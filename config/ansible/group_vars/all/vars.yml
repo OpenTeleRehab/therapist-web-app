@@ -1,0 +1,6 @@
+---
+
+project_id:     'hiv-tra-20'
+project_name:   'therapist-webapp'
+
+workspace:      '{{ lookup("env", "WORKSPACE") or lookup("env", "PWD") }}'
