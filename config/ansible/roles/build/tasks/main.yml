@@ -1,0 +1,7 @@
+---
+
+- name: Create build file
+  file:
+    path: '/var/tmp/{{ project_id }}/{{ project_name }}-build'
+    state: touch
+    mode: 0755
