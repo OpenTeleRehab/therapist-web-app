@@ -1,26 +1,36 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Provider } from 'react-redux';
+import { Router } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { LocalizeProvider } from 'react-localize-redux';
+import { ReactKeycloakProvider } from '@react-keycloak/web';
 
-function App() {
+import RouteSwitch from 'routes';
+import store from 'store';
+import keycloak from 'utils/keycloak';
+
+import 'scss/app.scss';
+import SplashScreen from 'components/SplashScreen';
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ReactKeycloakProvider
+      authClient={keycloak}
+      initOptions={{
+        onLoad: process.env.REACT_APP_KEYCLOAK_OPTION_ON_LOAD,
+        checkLoginIframe: process.env.REACT_APP_KEYCLOAK_OPTION_CHECK_LOGIN_IFRAME === 'true'
+      }}
+      LoadingComponent={<SplashScreen />}
+    >
+      <Provider store={store}>
+        <LocalizeProvider store={store}>
+          <Router history={createBrowserHistory()}>
+            <RouteSwitch />
+          </Router>
+        </LocalizeProvider>
+      </Provider>
+    </ReactKeycloakProvider>
   );
-}
+};
 
 export default App;

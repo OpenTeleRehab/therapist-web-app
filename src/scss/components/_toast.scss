@@ -1,0 +1,31 @@
+.toast {
+	position: absolute;
+	z-index: $zindex-toast;
+	top: $grid-gutter-width / 2;
+	right: $grid-gutter-width / 2;
+	min-width: $toast-min-width;
+}
+
+.toast-header {
+	font-size: 16px;
+	border-bottom: none;
+}
+
+.type-danger {
+	&.toast {
+		background-color: theme-color-level('danger', -10);
+		border: $toast-border-width solid theme-color('danger');
+		color: theme-color('danger');
+	}
+
+	.toast-header {
+		background-color: theme-color-level('danger', -10);
+		color: theme-color('danger');
+	}
+}
+
+@include media-breakpoint-up(xl) {
+	.toast {
+		top: 80px;
+	}
+}
