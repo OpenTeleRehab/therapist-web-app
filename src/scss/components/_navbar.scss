@@ -1,0 +1,88 @@
+.portal-name {
+	font-size: 14px;
+	line-height: 19px;
+	color: $white;
+	width: 60px;
+	text-transform: uppercase;
+}
+
+.main-nav {
+  justify-content: flex-start;
+  padding: 0.5rem 0;
+
+  .navbar-toggler {
+	margin-left: auto;
+	border: none;
+	padding: 0;
+	font-size: 24px;
+	margin-right: 1rem;
+
+	&:focus {
+	  outline: none;
+	}
+  }
+
+  .navbar-brand {
+	margin-left: 1rem;
+  }
+
+  .navbar-nav {
+	margin-top: 0.5rem;
+	.nav-link {
+	  border-radius: unset;
+	  color: $white;
+	  font-weight: $font-weight-bold;
+	  padding: 0.5rem 1rem;
+
+	  &.active {
+		background-color: theme-color('primary');
+	  }
+	}
+
+	.show > .nav-link {
+	  background: none;
+	  outline: none;
+	}
+  }
+
+  .btn-link {
+	color: $white;
+	border: none;
+	font-size: 14px;
+	line-height: 19px;
+	padding: 1rem;
+
+	&:hover {
+	  text-decoration: none;
+	}
+
+	&:focus {
+	  outline: none;
+	  border: none;
+	  box-shadow: none;
+	  text-decoration: none;
+	}
+  }
+}
+
+@include media-breakpoint-up(xl) {
+  .main-nav {
+	padding: 0;
+	height: 70px;
+
+	.navbar-collapse {
+	  height: 100%;
+	}
+
+	.navbar-nav {
+	  margin-top: 0;
+	  height: 100%;
+
+	  .nav-link {
+		font-size: 18px;
+		line-height: 25px;
+		padding: 1.4rem 2.5rem;
+	  }
+	}
+  }
+}

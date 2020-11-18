@@ -1,0 +1,12 @@
+.dx-g-bs4-table-cell.position-sticky {
+	overflow: visible;
+}
+
+.table thead {
+	th {
+		background-color: theme-color('light') !important;
+	}
+	tr.filter th {
+		background-color: theme-color('dark') !important;
+	}
+}

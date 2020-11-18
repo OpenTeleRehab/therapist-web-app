@@ -1,0 +1,47 @@
+/* make the customizations */
+
+// Font
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+$font-family-base: Nunito, Arial, sans-serif;
+
+// Color
+$red: #FB4E4E;
+$green: #1AB759;
+$blue: #0077C8;
+$teal: #EAF9F0;
+
+$primary: $blue;
+$secondary: #06038D;
+$danger: $red;
+$light: #EBEBEB;
+$dark: #5C5C5C;
+
+$theme-colors: (
+	"primary": $primary,
+	"secondary": $secondary,
+	"success": $green,
+	"danger": $danger,
+	"light": $light,
+	"dark": $dark
+);
+
+// Toasts
+$toast-background-color: $teal;
+$toast-header-background-color: $teal;
+$toast-border-color: $green;
+$toast-header-color: $green;
+$toast-color: $green;
+
+$toast-border-radius: .5rem;
+
+$toast-min-width: 200px;
+
+// Z-index
+$zindex-toast: 1080;
+
+// Font size
+$h1-font-size: 1.5rem;
+$headings-line-height: 1.5rem;
+
+/* import bootstrap to set changes */
+@import '~bootstrap/scss/bootstrap';
