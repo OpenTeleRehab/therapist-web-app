@@ -15,6 +15,8 @@
   "common.filters": "Filters",
   "common.columns": "Columns",
   "common.search.placeholder": "Search",
+  "common.back": "Back",
+  "common.edit": "Edit",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
@@ -38,6 +40,15 @@
   "admin.hint_message_global_admin": "Global admins can manage Global Admins/ Country Admin, create and upload the content (exercises and questionnaires).",
   "admin.hint_message_country_admin": "Country admins manage therapist of a country.",
   "admin.hint_message_clinic_admin": "Clinic admins manage therapist of a clinics.",
+
+  "profile": "Profile",
+  "profile.personal": "Personal",
+  "profile.information": "Profile Information",
+  "profile.change_password": "Change password",
+  "profile.passwords": "Passwords",
+  "profile.current_password": "Current Passwords",
+  "profile.new_password": "New Passwords",
+  "profile.confirm_new_password": "Confirm New Passwords",
 
   "logout": "Logout",
   "logout.confirmation": "Logout Confirmation",

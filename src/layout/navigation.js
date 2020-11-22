@@ -63,8 +63,12 @@ const Navigation = ({ translate }) => {
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item href="#/action-1">Update profile</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Change password</Dropdown.Item>
+                <Dropdown.Item as={Link} to={ROUTES.PROFILE}>
+                  {translate('profile')}
+                </Dropdown.Item>
+                <Dropdown.Item as={Link} to={ROUTES.PROFILE}>
+                  {translate('profile.change_password')}
+                </Dropdown.Item>
                 <Dropdown.Item onClick={handleShow}>{translate('logout')}</Dropdown.Item>
                 <Dialog
                   show={show}
