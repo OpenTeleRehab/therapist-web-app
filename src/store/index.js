@@ -8,12 +8,14 @@ import {
 } from 'react-localize-redux';
 
 import { notification } from 'store/notification/reducers';
+import { auth } from 'store/auth/reducers';
 
 import en from 'translations/en.locale.json';
 
 export const rootReducer = {
   localize: localizeReducer,
-  notification
+  notification,
+  auth
 };
 
 const devTool =
