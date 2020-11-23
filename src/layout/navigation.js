@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, NavLink, withRouter } from 'react-router-dom';
 import { Navbar, Nav, Dropdown } from 'react-bootstrap';
 import * as ROUTES from 'variables/routes';
@@ -15,10 +15,12 @@ const Navigation = ({ translate }) => {
   const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   const { profile } = useSelector((state) => state.auth);
 
-  if (!isProfileLoaded && keycloak.authenticated) {
-    dispatch(getProfile());
-    setIsProfileLoaded(true);
-  }
+  useEffect(() => {
+    if (!isProfileLoaded && keycloak.authenticated) {
+      dispatch(getProfile());
+      setIsProfileLoaded(true);
+    }
+  }, [isProfileLoaded, dispatch, keycloak.authenticated]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);

@@ -45,10 +45,10 @@
   "profile.personal": "Personal",
   "profile.information": "Profile Information",
   "profile.change_password": "Change password",
-  "profile.passwords": "Passwords",
-  "profile.current_password": "Current Passwords",
-  "profile.new_password": "New Passwords",
-  "profile.confirm_new_password": "Confirm New Passwords",
+  "profile.password": "Password",
+  "profile.current_password": "Current Password",
+  "profile.new_password": "New Password",
+  "profile.confirm_new_password": "Confirm New Password",
 
   "logout": "Logout",
   "logout.confirmation": "Logout Confirmation",
@@ -69,13 +69,20 @@
   "error.country": "Please select a country",
   "error.clinic": "Please select a clinic",
   "error.limit_patient": "Please Limit Patient",
+  "error.current_password": "Please fill in the current password",
+  "error.new_password": "Please fill in the new password",
+  "error.confirm_password": "Confirm new password does not match",
 
   "error_message.email_exists": "Email already exists",
+  "error_message.wrong_password": "Wrong old password",
+  "error_message.cannot_change_password": "Password is unable to change",
 
   "success_message.user_add": "User has been added",
   "success_message.user_update": "User has been updated",
+  "success_message.change_password_success": "Password changed successfully!",
 
   "toast_title.new_admin_account": "New admin account",
   "toast_title.edit_admin_account": "Edit admin account",
+  "toast_title.change_password": "Change password",
   "toast_title.error_message": "Error message"
 }

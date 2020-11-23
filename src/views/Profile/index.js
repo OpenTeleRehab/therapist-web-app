@@ -16,7 +16,7 @@ const Profile = ({ translate }) => {
         <Tab eventKey="information" title={translate('profile.information')}>
           <Information />
         </Tab>
-        <Tab eventKey="password" title={translate('profile.passwords')}>
+        <Tab eventKey="password" title={translate('profile.password')}>
           <Password />
         </Tab>
       </Tabs>
