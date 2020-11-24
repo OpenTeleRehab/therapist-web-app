@@ -55,6 +55,14 @@ const Navigation = ({ translate }) => {
           >
             {translate('dashboard')}
           </NavLink>
+          <NavLink
+            exact
+            to={ROUTES.PATIENT}
+            key='nav-patient'
+            className="nav-link"
+          >
+            {translate('patient')}
+          </NavLink>
 
           { profile !== undefined && (
             <Dropdown>

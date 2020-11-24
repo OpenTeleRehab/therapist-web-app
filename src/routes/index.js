@@ -4,7 +4,9 @@ import { Spinner } from 'react-bootstrap';
 
 import PageLayout from 'layout/layout';
 import PrivateRoute from 'routes/privateRoute';
+
 import DashboardPage from 'views/Dashboard';
+import Patient from 'views/Patient';
 import Profile from 'views/Profile';
 import NotFoundPage from 'views/NotFound';
 
@@ -17,6 +19,13 @@ const routes = [
     title: 'dashboard',
     path: ROUTES.DASHBOARD,
     component: DashboardPage,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'patient',
+    path: ROUTES.PATIENT,
+    component: Patient,
     exact: true,
     type: PRIVATE
   },
