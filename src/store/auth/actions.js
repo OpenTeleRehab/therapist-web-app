@@ -22,6 +22,23 @@ export const getProfile = () => async dispatch => {
   }
 };
 
+export const updateProfile = (id, payload) => async dispatch => {
+  dispatch(mutation.updateProfileRequest());
+  if (keycloak.authenticated) {
+    const data = await Auth.updateProfile(id, payload);
+    if (data.success) {
+      dispatch(mutation.updateProfileSuccess());
+      dispatch(showSuccessNotification('toast_title.update_profile', 'success_message.change_password_success'));
+      dispatch(getProfile());
+      return true;
+    } else {
+      dispatch(mutation.updatePasswordFail());
+      dispatch(showErrorNotification('toast_title.update_profile', data.message));
+      return false;
+    }
+  }
+};
+
 export const updatePassword = (payload) => async dispatch => {
   dispatch(mutation.updatePasswordRequest());
   if (keycloak.authenticated) {

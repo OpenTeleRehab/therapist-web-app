@@ -11,6 +11,19 @@ const getProfileFail = () => ({
   type: 'GET_PROFILE_FAIL'
 });
 
+const updateProfileRequest = () => ({
+  type: 'UPDATE_PROFILE_REQUEST'
+});
+
+const updateProfileSuccess = (data) => ({
+  type: 'UPDATE_PROFILE_SUCCESS',
+  data
+});
+
+const updateProfileFail = () => ({
+  type: 'UPDATE_PROFILE_FAIL'
+});
+
 const updatePasswordRequest = () => ({
   type: 'UPDATE_PASSWORD_REQUEST'
 });
@@ -28,6 +41,9 @@ export const mutation = {
   getProfileRequest,
   getProfileSuccess,
   getProfileFail,
+  updateProfileRequest,
+  updateProfileSuccess,
+  updateProfileFail,
   updatePasswordRequest,
   updatePasswordSuccess,
   updatePasswordFail
