@@ -12,6 +12,18 @@ const getProfile = username => {
     });
 };
 
+const updateProfile = (id, payload) => {
+  return axios.put(`/therapist/${id}`, payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const updatePassword = (username, payload) => {
   return axios.put(`/user/update-password/${username}`, payload)
     .then(
@@ -26,5 +38,6 @@ const updatePassword = (username, payload) => {
 
 export const Auth = {
   getProfile,
+  updateProfile,
   updatePassword
 };

@@ -65,6 +65,8 @@
   "placeholder.birth_date": "Enter Birth Date",
   "placeholder.institution": "Enter Institution",
 
+  "error.first_name": "Please fill first name",
+  "error.last_name": "Please fill last name",
   "error.email": "Please fill in the email",
   "error.country": "Please select a country",
   "error.clinic": "Please select a clinic",
@@ -79,10 +81,12 @@
 
   "success_message.user_add": "User has been added",
   "success_message.user_update": "User has been updated",
+  "success_message.update_profile_success": "Profile Updated successfully.",
   "success_message.change_password_success": "Password changed successfully!",
 
   "toast_title.new_admin_account": "New admin account",
   "toast_title.edit_admin_account": "Edit admin account",
+  "toast_title.update_profile": "Profile update",
   "toast_title.change_password": "Change password",
   "toast_title.error_message": "Error message"
 }
