@@ -19,7 +19,8 @@ const Password = () => {
   });
   const [passwordError, setPasswordError] = useState(false);
   const [newPasswordError, setNewPasswordError] = useState(false);
-  const [confirmPasswordError, setconfirmPasswordError] = useState(false);
+  const [confirmPasswordError, setConfirmPasswordError] = useState(false);
+  const [confirmPasswordNotMatchError, setConfirmPasswordNotMatchError] = useState(false);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -43,11 +44,17 @@ const Password = () => {
       setNewPasswordError(false);
     }
 
-    if (formFields.confirm_password !== formFields.new_password) {
-      canSave = false;
-      setconfirmPasswordError(true);
+    if (formFields.confirm_password === '') {
+      setConfirmPasswordNotMatchError(false);
+      setConfirmPasswordError(true);
     } else {
-      setconfirmPasswordError(false);
+      setConfirmPasswordError(false);
+      if (formFields.confirm_password !== formFields.new_password) {
+        canSave = false;
+        setConfirmPasswordNotMatchError(true);
+      } else {
+        setConfirmPasswordNotMatchError(false);
+      }
     }
 
     if (canSave) {
@@ -102,16 +109,20 @@ const Password = () => {
               type="password"
               name="confirm_password"
               onChange={handleChange}
-              isInvalid={confirmPasswordError}
+              isInvalid={confirmPasswordError || confirmPasswordNotMatchError}
             />
             <Form.Control.Feedback type="invalid">
-              {translate('error.confirm_password')}
+              {confirmPasswordError && translate('error.confirm_password')}
+              {confirmPasswordNotMatchError && translate('error.confirm_password_not_match')}
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
 
         <Form.Row>
-          <Button onClick={handleSave}>
+          <Button
+            onClick={handleSave}
+            disabled={!formFields.current_password && !formFields.new_password && !formFields.confirm_password}
+          >
             {translate('common.save')}
           </Button>
           <Button
