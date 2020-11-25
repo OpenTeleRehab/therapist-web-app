@@ -31,7 +31,7 @@ const Navigation = ({ translate }) => {
   };
 
   return (
-    <Navbar bg="secondary" variant="dark" expand="xl" sticky="top" className="main-nav">
+    <Navbar bg="primary" variant="dark" expand="xl" sticky="top" className="main-nav">
       <Navbar.Brand>
         <Link to={ROUTES.DASHBOARD}>
           <img
