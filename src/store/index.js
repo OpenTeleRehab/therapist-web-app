@@ -9,13 +9,19 @@ import {
 
 import { notification } from 'store/notification/reducers';
 import { auth } from 'store/auth/reducers';
+import { clinic } from 'store/clinic/reducers';
+import { country } from 'store/country/reducers';
 
 import en from 'translations/en.locale.json';
+import { getClinics } from 'store/clinic/actions';
+import { getCountries } from 'store/country/actions';
 
 export const rootReducer = {
   localize: localizeReducer,
   notification,
-  auth
+  auth,
+  clinic,
+  country
 };
 
 const devTool =
@@ -46,5 +52,11 @@ store.dispatch(initialize({
 }));
 
 store.dispatch(addTranslationForLanguage(en, 'en'));
+
+// Fetch data for clinic
+store.dispatch(getClinics());
+
+// Fetch data for country
+store.dispatch(getCountries());
 
 export default store;

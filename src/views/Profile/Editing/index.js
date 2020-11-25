@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { updateProfile } from 'store/auth/actions';
 
+import { getCountryName } from 'utils/country';
+import { getClinicName } from 'utils/clinic';
+
 const Edition = () => {
+  const clinics = useSelector(state => state.clinic.clinics);
+  const countries = useSelector(state => state.country.countries);
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -101,7 +106,7 @@ const Edition = () => {
       <Form.Row>
         <Form.Group className="col-sm-4 md-4" controlId="formEmail">
           <Form.Label>{translate('common.email')}</Form.Label>
-          <Form.Control name="email" disabled />
+          <Form.Control name="email" disabled value={profile.email} />
         </Form.Group>
       </Form.Row>
       <Form.Row>
@@ -112,10 +117,7 @@ const Edition = () => {
             as="select"
             disabled
           >
-            <option value="">{translate('placeholder.country')}</option>
-            <option value="1">Cambodia</option>
-            <option value="2">Laos</option>
-            <option value="3">Vietnam</option>
+            <option value={profile.country_id}>{getCountryName(profile.country_id, countries)}</option>
           </Form.Control>
         </Form.Group>
       </Form.Row>
@@ -128,10 +130,7 @@ const Edition = () => {
             as="select"
             disabled
           >
-            <option value="">{translate('placeholder.clinic')}</option>
-            <option value="1">Clinic A</option>
-            <option value="2">Clinic B</option>
-            <option value="3">Clinic C</option>
+            <option value={profile.clinic_id}>{getClinicName(profile.clinic_id, clinics)}</option>
           </Form.Control>
         </Form.Group>
       </Form.Row>
