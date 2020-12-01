@@ -134,9 +134,10 @@
   "toast_title.error_message": "Error message",
 
   "toast_title.edit_patient_account": "Edit patient account",
-  "toast_title.patient_admin_account": "Update patient account",
   "toast_title.new_patient_account": "New patient account",
-
   "toast_title.new_treatment_plan": "New Treatment Plan",
-  "toast_title.update_treatment_plan": "Update Treatment Plan"
+  "toast_title.update_treatment_plan": "Update Treatment Plan",
+
+  "patient.edit" : "Edit Patient",
+  "patient.new": "New Patient"
 }
