@@ -74,8 +74,8 @@
   "error.limit_patient": "Please Limit Patient",
   "error.current_password": "Please fill in the current password",
   "error.new_password": "Please fill in the new password",
-  "error.confirm_password": "Password does not match",
-  "error.confirm_password_not_match": "Please fill in the confirm new password",
+  "error.confirm_password": "Please fill in the confirm new password",
+  "error.confirm_password_not_match": "Password does not match",
 
   "error_message.email_exists": "Email already exists",
   "error_message.wrong_password": "Old password is not valid.",
