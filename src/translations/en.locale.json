@@ -17,6 +17,10 @@
   "common.search.placeholder": "Search",
   "common.back": "Back",
   "common.edit": "Edit",
+  "common.gender": "Gender",
+  "common.dateOfBirth": "Date of Birth",
+  "common.note": "Note",
+  "common.phone": "Mobile Number",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
@@ -43,6 +47,9 @@
   "admin.hint_message_clinic_admin": "Clinic admins manage therapist of a clinics.",
 
   "profile.setting": "Settings",
+  "patient.management": "Patient Management",
+  "patient.new": "New Patient",
+
   "profile": "Profile",
   "profile.personal": "Personal",
   "profile.information": "Profile Information",
@@ -64,10 +71,16 @@
   "placeholder.country": "Please select a country",
   "placeholder.email": "Enter email",
   "placeholder.limit_patient": "Enter Limit Patient",
-  "placeholder.birth_date": "Enter Birth Date",
+  "placeholder.birth_date": "Enter birth date",
   "placeholder.institution": "Enter Institution",
+  "placeholder.gender": "Please select a gender",
+  "placeholder.phone": "Enter mobile number",
+  "placeholder.note": "Enter note",
+  "placeholder.date_of_birth": "Enter date of birth",
 
+  "error.phone": "Please fill mobile number",
   "error.first_name": "Please fill first name",
+  "error.gender": "Please fill gender",
   "error.last_name": "Please fill last name",
   "error.email": "Please fill in the email",
   "error.country": "Please select a country",
@@ -91,5 +104,9 @@
   "toast_title.edit_admin_account": "Edit admin account",
   "toast_title.update_profile": "Profile update",
   "toast_title.change_password": "Change password",
-  "toast_title.error_message": "Error message"
+  "toast_title.error_message": "Error message",
+
+  "toast_title.edit_patient_account": "Edit patient account",
+  "toast_title.patient_admin_account": "Update patient account",
+  "toast_title.new_patient_account": "New patient account"
 }

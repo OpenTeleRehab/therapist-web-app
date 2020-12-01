@@ -15,9 +15,11 @@ import { country } from 'store/country/reducers';
 import en from 'translations/en.locale.json';
 import { getClinics } from 'store/clinic/actions';
 import { getCountries } from 'store/country/actions';
+import { user } from 'store/user/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
+  user,
   notification,
   auth,
   clinic,
@@ -26,8 +28,8 @@ export const rootReducer = {
 
 const devTool =
   process.env.NODE_ENV === 'development'
-    ? window.__REDUX_DEVTOOLS_EXTENSION__ &&
-      window.__REDUX_DEVTOOLS_EXTENSION__()
+    ? (window.__REDUX_DEVTOOLS_EXTENSION__ &&
+      window.__REDUX_DEVTOOLS_EXTENSION__()) || compose
     : compose;
 
 const store = createStore(
