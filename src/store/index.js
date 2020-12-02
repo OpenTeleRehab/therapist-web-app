@@ -11,11 +11,12 @@ import { notification } from 'store/notification/reducers';
 import { auth } from 'store/auth/reducers';
 import { clinic } from 'store/clinic/reducers';
 import { country } from 'store/country/reducers';
+import { user } from 'store/user/reducers';
+import { treatmentPlan } from 'store/treatmentPlan/reducers';
 
 import en from 'translations/en.locale.json';
 import { getClinics } from 'store/clinic/actions';
 import { getCountries } from 'store/country/actions';
-import { user } from 'store/user/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -23,7 +24,8 @@ export const rootReducer = {
   notification,
   auth,
   clinic,
-  country
+  country,
+  treatmentPlan
 };
 
 const devTool =
