@@ -94,8 +94,12 @@ const CreateTreatmentPlan = () => {
   };
 
   const handleChangeDate = (value) => {
-    const date = value.format(settings.date_format);
-    setFormFields({ ...formFields, start_date: date });
+    if (moment(value).isValid()) {
+      const date = value.format(settings.date_format);
+      setFormFields({ ...formFields, start_date: date });
+    } else {
+      setFormFields({ ...formFields, start_date: '' });
+    }
   };
 
   const handleSaveAsPreset = () => {
@@ -263,7 +267,7 @@ const CreateTreatmentPlan = () => {
                   timeFormat={false}
                   closeOnSelect={true}
                   value={formFields.start_date}
-                  onChange={(e) => handleChangeDate(e)}
+                  onChangeRaw={(e) => handleChangeDate(e)}
                 />
                 {errorStartDate && (
                   <Form.Control.Feedback type="invalid" className="d-block">
