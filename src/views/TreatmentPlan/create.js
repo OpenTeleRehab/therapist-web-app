@@ -83,6 +83,7 @@ const CreateTreatmentPlan = () => {
     setFormFields({
       name: '',
       description: '',
+      patient_id: patientId,
       start_date: '',
       end_date: ''
     });
@@ -190,7 +191,7 @@ const CreateTreatmentPlan = () => {
           variant="primary"
           onClick={handleAssign}
         >
-          {translate('common.assign')}
+          {translate(id ? 'common.save' : 'common.assign')}
         </Button>
       </div>
       <Accordion defaultActiveKey="0">
