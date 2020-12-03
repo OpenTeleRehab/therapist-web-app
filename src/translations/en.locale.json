@@ -21,6 +21,11 @@
   "common.dateOfBirth": "Date of Birth",
   "common.note": "Note",
   "common.phone": "Mobile Number",
+  "common.name": "Name",
+  "common.description": "Description",
+  "common.start_date": "Start date",
+  "common.end_date": "End date",
+  "common.assign": "Assign",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
@@ -65,6 +70,15 @@
   "logout.cancel": "No",
   "logout.confirm": "Yes",
 
+  "treatment_plan.treatment_information": "TREATMENT INFORMATION",
+  "treatment_plan.treatment_planning": "Treatment Planning",
+  "treatment_plan.general_information": "GENERAL INFORMATION",
+  "treatment_plan.assign_to_patient": "ASSIGNMENT TO PATIENT",
+  "treatment_plan.treatment_goal_for_patient": "TREATMENT GOAL FOR PATIENT",
+  "treatment_plan.treatment_goal_for_patient_max_number": "(Maximum: 4 goals)",
+  "treatment_plan.choose_a_patient": "Choose a patient",
+  "treatment_plan.save_as_preset": "Save As Preset",
+
   "placeholder.last_name": "Enter last name",
   "placeholder.first_name": "Enter first name",
   "placeholder.clinic": "Please select a clinic",
@@ -77,6 +91,10 @@
   "placeholder.phone": "Enter mobile number",
   "placeholder.note": "Enter note",
   "placeholder.date_of_birth": "Enter date of birth",
+  "placeholder.name": "Enter name",
+  "placeholder.description": "Enter description",
+  "placeholder.start_date": "Please select start date",
+  "placeholder.patient": "Please select a patient",
 
   "error.phone": "Please fill mobile number",
   "error.first_name": "Please fill first name",
@@ -90,15 +108,24 @@
   "error.new_password": "Please fill in the new password",
   "error.confirm_password": "Please fill in the confirm new password",
   "error.confirm_password_not_match": "Password does not match",
+  "error.name": "Please fill in name",
+  "error.description": "Please fill in description",
+  "error.start_date": "Please select start date",
 
   "error_message.email_exists": "Email already exists",
   "error_message.wrong_password": "Old password is not valid.",
   "error_message.cannot_change_password": "Password is unable to change",
+  "error_message.treatment_plan_add_as_preset": "Treatment Plan cannot be added as a preset.",
+  "error_message.treatment_plan_assign_to_patient_overlap_schedule": "The patient already has a schedule between selected dates.",
+  "error_message.treatment_plan_assign_to_patient": "Treatment Plan cannot be assigned to the patient.",
 
   "success_message.user_add": "User has been added",
   "success_message.user_update": "User has been updated",
   "success_message.update_profile_success": "Profile Updated successfully.",
   "success_message.change_password_success": "Password changed successfully!",
+  "success_message.treatment_plan_add_as_preset": "Treatment Plan has been added as a preset.",
+  "success_message.treatment_plan_assign_to_patient": "Treatment Plan has been assigned to the patient.",
+  "success_message.treatment_plan_update": "Treatment Plan has been updated.",
 
   "toast_title.new_admin_account": "New admin account",
   "toast_title.edit_admin_account": "Edit admin account",
@@ -108,5 +135,8 @@
 
   "toast_title.edit_patient_account": "Edit patient account",
   "toast_title.patient_admin_account": "Update patient account",
-  "toast_title.new_patient_account": "New patient account"
+  "toast_title.new_patient_account": "New patient account",
+
+  "toast_title.new_treatment_plan": "New Treatment Plan",
+  "toast_title.update_treatment_plan": "Update Treatment Plan"
 }
