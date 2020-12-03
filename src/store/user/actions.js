@@ -27,7 +27,6 @@ export const getUsers = payload => async dispatch => {
   const data = await User.getUsers(payload);
   if (data.success) {
     dispatch(mutation.getUsersSuccess(data.data, payload));
-    // dispatch(showSpinner(false));
     return data.info;
   } else {
     dispatch(mutation.getUsersFail());
@@ -41,7 +40,8 @@ export const updateUser = (id, payload) => async (dispatch, getState) => {
   const data = await User.updateUser(id, payload);
   if (data.success) {
     dispatch(mutation.updateUserSuccess());
-    dispatch(getUsers());
+    const filters = getState().user.filters;
+    dispatch(getUsers(filters));
     dispatch(showSuccessNotification('toast_title.edit_patient_account', data.message));
     return true;
   } else {

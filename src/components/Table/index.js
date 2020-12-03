@@ -17,16 +17,24 @@ import {
   PagingPanel
 } from '@devexpress/dx-react-grid-bootstrap4';
 import PropTypes from 'prop-types';
+import { getTranslate } from 'react-localize-redux';
 
 import Toolbar from 'components/Table/Toolbar';
 import SearchInput from 'components/Table/SearchPanel/Input';
 import FilterToggle from 'components/Table/FilterToggle';
 import ToggleButton from 'components/Table/ColumnChooser/ToggleButton';
+import FilterCells from 'components/Table/FilterCells';
 
 import '@icon/open-iconic/open-iconic.css';
 import '@devexpress/dx-react-grid-bootstrap4/dist/dx-react-grid-bootstrap4.css';
+import { useSelector } from 'react-redux';
 
-const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue }) => {
+const FilterRow = (props) => <Table.Row className="filter" {...props} />;
+const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
+
+const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters }) => {
+  const localize = useSelector((state) => state.localize);
+  const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
 
   const pageSizes = [10, 20, 30, 40, 50];
@@ -34,10 +42,11 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
   const tableColumnExtensions = [...columnExtensions, { columnName: 'action', align: 'right', width: 120 }];
   const tableColumnVisibilityColumnExtensions = [{ columnName: 'action', togglingEnabled: false }];
   const filteringStateColumnExtensions = [{ columnName: 'action', filteringEnabled: false }];
-  const FilterRow = (props) => <Table.Row className="filter" {...props} />;
-  const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
   const toggleFilter = () => {
+    if (filters && filters.length) {
+      setFilters([]);
+    }
     setShowFilter(!showFilter);
   };
 
@@ -46,7 +55,7 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
       rows={rows}
       columns={columns}>
       <SearchState onValueChange={setSearchValue} />
-      <FilteringState defaultFilters={[]} columnExtensions={filteringStateColumnExtensions} />
+      <FilteringState defaultFilters={[]} onFiltersChange={setFilters} columnExtensions={filteringStateColumnExtensions} />
       <PagingState
         currentPage={currentPage}
         onCurrentPageChange={setCurrentPage}
@@ -59,7 +68,7 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
 
       <Table columnExtensions={tableColumnExtensions} />
       <TableHeaderRow />
-      {showFilter && <TableFilterRow rowComponent={FilterRow} />}
+      {showFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
       <TableFixedColumns rightColumns={rightColumns} cellComponent={FixedColumnCell} />
       <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} />
 
@@ -81,7 +90,9 @@ CustomTable.propTypes = {
   currentPage: PropTypes.number,
   setCurrentPage: PropTypes.func,
   totalCount: PropTypes.number,
-  setSearchValue: PropTypes.func
+  setSearchValue: PropTypes.func,
+  setFilters: PropTypes.func,
+  filters: PropTypes.array
 };
 
 CustomTable.defaultProps = {
