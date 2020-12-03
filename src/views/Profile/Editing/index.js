@@ -78,6 +78,7 @@ const Edition = () => {
       <Form.Row>
         <Form.Group className="col-sm-2 md-4" controlId="formLastName">
           <Form.Label>{translate('common.last_name')}</Form.Label>
+          <span className="text-dark ml-1">*</span>
           <Form.Control
             name="last_name"
             onChange={handleChange}
@@ -91,6 +92,7 @@ const Edition = () => {
         </Form.Group>
         <Form.Group className="col-sm-2 md-4" controlId="formFirstName">
           <Form.Label>{translate('common.first_name')}</Form.Label>
+          <span className="text-dark ml-1">*</span>
           <Form.Control
             name="first_name"
             onChange={handleChange}

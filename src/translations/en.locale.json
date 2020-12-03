@@ -42,6 +42,7 @@
   "admin.hint_message_country_admin": "Country admins manage therapist of a country.",
   "admin.hint_message_clinic_admin": "Clinic admins manage therapist of a clinics.",
 
+  "profile.setting": "Settings",
   "profile": "Profile",
   "profile.personal": "Personal",
   "profile.information": "Profile Information",

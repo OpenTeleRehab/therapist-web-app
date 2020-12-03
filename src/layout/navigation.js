@@ -76,10 +76,7 @@ const Navigation = ({ translate }) => {
                 alignRight={true}
               >
                 <Dropdown.Item as={Link} to={ROUTES.PROFILE}>
-                  {translate('profile')}
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to={ROUTES.PROFILE_PASSWORD}>
-                  {translate('profile.change_password')}
+                  {translate('profile.setting')}
                 </Dropdown.Item>
                 <Dropdown.Item onClick={handleShow}>{translate('logout')}</Dropdown.Item>
                 <Dialog
