@@ -42,7 +42,7 @@ export const updateUser = (id, payload) => async (dispatch, getState) => {
   if (data.success) {
     dispatch(mutation.updateUserSuccess());
     dispatch(getUsers());
-    dispatch(showSuccessNotification('toast_title.patient_admin_account', data.message));
+    dispatch(showSuccessNotification('toast_title.edit_patient_account', data.message));
     return true;
   } else {
     dispatch(mutation.updateUserFail());

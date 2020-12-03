@@ -42,7 +42,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     clinic_identity: '',
     note: '',
     date_of_birth: '',
-    age: 1
+    age: ''
   });
 
   useEffect(() => {
@@ -90,7 +90,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       gender: '',
       date_of_birth: '',
       note: '',
-      age: '1'
+      age: ''
     });
   };
 
@@ -185,7 +185,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   return (
     <Dialog
       show={show}
-      title={translate(editId ? 'admin.edit' : 'admin.new')}
+      title={translate(editId ? 'patient.edit' : 'patient.new')}
       onCancel={handleClose}
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
@@ -257,8 +257,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               as="select"
             >
               <option value="">{translate('placeholder.gender')}</option>
-              <option value="male">Male</option>ដាតេ
-              <option value="female">Female</option>
+              {settings.genders.options.map((gender, index) => (
+                <option key={index} value={gender.value}>{gender.text}</option>
+              ))}
             </Form.Control>
             <Form.Control.Feedback type="invalid">
               {translate('error.gender')}
@@ -293,6 +294,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               value={formFields.last_name}
               placeholder={translate('placeholder.last_name')}
               isInvalid={errorLastName}
+              maxLength={settings.textMaxLength}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.last_name')}
@@ -307,6 +309,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               value={formFields.first_name}
               placeholder={translate('placeholder.first_name')}
               isInvalid={errorFirstName}
+              maxLength={settings.textMaxLength}
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.first_name')}
@@ -321,6 +324,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             value={formFields.note}
             placeholder={translate('placeholder.note')}
             as="textarea"
+            maxLength={settings.textMaxLength}
           />
         </Form.Group>
       </Form>
