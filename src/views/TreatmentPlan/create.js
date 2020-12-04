@@ -11,6 +11,7 @@ import moment from 'moment';
 
 import CollapseToggle from 'views/TreatmentPlan/collapseToggle';
 import * as ROUTES from '../../variables/routes';
+import ActivitySection from './activitySection';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -41,6 +42,7 @@ const CreateTreatmentPlan = () => {
     start_date: '',
     end_date: ''
   });
+  const [weeks, setWeeks] = useState(1);
 
   const [errorName, setErrorName] = useState(false);
   const [errorDescription, setErrorDescription] = useState(false);
@@ -54,12 +56,12 @@ const CreateTreatmentPlan = () => {
 
   useEffect(() => {
     if (formFields.start_date) {
-      setFormFields({ ...formFields, end_date: moment(formFields.start_date, settings.date_format).add(1, 'weeks').format(settings.date_format) });
+      setFormFields({ ...formFields, end_date: moment(formFields.start_date, settings.date_format).add(weeks, 'weeks').subtract(1, 'days').format(settings.date_format) });
     } else {
       setFormFields({ ...formFields, end_date: '' });
     }
     // eslint-disable-next-line
-  }, [formFields.start_date]);
+  }, [formFields.start_date, weeks]);
 
   useEffect(() => {
     if (id && treatmentPlans.length) {
@@ -74,6 +76,7 @@ const CreateTreatmentPlan = () => {
     } else {
       resetData();
     }
+    // eslint-disable-next-line
   }, [id, treatmentPlans]);
 
   const resetData = () => {
@@ -95,8 +98,8 @@ const CreateTreatmentPlan = () => {
   };
 
   const handleChangeDate = (value) => {
-    if (moment(value).isValid()) {
-      const date = value.format(settings.date_format);
+    if (moment(value, settings.date_format).isValid()) {
+      const date = moment(value).format(settings.date_format);
       setFormFields({ ...formFields, start_date: date });
     } else {
       setFormFields({ ...formFields, start_date: '' });
@@ -268,7 +271,7 @@ const CreateTreatmentPlan = () => {
                   timeFormat={false}
                   closeOnSelect={true}
                   value={formFields.start_date}
-                  onChangeRaw={(e) => handleChangeDate(e)}
+                  onChange={(e) => handleChangeDate(e)}
                 />
                 {errorStartDate && (
                   <Form.Control.Feedback type="invalid" className="d-block">
@@ -289,6 +292,7 @@ const CreateTreatmentPlan = () => {
         </Accordion.Collapse>
         <CollapseToggle title={translate('treatment_plan.treatment_information')} eventKey="0" />
       </Accordion>
+      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} />
     </>
   );
 };
