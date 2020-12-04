@@ -100,9 +100,13 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   };
 
   const handleChangeDate = (value) => {
-    const date = value.format(settings.date_format);
-    const age = ageCalculation(value);
-    setFormFields({ ...formFields, date_of_birth: date, age: age });
+    if (moment(value).isValid()) {
+      const date = value.format(settings.date_format);
+      const age = ageCalculation(value);
+      setFormFields({ ...formFields, date_of_birth: date, age: age });
+    } else {
+      setFormFields({ ...formFields, date_of_birth: '', age: '' });
+    }
   };
 
   const ageCalculation = (value) => {
@@ -278,7 +282,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               timeFormat={false}
               closeOnSelect={true}
               value={formFields.date_of_birth}
-              onChange={(e) => handleChangeDate(e)}
+              onChangeRaw={(e) => handleChangeDate(e)}
               isValidDate={ validateDate }
             />
             <p className="mt-1">Age: {formFields.age}</p>
