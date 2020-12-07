@@ -11,6 +11,7 @@ import moment from 'moment';
 
 import CollapseToggle from 'views/TreatmentPlan/collapseToggle';
 import ActivitySection from './activitySection';
+import PatientInfo from 'views/Patient/Partials/patientInfo';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -177,6 +178,10 @@ const CreateTreatmentPlan = () => {
 
   return (
     <>
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
+        <span>Patient / Patient Detail / Treatment Plan</span>
+      </div>
+      <PatientInfo id={patientId} translate={translate} />
       <div className="d-flex mb-4">
         <h4 className="mb-">{translate('treatment_plan.treatment_planning')}</h4>
         <Button
