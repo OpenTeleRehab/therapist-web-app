@@ -9,6 +9,7 @@ import DashboardPage from 'views/Dashboard';
 import Patient from 'views/Patient';
 import Profile from 'views/Profile';
 import CreateTreatmentPlan from 'views/TreatmentPlan/create';
+import ViewPatient from 'views/Patient/viewPatient';
 import NotFoundPage from 'views/NotFound';
 
 import * as ROUTES from 'variables/routes';
@@ -48,6 +49,13 @@ const routes = [
     title: 'treatment_plan.edit',
     path: ROUTES.TREATMENT_PLAN_EDIT,
     component: CreateTreatmentPlan,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'patient.detail',
+    path: ROUTES.VIEW_PATIENT_DETAIL,
+    component: ViewPatient,
     exact: true,
     type: PRIVATE
   },

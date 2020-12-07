@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { BsPlus } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment/moment';
+import * as ROUTES from 'variables/routes';
 
 import CreatePatient from './create';
 import { getUsers } from 'store/user/actions';
@@ -121,9 +123,9 @@ const Patient = ({ translate }) => {
               <Dropdown.Item onClick={() => handleEdit(user.id)}>{translate('common.edit_info')}</Dropdown.Item>
               <Dropdown.Item href="#/action-2">{translate('common.deactivate')}</Dropdown.Item>
               <Dropdown.Item href="#/action-3">{translate('common.delete')}</Dropdown.Item>
+              <Dropdown.Item as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>Show</Dropdown.Item>
             </DropdownButton>
           );
-
           return {
             identity: user.identity,
             first_name: user.first_name,
