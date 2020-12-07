@@ -10,6 +10,7 @@ import { getCountryName } from '../../utils/country';
 import { ageCalculation } from 'utils/age';
 import { getUsers } from 'store/user/actions';
 import * as ROUTES from '../../variables/routes';
+import TreatmentHistory from 'views/Patient/treatmentHistory';
 
 const ViewPatient = () => {
   const dispatch = useDispatch();
@@ -44,7 +45,7 @@ const ViewPatient = () => {
       page_size: pageSize,
       page: currentPage + 1
     }));
-  }, [dispatch]);
+  }, [dispatch, currentPage, filters, pageSize, searchValue]);
 
   useEffect(() => {
     if (patientId && users.length) {
@@ -59,7 +60,7 @@ const ViewPatient = () => {
         age: ageCalculation(data.date_of_birth) || ''
       });
     }
-  }, [patientId, users]);
+  }, [patientId, users, countries]);
 
   return (
     <>
@@ -85,6 +86,7 @@ const ViewPatient = () => {
         </div>
       </div>
       <patientInfo />
+      <TreatmentHistory />
     </>
   );
 };

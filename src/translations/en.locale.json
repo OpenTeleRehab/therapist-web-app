@@ -34,6 +34,10 @@
   "common.delete_confirmation_message": "Are you sure want to delete this record?",
   "common.yes": "Yes",
   "common.no": "No",
+  "common.finished": "Finished",
+  "common.on_going": "On-going",
+  "common.planned": "Planned",
+  "common.all": "All",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
@@ -89,6 +93,9 @@
   "treatment_plan.save_as_preset": "Save As Preset",
   "treatment_plan.activities": "Activities",
   "treatment_plan.delete_confirmation_title": "Week deletion",
+  "treatment_plan.treatment_history": "Treatment History",
+  "treatment_plan.edit_treatment_info": "Edit Treatment Info",
+  "treatment_plan.view_treatment_detail": "View Treatment Detail",
 
   "placeholder.last_name": "Enter last name",
   "placeholder.first_name": "Enter first name",
@@ -152,9 +159,6 @@
   "toast_title.new_patient_account": "New patient account",
   "toast_title.new_treatment_plan": "New Treatment Plan",
   "toast_title.update_treatment_plan": "Update Treatment Plan",
-
-  "patient.edit" : "Edit Patient",
-  "patient.new": "New Patient",
 
   "patient.edit_info": "Edit Patient Info",
   "patient.create_treatment": "Create Treatment Plan",
