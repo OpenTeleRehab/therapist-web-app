@@ -151,5 +151,13 @@
   "toast_title.edit_patient_account": "Edit patient account",
   "toast_title.new_patient_account": "New patient account",
   "toast_title.new_treatment_plan": "New Treatment Plan",
-  "toast_title.update_treatment_plan": "Update Treatment Plan"
+  "toast_title.update_treatment_plan": "Update Treatment Plan",
+
+  "patient.edit" : "Edit Patient",
+  "patient.new": "New Patient",
+
+  "patient.edit_info": "Edit Patient Info",
+  "patient.create_treatment": "Create Treatment Plan",
+  "patient.deactivate_account": "Deactivate Account",
+  "patient.delete_account": "Delete Account"
 }

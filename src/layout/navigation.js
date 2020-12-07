@@ -56,7 +56,6 @@ const Navigation = ({ translate }) => {
             {translate('dashboard')}
           </NavLink>
           <NavLink
-            exact
             to={ROUTES.PATIENT}
             key='nav-patient'
             className="nav-link"
