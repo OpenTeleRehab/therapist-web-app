@@ -12,15 +12,13 @@ const Navigation = ({ translate }) => {
   const dispatch = useDispatch();
   const { keycloak } = useKeycloak();
   const [show, setShow] = useState(false);
-  const [isProfileLoaded, setIsProfileLoaded] = useState(false);
   const { profile } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (!isProfileLoaded && keycloak.authenticated) {
+    if (!profile && keycloak.authenticated) {
       dispatch(getProfile());
-      setIsProfileLoaded(true);
     }
-  }, [isProfileLoaded, dispatch, keycloak.authenticated]);
+  }, [profile, dispatch, keycloak.authenticated]);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
