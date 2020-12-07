@@ -26,6 +26,14 @@
   "common.start_date": "Start date",
   "common.end_date": "End date",
   "common.assign": "Assign",
+  "common.week": "Week",
+  "common.day": "Day",
+  "common.exercises": "Exercises",
+  "common.education_materials": "Education Materials",
+  "common.questionnaire": "Questionnaire",
+  "common.delete_confirmation_message": "Are you sure want to delete this record?",
+  "common.yes": "Yes",
+  "common.no": "No",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
@@ -54,6 +62,7 @@
   "profile.setting": "Settings",
   "patient.management": "Patient Management",
   "patient.new": "New Patient",
+  "patient.edit" : "Edit Patient",
 
   "profile": "Profile",
   "profile.personal": "Personal",
@@ -78,6 +87,8 @@
   "treatment_plan.treatment_goal_for_patient_max_number": "(Maximum: 4 goals)",
   "treatment_plan.choose_a_patient": "Choose a patient",
   "treatment_plan.save_as_preset": "Save As Preset",
+  "treatment_plan.activities": "Activities",
+  "treatment_plan.delete_confirmation_title": "Week deletion",
 
   "placeholder.last_name": "Enter last name",
   "placeholder.first_name": "Enter first name",
@@ -136,8 +147,5 @@
   "toast_title.edit_patient_account": "Edit patient account",
   "toast_title.new_patient_account": "New patient account",
   "toast_title.new_treatment_plan": "New Treatment Plan",
-  "toast_title.update_treatment_plan": "Update Treatment Plan",
-
-  "patient.edit" : "Edit Patient",
-  "patient.new": "New Patient"
+  "toast_title.update_treatment_plan": "Update Treatment Plan"
 }
