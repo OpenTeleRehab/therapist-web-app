@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Accordion, Row, Col, Form, Button } from 'react-bootstrap';
 import Datetime from 'react-datetime';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useHistory, Link } from 'react-router-dom';
+import { useParams, useHistory } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 import settings from 'settings';
 import { createTreatmentPlan, updateTreatmentPlan } from 'store/treatmentPlan/actions';
@@ -10,7 +10,6 @@ import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import moment from 'moment';
 
 import CollapseToggle from 'views/TreatmentPlan/collapseToggle';
-import * as ROUTES from '../../variables/routes';
 import ActivitySection from './activitySection';
 
 const CreateTreatmentPlan = () => {
@@ -158,18 +157,22 @@ const CreateTreatmentPlan = () => {
         dispatch(updateTreatmentPlan(id, { ...formFields, type: 'normal' }))
           .then(result => {
             if (result) {
-              history.push(ROUTES.PATIENT);
+              history.goBack();
             }
           });
       } else {
         dispatch(createTreatmentPlan({ ...formFields, type: 'normal' }))
           .then(result => {
             if (result) {
-              history.push(ROUTES.PATIENT);
+              history.goBack();
             }
           });
       }
     }
+  };
+
+  const handleCancel = () => {
+    history.goBack();
   };
 
   return (
@@ -179,8 +182,7 @@ const CreateTreatmentPlan = () => {
         <Button
           className="ml-auto"
           variant="outline-primary"
-          as={Link}
-          to={ROUTES.PATIENT}
+          onClick={handleCancel}
         >
           {translate('common.cancel')}
         </Button>
