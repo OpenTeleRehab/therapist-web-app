@@ -55,7 +55,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
 
   useEffect(() => {
     if (editId && users.length) {
-      const editingData = users.find(user => user.id === editId);
+      const editingData = users.find(user => user.id === parseInt(editId));
       setFormFields({
         first_name: editingData.first_name || '',
         last_name: editingData.last_name || '',
