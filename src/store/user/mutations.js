@@ -14,9 +14,10 @@ const getUsersRequest = () => ({
   type: 'GET_USERS_REQUEST'
 });
 
-const getUsersSuccess = (data) => ({
+const getUsersSuccess = (data, filters) => ({
   type: 'GET_USERS_SUCCESS',
-  data
+  data,
+  filters
 });
 
 const getUsersFail = () => ({

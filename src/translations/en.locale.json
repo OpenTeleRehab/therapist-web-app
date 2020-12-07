@@ -107,6 +107,10 @@
   "placeholder.start_date": "Please select start date",
   "placeholder.patient": "Please select a patient",
 
+  "common.timerange.placeholder": "Select date range",
+  "common.apply": "Apply",
+  "common.clear": "Clear",
+
   "error.phone": "Please fill mobile number",
   "error.first_name": "Please fill first name",
   "error.gender": "Please fill gender",
