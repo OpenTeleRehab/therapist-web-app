@@ -96,6 +96,8 @@
   "treatment_plan.treatment_history": "Treatment History",
   "treatment_plan.edit_treatment_info": "Edit Treatment Info",
   "treatment_plan.view_treatment_detail": "View Treatment Detail",
+  "treatment_plan.edit": "Edit Treatment Plan",
+  "treatment_plan.create": "Edit Treatment Create",
 
   "placeholder.last_name": "Enter last name",
   "placeholder.first_name": "Enter first name",
@@ -163,5 +165,6 @@
   "patient.edit_info": "Edit Patient Info",
   "patient.create_treatment": "Create Treatment Plan",
   "patient.deactivate_account": "Deactivate Account",
-  "patient.delete_account": "Delete Account"
+  "patient.delete_account": "Delete Account",
+  "patient.detail": "Patient Detail"
 }
