@@ -13,7 +13,7 @@ import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
 import { getCountryName } from 'utils/country';
 import { getClinicName } from 'utils/clinic';
-import { ageCalculation } from 'utils/age';
+import AgeCalculation from 'utils/age';
 
 let timer = null;
 const Patient = ({ translate }) => {
@@ -134,7 +134,7 @@ const Patient = ({ translate }) => {
             last_name: user.last_name,
             email: user.email,
             date_of_birth: moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format),
-            age: ageCalculation(moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format)),
+            age: AgeCalculation(user.date_of_birth, translate),
             country: getCountryName(user.country_id, countries),
             clinic: getClinicName(user.clinic_id, clinics),
             ongoing_treatment_status: '',

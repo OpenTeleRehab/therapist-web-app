@@ -168,5 +168,12 @@
   "patient.create_treatment": "Create Treatment Plan",
   "patient.deactivate_account": "Deactivate Account",
   "patient.delete_account": "Delete Account",
-  "patient.detail": "Patient Detail"
+  "patient.detail": "Patient Detail",
+
+  "age.single_year": "year",
+  "age.single_month": "month",
+  "age.single_day": "day",
+  "age.plural_year": "years",
+  "age.plural_month": "months",
+  "age.plural_day": "days"
 }
