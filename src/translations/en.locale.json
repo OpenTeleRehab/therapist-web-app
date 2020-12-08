@@ -131,6 +131,8 @@
   "error.current_password": "Please fill in the current password",
   "error.new_password": "Please fill in the new password",
   "error.confirm_password": "Please fill in the confirm new password",
+  "error.new_password_validation": "Passwords must contain at least ${passwordLength} characters, including uppercase, lowercase letters and numbers.",
+  "error.new_password_validation_exist": "The new password can not be the same the current password",
   "error.confirm_password_not_match": "Password does not match",
   "error.name": "Please fill in name",
   "error.description": "Please fill in description",
