@@ -60,6 +60,7 @@ const Password = () => {
       }
     }
     if (formFields.confirm_password === '') {
+      canSave = false;
       setConfirmPasswordNotMatchError(false);
       setConfirmPasswordError(true);
     } else {
