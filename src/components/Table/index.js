@@ -39,7 +39,7 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
 
   const pageSizes = [10, 20, 30, 40, 50];
   const rightColumns = ['action'];
-  const tableColumnExtensions = [...columnExtensions, { columnName: 'action', align: 'right', width: 120 }];
+  const tableColumnExtensions = [...columnExtensions, { columnName: 'action', align: 'center', width: 120 }];
   const tableColumnVisibilityColumnExtensions = [{ columnName: 'action', togglingEnabled: false }];
   const filteringStateColumnExtensions = [{ columnName: 'action', filteringEnabled: false }];
 
