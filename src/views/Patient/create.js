@@ -14,7 +14,7 @@ import { createUser, updateUser } from 'store/user/actions';
 
 import { getCountryName } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
-import { ageCalculation } from 'utils/age';
+import AgeCalculation from 'utils/age';
 
 const CreatePatient = ({ show, handleClose, editId }) => {
   const dispatch = useDispatch();
@@ -65,7 +65,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         gender: editingData.gender || '',
         note: editingData.note || '',
         date_of_birth: moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) || '',
-        age: ageCalculation(editingData.date_of_birth) || ''
+        age: AgeCalculation(editingData.date_of_birth, translate) || ''
       });
     } else {
       resetData();
@@ -103,7 +103,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const handleChangeDate = (value) => {
     if (moment(value, settings.date_format).isValid()) {
       const date = moment(value).format(settings.date_format);
-      const age = ageCalculation(value);
+      const age = AgeCalculation(value, translate);
       setFormFields({ ...formFields, date_of_birth: date, age: age });
     } else {
       setFormFields({ ...formFields, date_of_birth: '', age: '' });

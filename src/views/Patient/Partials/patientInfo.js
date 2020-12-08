@@ -5,7 +5,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 
 import { getCountryName } from 'utils/country';
-import { ageCalculation } from 'utils/age';
+import AgeCalculation from 'utils/age';
 import { getUsers } from 'store/user/actions';
 
 const PatientInfo = ({ id, translate }) => {
@@ -50,7 +50,7 @@ const PatientInfo = ({ id, translate }) => {
         date_of_birth: moment(data.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) || '',
         country: getCountryName(data.country_id, countries),
         note: data.note || '',
-        age: ageCalculation(data.date_of_birth) || ''
+        age: AgeCalculation(data.date_of_birth, translate) || ''
       });
     }
   }, [id, users, countries]);
