@@ -142,7 +142,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       setErrorLastName(false);
     }
 
-    if (formFields.phone === '') {
+    if (formFields.phone === '' || formFields.phone === undefined) {
       canSave = false;
       setErrorPhone(true);
     } else {
@@ -182,10 +182,11 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           <span className="text-dark ml-1">*</span>
           <PhoneInput
             defaultCountry="KH"
-            class="form-control"
+            // class="form-control"
             placeholder="Enter phone number"
             value={formFields.phone}
-            isInvalid={errorPhone}
+            // isInvalid={errorPhone}
+            class={`form-control${errorPhone ? ' is-invalid' : ''}`}
             onChange={(e) => handleChangePhone(e)}
           />
           <Form.Control.Feedback type="invalid">
