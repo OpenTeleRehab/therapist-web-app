@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { BsPlus } from 'react-icons/bs';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import * as ROUTES from 'variables/routes';
 import CreatePatient from './create';
 import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
+import { DeleteAction, EditAction, ViewAction } from 'components/ActionIcons';
 import { getCountryName } from 'utils/country';
 import { getClinicName } from 'utils/clinic';
 import { ageCalculation } from 'utils/age';
@@ -120,13 +121,12 @@ const Patient = ({ translate }) => {
         columns={columns}
         columnExtensions={columnExtensions}
         rows={users.map(user => {
-          const dropdown = (
-            <DropdownButton alignRight variant="outline-dark" title={translate('common.actions')}>
-              <Dropdown.Item onClick={() => handleEdit(user.id)}>{translate('common.edit_info')}</Dropdown.Item>
-              <Dropdown.Item href="#/action-2">{translate('common.deactivate')}</Dropdown.Item>
-              <Dropdown.Item href="#/action-3">{translate('common.delete')}</Dropdown.Item>
-              <Dropdown.Item as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>Show</Dropdown.Item>
-            </DropdownButton>
+          const action = (
+            <>
+              <ViewAction as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)} />
+              <EditAction className="ml-1" onClick={() => handleEdit(user.id)} />
+              <DeleteAction className="ml-1" disabled />
+            </>
           );
           return {
             identity: user.identity,
@@ -140,7 +140,7 @@ const Patient = ({ translate }) => {
             ongoing_treatment_status: '',
             ongoing_treatment_plan: '',
             note: user.note,
-            action: dropdown
+            action
           };
         })}
       />

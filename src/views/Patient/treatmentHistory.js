@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { DropdownButton, Dropdown, Badge } from 'react-bootstrap';
+import { Badge } from 'react-bootstrap';
 import { getTranslate } from 'react-localize-redux';
 import CustomTable from 'components/Table';
-import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
-import * as ROUTES from '../../variables/routes';
-import { STATUS } from '../../variables/treatmentPlan';
+import { EditAction, ViewAction } from 'components/ActionIcons';
+import { getTreatmentPlans } from 'store/treatmentPlan/actions';
+import * as ROUTES from 'variables/routes';
+import { STATUS } from 'variables/treatmentPlan';
 
 let timer = null;
 const TreatmentHistory = () => {
@@ -92,11 +93,11 @@ const TreatmentHistory = () => {
         columns={columns}
         columnExtensions={columnExtensions}
         rows={treatmentPlans.map(treatmentPlan => {
-          const dropdown = (
-            <DropdownButton alignRight variant="outline-dark" title={translate('common.actions')}>
-              <Dropdown.Item onClick={() => handleEdit(treatmentPlan.id)}>{translate('treatment_plan.edit_treatment_info')}</Dropdown.Item>
-              <Dropdown.Item href="#">{translate('treatment_plan.view_treatment_detail')}</Dropdown.Item>
-            </DropdownButton>
+          const action = (
+            <>
+              <ViewAction disabled />
+              <EditAction className="ml-1" onClick={() => handleEdit(treatmentPlan.id)} />
+            </>
           );
 
           return {
@@ -118,7 +119,7 @@ const TreatmentHistory = () => {
               ),
             start_date: treatmentPlan.start_date,
             end_date: treatmentPlan.end_date,
-            action: dropdown
+            action
           };
         })}
       />

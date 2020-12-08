@@ -1,6 +1,5 @@
 import { User } from 'services/user';
 import { mutation } from './mutations';
-import { getProfile } from 'store/auth/actions';
 
 import {
   showErrorNotification,
@@ -13,6 +12,8 @@ export const createUser = payload => async (dispatch, getState) => {
   const data = await User.createUser(payload);
   if (data.success) {
     dispatch(mutation.createUserSuccess());
+    const filters = getState().user.filters;
+    dispatch(getUsers(filters));
     dispatch(showSuccessNotification('toast_title.new_patient_account', data.message));
     return true;
   } else {
@@ -41,7 +42,6 @@ export const updateUser = (id, payload) => async (dispatch, getState) => {
   const data = await User.updateUser(id, payload);
   if (data.success) {
     dispatch(mutation.updateUserSuccess());
-    dispatch(getProfile());
     const filters = getState().user.filters;
     dispatch(getUsers(filters));
     dispatch(showSuccessNotification('toast_title.edit_patient_account', data.message));
