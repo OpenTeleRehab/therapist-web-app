@@ -53,7 +53,7 @@ const PatientInfo = ({ id, translate }) => {
         age: AgeCalculation(data.date_of_birth, translate) || ''
       });
     }
-  }, [id, users, countries]);
+  }, [id, users, countries, translate]);
 
   return (
     <>

@@ -25,3 +25,13 @@
 	right: -10px;
 	line-height: 0;
 }
+
+.btn-custom-link {
+  cursor: pointer;
+  color: inherit;
+
+  &:hover {
+	color: inherit;
+	text-decoration: none;
+  }
+}

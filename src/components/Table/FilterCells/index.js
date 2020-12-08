@@ -14,7 +14,9 @@ const FilterCell = (props) => {
     return <TreatmentStatusFilterCell {...props} />;
   } else if (column.name === 'date_of_birth' || column.name === 'start_date' || column.name === 'end_date') {
     return <DateRangeFilterCell {...props} />;
-  } else if (column.name === 'action' || column.name === 'age' || column.name === 'country' || column.name === 'clinic') {
+  } else if (column.name === 'action' || column.name === 'age' ||
+    column.name === 'country' || column.name === 'clinic' ||
+    column.name === 'ongoing_treatment_status' || column.name === 'ongoing_treatment_plan' || column.name === 'next_appointment') {
     return <th className="dx-g-bs4-fixed-cell position-sticky" style={{ right: 0 }} />;
   }
   return <TableFilterRow.Cell {...props} />;

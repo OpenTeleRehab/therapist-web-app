@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+
 import { BsPlus } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import settings from 'settings';
@@ -11,10 +12,12 @@ import * as ROUTES from 'variables/routes';
 import CreatePatient from './create';
 import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
-import { DeleteAction, EditAction, ViewAction } from 'components/ActionIcons';
+import { DeleteAction, EditAction } from 'components/ActionIcons';
 import { getCountryName } from 'utils/country';
 import { getClinicName } from 'utils/clinic';
 import AgeCalculation from 'utils/age';
+import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
+import { getTreatmentPlanName, getTreatmentPlanStatus } from 'utils/treatmentPlan';
 
 let timer = null;
 const Patient = ({ translate }) => {
@@ -24,6 +27,8 @@ const Patient = ({ translate }) => {
   const users = useSelector(state => state.user.users);
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
+  const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
+  const history = useHistory();
 
   const columns = [
     { name: 'identity', title: 'ID' },
@@ -35,6 +40,7 @@ const Patient = ({ translate }) => {
     { name: 'clinic', title: 'Clinic' },
     { name: 'ongoing_treatment_status', title: 'Ongoing Treatment Status' },
     { name: 'ongoing_treatment_plan', title: 'Ongoing Treatment Plan' },
+    { name: 'next_appointment', title: 'Next Appointment' },
     { name: 'note', title: 'Note' },
     { name: 'action', title: 'Actions' }
   ];
@@ -43,6 +49,10 @@ const Patient = ({ translate }) => {
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true }
   ];
+
+  const handleClick = (id) => {
+    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', id));
+  };
 
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
@@ -95,6 +105,13 @@ const Patient = ({ translate }) => {
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch]);
 
+  useEffect(() => {
+    dispatch(getTreatmentPlans({
+      page_size: pageSize,
+      page: currentPage + 1
+    }));
+  }, [currentPage, pageSize, dispatch]);
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -123,22 +140,22 @@ const Patient = ({ translate }) => {
         rows={users.map(user => {
           const action = (
             <>
-              <ViewAction as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)} />
               <EditAction className="ml-1" onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" disabled />
             </>
           );
           return {
             identity: user.identity,
-            first_name: user.first_name,
-            last_name: user.last_name,
+            first_name: <a className="btn-custom-link" onClick={() => handleClick(user.id)}>{user.first_name}</a>,
+            last_name: <a className="btn-custom-link" onClick={() => handleClick(user.id)}>{user.last_name}</a>,
             email: user.email,
             date_of_birth: moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format),
             age: AgeCalculation(user.date_of_birth, translate),
             country: getCountryName(user.country_id, countries),
             clinic: getClinicName(user.clinic_id, clinics),
-            ongoing_treatment_status: '',
-            ongoing_treatment_plan: '',
+            ongoing_treatment_status: treatmentPlans.length ? getTreatmentPlanStatus(user.id, treatmentPlans, translate) : '',
+            ongoing_treatment_plan: treatmentPlans.length ? getTreatmentPlanName(user.id, treatmentPlans, translate) : '',
+            next_appointment: '',
             note: user.note,
             action
           };
