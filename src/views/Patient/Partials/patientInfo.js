@@ -28,23 +28,11 @@ const PatientInfo = ({ id, translate }) => {
     note: ''
   });
 
-  const [pageSize] = useState(10);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [searchValue] = useState('');
-  const [filters] = useState([]);
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [pageSize, searchValue, filters]);
-
   useEffect(() => {
     dispatch(getUsers({
-      filters,
-      search_value: searchValue,
-      page_size: pageSize,
-      page: currentPage + 1
+      id: id
     }));
-  }, [dispatch, searchValue, pageSize, currentPage, filters]);
+  }, [dispatch]);
 
   useEffect(() => {
     if (id && users.length) {
