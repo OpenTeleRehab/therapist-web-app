@@ -29,6 +29,7 @@ const Patient = ({ translate }) => {
   const clinics = useSelector(state => state.clinic.clinics);
   const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
   const history = useHistory();
+  const { profile } = useSelector((state) => state.auth);
 
   const columns = [
     { name: 'identity', title: 'ID' },
@@ -77,10 +78,24 @@ const Patient = ({ translate }) => {
   }, [pageSize, searchValue, filters]);
 
   useEffect(() => {
-    if (searchValue || filters.length) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
+    if (profile !== undefined) {
+      if (searchValue || filters.length) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          dispatch(getUsers({
+            therapist_id: profile.id,
+            search_value: searchValue,
+            page_size: pageSize,
+            page: currentPage + 1
+          })).then(result => {
+            if (result) {
+              setTotalCount(result.total_count);
+            }
+          });
+        }, 500);
+      } else {
         dispatch(getUsers({
+          therapist_id: profile.id,
           filters,
           search_value: searchValue,
           page_size: pageSize,
@@ -90,20 +105,9 @@ const Patient = ({ translate }) => {
             setTotalCount(result.total_count);
           }
         });
-      }, 500);
-    } else {
-      dispatch(getUsers({
-        filters,
-        search_value: searchValue,
-        page_size: pageSize,
-        page: currentPage + 1
-      })).then(result => {
-        if (result) {
-          setTotalCount(result.total_count);
-        }
-      });
+      }
     }
-  }, [currentPage, pageSize, searchValue, filters, dispatch]);
+  }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
   useEffect(() => {
     dispatch(getTreatmentPlans({
