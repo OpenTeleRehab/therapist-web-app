@@ -43,7 +43,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     clinic_identity: '',
     note: '',
     date_of_birth: '',
-    age: ''
+    age: '',
+    therapist_id: ''
   });
 
   useEffect(() => {
@@ -70,7 +71,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     } else {
       resetData();
       if (profile !== undefined) {
-        setFormFields({ ...formFields, country_id: profile.country_id, clinic_id: profile.clinic_id, clinic_identity: getClinicIdentity(profile.clinic_id, clinics) });
+        setFormFields({ ...formFields, country_id: profile.country_id, clinic_id: profile.clinic_id, clinic_identity: getClinicIdentity(profile.clinic_id, clinics), therapist_id: profile.id });
       }
     }
     // eslint-disable-next-line
