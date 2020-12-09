@@ -3,6 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import settings from 'settings';
 import moment from 'moment';
 import PropTypes from 'prop-types';
+import {
+  Tooltip,
+  OverlayTrigger
+} from 'react-bootstrap';
+
+import EllipsisText from 'react-ellipsis-text';
 
 import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
@@ -54,17 +60,25 @@ const PatientInfo = ({ id, translate }) => {
       });
     }
   }, [id, users, countries, translate]);
-
   return (
     <>
-      <div className="mb-4">
+      <div className="p-3">
         <h4 className="mb-">{formFields.name}</h4>
         <div className="patient-info">
           <span className="mr-4"><strong>ID: </strong>{formFields.id}</span>
           <span className="mr-4"><strong>Mobile Number: </strong>{formFields.phone}</span>
           <span className="mr-4"><strong>DOB: </strong>{formFields.date_of_birth} ({formFields.age}) old</span>
           <span className="mr-4"><strong>Country: </strong>{formFields.country}</span>
-          <span className="mr-4"><strong>Note: </strong>{formFields.note}</span>
+          <span className="mr-4">
+            <strong>Note: </strong>
+            <OverlayTrigger
+              overlay={<Tooltip id="button-tooltip-2">{ formFields.note }</Tooltip>}
+            >
+              <span className="card-title">
+                <EllipsisText text={formFields.note} length={settings.noteMaxLength} />
+              </span>
+            </OverlayTrigger>
+          </span>
         </div>
       </div>
     </>

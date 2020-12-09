@@ -6,7 +6,8 @@ const settings = {
       { text: 'Male', value: 'male' },
       { text: 'Female', value: 'Female' }
     ]
-  }
+  },
+  noteMaxLength: 50
 };
 
 export default settings;
