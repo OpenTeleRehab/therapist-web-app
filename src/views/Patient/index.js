@@ -48,7 +48,10 @@ const Patient = ({ translate }) => {
 
   const columnExtensions = [
     { columnName: 'last_name', wordWrapEnabled: true },
-    { columnName: 'first_name', wordWrapEnabled: true }
+    { columnName: 'first_name', wordWrapEnabled: true },
+    { columnName: 'ongoing_treatment_status', wordWrapEnabled: true },
+    { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
+    { columnName: 'next_appointment', wordWrapEnabled: true }
   ];
 
   const handleClick = (id) => {
