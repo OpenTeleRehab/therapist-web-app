@@ -35,6 +35,11 @@ const CreateTreatmentPlan = () => {
     }
   ];
 
+  const validateDate = (current) => {
+    const yesterday = moment().subtract(1, 'day');
+    return current.isAfter(yesterday);
+  };
+
   const [formFields, setFormFields] = useState({
     name: '',
     description: '',
@@ -279,6 +284,7 @@ const CreateTreatmentPlan = () => {
                   closeOnSelect={true}
                   value={formFields.start_date}
                   onChange={(e) => handleChangeDate(e)}
+                  isValidDate={ validateDate }
                 />
                 {errorStartDate && (
                   <Form.Control.Feedback type="invalid" className="d-block">

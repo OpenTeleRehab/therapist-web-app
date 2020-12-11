@@ -25,7 +25,6 @@ export const updateTreatmentPlan = (id, payload) => async dispatch => {
   const data = await TreatmentPlan.updateTreatmentPlan(id, payload);
   if (data.success) {
     dispatch(mutation.updateTreatmentPlanSuccess());
-    dispatch(getTreatmentPlans());
     dispatch(showSuccessNotification('toast_title.update_treatment_plan', data.message));
     return true;
   } else {
