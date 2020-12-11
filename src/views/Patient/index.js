@@ -124,7 +124,7 @@ const Patient = ({ translate }) => {
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('patient.management')}</h1>
         <span>Total Number Of Patient: <strong>{totalCount}</strong></span>
-        <span>Ongoing Patients / Limit: <strong>10</strong> / 120</span>
+        <span>On-going Treatment Limit: <strong>10</strong> / 120</span>
         <div className="btn-toolbar mb-2 mb-md-0">
           <Button variant="primary" onClick={handleShow}>
             <BsPlus className="mr-1" />
