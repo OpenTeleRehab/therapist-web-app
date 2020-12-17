@@ -17,7 +17,8 @@ import { treatmentPlan } from 'store/treatmentPlan/reducers';
 import en from 'translations/en.locale.json';
 import { getClinics } from 'store/clinic/actions';
 import { getCountries } from 'store/country/actions';
-
+import { language } from 'store/setting/reducers';
+import { getLanguages } from './setting/actions';
 export const rootReducer = {
   localize: localizeReducer,
   user,
@@ -25,7 +26,8 @@ export const rootReducer = {
   auth,
   clinic,
   country,
-  treatmentPlan
+  treatmentPlan,
+  language
 };
 
 const devTool =
@@ -62,5 +64,8 @@ store.dispatch(getClinics());
 
 // Fetch data for country
 store.dispatch(getCountries());
+
+// fetch languages
+store.dispatch(getLanguages());
 
 export default store;

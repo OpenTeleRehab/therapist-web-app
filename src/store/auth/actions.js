@@ -28,7 +28,7 @@ export const updateProfile = (id, payload) => async dispatch => {
     const data = await Auth.updateProfile(id, payload);
     if (data.success) {
       dispatch(mutation.updateProfileSuccess());
-      dispatch(showSuccessNotification('toast_title.update_profile', 'success_message.change_password_success'));
+      dispatch(showSuccessNotification('toast_title.update_profile', 'success_message.update_profile_success'));
       dispatch(getProfile());
       return true;
     } else {
