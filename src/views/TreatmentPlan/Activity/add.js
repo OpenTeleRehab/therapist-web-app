@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 
+import Exercise from './Exercise';
+
 const AddActivity = ({ show, handleClose, editId }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -22,9 +24,9 @@ const AddActivity = ({ show, handleClose, editId }) => {
       confirmLabel={translate('common.save')}
       size="xl"
     >
-      <Tabs transition={false}>
+      <Tabs transition={false} className="mb-3">
         <Tab eventKey="exercise" title={translate('activity.exercises')}>
-          {translate('activity.exercises')}
+          <Exercise />
         </Tab>
         <Tab eventKey="education" title={translate('activity.education_materials')}>
           {translate('activity.education_materials')}

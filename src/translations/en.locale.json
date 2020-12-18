@@ -40,6 +40,8 @@
   "common.planned": "Planned",
   "common.all": "All",
   "common.language": "Languages",
+  "common.paginate.show_number_of_records": "Show ${recordStart} to ${recordEnd} of ${totalCount} items",
+  "common.paginate.per_page": "per page",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
