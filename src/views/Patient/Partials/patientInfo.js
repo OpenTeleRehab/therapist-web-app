@@ -32,7 +32,7 @@ const PatientInfo = ({ id, translate }) => {
     dispatch(getUsers({
       id: id
     }));
-  }, [dispatch]);
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (id && users.length) {
