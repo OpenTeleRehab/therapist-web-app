@@ -39,6 +39,7 @@
   "common.on_going": "On-going",
   "common.planned": "Planned",
   "common.all": "All",
+  "common.language": "Languages",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
@@ -116,6 +117,7 @@
   "placeholder.description": "Enter description",
   "placeholder.start_date": "Please select start date",
   "placeholder.patient": "Please select a patient",
+  "placeholder.language": "Please select a language",
 
   "common.timerange.placeholder": "Select date range",
   "common.apply": "Apply",

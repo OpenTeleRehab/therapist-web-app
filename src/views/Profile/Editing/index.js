@@ -11,6 +11,7 @@ import { getClinicName } from 'utils/clinic';
 const Edition = () => {
   const clinics = useSelector(state => state.clinic.clinics);
   const countries = useSelector(state => state.country.countries);
+  const languages = useSelector(state => state.language.languages);
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -18,9 +19,9 @@ const Edition = () => {
   const { profile } = useSelector((state) => state.auth);
   const [formFields, setFormFields] = useState({
     last_name: '',
-    first_name: ''
+    first_name: '',
+    language_id: ''
   });
-
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorFirstName, setErrorFirstName] = useState(false);
 
@@ -28,7 +29,8 @@ const Edition = () => {
     if (profile) {
       setFormFields({
         last_name: profile.last_name,
-        first_name: profile.first_name
+        first_name: profile.first_name,
+        language_id: profile.language_id
       });
     }
   }, [profile]);
@@ -111,6 +113,24 @@ const Edition = () => {
           <Form.Control name="email" disabled value={profile.email} />
         </Form.Group>
       </Form.Row>
+
+      <Form.Row>
+        <Form.Group className="col-sm-4 md-4" controlId="formLanguage">
+          <Form.Label>{translate('common.language')}</Form.Label>
+          <Form.Control
+            name="language_id"
+            as="select"
+            onChange={handleChange}
+            value={formFields.language_id}
+          >
+            <option value="">{translate('placeholder.language')}</option>
+            {languages.map((language, index) => (
+              <option key={index} value={language.id}>{language.name}</option>
+            ))}
+          </Form.Control>
+        </Form.Group>
+      </Form.Row>
+
       <Form.Row>
         <Form.Group className="col-sm-4 md-4" controlId="formCountry">
           <Form.Label>{translate('common.country')}</Form.Label>
