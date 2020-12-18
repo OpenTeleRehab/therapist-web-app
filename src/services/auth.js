@@ -13,7 +13,7 @@ const getProfile = username => {
 };
 
 const updateProfile = (id, payload) => {
-  return axios.put(`/therapist/${id}`, payload)
+  return axios.put(`/user/update-information/${id}`, payload)
     .then(
       res => {
         return res.data;
