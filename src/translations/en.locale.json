@@ -40,6 +40,8 @@
   "common.planned": "Planned",
   "common.all": "All",
   "common.language": "Languages",
+  "common.paginate.show_number_of_records": "Show ${recordStart} to ${recordEnd} of ${totalCount} items",
+  "common.paginate.per_page": "per page",
 
   "portal.name": "Therapist Portal",
   "home": "Home",
@@ -178,5 +180,10 @@
   "age.single_day": "day",
   "age.plural_year": "years",
   "age.plural_month": "months",
-  "age.plural_day": "days"
+  "age.plural_day": "days",
+
+  "activity.select_activities_to_add": "Select Activities to Add",
+  "activity.exercises": "Exercises",
+  "activity.education_materials": "Education Materials",
+  "activity.questionnaires": "Education Questionnaires"
 }

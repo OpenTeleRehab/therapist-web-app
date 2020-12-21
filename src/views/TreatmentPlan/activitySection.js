@@ -7,6 +7,7 @@ import moment from 'moment';
 import settings from '../../settings';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
+import AddActivity from 'views/TreatmentPlan/Activity/add';
 
 const ActivitySection = ({ weeks, setWeeks, startDate }) => {
   const localize = useSelector((state) => state.localize);
@@ -15,6 +16,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
   const [currentWeek, setCurrentWeek] = useState(1);
   const [currentWeekStartDate, setCurrentWeekStartDate] = useState('');
   const [show, setShow] = useState(false);
+  const [openActivityDialog, setOpenActivityDialog] = useState(false);
 
   useEffect(() => {
     if (moment(startDate, settings.date_format).isValid()) {
@@ -70,6 +72,14 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
     return elements;
   };
 
+  const handleAddActivity = () => {
+    setOpenActivityDialog(true);
+  };
+
+  const handleCloseActivityDialog = () => {
+    setOpenActivityDialog(false);
+  };
+
   const dayElements = () => {
     const elements = [];
     for (let i = 0; i < 7; i++) {
@@ -87,6 +97,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
             <Button
               variant="outline-primary"
               className="btn-circle-lg m-3"
+              onClick={handleAddActivity}
             >
               <BsPlus size={15} />
             </Button>
@@ -118,7 +129,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
           </Button>
         </div>
       </div>
-      <div className="d-flex flex-column flex-lg-row bg-light">
+      <div className="d-flex flex-column flex-lg-row bg-light mb-3">
         {moment(startDate, settings.date_format).isValid() && dayElements()}
       </div>
       <Dialog
@@ -131,6 +142,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+
+      {openActivityDialog && <AddActivity handleClose={handleCloseActivityDialog} show={openActivityDialog} />}
     </>
   );
 };

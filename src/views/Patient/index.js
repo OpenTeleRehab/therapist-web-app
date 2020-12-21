@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { BsPlus } from 'react-icons/bs';
 import PropTypes from 'prop-types';
@@ -28,7 +28,6 @@ const Patient = ({ translate }) => {
   const countries = useSelector(state => state.country.countries);
   const clinics = useSelector(state => state.clinic.clinics);
   const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
-  const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
 
   const columns = [
@@ -53,10 +52,6 @@ const Patient = ({ translate }) => {
     { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
     { columnName: 'next_appointment', wordWrapEnabled: true }
   ];
-
-  const handleClick = (id) => {
-    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', id));
-  };
 
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
@@ -153,8 +148,8 @@ const Patient = ({ translate }) => {
           );
           return {
             identity: user.identity,
-            first_name: <a className="btn-custom-link" onClick={() => handleClick(user.id)}>{user.first_name}</a>,
-            last_name: <a className="btn-custom-link" onClick={() => handleClick(user.id)}>{user.last_name}</a>,
+            last_name: <Button variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.last_name}</Button>,
+            first_name: <Button variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.first_name}</Button>,
             email: user.email,
             date_of_birth: moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format),
             age: AgeCalculation(user.date_of_birth, translate),

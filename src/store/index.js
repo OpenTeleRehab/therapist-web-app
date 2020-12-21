@@ -19,6 +19,7 @@ import { getClinics } from 'store/clinic/actions';
 import { getCountries } from 'store/country/actions';
 import { language } from 'store/setting/reducers';
 import { getLanguages } from './setting/actions';
+import { exercise } from 'store/exercise/reducers';
 export const rootReducer = {
   localize: localizeReducer,
   user,
@@ -27,7 +28,8 @@ export const rootReducer = {
   clinic,
   country,
   treatmentPlan,
-  language
+  language,
+  exercise
 };
 
 const devTool =
