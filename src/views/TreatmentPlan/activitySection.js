@@ -91,7 +91,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
               ? 'font-weight-bold w-100 text-center text-uppercase py-2 bg-danger'
               : 'font-weight-bold w-100 text-center text-uppercase py-2'}
           >
-            {translate('common.day')} {i + 1} <small>({date.format(settings.date_format)})</small>
+            {translate('common.day')} {i + 1}
+            {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="activity-card-wrapper">
             <Button
@@ -130,7 +131,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
         </div>
       </div>
       <div className="d-flex flex-column flex-lg-row bg-light mb-3">
-        {moment(startDate, settings.date_format).isValid() && dayElements()}
+        {dayElements()}
       </div>
       <Dialog
         show={show}
