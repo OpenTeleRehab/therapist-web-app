@@ -52,6 +52,7 @@ const CreateTreatmentPlan = () => {
   const [errorName, setErrorName] = useState(false);
   const [errorDescription, setErrorDescription] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
     if (id) {
@@ -78,6 +79,7 @@ const CreateTreatmentPlan = () => {
         start_date: moment(editingData.start_date, settings.date_format).format(settings.date_format),
         end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format)
       });
+      setActivities(editingData.activities || []);
     } else {
       resetData();
     }
@@ -130,7 +132,7 @@ const CreateTreatmentPlan = () => {
     }
 
     if (canSave) {
-      dispatch(createTreatmentPlan({ ...formFields, type: 'preset' }));
+      dispatch(createTreatmentPlan({ ...formFields, type: 'preset', activities }));
     }
   };
 
@@ -160,14 +162,14 @@ const CreateTreatmentPlan = () => {
 
     if (canSave) {
       if (id) {
-        dispatch(updateTreatmentPlan(id, { ...formFields, type: 'normal' }))
+        dispatch(updateTreatmentPlan(id, { ...formFields, type: 'normal', activities }))
           .then(result => {
             if (result) {
               history.goBack();
             }
           });
       } else {
-        dispatch(createTreatmentPlan({ ...formFields, type: 'normal' }))
+        dispatch(createTreatmentPlan({ ...formFields, type: 'normal', activities }))
           .then(result => {
             if (result) {
               history.goBack();
@@ -180,6 +182,7 @@ const CreateTreatmentPlan = () => {
   const handleCancel = () => {
     history.goBack();
   };
+  console.log(activities);
 
   return (
     <>
@@ -305,7 +308,7 @@ const CreateTreatmentPlan = () => {
         </Accordion.Collapse>
         <CollapseToggle title={translate('treatment_plan.treatment_information')} eventKey="0" />
       </Accordion>
-      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} />
+      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} />
     </>
   );
 };

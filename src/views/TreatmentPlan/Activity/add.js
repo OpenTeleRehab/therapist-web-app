@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector } from 'react-redux';
@@ -7,11 +7,19 @@ import PropTypes from 'prop-types';
 
 import Exercise from './Exercise';
 
-const AddActivity = ({ show, handleClose, editId }) => {
+const AddActivity = ({ show, handleClose, editId, day, week, setActivities, selectedExercises, setSelectedExercises, setDayExercises, dayExercises }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const [exercises, setExercises] = useState([]);
 
   const handleConfirm = () => {
+    for (let i = 0; i < selectedExercises.length; i++) {
+      exercises.push(selectedExercises[i].id);
+      dayExercises.push(selectedExercises[i]);
+    }
+    setExercises([...exercises]);
+    setActivities([{ week: week, day: day, exercises: exercises }]);
+    setDayExercises([...dayExercises]);
     handleClose();
   };
 
@@ -26,7 +34,7 @@ const AddActivity = ({ show, handleClose, editId }) => {
     >
       <Tabs transition={false} className="mb-3">
         <Tab eventKey="exercise" title={translate('activity.exercises')}>
-          <Exercise />
+          <Exercise selectedExercises={selectedExercises} setSelectedExercises={setSelectedExercises} />
         </Tab>
         <Tab eventKey="education" title={translate('activity.education_materials')}>
           {translate('activity.education_materials')}
@@ -42,7 +50,14 @@ const AddActivity = ({ show, handleClose, editId }) => {
 AddActivity.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
-  editId: PropTypes.string
+  editId: PropTypes.string,
+  day: PropTypes.number,
+  week: PropTypes.number,
+  setActivities: PropTypes.func,
+  selectedExercises: PropTypes.array,
+  setSelectedExercises: PropTypes.func,
+  dayExercises: PropTypes.array,
+  setDayExercises: PropTypes.func
 };
 
 export default AddActivity;
