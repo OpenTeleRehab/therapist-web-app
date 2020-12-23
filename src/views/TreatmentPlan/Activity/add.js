@@ -48,7 +48,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
       title={translate('activity.select_activities_to_add')}
       onCancel={handleClose}
       onConfirm={handleConfirm}
-      confirmLabel={translate('common.save')}
+      confirmLabel={translate('activity.add_to_day')}
       size="xl"
     >
       <Tabs transition={false} className="mb-3">
