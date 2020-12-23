@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Button,
-  Card,
-  OverlayTrigger,
-  Tooltip
-} from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { BsPlus, BsX } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
@@ -15,6 +10,7 @@ import settings from '../../settings';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import AddActivity from 'views/TreatmentPlan/Activity/add';
+import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 
 const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities }) => {
   const localize = useSelector((state) => state.localize);
@@ -26,7 +22,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [openActivityDialog, setOpenActivityDialog] = useState(false);
   const [day, setDay] = useState(1);
   const [selectedExercises, setSelectedExercises] = useState([]);
-  const [dayExercises, setDayExercises] = useState([]);
+  const [exercises, setExercises] = useState([]);
 
   useEffect(() => {
     if (moment(startDate, settings.date_format).isValid()) {
@@ -97,7 +93,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
     for (let i = 0; i < 7; i++) {
       const date = moment(currentWeekStartDate).add(i, 'days');
       const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
-      const exercises = dayActivity ? dayActivity.exercises : [];
+      const exerciseIds = dayActivity ? dayActivity.exercises : [];
       elements.push(
         <div className="flex-fill flex-basic-0 d-flex flex-column align-items-center" key={i}>
           <div
@@ -109,49 +105,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper">
-            { exercises.map(exercise => (
-              <Card key={exercise} className="exercise-card shadow-sm mb-4">
-                TODO: Render exercise card id: {exercise}
-                {/*<div className="card-img bg-light">
-                  {
-                    exercise.files.length > 0 && (
-                      (exercise.files[0].fileType === 'audio/mpeg' &&
-                        <div className="w-100">
-                          <audio controls className="w-100">
-                            <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
-                          </audio>
-                        </div>
-                      ) ||
-                      (exercise.files[0].fileType === 'video/mp4' &&
-                        <video controls className="w-100 h-100">
-                          <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="video/mp4" />
-                        </video>
-                      ) ||
-                      ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                        <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                        />
-                      )
-                    )
-                  }
-                </div>
-                <Card.Body>
-                  <Card.Title>
-                    {
-                      exercise.title.length <= 50
-                        ? <h5 className="card-title">{ exercise.title }</h5>
-                        : (
-                          <OverlayTrigger
-                            overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                          >
-                            <h5 className="card-title">{ exercise.title }</h5>
-                          </OverlayTrigger>
-                        )
-                    }
-                  </Card.Title>
-                </Card.Body>*/}
-              </Card>
-            ))}
-
+            <ListExerciseCard exerciseIds={exerciseIds} />
             <Button
               variant="outline-primary"
               className="btn-circle-lg m-3"
@@ -201,7 +155,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
 
-      {openActivityDialog && <AddActivity handleClose={handleCloseActivityDialog} show={openActivityDialog} day={day} week={currentWeek} setActivities={setActivities} selectedExercises={selectedExercises} setSelectedExercises={setSelectedExercises} dayExercises={dayExercises} setDayExercises={setDayExercises}/>}
+      {openActivityDialog && <AddActivity handleClose={handleCloseActivityDialog} show={openActivityDialog} week={currentWeek} day={day} activities={activities} setActivities={setActivities} selectedExercises={selectedExercises} setSelectedExercises={setSelectedExercises} exercises={exercises} setExercises={setExercises}/>}
     </>
   );
 };

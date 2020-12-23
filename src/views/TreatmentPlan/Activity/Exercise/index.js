@@ -16,9 +16,8 @@ import { BsSearch, BsX } from 'react-icons/bs';
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
-import { BiChevronLeftCircle } from 'react-icons/bi';
 
-const Exercise = ({ translate, selectedExercises, setSelectedExercises }) => {
+const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
   const dispatch = useDispatch();
   const { loading, exercises } = useSelector(state => state.exercise);
   const [pageSize, setPageSize] = useState(8);
@@ -27,7 +26,6 @@ const Exercise = ({ translate, selectedExercises, setSelectedExercises }) => {
   const [formFields, setFormFields] = useState({
     search_value: ''
   });
-  const [isShow, setIsShow] = useState(false);
 
   useEffect(() => {
     dispatch(getExercises({
@@ -48,26 +46,6 @@ const Exercise = ({ translate, selectedExercises, setSelectedExercises }) => {
 
   const handleClearSearch = () => {
     setFormFields({ ...formFields, search_value: '' });
-  };
-
-  const handleCheck = (e, id) => {
-    if (e.currentTarget.checked) {
-      const obj = exercises.find(o => o.id === id);
-      selectedExercises.push(obj);
-      setSelectedExercises([...selectedExercises]);
-    } else {
-      const selectedItems = selectedExercises;
-      const index = selectedItems.findIndex(x => x.id === id);
-      if (index !== -1) {
-        selectedItems.splice(index, 1);
-        setSelectedExercises([...selectedItems]);
-      }
-    }
-  };
-
-  const handleShow = () => {
-    const test = !isShow;
-    setIsShow(test);
   };
 
   return (
@@ -132,7 +110,12 @@ const Exercise = ({ translate, selectedExercises, setSelectedExercises }) => {
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="card-img bg-light">
                         <div className="position-absolute w-100">
-                          <Form.Check type="checkbox" id = "checkTest" className="float-right action" onChange={(e) => handleCheck(e, exercise.id)} />
+                          <Form.Check
+                            type="checkbox"
+                            className="float-right action"
+                            checked={selectedExercises.includes(exercise.id)}
+                            onChange={(e) => onSectionChange(e, exercise.id)}
+                          />
                         </div>
                         {
                           exercise.files.length > 0 && (
@@ -187,57 +170,6 @@ const Exercise = ({ translate, selectedExercises, setSelectedExercises }) => {
           )}
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
         </Col>
-        <div className="position-absolute p-2 show-select-exercise-button"><BiChevronLeftCircle size={25} onClick={handleShow}/></div>
-        {isShow &&
-          <div className="position-absolute w-25 selected-exercise-wrapper">
-            { selectedExercises.map(exercise => (
-              <Col key={exercise.id} className="col-sm">
-                <Card className="exercise-card shadow-sm mb-4">
-                  <div className="card-img bg-light">
-                    <div className="position-absolute w-100">
-                      <Form.Check type="checkbox" className="float-right action" onChange={() => handleCheck(exercise.id)} />
-                    </div>
-                    {
-                      exercise.files.length > 0 && (
-                        (exercise.files[0].fileType === 'audio/mpeg' &&
-                          <div className="w-100">
-                            <audio controls className="w-100">
-                              <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
-                            </audio>
-                          </div>
-                        ) ||
-                        (exercise.files[0].fileType === 'video/mp4' &&
-                          <video controls className="w-100 h-100">
-                            <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="video/mp4" />
-                          </video>
-                        ) ||
-                        ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                          <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                          />
-                        )
-                      )
-                    }
-                  </div>
-                  <Card.Body>
-                    <Card.Title>
-                      {
-                        exercise.title.length <= 50
-                          ? <h5 className="card-title">{ exercise.title }</h5>
-                          : (
-                            <OverlayTrigger
-                              overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                            >
-                              <h5 className="card-title">{ exercise.title }</h5>
-                            </OverlayTrigger>
-                          )
-                      }
-                    </Card.Title>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </div>
-        }
       </Row>
     </>
   );
@@ -246,7 +178,7 @@ const Exercise = ({ translate, selectedExercises, setSelectedExercises }) => {
 Exercise.propTypes = {
   translate: PropTypes.func,
   selectedExercises: PropTypes.array,
-  setSelectedExercises: PropTypes.func
+  onSectionChange: PropTypes.func
 };
 
 export default withLocalize(Exercise);

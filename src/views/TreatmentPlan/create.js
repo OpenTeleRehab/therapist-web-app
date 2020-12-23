@@ -182,7 +182,6 @@ const CreateTreatmentPlan = () => {
   const handleCancel = () => {
     history.goBack();
   };
-  console.log(activities);
 
   return (
     <>

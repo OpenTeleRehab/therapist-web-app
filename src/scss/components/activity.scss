@@ -4,3 +4,19 @@
 	width: 100%;
 	min-height: 250px;
 }
+
+
+.show-select-exercise-button {
+	right: 0;
+	top: 7px;
+}
+
+.selected-exercise-wrapper {
+	right: 0;
+	top: 58px;
+	height: 93%;
+	overflow-y:scroll;
+	background-color: $light;
+	z-index: 99;
+	padding: $spacer;
+}
