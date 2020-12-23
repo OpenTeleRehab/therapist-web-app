@@ -104,7 +104,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {translate('common.day')} {i + 1}
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
-          <div className="p-2 activity-card-wrapper">
+          <div className="p-2 activity-card-wrapper h-100">
             <ListExerciseCard exerciseIds={exerciseIds} />
             <Button
               variant="outline-primary"
