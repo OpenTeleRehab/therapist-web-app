@@ -148,8 +148,8 @@ const Patient = ({ translate }) => {
           );
           return {
             identity: user.identity,
-            last_name: <Button variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.last_name}</Button>,
-            first_name: <Button variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.first_name}</Button>,
+            last_name: <Button className="p-0" variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.last_name}</Button>,
+            first_name: <Button className="p-0" variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.first_name}</Button>,
             email: user.email,
             date_of_birth: moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format),
             age: AgeCalculation(user.date_of_birth, translate),

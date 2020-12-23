@@ -17,7 +17,7 @@ import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
 
-const Exercise = ({ translate }) => {
+const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
   const dispatch = useDispatch();
   const { loading, exercises } = useSelector(state => state.exercise);
   const [pageSize, setPageSize] = useState(8);
@@ -110,7 +110,12 @@ const Exercise = ({ translate }) => {
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="card-img bg-light">
                         <div className="position-absolute w-100">
-                          <Form.Check type="checkbox" className="float-right action" />
+                          <Form.Check
+                            type="checkbox"
+                            className="float-right action"
+                            checked={selectedExercises.includes(exercise.id)}
+                            onChange={(e) => onSectionChange(e, exercise.id)}
+                          />
                         </div>
                         {
                           exercise.files.length > 0 && (
@@ -163,7 +168,6 @@ const Exercise = ({ translate }) => {
               />
             </>
           )}
-
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
         </Col>
       </Row>
@@ -172,7 +176,9 @@ const Exercise = ({ translate }) => {
 };
 
 Exercise.propTypes = {
-  translate: PropTypes.func
+  translate: PropTypes.func,
+  selectedExercises: PropTypes.array,
+  onSectionChange: PropTypes.func
 };
 
 export default withLocalize(Exercise);

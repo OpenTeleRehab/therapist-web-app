@@ -4,12 +4,15 @@ import { BsPlus, BsX } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import moment from 'moment';
+import _ from 'lodash';
+
 import settings from '../../settings';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import AddActivity from 'views/TreatmentPlan/Activity/add';
+import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 
-const ActivitySection = ({ weeks, setWeeks, startDate }) => {
+const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -17,6 +20,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
   const [currentWeekStartDate, setCurrentWeekStartDate] = useState('');
   const [show, setShow] = useState(false);
   const [openActivityDialog, setOpenActivityDialog] = useState(false);
+  const [day, setDay] = useState(1);
+  const [selectedExercises, setSelectedExercises] = useState([]);
+  const [exercises, setExercises] = useState([]);
 
   useEffect(() => {
     if (moment(startDate, settings.date_format).isValid()) {
@@ -72,18 +78,22 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
     return elements;
   };
 
-  const handleAddActivity = () => {
+  const handleAddActivity = (day) => {
     setOpenActivityDialog(true);
+    setDay(day);
   };
 
   const handleCloseActivityDialog = () => {
     setOpenActivityDialog(false);
+    setSelectedExercises([]);
   };
 
   const dayElements = () => {
     const elements = [];
     for (let i = 0; i < 7; i++) {
       const date = moment(currentWeekStartDate).add(i, 'days');
+      const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
+      const exerciseIds = dayActivity ? dayActivity.exercises : [];
       elements.push(
         <div className="flex-fill flex-basic-0 d-flex flex-column align-items-center" key={i}>
           <div
@@ -94,11 +104,12 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
             {translate('common.day')} {i + 1}
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
-          <div className="activity-card-wrapper">
+          <div className="p-2 activity-card-wrapper">
+            <ListExerciseCard exerciseIds={exerciseIds} />
             <Button
               variant="outline-primary"
               className="btn-circle-lg m-3"
-              onClick={handleAddActivity}
+              onClick={() => handleAddActivity(i + 1)}
             >
               <BsPlus size={15} />
             </Button>
@@ -144,7 +155,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
 
-      {openActivityDialog && <AddActivity handleClose={handleCloseActivityDialog} show={openActivityDialog} />}
+      {openActivityDialog && <AddActivity handleClose={handleCloseActivityDialog} show={openActivityDialog} week={currentWeek} day={day} activities={activities} setActivities={setActivities} selectedExercises={selectedExercises} setSelectedExercises={setSelectedExercises} exercises={exercises} setExercises={setExercises}/>}
     </>
   );
 };
@@ -152,7 +163,10 @@ const ActivitySection = ({ weeks, setWeeks, startDate }) => {
 ActivitySection.propTypes = {
   weeks: PropTypes.number,
   setWeeks: PropTypes.func,
-  startDate: PropTypes.string
+  startDate: PropTypes.string,
+  day: PropTypes.number,
+  activities: PropTypes.array,
+  setActivities: PropTypes.func
 };
 
 export default ActivitySection;
