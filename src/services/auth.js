@@ -1,7 +1,7 @@
 import axios from 'utils/axios';
 
-const getProfile = username => {
-  return axios.get(`/user/profile/${username}`)
+const getProfile = () => {
+  return axios.get('/user/profile')
     .then(
       res => {
         return res.data;
@@ -12,8 +12,8 @@ const getProfile = username => {
     });
 };
 
-const updateProfile = (id, payload) => {
-  return axios.put(`/user/update-information/${id}`, payload)
+const updateProfile = payload => {
+  return axios.put('/user/update-information', payload)
     .then(
       res => {
         return res.data;
@@ -24,8 +24,8 @@ const updateProfile = (id, payload) => {
     });
 };
 
-const updatePassword = (username, payload) => {
-  return axios.put(`/user/update-password/${username}`, payload)
+const updatePassword = payload => {
+  return axios.put('/user/update-password', payload)
     .then(
       res => {
         return res.data;
