@@ -13,6 +13,7 @@ import keycloak from 'utils/keycloak';
 
 import 'scss/app.scss';
 import SplashScreen from 'components/SplashScreen';
+import ConfigurationProvider from './ConfigurationProvider';
 
 const App = () => {
   return (
@@ -25,11 +26,13 @@ const App = () => {
       LoadingComponent={<SplashScreen />}
     >
       <Provider store={store}>
-        <LocalizeProvider store={store}>
-          <Router history={createBrowserHistory()}>
-            <RouteSwitch />
-          </Router>
-        </LocalizeProvider>
+        <ConfigurationProvider>
+          <LocalizeProvider store={store}>
+            <Router history={createBrowserHistory()}>
+              <RouteSwitch />
+            </Router>
+          </LocalizeProvider>
+        </ConfigurationProvider>
       </Provider>
     </ReactKeycloakProvider>
   );
