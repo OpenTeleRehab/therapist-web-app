@@ -81,18 +81,12 @@ const CreateTreatmentPlan = () => {
         end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format)
       });
       setActivities(editingData.activities || []);
+      setWeeks(_.uniqBy(editingData.activities, 'week').length);
     } else {
       resetData();
     }
     // eslint-disable-next-line
   }, [id, treatmentPlans]);
-
-  useEffect(() => {
-    if (activities.length > 0) {
-      const totalWeeks = _.uniqBy(activities, 'week').length;
-      setWeeks(totalWeeks);
-    }
-  }, [activities]);
 
   const resetData = () => {
     setErrorName(false);
