@@ -8,6 +8,7 @@ import settings from 'settings';
 import { createTreatmentPlan, updateTreatmentPlan } from 'store/treatmentPlan/actions';
 import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import moment from 'moment';
+import _ from 'lodash';
 
 import CollapseToggle from 'views/TreatmentPlan/collapseToggle';
 import ActivitySection from './activitySection';
@@ -85,6 +86,13 @@ const CreateTreatmentPlan = () => {
     }
     // eslint-disable-next-line
   }, [id, treatmentPlans]);
+
+  useEffect(() => {
+    if (activities.length > 0) {
+      const totalWeeks = _.uniqBy(activities, 'week').length;
+      setWeeks(totalWeeks);
+    }
+  }, [activities]);
 
   const resetData = () => {
     setErrorName(false);
