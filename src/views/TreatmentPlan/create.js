@@ -194,7 +194,7 @@ const CreateTreatmentPlan = () => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <span>Patient / Patient Detail / Treatment Plan</span>
+        <span>{translate('treatment_plan.patient_detail')}</span>
       </div>
       <PatientInfo id={patientId} translate={translate} />
       <div className="d-flex mb-4">

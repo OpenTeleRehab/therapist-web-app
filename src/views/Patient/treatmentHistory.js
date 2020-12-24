@@ -19,11 +19,11 @@ const TreatmentHistory = () => {
   const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
 
   const columns = [
-    { name: 'name', title: 'Treatment Name' },
-    { name: 'treatment_status', title: 'Status' },
-    { name: 'start_date', title: 'Start Date' },
-    { name: 'end_date', title: 'End Date' },
-    { name: 'action', title: 'Actions' }
+    { name: 'name', title: translate('common.treatment_name') },
+    { name: 'treatment_status', title: translate('common.status') },
+    { name: 'start_date', title: translate('common.start_date') },
+    { name: 'end_date', title: translate('common.end_date') },
+    { name: 'action', title: translate('common.action') }
   ];
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
@@ -79,7 +79,7 @@ const TreatmentHistory = () => {
   return (
     <div className="mt-3">
       <h5>
-        Treatment History
+        {translate('treatment_plan.treatment_history')}
       </h5>
       <CustomTable
         pageSize={pageSize}
