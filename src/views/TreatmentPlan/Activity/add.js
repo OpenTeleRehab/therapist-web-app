@@ -33,12 +33,11 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
   };
 
   const handleConfirm = () => {
-    let dayActivity = _.findLast(activities, { week, day });
-    if (!dayActivity) {
-      dayActivity = { week, day };
-    }
-    dayActivity.exercises = selectedExercises;
-    setActivities([...activities, dayActivity]);
+    const newActivity = { week, day, exercises: selectedExercises };
+    const updatedActivities = _.unionWith(activities, [newActivity], (a, n) => {
+      return a.week === n.week && a.day === n.day;
+    });
+    setActivities(updatedActivities);
     handleClose();
   };
 
