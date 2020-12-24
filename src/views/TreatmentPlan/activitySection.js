@@ -126,7 +126,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
       <div className="d-flex justify-content-center align-items-center flex-column">
         <h6>{translate('treatment_plan.activities')}</h6>
         <div>
-          <span className="mr-3"><b>0</b> {translate('common.exercises')}</span>
+          <span className="mr-3">
+            <b>{ _.sumBy(activities, a => a.exercises.length) }</b> {translate('common.exercises')}
+          </span>
           <span className="mr-3"><b>0</b> {translate('common.education_materials')}</span>
           <span><b>0</b> {translate('common.questionnaire')}</span>
         </div>
