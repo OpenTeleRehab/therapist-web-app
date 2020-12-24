@@ -23,6 +23,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [day, setDay] = useState(1);
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [exercises, setExercises] = useState([]);
+  const [weekToRemove, setWeekToRemove] = useState(0);
 
   useEffect(() => {
     if (moment(startDate, settings.date_format).isValid()) {
@@ -37,8 +38,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
     setWeeks(weeks + 1);
   };
 
-  const handleRemoveWeek = () => {
+  const handleRemoveWeek = (week) => {
     setShow(true);
+    setWeekToRemove(week);
   };
 
   const handleClose = () => {
@@ -46,10 +48,19 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   };
 
   const handleConfirm = () => {
-    if (weeks > 1) {
+    if (weeks > 1 && weekToRemove > 0) {
       setCurrentWeek(1);
       setWeeks(weeks - 1);
       setShow(false);
+      _.remove(activities, a => a.week === weekToRemove);
+      activities.map(activity => {
+        if (activity.week > weekToRemove) {
+          activity.week--;
+        }
+        return activity;
+      });
+      setActivities([...activities]);
+      setWeekToRemove(0);
     }
   };
 
@@ -67,7 +78,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           {i !== 1 && <Button
             className="btn-circle-sm btn-in-btn"
             variant="light"
-            onClick={handleRemoveWeek}
+            onClick={() => handleRemoveWeek(i)}
           >
             <BsX size={15} />
           </Button>
