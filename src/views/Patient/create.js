@@ -184,7 +184,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           <PhoneInput
             defaultCountry="KH"
             // class="form-control"
-            placeholder="Enter phone number"
+            placeholder={translate('placeholder.phone')}
             value={formFields.phone}
             // isInvalid={errorPhone}
             class={`form-control${errorPhone ? ' is-invalid' : ''}`}
@@ -269,7 +269,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               onChange={(e) => handleChangeDate(e)}
               isValidDate={ validateDate }
             />
-            <p className="mt-1">Age: {formFields.age}</p>
+            <p className="mt-1">{translate('common.age')} {formFields.age}</p>
           </Form.Group>
         </Form.Row>
         <Form.Row>

@@ -33,7 +33,7 @@ const ViewPatient = () => {
     <>
       <div className="top-content">
         <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pr-3 pl-3 pt-3">
-          <span>Patient / Patient Detail</span>
+          <span>{translate('common.patient_detail')}</span>
           <div className="btn-toolbar mb-2 mb-md-0">
             <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
               <FaPhoneAlt size={20} />

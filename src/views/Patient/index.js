@@ -18,9 +18,10 @@ import { getClinicName } from 'utils/clinic';
 import AgeCalculation from 'utils/age';
 import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import { getTreatmentPlanName, getTreatmentPlanStatus } from 'utils/treatmentPlan';
+import { getTranslate } from 'react-localize-redux';
 
 let timer = null;
-const Patient = ({ translate }) => {
+const Patient = () => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
@@ -29,20 +30,22 @@ const Patient = ({ translate }) => {
   const clinics = useSelector(state => state.clinic.clinics);
   const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
   const { profile } = useSelector((state) => state.auth);
+  const localize = useSelector((state) => state.localize);
+  const translate = getTranslate(localize);
 
   const columns = [
-    { name: 'identity', title: 'ID' },
-    { name: 'last_name', title: 'Last Name' },
-    { name: 'first_name', title: 'First Name' },
-    { name: 'date_of_birth', title: 'Date Of Birth' },
-    { name: 'age', title: 'Age' },
-    { name: 'country', title: 'Country' },
-    { name: 'clinic', title: 'Clinic' },
-    { name: 'ongoing_treatment_status', title: 'Ongoing Treatment Status' },
-    { name: 'ongoing_treatment_plan', title: 'Ongoing Treatment Plan' },
-    { name: 'next_appointment', title: 'Next Appointment' },
-    { name: 'note', title: 'Note' },
-    { name: 'action', title: 'Actions' }
+    { name: 'identity', title: translate('common.id') },
+    { name: 'last_name', title: translate('common.last_name') },
+    { name: 'first_name', title: translate('common.first_name') },
+    { name: 'date_of_birth', title: translate('common.date_of_birth') },
+    { name: 'age', title: translate('common.age') },
+    { name: 'country', title: translate('common.country') },
+    { name: 'clinic', title: translate('common.clinic') },
+    { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
+    { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
+    { name: 'next_appointment', title: translate('common.next_appointment') },
+    { name: 'note', title: translate('common.note') },
+    { name: 'action', title: translate('common.action') }
   ];
 
   const columnExtensions = [
@@ -118,8 +121,8 @@ const Patient = ({ translate }) => {
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{translate('patient.management')}</h1>
-        <span>Total Number Of Patient: <strong>{totalCount}</strong></span>
-        <span>On-going Treatment Limit: <strong>10</strong> / 120</span>
+        <span>{translate('common.total_number_of_patient')} <strong>{totalCount}</strong></span>
+        <span>{translate('common.on_going_treatment_limit')} <strong>10</strong> / 120</span>
         <div className="btn-toolbar mb-2 mb-md-0">
           <Button variant="primary" onClick={handleShow}>
             <BsPlus className="mr-1" />

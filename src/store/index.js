@@ -2,7 +2,6 @@ import { combineReducers, createStore, applyMiddleware, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { renderToStaticMarkup } from 'react-dom/server';
 import {
-  addTranslationForLanguage,
   initialize,
   localizeReducer
 } from 'react-localize-redux';
@@ -14,12 +13,12 @@ import { country } from 'store/country/reducers';
 import { user } from 'store/user/reducers';
 import { treatmentPlan } from 'store/treatmentPlan/reducers';
 
-import en from 'translations/en.locale.json';
 import { getClinics } from 'store/clinic/actions';
 import { getCountries } from 'store/country/actions';
 import { language } from 'store/setting/reducers';
 import { getLanguages } from './setting/actions';
 import { exercise } from 'store/exercise/reducers';
+import { getTranslations } from './translation/actions';
 export const rootReducer = {
   localize: localizeReducer,
   user,
@@ -58,8 +57,7 @@ store.dispatch(initialize({
     onMissingTranslation
   }
 }));
-
-store.dispatch(addTranslationForLanguage(en, 'en'));
+store.dispatch(getTranslations());
 
 // Fetch data for clinic
 store.dispatch(getClinics());
