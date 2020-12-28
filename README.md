@@ -34,3 +34,6 @@ This web client app project was bootstrapped with [React Js](https://reactjs.org
     ```bash
     yarn lint
     ```
+# Label Translation
+
+Please have a look at [Platform Label Translation](https://git.web-essentials.asia/hiv-tra-20/admin-service#platform-label-translation)
