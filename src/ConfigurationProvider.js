@@ -22,6 +22,8 @@ const ConfigurationProvider = ({ children }) => {
               setLoading(false);
             }
           });
+        } else {
+          setLoading(false);
         }
       });
 
