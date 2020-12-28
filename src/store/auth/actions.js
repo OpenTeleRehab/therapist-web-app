@@ -4,6 +4,7 @@ import {
   showErrorNotification,
   showSuccessNotification
 } from 'store/notification/actions';
+import { getTranslations } from '../translation/actions';
 
 // Actions
 export const getProfile = () => async dispatch => {
@@ -11,6 +12,7 @@ export const getProfile = () => async dispatch => {
   const data = await Auth.getProfile();
   if (data) {
     dispatch(mutation.getProfileSuccess(data.data));
+    return data;
   } else {
     dispatch(mutation.getProfileFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));
@@ -23,6 +25,7 @@ export const updateProfile = (id, payload) => async dispatch => {
   if (data.success) {
     dispatch(mutation.updateProfileSuccess());
     dispatch(showSuccessNotification('toast_title.update_profile', 'success_message.update_profile_success'));
+    dispatch(getTranslations(payload.language_id));
     dispatch(getProfile());
     return true;
   } else {

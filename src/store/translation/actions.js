@@ -5,19 +5,20 @@ import {
 } from 'store/notification/actions';
 import { addTranslationForLanguage } from 'react-localize-redux';
 
-export const getTranslations = () => async dispatch => {
+export const getTranslations = languageId => async dispatch => {
   dispatch(mutation.getTranslationsRequest());
-  const data = await Translation.getTranslations();
-  if (data) {
+  const res = await Translation.getTranslations(languageId);
+  if (res && res.data) {
     const messages = {};
-    data.data.map(m => {
+    res.data.map(m => {
       messages[m.key] = m.value;
       return true;
     });
     dispatch(addTranslationForLanguage(messages, 'en'));
     dispatch(mutation.getTranslationsSuccess());
+    return true;
   } else {
     dispatch(mutation.getTranslationsFail());
-    dispatch(showErrorNotification('toast_title.error_message', data.message));
+    dispatch(showErrorNotification('toast_title.error_message', res.message));
   }
 };
