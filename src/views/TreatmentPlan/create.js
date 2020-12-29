@@ -268,10 +268,9 @@ const CreateTreatmentPlan = () => {
                   disabled={true}
                 >
                   <option>{translate('placeholder.patient')}</option>
-                  {patients.length && patients.map((patient, index) => {
-                    return (<option key={index} value={patient.id}>{ patient.name }</option>);
-                  })
-                  }
+                  {patients.length && patients.map((patient) => {
+                    return (<option key={`patient-${patient.id}`} value={patient.id}>{ patient.name }</option>);
+                  })}
                 </Form.Control>
               </Form.Group>
               <Form.Group>

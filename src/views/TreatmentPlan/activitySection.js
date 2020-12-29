@@ -68,7 +68,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
     const elements = [];
     for (let i = 1; i <= weeks; i++) {
       elements.push(
-        <div className="position-relative mr-3" key={i}>
+        <div className="position-relative mr-3" key={`week-tab-${i}`}>
           <Button
             variant={currentWeek === i ? 'primary' : 'outline-primary'}
             onClick={() => setCurrentWeek(i)}
@@ -106,7 +106,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
       const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
       const exerciseIds = dayActivity ? dayActivity.exercises : [];
       elements.push(
-        <div className="flex-fill flex-basic-0 d-flex flex-column align-items-center" key={i}>
+        <div className="flex-fill flex-basic-0 d-flex flex-column align-items-center" key={`day-column-${i}`}>
           <div
             className={date.weekday() === 0 || date.weekday() === 6
               ? 'font-weight-bold w-100 text-center text-uppercase py-2 bg-danger'
@@ -116,7 +116,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
-            <ListExerciseCard exerciseIds={exerciseIds} />
+            <ListExerciseCard exerciseIds={[...exerciseIds]} />
             <Button
               variant="outline-primary"
               className="btn-circle-lg m-3"
@@ -155,7 +155,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         </div>
       </div>
       <div className="d-flex flex-column flex-lg-row bg-light mb-3">
-        {dayElements()}
+        {!openActivityDialog && dayElements()}
       </div>
       <Dialog
         show={show}
