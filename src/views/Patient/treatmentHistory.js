@@ -41,22 +41,8 @@ const TreatmentHistory = () => {
 
   useEffect(() => {
     if (patientId) {
-      if (searchValue || filters.length) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          dispatch(getTreatmentPlans({
-            patient_id: patientId,
-            search_value: searchValue,
-            filters: filters,
-            page_size: pageSize,
-            page: currentPage + 1
-          })).then(result => {
-            if (result) {
-              setTotalCount(result.total_count);
-            }
-          });
-        }, 500);
-      } else {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
         dispatch(getTreatmentPlans({
           patient_id: patientId,
           search_value: searchValue,
@@ -68,7 +54,7 @@ const TreatmentHistory = () => {
             setTotalCount(result.total_count);
           }
         });
-      }
+      }, 500);
     }
   }, [currentPage, pageSize, searchValue, filters, patientId, dispatch]);
 

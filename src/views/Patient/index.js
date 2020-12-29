@@ -80,24 +80,10 @@ const Patient = () => {
 
   useEffect(() => {
     if (profile !== undefined) {
-      if (searchValue || filters.length) {
-        clearTimeout(timer);
-        timer = setTimeout(() => {
-          dispatch(getUsers({
-            therapist_id: profile.id,
-            search_value: searchValue,
-            page_size: pageSize,
-            page: currentPage + 1
-          })).then(result => {
-            if (result) {
-              setTotalCount(result.total_count);
-            }
-          });
-        }, 500);
-      } else {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
         dispatch(getUsers({
           therapist_id: profile.id,
-          filters,
           search_value: searchValue,
           page_size: pageSize,
           page: currentPage + 1
@@ -106,7 +92,7 @@ const Patient = () => {
             setTotalCount(result.total_count);
           }
         });
-      }
+      }, 500);
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
