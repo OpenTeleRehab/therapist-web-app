@@ -41,7 +41,7 @@ const ViewPatient = () => {
             <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
               <BsFillChatSquareFill size={20} />
             </Button>
-            <DropdownButton alignRight variant="primary" title={translate('common.actions')}>
+            <DropdownButton alignRight variant="primary" title={translate('common.action')}>
               <Dropdown.Item onClick={() => handleEdit(patientId)}>{translate('common.edit_info')}</Dropdown.Item>
               <Dropdown.Item as={Link} to={ROUTES.TREATMENT_PLAN_CREATE_FOR_PATIENT.replace(':patientId', patientId)}>{translate('patient.create_treatment')}</Dropdown.Item>
               <Dropdown.Item href="#/action-3">{translate('patient.deactivate_account')}</Dropdown.Item>
