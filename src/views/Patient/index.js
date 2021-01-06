@@ -51,7 +51,6 @@ const Patient = () => {
 
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalCount, setTotalCount] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
 
@@ -80,11 +79,7 @@ const Patient = () => {
           search_value: searchValue,
           page_size: pageSize,
           page: currentPage + 1
-        })).then(result => {
-          if (result) {
-            setTotalCount(result.total_count);
-          }
-        });
+        }));
       }, 500);
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
@@ -99,9 +94,7 @@ const Patient = () => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1>{translate('patient.management')}</h1>
-        <span>{translate('common.total_number_of_patient')} <strong>{totalCount}</strong></span>
-        <span>{translate('common.on_going_treatment_limit')} <strong>10</strong> / 120</span>
+        <h1></h1>
         <div className="btn-toolbar mb-2 mb-md-0">
           <Button variant="primary" onClick={handleShow}>
             <BsPlus className="mr-1" />
@@ -115,7 +108,6 @@ const Patient = () => {
         setPageSize={setPageSize}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
-        totalCount={totalCount}
         setSearchValue={setSearchValue}
         setFilters={setFilters}
         filters={filters}
