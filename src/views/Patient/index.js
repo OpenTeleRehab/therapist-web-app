@@ -13,8 +13,6 @@ import CreatePatient from './create';
 import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
 import { DeleteAction, EditAction } from 'components/ActionIcons';
-import { getCountryName } from 'utils/country';
-import { getClinicName } from 'utils/clinic';
 import AgeCalculation from 'utils/age';
 import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import { getTreatmentPlanName, getTreatmentPlanStatus } from 'utils/treatmentPlan';
@@ -26,8 +24,6 @@ const Patient = () => {
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
   const users = useSelector(state => state.user.users);
-  const countries = useSelector(state => state.country.countries);
-  const clinics = useSelector(state => state.clinic.clinics);
   const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
   const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
@@ -39,12 +35,9 @@ const Patient = () => {
     { name: 'first_name', title: translate('common.first_name') },
     { name: 'date_of_birth', title: translate('common.date_of_birth') },
     { name: 'age', title: translate('common.age') },
-    { name: 'country', title: translate('common.country') },
-    { name: 'clinic', title: translate('common.clinic') },
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
     { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
-    { name: 'note', title: translate('common.note') },
     { name: 'action', title: translate('common.action') }
   ];
 
@@ -142,12 +135,9 @@ const Patient = () => {
             email: user.email,
             date_of_birth: moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format),
             age: AgeCalculation(user.date_of_birth, translate),
-            country: getCountryName(user.country_id, countries),
-            clinic: getClinicName(user.clinic_id, clinics),
             ongoing_treatment_plan: treatmentPlans.length ? getTreatmentPlanName(user.id, treatmentPlans, translate) : '',
             ongoing_treatment_status: treatmentPlans.length ? getTreatmentPlanStatus(user.id, treatmentPlans, translate) : '',
             next_appointment: '',
-            note: user.note,
             action
           };
         })}
