@@ -41,8 +41,8 @@ const Patient = () => {
     { name: 'age', title: translate('common.age') },
     { name: 'country', title: translate('common.country') },
     { name: 'clinic', title: translate('common.clinic') },
-    { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
+    { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'note', title: translate('common.note') },
     { name: 'action', title: translate('common.action') }
@@ -51,8 +51,8 @@ const Patient = () => {
   const columnExtensions = [
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
-    { columnName: 'ongoing_treatment_status', wordWrapEnabled: true },
     { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
+    { columnName: 'ongoing_treatment_status', wordWrapEnabled: true },
     { columnName: 'next_appointment', wordWrapEnabled: true }
   ];
 
@@ -144,8 +144,8 @@ const Patient = () => {
             age: AgeCalculation(user.date_of_birth, translate),
             country: getCountryName(user.country_id, countries),
             clinic: getClinicName(user.clinic_id, clinics),
-            ongoing_treatment_status: treatmentPlans.length ? getTreatmentPlanStatus(user.id, treatmentPlans, translate) : '',
             ongoing_treatment_plan: treatmentPlans.length ? getTreatmentPlanName(user.id, treatmentPlans, translate) : '',
+            ongoing_treatment_status: treatmentPlans.length ? getTreatmentPlanStatus(user.id, treatmentPlans, translate) : '',
             next_appointment: '',
             note: user.note,
             action
