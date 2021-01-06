@@ -223,19 +223,19 @@ const CreateTreatmentPlan = () => {
             <Col md={3}>
               <h6 className="mb-4">{translate('treatment_plan.general_information')}</h6>
               <Form.Group>
-                <Form.Label>{translate('common.name')}</Form.Label>
+                <Form.Label>{translate('treatment_plan.name')}</Form.Label>
                 <span className="text-dark ml-1">*</span>
                 <Form.Control
                   type="text"
                   name="name"
                   maxLength={255}
                   value={formFields.name}
-                  placeholder={translate('placeholder.name')}
+                  placeholder={translate('placeholder.treatment_plan.name')}
                   onChange={handleChange}
                   isInvalid={errorName}
                 />
                 <Form.Control.Feedback type="invalid">
-                  {translate('error.name')}
+                  {translate('error.treatment_plan.name')}
                 </Form.Control.Feedback>
               </Form.Group>
               <Form.Group>
