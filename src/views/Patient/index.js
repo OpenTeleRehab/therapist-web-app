@@ -94,7 +94,7 @@ const Patient = () => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1></h1>
+        <h1>&nbsp;</h1>
         <div className="btn-toolbar mb-2 mb-md-0">
           <Button variant="primary" onClick={handleShow}>
             <BsPlus className="mr-1" />
