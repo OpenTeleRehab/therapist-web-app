@@ -5,7 +5,6 @@ import { createBrowserHistory } from 'history';
 import { LocalizeProvider } from 'react-localize-redux';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
 import 'react-datetime/css/react-datetime.css';
-import 'react-phone-number-input/style.css';
 
 import RouteSwitch from 'routes';
 import store from 'store';
