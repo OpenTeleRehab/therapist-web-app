@@ -1,7 +1,9 @@
 import axios from 'utils/axios';
+import axiosPatient from 'utils/patient-axios';
 
 const createTreatmentPlan = payload => {
-  return axios.post('/treatment-plan', payload)
+  const httpRequest = payload.type === 'preset' ? axios : axiosPatient;
+  return httpRequest.post('/treatment-plan', payload)
     .then(
       res => {
         return res.data;
@@ -13,7 +15,8 @@ const createTreatmentPlan = payload => {
 };
 
 const updateTreatmentPlan = (id, payload) => {
-  return axios.put(`/treatment-plan/${id}`, payload)
+  const httpRequest = payload.type === 'preset' ? axios : axiosPatient;
+  return httpRequest.put(`/treatment-plan/${id}`, payload)
     .then(
       res => {
         return res.data;
@@ -25,7 +28,8 @@ const updateTreatmentPlan = (id, payload) => {
 };
 
 const getTreatmentPlans = payload => {
-  return axios.get('/treatment-plan', { params: payload })
+  const httpRequest = payload.type === 'preset' ? axios : axiosPatient;
+  return httpRequest.get('/treatment-plan', { params: payload })
     .then(
       res => {
         return res.data;
