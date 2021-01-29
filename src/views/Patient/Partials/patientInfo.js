@@ -53,10 +53,10 @@ const PatientInfo = ({ id, translate }) => {
       <div className="p-3">
         <h4 className="mb-">{formFields.name}</h4>
         <div className="patient-info">
-          <span className="mr-4"><strong>{translate('common.label_id')} </strong>{formFields.id}</span>
-          <span className="mr-4"><strong>{translate('common.mobile_number')}</strong>{formFields.phone}</span>
-          <span className="mr-4"><strong>{translate('common.dob')}</strong>{formFields.date_of_birth} ({formFields.age})</span>
-          <span className="mr-4"><strong>{translate('common.label_country')}</strong>{formFields.country}</span>
+          <span className="mr-4"><strong>{translate('common.label_id')}</strong> {formFields.id}</span>
+          <span className="mr-4"><strong>{translate('common.mobile_number')}</strong>: {formFields.phone}</span>
+          <span className="mr-4"><strong>{translate('common.dob')}</strong> {formFields.date_of_birth} ({formFields.age})</span>
+          <span className="mr-4"><strong>{translate('common.label_country')}</strong> {formFields.country}</span>
           <span className="mr-4">
             <strong>{translate('common.note')} </strong>
             <OverlayTrigger

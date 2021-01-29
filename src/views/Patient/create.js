@@ -7,12 +7,13 @@ import Datetime from 'react-datetime';
 import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment';
-import PhoneInput from 'react-phone-number-input/input';
-import 'react-phone-number-input/style.css';
+
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 import { createUser, updateUser } from 'store/user/actions';
 
-import { getCountryName } from 'utils/country';
+import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
 import AgeCalculation from 'utils/age';
 
@@ -30,7 +31,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [errorClinic, setErrorClinic] = useState(false);
   const [errorFirstName, setErrorFirstName] = useState(false);
   const [errorLastName, setErrorLastName] = useState(false);
-  const [errorPhone, setErrorPhone] = useState(false);
+  const [errorClass, setErrorClass] = useState('');
+  const [dialCode, setDialCode] = useState('');
   const [errorGender, setErrorGender] = useState(false);
 
   const [formFields, setFormFields] = useState({
@@ -65,8 +67,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         phone: editingData.phone || '',
         gender: editingData.gender || '',
         note: editingData.note || '',
-        date_of_birth: moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) || '',
-        age: AgeCalculation(editingData.date_of_birth, translate) || ''
+        date_of_birth: editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
+        age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : ''
       });
     } else {
       resetData();
@@ -115,10 +117,6 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     return current.isBefore(moment());
   };
 
-  const handleChangePhone = (value) => {
-    setFormFields({ ...formFields, phone: value });
-  };
-
   const handleConfirm = () => {
     let canSave = true;
 
@@ -143,23 +141,30 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       setErrorLastName(false);
     }
 
-    if (formFields.phone === '' || formFields.phone === undefined) {
+    let formValues = formFields;
+    if (formFields.phone === '' || formFields.phone === undefined || dialCode === formFields.phone) {
       canSave = false;
-      setErrorPhone(true);
+      setErrorClass('d-block text-danger invalid-feedback');
     } else {
-      setErrorPhone(false);
+      setErrorClass('invalid-feedback');
+
+      const phoneValue = formFields.phone;
+      const numOnly = phoneValue.split(dialCode);
+      if (numOnly[1].match('^0')) {
+        formValues = { ...formFields, phone: dialCode + numOnly[1].slice(1) };
+      }
     }
 
     if (canSave) {
       if (editId) {
-        dispatch(updateUser(editId, formFields))
+        dispatch(updateUser(editId, formValues))
           .then(result => {
             if (result) {
               handleClose();
             }
           });
       } else {
-        dispatch(createUser(formFields))
+        dispatch(createUser(formValues))
           .then(result => {
             if (result) {
               handleClose();
@@ -182,15 +187,19 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           <Form.Label>{translate('common.phone')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <PhoneInput
-            defaultCountry="KH"
-            // class="form-control"
-            placeholder={translate('placeholder.phone')}
+            countryCodeEditable={false}
+            disableDropdown={true}
+            country={getCountryIsoCode(profile.country_id, countries)}
             value={formFields.phone}
-            // isInvalid={errorPhone}
-            class={`form-control${errorPhone ? ' is-invalid' : ''}`}
-            onChange={(e) => handleChangePhone(e)}
+            onlyCountries={
+              countries.map(country => { return country.iso_code; })
+            }
+            onChange={(value, country) => {
+              setFormFields({ ...formFields, phone: value });
+              setDialCode(country.dialCode);
+            }}
           />
-          <Form.Control.Feedback type="invalid">
+          <Form.Control.Feedback type="invalid" class={errorClass}>
             {translate('error.phone')}
           </Form.Control.Feedback>
         </Form.Group>

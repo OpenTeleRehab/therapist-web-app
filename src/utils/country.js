@@ -5,3 +5,9 @@ export const getCountryName = (id, countries) => {
 
   return country ? country.name : '';
 };
+
+export const getCountryIsoCode = (id, countries) => {
+  const country = _.findLast(countries, { id });
+
+  return country ? country.iso_code : '';
+};
