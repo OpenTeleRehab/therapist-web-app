@@ -14,6 +14,7 @@ import { user } from 'store/user/reducers';
 import { treatmentPlan } from 'store/treatmentPlan/reducers';
 import { language } from 'store/setting/reducers';
 import { exercise } from 'store/exercise/reducers';
+import { educationMaterial } from 'store/educationMaterial/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -24,7 +25,8 @@ export const rootReducer = {
   country,
   treatmentPlan,
   language,
-  exercise
+  exercise,
+  educationMaterial
 };
 
 const devTool =

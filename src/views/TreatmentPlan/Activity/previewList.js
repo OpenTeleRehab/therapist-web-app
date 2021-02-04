@@ -5,13 +5,13 @@ import { withLocalize } from 'react-localize-redux';
 import { BiChevronLeftCircle } from 'react-icons/bi';
 
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
+import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
 
-const PreviewExerciseList = ({ selectedExercises, onSectionChange }) => {
+const PreviewList = ({ selectedExercises, selectedMaterials, onExercisesChange, onMaterialsChange }) => {
   const [isShow, setIsShow] = useState(false);
 
   const handleShow = () => {
-    const test = !isShow;
-    setIsShow(test);
+    setIsShow(!isShow);
   };
 
   return (
@@ -21,17 +21,20 @@ const PreviewExerciseList = ({ selectedExercises, onSectionChange }) => {
       </div>
       { isShow &&
         <div className="position-absolute w-25 selected-exercise-wrapper">
-          <ListExerciseCard exerciseIds={selectedExercises} onSectionChange={onSectionChange} />
+          <ListExerciseCard exerciseIds={selectedExercises} onSectionChange={onExercisesChange} />
+          <ListEducationMaterialCard materialIds={selectedMaterials} onSectionChange={onMaterialsChange} />
         </div>
       }
     </>
   );
 };
 
-PreviewExerciseList.propTypes = {
+PreviewList.propTypes = {
   translate: PropTypes.func,
   selectedExercises: PropTypes.array,
-  onSectionChange: PropTypes.func
+  selectedMaterials: PropTypes.array,
+  onExercisesChange: PropTypes.func,
+  onMaterialsChange: PropTypes.func
 };
 
-export default withLocalize(PreviewExerciseList);
+export default withLocalize(PreviewList);

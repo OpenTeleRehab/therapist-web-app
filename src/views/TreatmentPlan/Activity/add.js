@@ -6,13 +6,15 @@ import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 
 import Exercise from './Exercise';
-import PreviewExerciseList from './Exercise/previewList';
+import EducationMaterial from './EducationMaterial';
+import PreviewList from './previewList';
 import _ from 'lodash';
 
 const AddActivity = ({ show, handleClose, week, day, activities, setActivities }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [selectedExercises, setSelectedExercises] = useState([]);
+  const [selectedMaterials, setSelectedMaterials] = useState([]);
 
   useEffect(() => {
     const dayActivity = _.findLast(activities, { week, day });
@@ -20,7 +22,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
     setSelectedExercises(exerciseIds);
   }, [week, day, activities]);
 
-  const handleSelectionChange = (e, id) => {
+  const handleExercisesChange = (e, id) => {
     if (e.currentTarget.checked) {
       selectedExercises.push(id);
     } else {
@@ -32,8 +34,20 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
     setSelectedExercises([...selectedExercises]);
   };
 
+  const handleMaterialsChange = (e, id) => {
+    if (e.currentTarget.checked) {
+      selectedMaterials.push(id);
+    } else {
+      const index = selectedMaterials.indexOf(id);
+      if (index >= 0) {
+        selectedMaterials.splice(index, 1);
+      }
+    }
+    setSelectedMaterials([...selectedMaterials]);
+  };
+
   const handleConfirm = () => {
-    const newActivity = { week, day, exercises: selectedExercises };
+    const newActivity = { week, day, exercises: selectedExercises, materials: selectedMaterials };
     const updatedActivities = _.unionWith(activities, [newActivity], (a, n) => {
       return a.week === n.week && a.day === n.day;
     });
@@ -52,16 +66,21 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
     >
       <Tabs transition={false} className="mb-3">
         <Tab eventKey="exercise" title={translate('activity.exercises')}>
-          <Exercise selectedExercises={selectedExercises} onSectionChange={handleSelectionChange} />
+          <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} />
         </Tab>
         <Tab eventKey="education" title={translate('activity.education_materials')}>
-          {translate('activity.education_materials')}
+          <EducationMaterial selectedExercises={selectedMaterials} onSectionChange={handleMaterialsChange} />
         </Tab>
         <Tab eventKey="questionnaire" title={translate('activity.questionnaires')}>
           {translate('activity.questionnaires')}
         </Tab>
       </Tabs>
-      <PreviewExerciseList selectedExercises={selectedExercises} onSectionChange={handleSelectionChange} />
+      <PreviewList
+        selectedExercises={selectedExercises}
+        selectedMaterials={selectedMaterials}
+        onSectionChange={handleExercisesChange}
+        onMaterialsChange={handleMaterialsChange}
+      />
     </Dialog>
   );
 };

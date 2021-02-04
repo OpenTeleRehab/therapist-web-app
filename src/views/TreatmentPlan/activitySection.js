@@ -11,6 +11,7 @@ import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import AddActivity from 'views/TreatmentPlan/Activity/add';
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
+import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
 
 const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities }) => {
   const localize = useSelector((state) => state.localize);
@@ -104,7 +105,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
     for (let i = 0; i < 7; i++) {
       const date = moment(currentWeekStartDate).add(i, 'days');
       const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
-      const exerciseIds = dayActivity ? dayActivity.exercises : [];
+      const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
+      const materialIds = dayActivity ? dayActivity.materials || [] : [];
       elements.push(
         <div className="flex-fill flex-basic-0 d-flex flex-column align-items-center" key={`day-column-${i}`}>
           <div
@@ -117,13 +119,17 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           </div>
           <div className="p-2 activity-card-wrapper h-100">
             <ListExerciseCard exerciseIds={[...exerciseIds]} />
-            <Button
-              variant="outline-primary"
-              className="btn-circle-lg m-3"
-              onClick={() => handleAddActivity(i + 1)}
-            >
-              <BsPlus size={15} />
-            </Button>
+            <ListEducationMaterialCard materialIds={[...materialIds]} />
+
+            <div className="text-center">
+              <Button
+                variant="outline-primary"
+                className="btn-circle-lg m-3"
+                onClick={() => handleAddActivity(i + 1)}
+              >
+                <BsPlus size={15} />
+              </Button>
+            </div>
           </div>
         </div>
       );
