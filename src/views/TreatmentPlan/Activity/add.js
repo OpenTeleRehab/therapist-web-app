@@ -18,8 +18,10 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
 
   useEffect(() => {
     const dayActivity = _.findLast(activities, { week, day });
-    const exerciseIds = dayActivity ? dayActivity.exercises : [];
+    const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
+    const materialIds = dayActivity ? dayActivity.materials || [] : [];
     setSelectedExercises(exerciseIds);
+    setSelectedMaterials(materialIds);
   }, [week, day, activities]);
 
   const handleExercisesChange = (e, id) => {
@@ -48,7 +50,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
 
   const handleConfirm = () => {
     const newActivity = { week, day, exercises: selectedExercises, materials: selectedMaterials };
-    const updatedActivities = _.unionWith(activities, [newActivity], (a, n) => {
+    const updatedActivities = _.unionWith([newActivity], activities, (a, n) => {
       return a.week === n.week && a.day === n.day;
     });
     setActivities(updatedActivities);
@@ -69,7 +71,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
           <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} />
         </Tab>
         <Tab eventKey="education" title={translate('activity.education_materials')}>
-          <EducationMaterial selectedExercises={selectedMaterials} onSectionChange={handleMaterialsChange} />
+          <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} />
         </Tab>
         <Tab eventKey="questionnaire" title={translate('activity.questionnaires')}>
           {translate('activity.questionnaires')}
@@ -78,7 +80,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
       <PreviewList
         selectedExercises={selectedExercises}
         selectedMaterials={selectedMaterials}
-        onSectionChange={handleExercisesChange}
+        onExercisesChange={handleExercisesChange}
         onMaterialsChange={handleMaterialsChange}
       />
     </Dialog>

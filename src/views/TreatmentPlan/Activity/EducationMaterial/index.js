@@ -19,7 +19,7 @@ import { MdDescription } from 'react-icons/md';
 import { getEducationMaterials } from 'store/educationMaterial/actions';
 
 let timer = null;
-const EducationMaterial = ({ translate, selectedExercises, onSectionChange }) => {
+const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) => {
   const dispatch = useDispatch();
   const { loading, educationMaterials } = useSelector(state => state.educationMaterial);
   const [pageSize, setPageSize] = useState(8);
@@ -118,7 +118,7 @@ const EducationMaterial = ({ translate, selectedExercises, onSectionChange }) =>
                           <Form.Check
                             type="checkbox"
                             className="float-right action"
-                            checked={selectedExercises.includes(exercise.id)}
+                            checked={selectedMaterials.includes(exercise.id)}
                             onChange={(e) => onSectionChange(e, exercise.id)}
                           />
                         </div>
@@ -167,7 +167,7 @@ const EducationMaterial = ({ translate, selectedExercises, onSectionChange }) =>
 
 EducationMaterial.propTypes = {
   translate: PropTypes.func,
-  selectedExercises: PropTypes.array,
+  selectedMaterials: PropTypes.array,
   onSectionChange: PropTypes.func
 };
 
