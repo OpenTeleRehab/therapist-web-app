@@ -144,9 +144,11 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         <h6>{translate('treatment_plan.activities')}</h6>
         <div>
           <span className="mr-3">
-            <b>{ _.sumBy(activities, a => a.exercises.length) }</b> {translate('common.exercises')}
+            <b>{ _.sumBy(activities, a => a.exercises ? a.exercises.length : 0) }</b> {translate('common.exercises')}
           </span>
-          <span className="mr-3"><b>0</b> {translate('common.education_materials')}</span>
+          <span className="mr-3">
+            <b>{ _.sumBy(activities, a => a.materials ? a.materials.length : 0) }</b> {translate('common.education_materials')}
+          </span>
           <span><b>0</b> {translate('common.questionnaire')}</span>
         </div>
         <div className="d-flex align-items-center my-4">
