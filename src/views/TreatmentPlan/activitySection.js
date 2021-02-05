@@ -22,8 +22,6 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [show, setShow] = useState(false);
   const [openActivityDialog, setOpenActivityDialog] = useState(false);
   const [day, setDay] = useState(1);
-  const [selectedExercises, setSelectedExercises] = useState([]);
-  const [exercises, setExercises] = useState([]);
   const [weekToRemove, setWeekToRemove] = useState(0);
 
   useEffect(() => {
@@ -97,7 +95,6 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
 
   const handleCloseActivityDialog = () => {
     setOpenActivityDialog(false);
-    setSelectedExercises([]);
   };
 
   const dayElements = () => {
@@ -176,7 +173,16 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
 
-      {openActivityDialog && <AddActivity handleClose={handleCloseActivityDialog} show={openActivityDialog} week={currentWeek} day={day} activities={activities} setActivities={setActivities} selectedExercises={selectedExercises} setSelectedExercises={setSelectedExercises} exercises={exercises} setExercises={setExercises}/>}
+      {openActivityDialog &&
+        <AddActivity
+          handleClose={handleCloseActivityDialog}
+          show={openActivityDialog}
+          week={currentWeek}
+          day={day}
+          activities={activities}
+          setActivities={setActivities}
+        />
+      }
     </>
   );
 };
