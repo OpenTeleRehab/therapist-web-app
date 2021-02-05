@@ -15,24 +15,24 @@ import { useSelector } from 'react-redux';
 const ListEducationMaterialCard = ({ materialIds, onSectionChange }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
-  const [exercises, setExercises] = useState([]);
+  const [materials, setMaterials] = useState([]);
 
   useEffect(() => {
     if (materialIds && materialIds.length > 0) {
       EducationMaterial.getEducationMaterialsByIds(materialIds).then(res => {
         if (res.data) {
-          setExercises(res.data);
+          setMaterials(res.data);
         }
       });
     } else {
-      setExercises([]);
+      setMaterials([]);
     }
   }, [materialIds]);
 
   return (
     <>
-      { exercises.map(exercise => (
-        <Card key={exercise} className="exercise-card shadow-sm mb-4">
+      { materials.map(material => (
+        <Card key={material} className="exercise-card shadow-sm mb-4">
           <div className="card-img bg-light">
             {
               onSectionChange && (
@@ -40,8 +40,8 @@ const ListEducationMaterialCard = ({ materialIds, onSectionChange }) => {
                   <Form.Check
                     type="checkbox"
                     className="float-right action"
-                    checked={materialIds.includes(exercise.id)}
-                    onChange={(e) => onSectionChange(e, exercise.id)}
+                    checked={materialIds.includes(material.id)}
+                    onChange={(e) => onSectionChange(e, material.id)}
                   />
                 </div>
               )
@@ -51,20 +51,23 @@ const ListEducationMaterialCard = ({ materialIds, onSectionChange }) => {
               <p>{translate('activity.material').toUpperCase()}</p>
             </div>
           </div>
-          <Card.Body>
+          <Card.Body className="d-flex flex-column justify-content-between">
             <Card.Title>
               {
-                exercise.title.length <= 50
-                  ? <h5 className="card-title">{ exercise.title }</h5>
+                material.title.length <= 50
+                  ? <h5 className="card-title">{ material.title }</h5>
                   : (
                     <OverlayTrigger
-                      overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                      overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
                     >
-                      <h5 className="card-title">{ exercise.title }</h5>
+                      <h5 className="card-title">{ material.title }</h5>
                     </OverlayTrigger>
                   )
               }
             </Card.Title>
+            <Card.Text>
+              {material.file.fileExtension}
+            </Card.Text>
           </Card.Body>
         </Card>
       ))}

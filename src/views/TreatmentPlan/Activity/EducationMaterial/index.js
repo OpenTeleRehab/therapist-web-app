@@ -110,16 +110,16 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
           { educationMaterials.length > 0 && (
             <>
               <Row>
-                { educationMaterials.map(exercise => (
-                  <Col key={exercise.id} md={6} lg={3}>
+                { educationMaterials.map(material => (
+                  <Col key={material.id} md={6} lg={3}>
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="card-img bg-light">
                         <div className="position-absolute w-100">
                           <Form.Check
                             type="checkbox"
                             className="float-right action"
-                            checked={selectedMaterials.includes(exercise.id)}
-                            onChange={(e) => onSectionChange(e, exercise.id)}
+                            checked={selectedMaterials.includes(material.id)}
+                            onChange={(e) => onSectionChange(e, material.id)}
                           />
                         </div>
 
@@ -128,20 +128,23 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
                           <p>{translate('activity.material').toUpperCase()}</p>
                         </div>
                       </div>
-                      <Card.Body>
+                      <Card.Body className="d-flex flex-column justify-content-between">
                         <Card.Title>
                           {
-                            exercise.title.length <= 50
-                              ? <h5 className="card-title">{ exercise.title }</h5>
+                            material.title.length <= 50
+                              ? <h5 className="card-title">{ material.title }</h5>
                               : (
                                 <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                                  overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
                                 >
-                                  <h5 className="card-title">{ exercise.title }</h5>
+                                  <h5 className="card-title">{ material.title }</h5>
                                 </OverlayTrigger>
                               )
                           }
                         </Card.Title>
+                        <Card.Text>
+                          {material.file.fileExtension}
+                        </Card.Text>
                       </Card.Body>
                     </Card>
                   </Col>
