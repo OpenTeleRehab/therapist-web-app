@@ -7,7 +7,7 @@ import { BiChevronLeftCircle } from 'react-icons/bi';
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
 
-const PreviewList = ({ selectedExercises, selectedMaterials, onExercisesChange, onMaterialsChange }) => {
+const PreviewList = ({ selectedExercises, selectedMaterials, onExerciseRemove, onMaterialRemove }) => {
   const [isShow, setIsShow] = useState(false);
 
   const handleShow = () => {
@@ -21,8 +21,8 @@ const PreviewList = ({ selectedExercises, selectedMaterials, onExercisesChange, 
       </div>
       { isShow &&
         <div className="position-absolute w-25 selected-exercise-wrapper">
-          <ListExerciseCard exerciseIds={selectedExercises} onSectionChange={onExercisesChange} />
-          <ListEducationMaterialCard materialIds={selectedMaterials} onSectionChange={onMaterialsChange} />
+          <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} />
+          <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} />
         </div>
       }
     </>
@@ -33,8 +33,8 @@ PreviewList.propTypes = {
   translate: PropTypes.func,
   selectedExercises: PropTypes.array,
   selectedMaterials: PropTypes.array,
-  onExercisesChange: PropTypes.func,
-  onMaterialsChange: PropTypes.func
+  onExerciseRemove: PropTypes.func,
+  onMaterialRemove: PropTypes.func
 };
 
 export default withLocalize(PreviewList);
