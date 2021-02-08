@@ -143,7 +143,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
                           }
                         </Card.Title>
                         <Card.Text>
-                          {material.file.fileGroupType}
+                          {translate(material.file.fileGroupType)}
                         </Card.Text>
                       </Card.Body>
                     </Card>
