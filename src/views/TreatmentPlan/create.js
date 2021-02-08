@@ -8,7 +8,6 @@ import settings from 'settings';
 import { createTreatmentPlan, updateTreatmentPlan } from 'store/treatmentPlan/actions';
 import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import moment from 'moment';
-import _ from 'lodash';
 
 import CollapseToggle from 'views/TreatmentPlan/collapseToggle';
 import ActivitySection from './activitySection';
@@ -81,7 +80,7 @@ const CreateTreatmentPlan = () => {
         end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format)
       });
       setActivities(editingData.activities || []);
-      setWeeks(_.uniqBy(editingData.activities, 'week').length);
+      setWeeks(editingData.total_of_weeks);
     } else {
       resetData();
     }
@@ -134,7 +133,7 @@ const CreateTreatmentPlan = () => {
     }
 
     if (canSave) {
-      dispatch(createTreatmentPlan({ ...formFields, type: 'preset', activities }));
+      dispatch(createTreatmentPlan({ ...formFields, total_of_weeks: weeks, type: 'preset', activities }));
     }
   };
 
@@ -164,14 +163,14 @@ const CreateTreatmentPlan = () => {
 
     if (canSave) {
       if (id) {
-        dispatch(updateTreatmentPlan(id, { ...formFields, type: 'normal', activities }))
+        dispatch(updateTreatmentPlan(id, { ...formFields, total_of_weeks: weeks, type: 'normal', activities }))
           .then(result => {
             if (result) {
               history.goBack();
             }
           });
       } else {
-        dispatch(createTreatmentPlan({ ...formFields, type: 'normal', activities }))
+        dispatch(createTreatmentPlan({ ...formFields, total_of_weeks: weeks, type: 'normal', activities }))
           .then(result => {
             if (result) {
               history.goBack();
