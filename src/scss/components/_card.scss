@@ -35,3 +35,9 @@
 		bottom: 0;
 	}
 }
+
+.material-card {
+  .card-title {
+	-webkit-line-clamp: 2;
+  }
+}

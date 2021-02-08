@@ -33,7 +33,7 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove }) => {
   return (
     <>
       { materials.map(material => (
-        <Card key={material} className="exercise-card shadow-sm mb-4">
+        <Card key={material} className="exercise-card material-card shadow-sm mb-4">
           <div className="card-img bg-light">
             {
               onSelectionRemove && (
