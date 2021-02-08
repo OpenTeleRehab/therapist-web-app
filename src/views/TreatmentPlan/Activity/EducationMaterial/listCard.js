@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getTranslate, withLocalize } from 'react-localize-redux';
 import {
+  Button,
   Card,
-  Form,
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
@@ -11,8 +11,9 @@ import { MdDescription } from 'react-icons/md';
 
 import { EducationMaterial } from 'services/educationMaterial';
 import { useSelector } from 'react-redux';
+import { BsX } from 'react-icons/bs';
 
-const ListEducationMaterialCard = ({ materialIds, onSectionChange }) => {
+const ListEducationMaterialCard = ({ materialIds, onSelectionRemove }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
@@ -35,14 +36,15 @@ const ListEducationMaterialCard = ({ materialIds, onSectionChange }) => {
         <Card key={material} className="exercise-card shadow-sm mb-4">
           <div className="card-img bg-light">
             {
-              onSectionChange && (
+              onSelectionRemove && (
                 <div className="position-absolute w-100">
-                  <Form.Check
-                    type="checkbox"
-                    className="float-right action"
-                    checked={materialIds.includes(material.id)}
-                    onChange={(e) => onSectionChange(e, material.id)}
-                  />
+                  <Button
+                    className="btn-circle-sm float-right m-1"
+                    variant="light"
+                    onClick={() => onSelectionRemove(material.id)}
+                  >
+                    <BsX size={15} />
+                  </Button>
                 </div>
               )
             }
@@ -66,7 +68,7 @@ const ListEducationMaterialCard = ({ materialIds, onSectionChange }) => {
               }
             </Card.Title>
             <Card.Text>
-              {material.file.fileExtension}
+              {material.file.fileGroupType}
             </Card.Text>
           </Card.Body>
         </Card>
@@ -77,7 +79,7 @@ const ListEducationMaterialCard = ({ materialIds, onSectionChange }) => {
 
 ListEducationMaterialCard.propTypes = {
   materialIds: PropTypes.array,
-  onSectionChange: PropTypes.func
+  onSelectionRemove: PropTypes.func
 };
 
 export default withLocalize(ListEducationMaterialCard);

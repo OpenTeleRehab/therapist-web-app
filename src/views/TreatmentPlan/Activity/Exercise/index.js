@@ -118,7 +118,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
                             type="checkbox"
                             className="float-right action"
                             checked={selectedExercises.includes(exercise.id)}
-                            onChange={(e) => onSectionChange(e, exercise.id)}
+                            onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
                           />
                         </div>
                         {

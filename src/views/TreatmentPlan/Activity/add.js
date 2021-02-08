@@ -24,8 +24,8 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
     setSelectedMaterials(materialIds);
   }, [week, day, activities]);
 
-  const handleExercisesChange = (e, id) => {
-    if (e.currentTarget.checked) {
+  const handleExercisesChange = (checked, id) => {
+    if (checked) {
       selectedExercises.push(id);
     } else {
       const index = selectedExercises.indexOf(id);
@@ -36,8 +36,8 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
     setSelectedExercises([...selectedExercises]);
   };
 
-  const handleMaterialsChange = (e, id) => {
-    if (e.currentTarget.checked) {
+  const handleMaterialsChange = (checked, id) => {
+    if (checked) {
       selectedMaterials.push(id);
     } else {
       const index = selectedMaterials.indexOf(id);
@@ -80,8 +80,8 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
       <PreviewList
         selectedExercises={selectedExercises}
         selectedMaterials={selectedMaterials}
-        onExercisesChange={handleExercisesChange}
-        onMaterialsChange={handleMaterialsChange}
+        onExerciseRemove={id => handleExercisesChange(false, id)}
+        onMaterialRemove={id => handleMaterialsChange(false, id)}
       />
     </Dialog>
   );

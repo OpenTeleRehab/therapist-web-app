@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import {
+  Button,
   Card,
-  Form,
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
 
 import { Exercise } from 'services/exercise';
+import { BsX } from 'react-icons/bs';
 
-const ListExerciseCard = ({ exerciseIds, onSectionChange }) => {
+const ListExerciseCard = ({ exerciseIds, onSelectionRemove }) => {
   const [exercises, setExercises] = useState([]);
 
   useEffect(() => {
@@ -31,14 +32,15 @@ const ListExerciseCard = ({ exerciseIds, onSectionChange }) => {
         <Card key={exercise} className="exercise-card shadow-sm mb-4">
           <div className="card-img bg-light">
             {
-              onSectionChange && (
-                <div className="position-absolute w-100">
-                  <Form.Check
-                    type="checkbox"
-                    className="float-right action"
-                    checked={exerciseIds.includes(exercise.id)}
-                    onChange={(e) => onSectionChange(e, exercise.id)}
-                  />
+              onSelectionRemove && (
+                <div className="position-absolute w-100 z-index-1">
+                  <Button
+                    className="btn-circle-sm float-right m-1"
+                    variant="light"
+                    onClick={() => onSelectionRemove(exercise.id)}
+                  >
+                    <BsX size={15} />
+                  </Button>
                 </div>
               )
             }
@@ -87,7 +89,7 @@ const ListExerciseCard = ({ exerciseIds, onSectionChange }) => {
 
 ListExerciseCard.propTypes = {
   exerciseIds: PropTypes.array,
-  onSectionChange: PropTypes.func
+  onSelectionRemove: PropTypes.func
 };
 
 export default withLocalize(ListExerciseCard);

@@ -93,6 +93,40 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
     setDay(day);
   };
 
+  const handleExerciseRemove = (id, dayActivity) => {
+    const { week, day } = dayActivity;
+    const exerciseIds = dayActivity.exercises || [];
+    const materialIds = dayActivity.materials || [];
+
+    const index = exerciseIds.indexOf(id);
+    if (index >= 0) {
+      exerciseIds.splice(index, 1);
+    }
+
+    const newActivity = { week, day, exercises: exerciseIds, materials: materialIds };
+    const updatedActivities = _.unionWith([newActivity], activities, (a, n) => {
+      return a.week === n.week && a.day === n.day;
+    });
+    setActivities(updatedActivities);
+  };
+
+  const handleMaterialRemove = (id, dayActivity) => {
+    const { week, day } = dayActivity;
+    const exerciseIds = dayActivity.exercises || [];
+    const materialIds = dayActivity.materials || [];
+
+    const index = materialIds.indexOf(id);
+    if (index >= 0) {
+      materialIds.splice(index, 1);
+    }
+
+    const newActivity = { week, day, exercises: exerciseIds, materials: materialIds };
+    const updatedActivities = _.unionWith([newActivity], activities, (a, n) => {
+      return a.week === n.week && a.day === n.day;
+    });
+    setActivities(updatedActivities);
+  };
+
   const handleCloseActivityDialog = () => {
     setOpenActivityDialog(false);
   };
@@ -115,8 +149,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
-            <ListExerciseCard exerciseIds={[...exerciseIds]} />
-            <ListEducationMaterialCard materialIds={[...materialIds]} />
+            <ListExerciseCard exerciseIds={[...exerciseIds]} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} />
+            <ListEducationMaterialCard materialIds={[...materialIds]} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} />
 
             <div className="text-center">
               <Button

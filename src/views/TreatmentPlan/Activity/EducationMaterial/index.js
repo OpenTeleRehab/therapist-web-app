@@ -119,7 +119,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
                             type="checkbox"
                             className="float-right action"
                             checked={selectedMaterials.includes(material.id)}
-                            onChange={(e) => onSectionChange(e, material.id)}
+                            onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
                           />
                         </div>
 
@@ -143,7 +143,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
                           }
                         </Card.Title>
                         <Card.Text>
-                          {material.file.fileExtension}
+                          {material.file.fileGroupType}
                         </Card.Text>
                       </Card.Body>
                     </Card>
