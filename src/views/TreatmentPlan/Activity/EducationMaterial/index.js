@@ -72,7 +72,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
                   name="search_value"
                   value={formFields.search_value}
                   onChange={handleChange}
-                  placeholder={translate('exercise.search')}
+                  placeholder={translate('education_material.search')}
                 />
               </Form.Group>
             </Card.Header>
