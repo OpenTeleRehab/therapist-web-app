@@ -12,6 +12,7 @@ import Dialog from 'components/Dialog';
 import AddActivity from 'views/TreatmentPlan/Activity/add';
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
+import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/listCard';
 
 const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities }) => {
   const localize = useSelector((state) => state.localize);
@@ -94,34 +95,24 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   };
 
   const handleExerciseRemove = (id, dayActivity) => {
-    const { week, day } = dayActivity;
-    const exerciseIds = dayActivity.exercises || [];
-    const materialIds = dayActivity.materials || [];
-
-    const index = exerciseIds.indexOf(id);
-    if (index >= 0) {
-      exerciseIds.splice(index, 1);
-    }
-
-    const newActivity = { week, day, exercises: exerciseIds, materials: materialIds };
-    const updatedActivities = _.unionWith([newActivity], activities, (a, n) => {
+    _.remove(dayActivity.exercises, n => n === id);
+    const updatedActivities = _.unionWith([dayActivity], activities, (a, n) => {
       return a.week === n.week && a.day === n.day;
     });
     setActivities(updatedActivities);
   };
 
   const handleMaterialRemove = (id, dayActivity) => {
-    const { week, day } = dayActivity;
-    const exerciseIds = dayActivity.exercises || [];
-    const materialIds = dayActivity.materials || [];
+    _.remove(dayActivity.materials, n => n === id);
+    const updatedActivities = _.unionWith([dayActivity], activities, (a, n) => {
+      return a.week === n.week && a.day === n.day;
+    });
+    setActivities(updatedActivities);
+  };
 
-    const index = materialIds.indexOf(id);
-    if (index >= 0) {
-      materialIds.splice(index, 1);
-    }
-
-    const newActivity = { week, day, exercises: exerciseIds, materials: materialIds };
-    const updatedActivities = _.unionWith([newActivity], activities, (a, n) => {
+  const handleQuestionnaireRemove = (id, dayActivity) => {
+    _.remove(dayActivity.questionnaires, n => n === id);
+    const updatedActivities = _.unionWith([dayActivity], activities, (a, n) => {
       return a.week === n.week && a.day === n.day;
     });
     setActivities(updatedActivities);
@@ -138,6 +129,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
       const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
       const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
       const materialIds = dayActivity ? dayActivity.materials || [] : [];
+      const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
       elements.push(
         <div className="flex-fill flex-basic-0 d-flex flex-column align-items-center" key={`day-column-${i}`}>
           <div
@@ -151,6 +143,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           <div className="p-2 activity-card-wrapper h-100">
             <ListExerciseCard exerciseIds={[...exerciseIds]} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} />
             <ListEducationMaterialCard materialIds={[...materialIds]} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} />
+            <ListQuestionnaireCard materialIds={[...questionnaireIds]} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} />
 
             <div className="text-center">
               <Button

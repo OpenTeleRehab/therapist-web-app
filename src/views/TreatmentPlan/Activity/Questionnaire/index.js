@@ -15,13 +15,13 @@ import { BsSearch, BsX } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
-import { MdDescription } from 'react-icons/md';
-import { getEducationMaterials } from 'store/educationMaterial/actions';
+import { RiChatQuoteLine } from 'react-icons/ri';
+import { getQuestionnaires } from 'store/questionnaire/actions';
 
 let timer = null;
-const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) => {
+const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
   const dispatch = useDispatch();
-  const { loading, educationMaterials } = useSelector(state => state.educationMaterial);
+  const { loading, questionnaires } = useSelector(state => state.questionnaire);
   const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -32,7 +32,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
   useEffect(() => {
     clearTimeout(timer);
     timer = setTimeout(() => {
-      dispatch(getEducationMaterials({
+      dispatch(getQuestionnaires({
         filter: formFields,
         page_size: pageSize,
         page: currentPage
@@ -72,7 +72,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
                   name="search_value"
                   value={formFields.search_value}
                   onChange={handleChange}
-                  placeholder={translate('education_material.search')}
+                  placeholder={translate('questionnaire.search')}
                 />
               </Form.Group>
             </Card.Header>
@@ -102,48 +102,48 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
           </Card>
         </Col>
         <Col sm={7} md={8} lg={9}>
-          { educationMaterials.length === 0 && (
+          { questionnaires.length === 0 && (
             <div className="card h-100 d-flex justify-content-center align-items-center">
               <big className="text-muted">{translate('common.no_data')}</big>
             </div>
           )}
-          { educationMaterials.length > 0 && (
+          { questionnaires.length > 0 && (
             <>
               <Row>
-                { educationMaterials.map(material => (
-                  <Col key={material.id} md={6} lg={3}>
+                { questionnaires.map(questionnaire => (
+                  <Col key={questionnaire.id} md={6} lg={3}>
                     <Card className="exercise-card material-card shadow-sm mb-4">
                       <div className="card-img bg-light">
                         <div className="position-absolute w-100">
                           <Form.Check
                             type="checkbox"
                             className="float-right action"
-                            checked={selectedMaterials.includes(material.id)}
-                            onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
+                            checked={selectedMaterials.includes(questionnaire.id)}
+                            onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
                           />
                         </div>
 
-                        <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
-                          <MdDescription size={80} />
-                          <p>{translate('activity.material').toUpperCase()}</p>
+                        <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
+                          <RiChatQuoteLine size={80} />
+                          <p>{translate('activity.questionnaire').toUpperCase()}</p>
                         </div>
                       </div>
                       <Card.Body className="d-flex flex-column justify-content-between">
                         <Card.Title>
                           {
-                            material.title.length <= 50
-                              ? <h5 className="card-title">{ material.title }</h5>
+                            questionnaire.title.length <= 50
+                              ? <h5 className="card-title">{ questionnaire.title }</h5>
                               : (
                                 <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
+                                  overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
                                 >
-                                  <h5 className="card-title">{ material.title }</h5>
+                                  <h5 className="card-title">{ questionnaire.title }</h5>
                                 </OverlayTrigger>
                               )
                           }
                         </Card.Title>
                         <Card.Text>
-                          {translate(material.file.fileGroupType)}
+                          <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
                         </Card.Text>
                       </Card.Body>
                     </Card>
@@ -168,10 +168,10 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
   );
 };
 
-EducationMaterial.propTypes = {
+Questionnaire.propTypes = {
   translate: PropTypes.func,
   selectedMaterials: PropTypes.array,
   onSectionChange: PropTypes.func
 };
 
-export default withLocalize(EducationMaterial);
+export default withLocalize(Questionnaire);

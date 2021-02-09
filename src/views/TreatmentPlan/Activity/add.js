@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 
 import Exercise from './Exercise';
 import EducationMaterial from './EducationMaterial';
+import Questionnaire from './Questionnaire';
 import PreviewList from './previewList';
 import _ from 'lodash';
 
@@ -15,23 +16,23 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
   const translate = getTranslate(localize);
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [selectedMaterials, setSelectedMaterials] = useState([]);
+  const [selectedQuestionnaires, setSelectedQuestionnaires] = useState([]);
 
   useEffect(() => {
     const dayActivity = _.findLast(activities, { week, day });
     const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
     const materialIds = dayActivity ? dayActivity.materials || [] : [];
+    const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
     setSelectedExercises(exerciseIds);
     setSelectedMaterials(materialIds);
+    setSelectedQuestionnaires(questionnaireIds);
   }, [week, day, activities]);
 
   const handleExercisesChange = (checked, id) => {
     if (checked) {
       selectedExercises.push(id);
     } else {
-      const index = selectedExercises.indexOf(id);
-      if (index >= 0) {
-        selectedExercises.splice(index, 1);
-      }
+      _.remove(selectedExercises, n => n === id);
     }
     setSelectedExercises([...selectedExercises]);
   };
@@ -40,16 +41,28 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
     if (checked) {
       selectedMaterials.push(id);
     } else {
-      const index = selectedMaterials.indexOf(id);
-      if (index >= 0) {
-        selectedMaterials.splice(index, 1);
-      }
+      _.remove(selectedMaterials, n => n === id);
     }
     setSelectedMaterials([...selectedMaterials]);
   };
 
+  const handleQuestionnairesChange = (checked, id) => {
+    if (checked) {
+      selectedQuestionnaires.push(id);
+    } else {
+      _.remove(selectedQuestionnaires, n => n === id);
+    }
+    setSelectedQuestionnaires([...selectedQuestionnaires]);
+  };
+
   const handleConfirm = () => {
-    const newActivity = { week, day, exercises: selectedExercises, materials: selectedMaterials };
+    const newActivity = {
+      week,
+      day,
+      exercises: selectedExercises,
+      materials: selectedMaterials,
+      questionnaires: selectedQuestionnaires
+    };
     const updatedActivities = _.unionWith([newActivity], activities, (a, n) => {
       return a.week === n.week && a.day === n.day;
     });
@@ -74,14 +87,16 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
           <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} />
         </Tab>
         <Tab eventKey="questionnaire" title={translate('activity.questionnaires')}>
-          {translate('activity.questionnaires')}
+          <Questionnaire selectedMaterials={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} />
         </Tab>
       </Tabs>
       <PreviewList
         selectedExercises={selectedExercises}
         selectedMaterials={selectedMaterials}
+        selectedQuestionnaires={selectedQuestionnaires}
         onExerciseRemove={id => handleExercisesChange(false, id)}
         onMaterialRemove={id => handleMaterialsChange(false, id)}
+        onQuestionnaireRemove={id => handleQuestionnairesChange(false, id)}
       />
     </Dialog>
   );
