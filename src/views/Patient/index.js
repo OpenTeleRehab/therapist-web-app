@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import { BsPlus } from 'react-icons/bs';
 import PropTypes from 'prop-types';
@@ -12,7 +12,7 @@ import * as ROUTES from 'variables/routes';
 import CreatePatient from './create';
 import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
-import { DeleteAction, EditAction } from 'components/ActionIcons';
+import { DeleteAction, EditAction, ViewAction } from 'components/ActionIcons';
 import AgeCalculation from 'utils/age';
 import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import { getTreatmentPlanName, getTreatmentPlanStatus } from 'utils/treatmentPlan';
@@ -28,6 +28,7 @@ const Patient = () => {
   const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const history = useHistory();
 
   const columns = [
     { name: 'identity', title: translate('common.id') },
@@ -91,6 +92,10 @@ const Patient = () => {
     }));
   }, [currentPage, pageSize, dispatch]);
 
+  const handleView = (id) => {
+    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', id));
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -116,14 +121,15 @@ const Patient = () => {
         rows={users.map(user => {
           const action = (
             <>
+              <ViewAction class="ml-1" onClick={() => handleView(user.id)} />
               <EditAction className="ml-1" onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" disabled />
             </>
           );
           return {
             identity: user.identity,
-            last_name: <Button className="p-0" variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.last_name}</Button>,
-            first_name: <Button className="p-0" variant="link" as={Link} to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', user.id)}>{user.first_name}</Button>,
+            last_name: user.last_name,
+            first_name: user.first_name,
             email: user.email,
             date_of_birth: user.date_of_birth !== null ? moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
