@@ -48,6 +48,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     age: '',
     therapist_id: ''
   });
+  const [dob, setDob] = useState('');
 
   useEffect(() => {
     if (!show) {
@@ -70,6 +71,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         date_of_birth: editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
         age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : ''
       });
+      setDob(editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '');
     } else {
       resetData();
       if (profile !== undefined) {
@@ -78,6 +80,19 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     }
     // eslint-disable-next-line
   }, [editId, users, profile]);
+
+  useEffect(() => {
+    if (dob) {
+      if (moment(dob, settings.date_format).isValid()) {
+        const date = moment(dob).format(settings.date_format);
+        const age = AgeCalculation(dob, translate);
+        setFormFields({ ...formFields, date_of_birth: date, age: age });
+      } else {
+        setFormFields({ ...formFields, date_of_birth: '', age: '' });
+      }
+    }
+    // eslint-disable-next-line
+  }, [dob]);
 
   const resetData = () => {
     setErrorCountry(false);
@@ -101,16 +116,6 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
-  };
-
-  const handleChangeDate = (value) => {
-    if (moment(value, settings.date_format).isValid()) {
-      const date = moment(value).format(settings.date_format);
-      const age = AgeCalculation(value, translate);
-      setFormFields({ ...formFields, date_of_birth: date, age: age });
-    } else {
-      setFormFields({ ...formFields, date_of_birth: '', age: '' });
-    }
   };
 
   const validateDate = (current) => {
@@ -274,8 +279,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               dateFormat={settings.date_format}
               timeFormat={false}
               closeOnSelect={true}
-              value={formFields.date_of_birth}
-              onChange={(e) => handleChangeDate(e)}
+              value={dob}
+              onChange={(value) => setDob(value)}
               isValidDate={ validateDate }
             />
             <p className="mt-1">{translate('common.age')} {formFields.age}</p>
