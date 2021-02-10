@@ -194,10 +194,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           <PhoneInput
             countryCodeEditable={false}
             disableDropdown={true}
-            country={getCountryIsoCode(profile.country_id, countries)}
+            country={getCountryIsoCode(profile.country_id, countries).toLowerCase()}
             value={formFields.phone}
             onlyCountries={
-              countries.map(country => { return country.iso_code; })
+              countries.map(country => { return country.iso_code.toLowerCase(); })
             }
             onChange={(value, country) => {
               setFormFields({ ...formFields, phone: value });
