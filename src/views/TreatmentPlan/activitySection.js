@@ -168,12 +168,14 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         <h6>{translate('treatment_plan.activities')}</h6>
         <div>
           <span className="mr-3">
-            <b>{ _.sumBy(activities, a => a.exercises ? a.exercises.length : 0) }</b> {translate('common.exercises')}
+            <b>{ _.sumBy(activities, a => a.exercises ? a.exercises.length : 0) }</b> {translate('activity.exercises')}
           </span>
           <span className="mr-3">
-            <b>{ _.sumBy(activities, a => a.materials ? a.materials.length : 0) }</b> {translate('common.education_materials')}
+            <b>{ _.sumBy(activities, a => a.materials ? a.materials.length : 0) }</b> {translate('activity.education_materials')}
           </span>
-          <span><b>0</b> {translate('common.questionnaire')}</span>
+          <span>
+            <b>{ _.sumBy(activities, a => a.questionnaires ? a.questionnaires.length : 0) }</b> {translate('activity.questionnaires')}
+          </span>
         </div>
         <div className="d-flex align-items-center my-4">
           {weekElements()}
