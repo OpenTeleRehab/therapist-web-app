@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 import { Dropdown, DropdownButton, Button } from 'react-bootstrap';
-import * as ROUTES from 'variables/routes';
 import { BsFillChatSquareFill } from 'react-icons/bs';
 import { FaPhoneAlt } from 'react-icons/fa';
 
@@ -43,7 +42,6 @@ const ViewPatient = () => {
             </Button>
             <DropdownButton alignRight variant="primary" title={translate('common.action')}>
               <Dropdown.Item onClick={() => handleEdit(patientId)}>{translate('common.edit_info')}</Dropdown.Item>
-              <Dropdown.Item as={Link} to={ROUTES.TREATMENT_PLAN_CREATE_FOR_PATIENT.replace(':patientId', patientId)}>{translate('patient.create_treatment')}</Dropdown.Item>
               <Dropdown.Item href="#/action-3">{translate('patient.deactivate_account')}</Dropdown.Item>
               <Dropdown.Item href="#/action-4">{translate('patient.delete_account')}</Dropdown.Item>
             </DropdownButton>

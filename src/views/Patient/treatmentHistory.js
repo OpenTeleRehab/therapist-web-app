@@ -8,6 +8,7 @@ import { EditAction, ViewAction } from 'components/ActionIcons';
 import { getTreatmentPlans } from 'store/treatmentPlan/actions';
 import * as ROUTES from 'variables/routes';
 import { STATUS } from 'variables/treatmentPlan';
+import CreateButton from 'views/Patient/Partials/createButton';
 
 let timer = null;
 const TreatmentHistory = () => {
@@ -78,6 +79,7 @@ const TreatmentHistory = () => {
         filters={filters}
         columns={columns}
         columnExtensions={columnExtensions}
+        rightButton={<CreateButton />}
         rows={treatmentPlans.map(treatmentPlan => {
           const action = (
             <>

@@ -32,7 +32,7 @@ import { useSelector } from 'react-redux';
 const FilterRow = (props) => <Table.Row className="filter" {...props} />;
 const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
-const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters }) => {
+const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, rightButton }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
@@ -76,6 +76,7 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
       <SearchPanel inputComponent={SearchInput} />
       <FilterToggle onToggle={toggleFilter} showFilter={showFilter} />
       <ColumnChooser toggleButtonComponent={ToggleButton} />
+      {rightButton}
       <PagingPanel pageSizes={pageSizes} />
     </Grid>
   );
@@ -92,7 +93,8 @@ CustomTable.propTypes = {
   totalCount: PropTypes.number,
   setSearchValue: PropTypes.func,
   setFilters: PropTypes.func,
-  filters: PropTypes.array
+  filters: PropTypes.array,
+  rightButton: PropTypes.object
 };
 
 CustomTable.defaultProps = {
