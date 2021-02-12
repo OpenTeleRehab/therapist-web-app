@@ -55,7 +55,7 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
       rows={rows}
       columns={columns}>
       <SearchState onValueChange={setSearchValue} />
-      <FilteringState defaultFilters={[]} onFiltersChange={setFilters} columnExtensions={filteringStateColumnExtensions} />
+      <FilteringState filters={filters} defaultFilters={[]} onFiltersChange={setFilters} columnExtensions={filteringStateColumnExtensions} />
       <PagingState
         currentPage={currentPage}
         onCurrentPageChange={setCurrentPage}
