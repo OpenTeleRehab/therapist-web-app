@@ -3,7 +3,7 @@ import { Col, Form } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
-import Datetime from 'react-datetime';
+import Datetime from 'components/DateTime';
 import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment';
@@ -34,6 +34,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [errorClass, setErrorClass] = useState('');
   const [dialCode, setDialCode] = useState('');
   const [errorGender, setErrorGender] = useState(false);
+  const [errorInvalidDob, setErrorInvalidDob] = useState(false);
 
   const [formFields, setFormFields] = useState({
     first_name: '',
@@ -71,7 +72,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         date_of_birth: editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
         age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : ''
       });
-      setDob(editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '');
+      setDob(editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD') : '');
     } else {
       resetData();
       if (profile !== undefined) {
@@ -82,17 +83,24 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   }, [editId, users, profile]);
 
   useEffect(() => {
-    if (dob) {
-      if (moment(dob, settings.date_format).isValid()) {
-        const date = moment(dob).format(settings.date_format);
-        const age = AgeCalculation(dob, translate);
-        setFormFields({ ...formFields, date_of_birth: date, age: age });
+    if (formFields.clinic_id) {
+      if (dob) {
+        if (moment(dob, settings.date_format, true).isValid() && dob.isBefore(moment())) {
+          const date = moment(dob).format(settings.date_format);
+          const age = AgeCalculation(dob, translate);
+          setErrorInvalidDob(false);
+          setFormFields({ ...formFields, date_of_birth: date, age: age });
+        } else {
+          setErrorInvalidDob(true);
+          setFormFields({ ...formFields, date_of_birth: '', age: '' });
+        }
       } else {
+        setErrorInvalidDob(false);
         setFormFields({ ...formFields, date_of_birth: '', age: '' });
       }
     }
     // eslint-disable-next-line
-  }, [dob]);
+  }, [dob, formFields.therapist_id]);
 
   const resetData = () => {
     setErrorCountry(false);
@@ -100,6 +108,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     setErrorFirstName(false);
     setErrorLastName(false);
     setErrorGender(false);
+    setErrorInvalidDob(false);
     setFormFields({
       first_name: '',
       last_name: '',
@@ -144,6 +153,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       setErrorLastName(true);
     } else {
       setErrorLastName(false);
+    }
+
+    if (errorInvalidDob) {
+      canSave = false;
     }
 
     let formValues = formFields;
@@ -273,7 +286,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               inputProps={{
                 name: 'date_of_birth',
                 autoComplete: 'off',
-                className: 'form-control',
+                className: errorInvalidDob ? 'form-control is-invalid' : 'form-control',
                 placeholder: translate('placeholder.date_of_birth')
               }}
               dateFormat={settings.date_format}
@@ -283,6 +296,11 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               onChange={(value) => setDob(value)}
               isValidDate={ validateDate }
             />
+            {errorInvalidDob && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {translate('error.invalid_date')}
+              </Form.Control.Feedback>
+            )}
             <p className="mt-1">{translate('common.age')} {formFields.age}</p>
           </Form.Group>
         </Form.Row>

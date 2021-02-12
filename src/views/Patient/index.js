@@ -121,7 +121,7 @@ const Patient = () => {
         rows={users.map(user => {
           const action = (
             <>
-              <ViewAction class="ml-1" onClick={() => handleView(user.id)} />
+              <ViewAction className="ml-1" onClick={() => handleView(user.id)} />
               <EditAction className="ml-1" onClick={() => handleEdit(user.id)} />
               <DeleteAction className="ml-1" disabled />
             </>
