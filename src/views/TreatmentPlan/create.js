@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Accordion, Row, Col, Form, Button } from 'react-bootstrap';
-import Datetime from 'react-datetime';
+import Datetime from 'components/DateTime';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
@@ -35,6 +35,7 @@ const CreateTreatmentPlan = () => {
     patient_name: ''
   });
   const [weeks, setWeeks] = useState(1);
+  const [startDate, setStartDate] = useState('');
 
   const [errorName, setErrorName] = useState(false);
   const [errorDescription, setErrorDescription] = useState(false);
@@ -56,6 +57,17 @@ const CreateTreatmentPlan = () => {
   }, [patientId, users]);
 
   useEffect(() => {
+    const yesterday = moment().subtract(1, 'day');
+    if (moment(startDate, settings.date_format, true).isValid() && startDate.isAfter(yesterday)) {
+      const date = moment(startDate).format(settings.date_format);
+      setFormFields({ ...formFields, start_date: date });
+    } else {
+      setFormFields({ ...formFields, start_date: '' });
+    }
+    // eslint-disable-next-line
+  }, [startDate]);
+
+  useEffect(() => {
     if (formFields.start_date) {
       setFormFields({ ...formFields, end_date: moment(formFields.start_date, settings.date_format).add(weeks, 'weeks').subtract(1, 'days').format(settings.date_format) });
     } else {
@@ -74,6 +86,7 @@ const CreateTreatmentPlan = () => {
         start_date: moment(editingData.start_date, settings.date_format).format(settings.date_format),
         end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format)
       });
+      setStartDate(moment(editingData.start_date, settings.date_format));
       setActivities(editingData.activities || []);
       setWeeks(editingData.total_of_weeks);
     } else {
@@ -98,15 +111,6 @@ const CreateTreatmentPlan = () => {
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
-  };
-
-  const handleChangeDate = (value) => {
-    if (moment(value, settings.date_format).isValid()) {
-      const date = moment(value).format(settings.date_format);
-      setFormFields({ ...formFields, start_date: date });
-    } else {
-      setFormFields({ ...formFields, start_date: '' });
-    }
   };
 
   const handleSaveAsPreset = () => {
@@ -277,7 +281,7 @@ const CreateTreatmentPlan = () => {
                   timeFormat={false}
                   closeOnSelect={true}
                   value={formFields.start_date}
-                  onChange={(e) => handleChangeDate(e)}
+                  onChange={(value) => setStartDate(value)}
                   isValidDate={ validateDate }
                 />
                 {errorStartDate && (
