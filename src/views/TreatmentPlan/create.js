@@ -20,21 +20,7 @@ const CreateTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
   const treatmentPlans = useSelector((state) => state.treatmentPlan.treatmentPlans);
   const translate = getTranslate(localize);
-  const patients = [
-    {
-      id: 1,
-      name: 'Patient 1'
-    },
-    {
-      id: 2,
-      name: 'Patient 2'
-    },
-    {
-      id: 3,
-      name: 'Patient 3'
-    }
-  ];
-
+  const users = useSelector(state => state.user.users);
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
@@ -45,7 +31,8 @@ const CreateTreatmentPlan = () => {
     description: '',
     patient_id: patientId,
     start_date: '',
-    end_date: ''
+    end_date: '',
+    patient_name: ''
   });
   const [weeks, setWeeks] = useState(1);
 
@@ -59,6 +46,14 @@ const CreateTreatmentPlan = () => {
       dispatch(getTreatmentPlans({ id }));
     }
   }, [id, dispatch]);
+
+  useEffect(() => {
+    if (users.length) {
+      const data = users.find(user => user.id === parseInt(patientId));
+      setFormFields({ ...formFields, patient_name: data.last_name + ' ' + data.first_name });
+    }
+    // eslint-disable-next-line
+  }, [patientId, users]);
 
   useEffect(() => {
     if (formFields.start_date) {
@@ -266,10 +261,7 @@ const CreateTreatmentPlan = () => {
                   value={formFields.patient_id}
                   disabled={true}
                 >
-                  <option>{translate('placeholder.patient')}</option>
-                  {patients.length && patients.map((patient) => {
-                    return (<option key={`patient-${patient.id}`} value={patient.id}>{ patient.name }</option>);
-                  })}
+                  <option>{formFields.patient_name}</option>
                 </Form.Control>
               </Form.Group>
               <Form.Group>
