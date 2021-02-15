@@ -130,12 +130,13 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
       const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
       const materialIds = dayActivity ? dayActivity.materials || [] : [];
       const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
+      const isEven = date.date() % 2 === 0;
       elements.push(
-        <div className="flex-fill flex-basic-0 d-flex flex-column align-items-center" key={`day-column-${i}`}>
+        <div className={'flex-fill flex-basic-0 d-flex flex-column align-items-center ' + (isEven ? 'bg-white' : 'bg-light') } key={`day-column-${i}`}>
           <div
             className={date.weekday() === 0 || date.weekday() === 6
               ? 'font-weight-bold w-100 text-center text-uppercase py-2 bg-danger'
-              : 'font-weight-bold w-100 text-center text-uppercase py-2'}
+              : 'font-weight-bold w-100 text-center text-uppercase py-2 bg-light'}
           >
             {translate('common.day')} {i + 1}
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
@@ -188,7 +189,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           </Button>
         </div>
       </div>
-      <div className="d-flex flex-column flex-lg-row bg-light mb-3">
+      <div className="d-flex flex-column flex-lg-row mb-3">
         {!openActivityDialog && dayElements()}
       </div>
       <Dialog
