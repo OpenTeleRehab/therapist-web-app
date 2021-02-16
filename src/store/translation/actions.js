@@ -5,9 +5,9 @@ import {
 } from 'store/notification/actions';
 import { addTranslationForLanguage } from 'react-localize-redux';
 
-export const getTranslations = () => async dispatch => {
+export const getTranslations = (lang) => async (dispatch) => {
   dispatch(mutation.getTranslationsRequest());
-  const res = await Translation.getTranslations();
+  const res = await Translation.getTranslations(lang);
   if (res && res.data) {
     const messages = {};
     res.data.map(m => {

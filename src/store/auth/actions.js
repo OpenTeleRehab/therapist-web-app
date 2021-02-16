@@ -12,8 +12,6 @@ export const getProfile = () => async dispatch => {
   const data = await Auth.getProfile();
   if (data && data.data) {
     dispatch(mutation.getProfileSuccess(data.data));
-    // Declare global language variable
-    window.lang = data.data.language_id;
     return data;
   } else {
     dispatch(mutation.getProfileFail());
@@ -27,9 +25,7 @@ export const updateProfile = (id, payload) => async dispatch => {
   if (data.success) {
     dispatch(mutation.updateProfileSuccess());
     dispatch(showSuccessNotification('toast_title.update_profile', 'success_message.update_profile_success'));
-    // Declare global language variable
-    window.lang = payload.language_id;
-    dispatch(getTranslations());
+    dispatch(getTranslations(payload.language_id));
     dispatch(getProfile());
     return true;
   } else {
