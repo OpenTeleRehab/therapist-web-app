@@ -77,6 +77,7 @@ const Patient = () => {
       timer = setTimeout(() => {
         dispatch(getUsers({
           therapist_id: profile.id,
+          filters,
           search_value: searchValue,
           page_size: pageSize,
           page: currentPage + 1
