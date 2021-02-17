@@ -6,18 +6,25 @@ import PropTypes from 'prop-types';
 import {
   Tooltip,
   OverlayTrigger
+  , Dropdown, DropdownButton, Button
 } from 'react-bootstrap';
+
+import { BsFillChatSquareFill } from 'react-icons/bs';
+import { FaPhoneAlt } from 'react-icons/fa';
 
 import EllipsisText from 'react-ellipsis-text';
 
 import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
 import { getUsers } from 'store/user/actions';
+import CreatePatient from 'views/Patient/create';
 
-const PatientInfo = ({ id, translate }) => {
+const PatientInfo = ({ id, translate, breadcrumb }) => {
   const dispatch = useDispatch();
   const users = useSelector(state => state.user.users);
   const countries = useSelector(state => state.country.countries);
+  const [editId, setEditId] = useState('');
+  const [show, setShow] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -48,8 +55,35 @@ const PatientInfo = ({ id, translate }) => {
       });
     }
   }, [id, users, countries, translate]);
+
+  const handleEdit = (id) => {
+    setEditId(id);
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setEditId('');
+    setShow(false);
+  };
+
   return (
     <>
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pr-3 pl-3 pt-3">
+        <span>{breadcrumb}</span>
+        <div className="btn-toolbar mb-2 mb-md-0">
+          <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
+            <FaPhoneAlt size={20} />
+          </Button>
+          <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
+            <BsFillChatSquareFill size={20} />
+          </Button>
+          <DropdownButton alignRight variant="primary" title={translate('common.action')}>
+            <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
+            <Dropdown.Item href="#/action-3">{translate('patient.deactivate_account')}</Dropdown.Item>
+            <Dropdown.Item href="#/action-4">{translate('patient.delete_account')}</Dropdown.Item>
+          </DropdownButton>
+        </div>
+      </div>
       <div className="p-3">
         <h4 className="mb-">{formFields.name}</h4>
         <div className="patient-info">
@@ -69,13 +103,15 @@ const PatientInfo = ({ id, translate }) => {
           </span>
         </div>
       </div>
+      {show && <CreatePatient handleClose={handleClose} show={show} editId={editId} />}
     </>
   );
 };
 
 PatientInfo.propTypes = {
   id: PropTypes.string,
-  translate: PropTypes.func
+  translate: PropTypes.func,
+  breadcrumb: PropTypes.string
 };
 
 export default PatientInfo;

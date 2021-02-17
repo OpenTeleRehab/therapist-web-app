@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { getTranslate } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useHistory } from 'react-router-dom';
-import { Badge } from 'react-bootstrap';
+import { useParams, Link } from 'react-router-dom';
+import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import moment from 'moment/moment';
+import * as ROUTES from 'variables/routes';
 
 import PatientInfo from 'views/Patient/Partials/patientInfo';
 import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import settings from 'settings';
 import { STATUS } from 'variables/treatmentPlan';
-import { EditAction } from 'components/ActionIcons';
+import EllipsisText from 'react-ellipsis-text';
 
 const ViewTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
-  const history = useHistory();
   const dispatch = useDispatch();
 
   const treatmentPlans = useSelector((state) => state.treatmentPlan.treatmentPlans);
@@ -52,20 +52,15 @@ const ViewTreatmentPlan = () => {
     // eslint-disable-next-line
   }, [id, treatmentPlans]);
 
-  const handleBack = () => {
-    history.goBack();
-  };
-
   return (
     <>
       <div className="top-content">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pr-3 pl-3 pt-3">
-          <span>{translate('treatment_plan.patient_detail')}</span>
-        </div>
-        <PatientInfo id={patientId} translate={translate} />
+        <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
       </div>
       <div className="mt-3">
-        <span><a href="#" onClick={handleBack}>{translate('treatment_plan.list')}</a></span>
+        <span>
+          <Link to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId)}>&lt; {translate('treatment_plan.back_to_list')}</Link>
+        </span>
         <div className="d-flex align-self-center mt-4">
           <h4 className="mr-4">{formFields.name}</h4>
           <span className="mb-2 ">
@@ -86,15 +81,26 @@ const ViewTreatmentPlan = () => {
               )
             }
           </span>
-          <span>
-            <EditAction className="ml-1"/>
-          </span>
         </div>
         <div className="patient-info">
-          <span className="mr-4"><strong>{translate('common.description')}:</strong> {formFields.description}</span>
+          <span className="mr-4">
+            <strong>{translate('common.description')}:</strong>&nbsp;
+            <OverlayTrigger
+              overlay={<Tooltip id="button-tooltip-2">{ formFields.description }</Tooltip>}
+            >
+              <span className="card-title">
+                <EllipsisText text={formFields.description} length={settings.noteMaxLength} />
+              </span>
+            </OverlayTrigger>
+          </span>
           <span className="mr-4"><strong>{translate('common.start_date')}:</strong> {formFields.start_date}</span>
           <span className="mr-4"><strong>{translate('common.end_date')}:</strong> {formFields.end_date}</span>
-          <span className="mr-4"><strong>{translate('common.duration')}</strong> {weeks}</span>
+          <span className="mr-4"><strong>{translate('common.duration')}:</strong>&nbsp;
+            {weeks}&nbsp;
+            {
+              weeks === 1 ? translate('common.week') : translate('common.weeks')
+            }
+          </span>
         </div>
       </div>
     </>
