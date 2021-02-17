@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getTranslate } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
-import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Badge, OverlayTrigger, Tab, Tabs, Tooltip } from 'react-bootstrap';
 import moment from 'moment/moment';
 import * as ROUTES from 'variables/routes';
 
@@ -11,6 +11,8 @@ import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import settings from 'settings';
 import { STATUS } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
+import QuestionnaireTab from './TabContents/questionnaireTab';
+import ActivitiesTab from './TabContents/activityTab';
 
 const ViewTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
@@ -29,6 +31,8 @@ const ViewTreatmentPlan = () => {
     status: ''
   });
   const [weeks, setWeeks] = useState(1);
+  const [key, setKey] = useState('activity');
+  const [activities, setActivities] = useState([]);
 
   useEffect(() => {
     if (id) {
@@ -48,6 +52,7 @@ const ViewTreatmentPlan = () => {
         status: editingData.status
       });
       setWeeks(editingData.total_of_weeks);
+      setActivities(editingData.activities);
     }
     // eslint-disable-next-line
   }, [id, treatmentPlans]);
@@ -102,6 +107,20 @@ const ViewTreatmentPlan = () => {
             }
           </span>
         </div>
+      </div>
+      <div className="mt-lg-5">
+        <Tabs
+          id="controlled-tab"
+          activeKey={key}
+          onSelect={(k) => setKey(k)}
+        >
+          <Tab eventKey="activity" title={translate('common.activity')}>
+            <ActivitiesTab activities={activities}/>
+          </Tab>
+          <Tab eventKey="questionnaire" title={translate('common.questionnaire')}>
+            <QuestionnaireTab activities={activities}/>
+          </Tab>
+        </Tabs>
       </div>
     </>
   );
