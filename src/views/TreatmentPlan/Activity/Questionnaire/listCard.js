@@ -7,7 +7,7 @@ import {
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
-import { RiChatQuoteLine } from 'react-icons/ri';
+import { FiTwitch } from 'react-icons/fi';
 
 import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
@@ -49,7 +49,7 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove }) => {
               )
             }
             <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-              <RiChatQuoteLine size={80} />
+              <FiTwitch size={80} />
               <p>{translate('activity.questionnaire').toUpperCase()}</p>
             </div>
           </div>

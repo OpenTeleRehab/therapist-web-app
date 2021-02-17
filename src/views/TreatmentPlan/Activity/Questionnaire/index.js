@@ -15,7 +15,7 @@ import { BsSearch, BsX } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
-import { RiChatQuoteLine } from 'react-icons/ri';
+import { FiTwitch } from 'react-icons/fi';
 import { getQuestionnaires } from 'store/questionnaire/actions';
 
 let timer = null;
@@ -124,7 +124,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
                         </div>
 
                         <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                          <RiChatQuoteLine size={80} />
+                          <FiTwitch size={80} />
                           <p>{translate('activity.questionnaire').toUpperCase()}</p>
                         </div>
                       </div>
