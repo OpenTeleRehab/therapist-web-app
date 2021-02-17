@@ -130,7 +130,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
       const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
       const materialIds = dayActivity ? dayActivity.materials || [] : [];
       const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
-      const isEven = date.date() % 2 === 0;
+      const isEven = i % 2 === 0;
       elements.push(
         <div className={'flex-fill flex-basic-0 d-flex flex-column align-items-center ' + (isEven ? 'bg-white' : 'bg-light') } key={`day-column-${i}`}>
           <div
