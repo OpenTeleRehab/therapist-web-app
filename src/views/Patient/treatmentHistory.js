@@ -63,6 +63,10 @@ const TreatmentHistory = () => {
     history.push(ROUTES.TREATMENT_PLAN_EDIT.replace(':patientId', patientId).replace(':id', id));
   };
 
+  const handleView = (id) => {
+    history.push(ROUTES.VIEW_TREATMENT_PLAN_DETAIL.replace(':patientId', patientId).replace(':id', id));
+  };
+
   return (
     <div className="mt-3">
       <h5>
@@ -83,7 +87,7 @@ const TreatmentHistory = () => {
         rows={treatmentPlans.map(treatmentPlan => {
           const action = (
             <>
-              <ViewAction disabled />
+              <ViewAction onClick={() => handleView(treatmentPlan.id)} />
               <EditAction className="ml-1" onClick={() => handleEdit(treatmentPlan.id)} />
             </>
           );
