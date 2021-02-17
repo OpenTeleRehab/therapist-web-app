@@ -186,10 +186,7 @@ const CreateTreatmentPlan = () => {
   return (
     <>
       <div className="top-content">
-        <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pr-3 pl-3 pt-3">
-          <span>{translate('treatment_plan.patient_detail')}</span>
-        </div>
-        <PatientInfo id={patientId} translate={translate} />
+        <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
       </div>
       <div className="d-flex mb-4 mt-4">
         <h4 className="mb-">{translate('treatment_plan.treatment_planning')}</h4>
