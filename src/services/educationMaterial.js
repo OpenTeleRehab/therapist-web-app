@@ -12,8 +12,8 @@ const getEducationMaterials = payload => {
     });
 };
 
-const getEducationMaterialsByIds = materialIds => {
-  const params = { material_ids: materialIds };
+const getEducationMaterialsByIds = (materialIds, lang) => {
+  const params = { material_ids: materialIds, lang: lang };
   return axios.get('education-material/list/by-ids', { params })
     .then(
       res => {

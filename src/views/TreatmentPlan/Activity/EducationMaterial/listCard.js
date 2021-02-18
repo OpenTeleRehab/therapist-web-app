@@ -13,14 +13,14 @@ import { EducationMaterial } from 'services/educationMaterial';
 import { useSelector } from 'react-redux';
 import { BsX } from 'react-icons/bs';
 
-const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly }) => {
+const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly, lang }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
 
   useEffect(() => {
     if (materialIds && materialIds.length > 0) {
-      EducationMaterial.getEducationMaterialsByIds(materialIds).then(res => {
+      EducationMaterial.getEducationMaterialsByIds(materialIds, lang).then(res => {
         if (res.data) {
           setMaterials(res.data);
         }
@@ -28,7 +28,7 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly }
     } else {
       setMaterials([]);
     }
-  }, [materialIds]);
+  }, [materialIds, lang]);
 
   return (
     <>
@@ -81,7 +81,8 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly }
 ListEducationMaterialCard.propTypes = {
   materialIds: PropTypes.array,
   onSelectionRemove: PropTypes.func,
-  readyOnly: PropTypes.bool
+  readyOnly: PropTypes.bool,
+  lang: PropTypes.string
 };
 
 export default withLocalize(ListEducationMaterialCard);

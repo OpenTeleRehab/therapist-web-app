@@ -16,6 +16,7 @@ import { language } from 'store/setting/reducers';
 import { exercise } from 'store/exercise/reducers';
 import { educationMaterial } from 'store/educationMaterial/reducers';
 import { questionnaire } from 'store/questionnaire/reducers';
+import { spinnerOverlay } from 'store/spinnerOverlay/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -28,7 +29,8 @@ export const rootReducer = {
   language,
   exercise,
   educationMaterial,
-  questionnaire
+  questionnaire,
+  spinnerOverlay
 };
 
 const devTool =

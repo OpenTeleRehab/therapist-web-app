@@ -13,14 +13,14 @@ import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
 import { BsX } from 'react-icons/bs';
 
-const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly }) => {
+const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly, lang }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
 
   useEffect(() => {
     if (materialIds && materialIds.length > 0) {
-      Questionnaire.getQuestionnairesByIds(materialIds).then(res => {
+      Questionnaire.getQuestionnairesByIds(materialIds, lang).then(res => {
         if (res.data) {
           setQuestionnaires(res.data);
         }
@@ -28,7 +28,7 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly }) =>
     } else {
       setQuestionnaires([]);
     }
-  }, [materialIds]);
+  }, [materialIds, lang]);
 
   return (
     <>
@@ -82,7 +82,8 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly }) =>
 ListQuestionnaireCard.propTypes = {
   materialIds: PropTypes.array,
   onSelectionRemove: PropTypes.func,
-  readyOnly: PropTypes.bool
+  readyOnly: PropTypes.bool,
+  lang: PropTypes.string
 };
 
 export default withLocalize(ListQuestionnaireCard);

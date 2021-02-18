@@ -24,6 +24,14 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [openActivityDialog, setOpenActivityDialog] = useState(false);
   const [day, setDay] = useState(1);
   const [weekToRemove, setWeekToRemove] = useState(0);
+  const { profile } = useSelector((state) => state.auth);
+  const [lang, setLang] = useState('');
+
+  useEffect(() => {
+    if (profile) {
+      setLang(profile.language_id);
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (moment(startDate, settings.date_format).isValid()) {
@@ -142,9 +150,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
-            <ListExerciseCard exerciseIds={[...exerciseIds]} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readyOnly={readyOnly} />
-            <ListEducationMaterialCard materialIds={[...materialIds]} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readyOnly={readyOnly} />
-            <ListQuestionnaireCard materialIds={[...questionnaireIds]} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readyOnly={readyOnly} />
+            <ListExerciseCard exerciseIds={[...exerciseIds]} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
+            <ListEducationMaterialCard materialIds={[...materialIds]} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
+            <ListQuestionnaireCard materialIds={[...questionnaireIds]} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
 
             <div className="text-center">
               {!readyOnly && <Button

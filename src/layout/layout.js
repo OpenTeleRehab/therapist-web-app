@@ -6,6 +6,7 @@ import { getTranslate } from 'react-localize-redux';
 
 import Navigation from 'layout/navigation';
 import ToastNotification from 'components/ToastNotification';
+import SpinnerOverlay from 'components/SpinnerOverlay';
 
 const Layout = ({ component: Component, title }) => {
   const localize = useSelector((state) => state.localize);
@@ -26,6 +27,7 @@ const Layout = ({ component: Component, title }) => {
       </main>
 
       <ToastNotification />
+      <SpinnerOverlay />
     </>
   );
 };

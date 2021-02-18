@@ -12,8 +12,8 @@ const getExercises = payload => {
     });
 };
 
-const getExercisesByIds = exerciseIds => {
-  const params = { exercise_ids: exerciseIds };
+const getExercisesByIds = (exerciseIds, lang) => {
+  const params = { exercise_ids: exerciseIds, lang: lang };
   return axios.get('exercise/list/by-ids', { params })
     .then(
       res => {
