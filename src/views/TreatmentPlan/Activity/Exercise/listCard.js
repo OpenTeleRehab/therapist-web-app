@@ -13,6 +13,7 @@ import { BsX } from 'react-icons/bs';
 
 const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly, lang }) => {
   const [exercises, setExercises] = useState([]);
+  const [ids] = exerciseIds;
 
   useEffect(() => {
     if (exerciseIds && exerciseIds.length > 0) {
@@ -24,12 +25,12 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly, lang }) =
     } else {
       setExercises([]);
     }
-  }, [exerciseIds, lang]);
+  }, [ids, exerciseIds, lang]);
 
   return (
     <>
       { exercises.map(exercise => (
-        <Card key={exercise} className="exercise-card shadow-sm mb-4">
+        <Card key={exercise.id} className="exercise-card shadow-sm mb-4">
           <div className="card-img bg-light">
             {
               onSelectionRemove && (
@@ -92,7 +93,7 @@ ListExerciseCard.propTypes = {
   exerciseIds: PropTypes.array,
   onSelectionRemove: PropTypes.func,
   readyOnly: PropTypes.bool,
-  lang: PropTypes.string
+  lang: PropTypes.any
 };
 
 export default withLocalize(ListExerciseCard);

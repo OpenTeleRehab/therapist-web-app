@@ -150,9 +150,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
-            <ListExerciseCard exerciseIds={[...exerciseIds]} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
-            <ListEducationMaterialCard materialIds={[...materialIds]} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
-            <ListQuestionnaireCard materialIds={[...questionnaireIds]} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
+            <ListExerciseCard exerciseIds={exerciseIds} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
+            <ListEducationMaterialCard materialIds={materialIds} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
+            <ListQuestionnaireCard materialIds={questionnaireIds} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
 
             <div className="text-center">
               {!readyOnly && <Button
