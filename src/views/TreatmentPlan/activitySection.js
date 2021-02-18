@@ -14,7 +14,7 @@ import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
 import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/listCard';
 
-const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities }) => {
+const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readyOnly }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -75,7 +75,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           >
             {translate('common.week')} {i}
           </Button>
-          {i !== 1 && <Button
+          {i !== 1 && !readyOnly && <Button
             className="btn-circle-sm btn-in-btn"
             variant="light"
             onClick={() => handleRemoveWeek(i)}
@@ -142,18 +142,19 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
-            <ListExerciseCard exerciseIds={[...exerciseIds]} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} />
-            <ListEducationMaterialCard materialIds={[...materialIds]} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} />
-            <ListQuestionnaireCard materialIds={[...questionnaireIds]} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} />
+            <ListExerciseCard exerciseIds={[...exerciseIds]} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readyOnly={readyOnly} />
+            <ListEducationMaterialCard materialIds={[...materialIds]} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readyOnly={readyOnly} />
+            <ListQuestionnaireCard materialIds={[...questionnaireIds]} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readyOnly={readyOnly} />
 
             <div className="text-center">
-              <Button
+              {!readyOnly && <Button
                 variant="outline-primary"
                 className="btn-circle-lg m-3"
                 onClick={() => handleAddActivity(i + 1)}
               >
                 <BsPlus size={15} />
               </Button>
+              }
             </div>
           </div>
         </div>
@@ -166,8 +167,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   return (
     <>
       <div className="d-flex justify-content-center align-items-center flex-column">
-        <h6>{translate('treatment_plan.activities')}</h6>
-        <div>
+        {!readyOnly && <h6 className="mb-0">{translate('treatment_plan.activities')}</h6>}
+        <div className="mt-3">
           <span className="mr-3">
             <b>{ _.sumBy(activities, a => a.exercises ? a.exercises.length : 0) }</b> {translate('activity.exercises')}
           </span>
@@ -180,13 +181,14 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         </div>
         <div className="d-flex align-items-center my-4">
           {weekElements()}
-          <Button
+          {!readyOnly && <Button
             variant="outline-primary"
             className="btn-circle"
             onClick={handleAddWeek}
           >
             <BsPlus size={15} />
           </Button>
+          }
         </div>
       </div>
       <div className="d-flex flex-column flex-lg-row mb-3">
@@ -223,7 +225,8 @@ ActivitySection.propTypes = {
   startDate: PropTypes.string,
   day: PropTypes.number,
   activities: PropTypes.array,
-  setActivities: PropTypes.func
+  setActivities: PropTypes.func,
+  readyOnly: PropTypes.bool
 };
 
 export default ActivitySection;

@@ -12,7 +12,7 @@ import settings from 'settings';
 import { STATUS } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
 import QuestionnaireTab from './TabContents/questionnaireTab';
-import ActivitiesTab from './TabContents/activityTab';
+import ActivitySection from './activitySection';
 
 const ViewTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
@@ -33,6 +33,8 @@ const ViewTreatmentPlan = () => {
   const [weeks, setWeeks] = useState(1);
   const [key, setKey] = useState('activity');
   const [activities, setActivities] = useState([]);
+  const [startDate, setStartDate] = useState('');
+  const [readyOnly] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -53,6 +55,7 @@ const ViewTreatmentPlan = () => {
       });
       setWeeks(editingData.total_of_weeks);
       setActivities(editingData.activities);
+      setStartDate(moment(editingData.start_date, settings.date_format).format(settings.date_format));
     }
     // eslint-disable-next-line
   }, [id, treatmentPlans]);
@@ -114,8 +117,8 @@ const ViewTreatmentPlan = () => {
           activeKey={key}
           onSelect={(k) => setKey(k)}
         >
-          <Tab eventKey="activity" title={translate('common.activity')}>
-            <ActivitiesTab activities={activities}/>
+          <Tab eventKey="activity" title={translate('treatment_plan.activities')}>
+            <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} setActivities={setActivities} readyOnly={readyOnly} />
           </Tab>
           <Tab eventKey="questionnaire" title={translate('common.questionnaire')}>
             <QuestionnaireTab activities={activities}/>
