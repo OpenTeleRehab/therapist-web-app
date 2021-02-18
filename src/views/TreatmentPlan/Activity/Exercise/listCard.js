@@ -11,7 +11,7 @@ import {
 import { Exercise } from 'services/exercise';
 import { BsX } from 'react-icons/bs';
 
-const ListExerciseCard = ({ exerciseIds, onSelectionRemove }) => {
+const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly }) => {
   const [exercises, setExercises] = useState([]);
 
   useEffect(() => {
@@ -34,13 +34,14 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove }) => {
             {
               onSelectionRemove && (
                 <div className="position-absolute w-100 z-index-1">
-                  <Button
+                  {!readyOnly && <Button
                     className="btn-circle-sm float-right m-1"
                     variant="light"
                     onClick={() => onSelectionRemove(exercise.id)}
                   >
                     <BsX size={15} />
                   </Button>
+                  }
                 </div>
               )
             }
@@ -89,7 +90,8 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove }) => {
 
 ListExerciseCard.propTypes = {
   exerciseIds: PropTypes.array,
-  onSelectionRemove: PropTypes.func
+  onSelectionRemove: PropTypes.func,
+  readyOnly: PropTypes.bool
 };
 
 export default withLocalize(ListExerciseCard);

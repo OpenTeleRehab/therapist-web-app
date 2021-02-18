@@ -13,7 +13,7 @@ import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
 import { BsX } from 'react-icons/bs';
 
-const ListQuestionnaireCard = ({ materialIds, onSelectionRemove }) => {
+const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
@@ -38,6 +38,7 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove }) => {
             {
               onSelectionRemove && (
                 <div className="position-absolute w-100">
+                  {!readyOnly &&
                   <Button
                     className="btn-circle-sm float-right m-1"
                     variant="light"
@@ -45,6 +46,7 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove }) => {
                   >
                     <BsX size={15} />
                   </Button>
+                  }
                 </div>
               )
             }
@@ -79,7 +81,8 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove }) => {
 
 ListQuestionnaireCard.propTypes = {
   materialIds: PropTypes.array,
-  onSelectionRemove: PropTypes.func
+  onSelectionRemove: PropTypes.func,
+  readyOnly: PropTypes.bool
 };
 
 export default withLocalize(ListQuestionnaireCard);

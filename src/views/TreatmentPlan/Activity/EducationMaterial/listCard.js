@@ -13,7 +13,7 @@ import { EducationMaterial } from 'services/educationMaterial';
 import { useSelector } from 'react-redux';
 import { BsX } from 'react-icons/bs';
 
-const ListEducationMaterialCard = ({ materialIds, onSelectionRemove }) => {
+const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
@@ -38,13 +38,14 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove }) => {
             {
               onSelectionRemove && (
                 <div className="position-absolute w-100">
-                  <Button
+                  {!readyOnly && <Button
                     className="btn-circle-sm float-right m-1"
                     variant="light"
                     onClick={() => onSelectionRemove(material.id)}
                   >
                     <BsX size={15} />
                   </Button>
+                  }
                 </div>
               )
             }
@@ -79,7 +80,8 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove }) => {
 
 ListEducationMaterialCard.propTypes = {
   materialIds: PropTypes.array,
-  onSelectionRemove: PropTypes.func
+  onSelectionRemove: PropTypes.func,
+  readyOnly: PropTypes.bool
 };
 
 export default withLocalize(ListEducationMaterialCard);
