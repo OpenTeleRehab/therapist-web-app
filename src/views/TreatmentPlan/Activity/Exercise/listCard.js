@@ -11,12 +11,12 @@ import {
 import { Exercise } from 'services/exercise';
 import { BsX } from 'react-icons/bs';
 
-const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly }) => {
+const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly, lang }) => {
   const [exercises, setExercises] = useState([]);
 
   useEffect(() => {
     if (exerciseIds && exerciseIds.length > 0) {
-      Exercise.getExercisesByIds(exerciseIds).then(res => {
+      Exercise.getExercisesByIds(exerciseIds, lang).then(res => {
         if (res.data) {
           setExercises(res.data);
         }
@@ -24,7 +24,7 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly }) => {
     } else {
       setExercises([]);
     }
-  }, [exerciseIds]);
+  }, [exerciseIds, lang]);
 
   return (
     <>
@@ -91,7 +91,8 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly }) => {
 ListExerciseCard.propTypes = {
   exerciseIds: PropTypes.array,
   onSelectionRemove: PropTypes.func,
-  readyOnly: PropTypes.bool
+  readyOnly: PropTypes.bool,
+  lang: PropTypes.string
 };
 
 export default withLocalize(ListExerciseCard);

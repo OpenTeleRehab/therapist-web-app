@@ -12,8 +12,8 @@ const getQuestionnaires = payload => {
     });
 };
 
-const getQuestionnairesByIds = materialIds => {
-  const params = { questionnaire_ids: materialIds };
+const getQuestionnairesByIds = (materialIds, lang) => {
+  const params = { questionnaire_ids: materialIds, lang: lang };
   return axios.get('questionnaire/list/by-ids', { params })
     .then(
       res => {
