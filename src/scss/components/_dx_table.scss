@@ -10,3 +10,17 @@
 		background-color: theme-color('dark') !important;
 	}
 }
+
+.questionnaire-title {
+	white-space: pre-wrap;
+
+	.description {
+		overflow: hidden;
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+	}
+	.title {
+		color: $primary;
+	}
+}

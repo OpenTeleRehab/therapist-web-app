@@ -13,15 +13,17 @@ import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
 import { BsX } from 'react-icons/bs';
 
-const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly, lang }) => {
+const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectionRemove, readOnly, lang }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
-  const [ids] = materialIds;
+  const [ids] = questionnaireIds;
 
   useEffect(() => {
-    if (materialIds && materialIds.length > 0) {
-      Questionnaire.getQuestionnairesByIds(materialIds, lang).then(res => {
+    if (questionnaireObjs && questionnaireObjs.length > 0) {
+      setQuestionnaires(questionnaireObjs);
+    } else if (questionnaireIds && questionnaireIds.length > 0) {
+      Questionnaire.getQuestionnairesByIds(questionnaireIds, lang).then(res => {
         if (res.data) {
           setQuestionnaires(res.data);
         }
@@ -29,7 +31,7 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly, lang
     } else {
       setQuestionnaires([]);
     }
-  }, [ids, materialIds, lang]);
+  }, [ids, questionnaireIds, lang, questionnaireObjs]);
 
   return (
     <>
@@ -39,7 +41,7 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly, lang
             {
               onSelectionRemove && (
                 <div className="position-absolute w-100">
-                  {!readyOnly &&
+                  {!readOnly &&
                   <Button
                     className="btn-circle-sm float-right m-1"
                     variant="light"
@@ -81,9 +83,10 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly, lang
 };
 
 ListQuestionnaireCard.propTypes = {
-  materialIds: PropTypes.array,
+  questionnaireIds: PropTypes.array,
+  questionnaireObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
-  readyOnly: PropTypes.bool,
+  readOnly: PropTypes.bool,
   lang: PropTypes.any
 };
 

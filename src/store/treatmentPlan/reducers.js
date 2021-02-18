@@ -7,6 +7,11 @@ export const treatmentPlan = (state = initialState, action) => {
         treatmentPlans: action.data
       });
     }
+    case 'GET_TREATMENT_PLANS_DETAIL_SUCCESS': {
+      return Object.assign({}, state, {
+        treatmentPlansDetail: action.data
+      });
+    }
     default:
       return state;
   }

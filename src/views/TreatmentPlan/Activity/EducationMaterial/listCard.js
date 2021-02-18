@@ -13,14 +13,16 @@ import { EducationMaterial } from 'services/educationMaterial';
 import { useSelector } from 'react-redux';
 import { BsX } from 'react-icons/bs';
 
-const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly, lang }) => {
+const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
   const [ids] = materialIds;
 
   useEffect(() => {
-    if (materialIds && materialIds.length > 0) {
+    if (materialObjs && materialObjs.length > 0) {
+      setMaterials(materialObjs);
+    } else if (materialIds && materialIds.length > 0) {
       EducationMaterial.getEducationMaterialsByIds(materialIds, lang).then(res => {
         if (res.data) {
           setMaterials(res.data);
@@ -29,7 +31,7 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly, 
     } else {
       setMaterials([]);
     }
-  }, [ids, materialIds, lang]);
+  }, [ids, materialIds, lang, materialObjs]);
 
   return (
     <>
@@ -39,7 +41,7 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly, 
             {
               onSelectionRemove && (
                 <div className="position-absolute w-100">
-                  {!readyOnly && <Button
+                  {!readOnly && <Button
                     className="btn-circle-sm float-right m-1"
                     variant="light"
                     onClick={() => onSelectionRemove(material.id)}
@@ -81,8 +83,9 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly, 
 
 ListEducationMaterialCard.propTypes = {
   materialIds: PropTypes.array,
+  materialObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
-  readyOnly: PropTypes.bool,
+  readOnly: PropTypes.bool,
   lang: PropTypes.any
 };
 

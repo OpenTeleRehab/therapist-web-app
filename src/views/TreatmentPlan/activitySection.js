@@ -14,7 +14,7 @@ import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
 import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/listCard';
 
-const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readyOnly }) => {
+const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -83,7 +83,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           >
             {translate('common.week')} {i}
           </Button>
-          {i !== 1 && !readyOnly && <Button
+          {i !== 1 && !readOnly && <Button
             className="btn-circle-sm btn-in-btn"
             variant="light"
             onClick={() => handleRemoveWeek(i)}
@@ -133,11 +133,20 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const dayElements = () => {
     const elements = [];
     for (let i = 0; i < 7; i++) {
+      let exercises = null;
+      let materials = null;
+      let questionnaires = null;
       const date = moment(currentWeekStartDate).add(i, 'days');
       const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
       const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
       const materialIds = dayActivity ? dayActivity.materials || [] : [];
       const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
+      if (readOnly) {
+        const dayActivities = activities.filter(activity => activity.week === currentWeek && activity.day === i + 1);
+        exercises = dayActivities.filter(dayActivity => dayActivity.type === 'exercise');
+        materials = dayActivities.filter(dayActivity => dayActivity.type === 'material');
+        questionnaires = dayActivities.filter(dayActivity => dayActivity.type === 'questionnaire');
+      }
       const isEven = i % 2 === 0;
       elements.push(
         <div className={'flex-fill flex-basic-0 d-flex flex-column align-items-center ' + (isEven ? 'bg-white' : 'bg-light') } key={`day-column-${i}`}>
@@ -150,12 +159,12 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
-            <ListExerciseCard exerciseIds={exerciseIds} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
-            <ListEducationMaterialCard materialIds={materialIds} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
-            <ListQuestionnaireCard materialIds={questionnaireIds} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readyOnly={readyOnly} lang={lang} />
+            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} />
+            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} />
+            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} />
 
             <div className="text-center">
-              {!readyOnly && <Button
+              {!readOnly && <Button
                 variant="outline-primary"
                 className="btn-circle-lg m-3"
                 onClick={() => handleAddActivity(i + 1)}
@@ -175,7 +184,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   return (
     <>
       <div className="d-flex justify-content-center align-items-center flex-column">
-        {!readyOnly && <h6 className="mb-0">{translate('treatment_plan.activities')}</h6>}
+        {!readOnly && <h6 className="mb-0">{translate('treatment_plan.activities')}</h6>}
         <div className="mt-3">
           <span className="mr-3">
             <b>{ _.sumBy(activities, a => a.exercises ? a.exercises.length : 0) }</b> {translate('activity.exercises')}
@@ -189,7 +198,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         </div>
         <div className="d-flex align-items-center my-4">
           {weekElements()}
-          {!readyOnly && <Button
+          {!readOnly && <Button
             variant="outline-primary"
             className="btn-circle"
             onClick={handleAddWeek}
@@ -234,7 +243,7 @@ ActivitySection.propTypes = {
   day: PropTypes.number,
   activities: PropTypes.array,
   setActivities: PropTypes.func,
-  readyOnly: PropTypes.bool
+  readOnly: PropTypes.bool
 };
 
 export default ActivitySection;

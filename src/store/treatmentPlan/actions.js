@@ -49,3 +49,15 @@ export const getTreatmentPlans = payload => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const getTreatmentPlansDetail = payload => async dispatch => {
+  dispatch(mutation.getTreatmentPlansDetailRequest());
+  const data = await TreatmentPlan.getTreatmentPlansDetail(payload);
+  if (data.success) {
+    dispatch(mutation.getTreatmentPlansDetailSuccess(data.data, payload));
+    return data.info;
+  } else {
+    dispatch(mutation.getTreatmentPlansDetailFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};
