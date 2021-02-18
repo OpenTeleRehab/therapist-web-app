@@ -36,6 +36,7 @@ const CreateTreatmentPlan = () => {
   });
   const [weeks, setWeeks] = useState(1);
   const [startDate, setStartDate] = useState('');
+  const [editingTreatmentPlan, setEditingTreatmentPlan] = useState([]);
 
   const [errorName, setErrorName] = useState(false);
   const [errorDescription, setErrorDescription] = useState(false);
@@ -57,12 +58,14 @@ const CreateTreatmentPlan = () => {
   }, [patientId, users]);
 
   useEffect(() => {
-    const yesterday = moment().subtract(1, 'day');
-    if (moment(startDate, settings.date_format, true).isValid() && startDate.isAfter(yesterday)) {
-      const date = moment(startDate).format(settings.date_format);
-      setFormFields({ ...formFields, start_date: date });
-    } else {
-      setFormFields({ ...formFields, start_date: '' });
+    if (!isPast()) {
+      const yesterday = moment().subtract(1, 'day');
+      if (moment(startDate, settings.date_format, true).isValid() && startDate.isAfter(yesterday)) {
+        const date = moment(startDate).format(settings.date_format);
+        setFormFields({ ...formFields, start_date: date });
+      } else {
+        setFormFields({ ...formFields, start_date: '' });
+      }
     }
     // eslint-disable-next-line
   }, [startDate]);
@@ -86,6 +89,7 @@ const CreateTreatmentPlan = () => {
         start_date: moment(editingData.start_date, settings.date_format).format(settings.date_format),
         end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format)
       });
+      setEditingTreatmentPlan(editingData);
       setStartDate(moment(editingData.start_date, settings.date_format));
       setActivities(editingData.activities || []);
       setWeeks(editingData.total_of_weeks);
@@ -183,6 +187,10 @@ const CreateTreatmentPlan = () => {
     history.goBack();
   };
 
+  const isPast = () => {
+    return moment().diff(moment(editingTreatmentPlan.start_date, settings.date_format), 'days') >= 0;
+  };
+
   return (
     <>
       <div className="top-content">
@@ -274,7 +282,8 @@ const CreateTreatmentPlan = () => {
                     name: 'start_date',
                     autoComplete: 'off',
                     className: errorStartDate ? 'form-control is-invalid' : 'form-control',
-                    placeholder: translate('placeholder.start_date')
+                    placeholder: translate('placeholder.start_date'),
+                    disabled: id && isPast()
                   }}
                   dateFormat={settings.date_format}
                   timeFormat={false}
