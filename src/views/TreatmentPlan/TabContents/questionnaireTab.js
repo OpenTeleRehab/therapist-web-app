@@ -33,6 +33,7 @@ const QuestionnaireTab = ({ activities }) => {
         setCurrentPage={setCurrentPage}
         hideSearchFilter={true}
         columns={columns}
+        remotePaging={false}
         rows={questionnaires.map(questionnaire => {
           return {
             title: <span

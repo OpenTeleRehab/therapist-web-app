@@ -3,7 +3,8 @@ import {
   FilteringState,
   SearchState,
   PagingState,
-  CustomPaging
+  CustomPaging,
+  IntegratedPaging
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
@@ -32,7 +33,7 @@ import { useSelector } from 'react-redux';
 const FilterRow = (props) => <Table.Row className="filter" {...props} />;
 const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
-const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, rightButton, hideSearchFilter }) => {
+const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, rightButton, hideSearchFilter, remotePaging }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
@@ -62,10 +63,7 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
         pageSize={pageSize}
         onPageSizeChange={setPageSize}
       />
-      <CustomPaging
-        totalCount={totalCount}
-      />
-
+      {remotePaging ? <CustomPaging totalCount={totalCount} /> : <IntegratedPaging />}
       <Table columnExtensions={tableColumnExtensions} />
       <TableHeaderRow />
       {showFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
@@ -95,11 +93,13 @@ CustomTable.propTypes = {
   setFilters: PropTypes.func,
   filters: PropTypes.array,
   rightButton: PropTypes.object,
-  hideSearchFilter: PropTypes.bool
+  hideSearchFilter: PropTypes.bool,
+  remotePaging: PropTypes.bool
 };
 
 CustomTable.defaultProps = {
-  columnExtensions: []
+  columnExtensions: [],
+  remotePaging: true
 };
 
 export default CustomTable;
