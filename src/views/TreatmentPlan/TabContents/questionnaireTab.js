@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import CustomTable from '../../../components/Table';
+import moment from 'moment/moment';
+import settings from '../../../settings';
 
 const QuestionnaireTab = ({ activities }) => {
   const localize = useSelector((state) => state.localize);
@@ -35,6 +37,7 @@ const QuestionnaireTab = ({ activities }) => {
         columns={columns}
         rows={questionnaires.map(questionnaire => {
           return {
+            submitted_date: questionnaire.submitted_date ? moment(questionnaire.submitted_date).format(settings.date_format) : '',
             title: <span
               className="questionnaire-title"
               dangerouslySetInnerHTML={{
