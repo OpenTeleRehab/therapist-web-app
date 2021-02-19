@@ -1,32 +1,25 @@
 import React from 'react';
-import _ from 'lodash';
-import { STATUS } from 'variables/treatmentPlan';
+import { STATUS, STATUS_VARIANTS } from 'variables/treatmentPlan';
 import { Badge } from 'react-bootstrap';
+import moment from 'moment';
+import settings from '../settings';
+import { Translate } from 'react-localize-redux';
 
-export const getTreatmentPlanStatus = (patientId, treatmentPlans, translate) => {
-  const treatmentPlan = _.find(treatmentPlans, { patient_id: patientId });
-
-  if (treatmentPlan !== undefined) {
-    if (treatmentPlan.status === STATUS.planned) {
-      return (
-        <Badge pill variant="info">
-          {translate('common.planned')}
-        </Badge>
-      );
-    } else {
-      return (
-        <Badge pill variant={treatmentPlan.status === STATUS.finished ? 'danger' : 'primary'}>
-          {translate('common.' + treatmentPlan.status)}
-        </Badge>
-      );
-    }
-  } else {
+export const renderStatusBadge = (treatmentPlan) => {
+  if (!treatmentPlan || !treatmentPlan.id) {
     return '';
   }
-};
 
-export const getTreatmentPlanName = (patientId, treatmentPlans) => {
-  const treatmentPlan = _.find(treatmentPlans, { patient_id: patientId });
+  let status = STATUS.planned;
+  if (moment().diff(moment(treatmentPlan.end_date, settings.date_format), 'days') > 0) {
+    status = STATUS.finished;
+  } else if (moment().diff(moment(treatmentPlan.start_date, settings.date_format), 'days') > 0) {
+    status = STATUS.on_going;
+  }
 
-  return treatmentPlan !== undefined ? treatmentPlan.name : '';
+  return (
+    <Badge pill variant={STATUS_VARIANTS[status]}>
+      <Translate id={`common.${status}`} />
+    </Badge>
+  );
 };

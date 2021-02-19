@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
+import _ from 'lodash';
 
 import { BsPlus } from 'react-icons/bs';
 import PropTypes from 'prop-types';
@@ -15,7 +16,7 @@ import CustomTable from 'components/Table';
 import { DeleteAction, EditAction, ViewAction } from 'components/ActionIcons';
 import AgeCalculation from 'utils/age';
 import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
-import { getTreatmentPlanName, getTreatmentPlanStatus } from 'utils/treatmentPlan';
+import { renderStatusBadge } from 'utils/treatmentPlan';
 import { getTranslate } from 'react-localize-redux';
 
 let timer = null;
@@ -127,6 +128,7 @@ const Patient = () => {
               <DeleteAction className="ml-1" disabled />
             </>
           );
+          const treatmentPlan = _.find(treatmentPlans, { patient_id: user.id });
           return {
             identity: user.identity,
             last_name: user.last_name,
@@ -134,8 +136,8 @@ const Patient = () => {
             email: user.email,
             date_of_birth: user.date_of_birth !== null ? moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
-            ongoing_treatment_plan: treatmentPlans.length ? getTreatmentPlanName(user.id, treatmentPlans, translate) : '',
-            ongoing_treatment_status: treatmentPlans.length ? getTreatmentPlanStatus(user.id, treatmentPlans, translate) : '',
+            ongoing_treatment_plan: treatmentPlan ? treatmentPlan.name : '',
+            ongoing_treatment_status: renderStatusBadge(treatmentPlan),
             next_appointment: '',
             action
           };

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
-import { Badge } from 'react-bootstrap';
 import { getTranslate } from 'react-localize-redux';
 import CustomTable from 'components/Table';
 import { EditAction, ViewAction } from 'components/ActionIcons';
 import { getTreatmentPlans } from 'store/treatmentPlan/actions';
 import * as ROUTES from 'variables/routes';
-import { STATUS } from 'variables/treatmentPlan';
 import CreateButton from 'views/Patient/Partials/createButton';
+import { renderStatusBadge } from '../../utils/treatmentPlan';
 
 let timer = null;
 const TreatmentHistory = () => {
@@ -94,21 +93,7 @@ const TreatmentHistory = () => {
 
           return {
             name: treatmentPlan.name,
-            treatment_status: treatmentPlan.status === STATUS.planned
-              ? (
-                <Badge pill
-                  variant="info"
-                >
-                  {translate('common.planned')}
-                </Badge>
-              )
-              : (
-                <Badge pill
-                  variant={treatmentPlan.status === STATUS.finished ? 'danger' : 'primary'}
-                >
-                  {translate('common.' + treatmentPlan.status)}
-                </Badge>
-              ),
+            treatment_status: renderStatusBadge(treatmentPlan),
             start_date: treatmentPlan.start_date,
             end_date: treatmentPlan.end_date,
             action

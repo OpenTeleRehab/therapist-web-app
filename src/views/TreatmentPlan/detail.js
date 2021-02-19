@@ -2,18 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { getTranslate } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Link } from 'react-router-dom';
-import { Badge, OverlayTrigger, Tab, Tabs, Tooltip } from 'react-bootstrap';
+import { OverlayTrigger, Tab, Tabs, Tooltip } from 'react-bootstrap';
 import moment from 'moment/moment';
 import * as ROUTES from 'variables/routes';
 
 import PatientInfo from 'views/Patient/Partials/patientInfo';
 import { getTreatmentPlansDetail } from '../../store/treatmentPlan/actions';
 import settings from 'settings';
-import { STATUS, TAB } from 'variables/treatmentPlan';
+import { TAB } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
 import QuestionnaireTab from './TabContents/questionnaireTab';
 import ActivitySection from './activitySection';
 import _ from 'lodash';
+import { renderStatusBadge } from '../../utils/treatmentPlan';
 
 const ViewTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
@@ -73,22 +74,7 @@ const ViewTreatmentPlan = () => {
         <div className="d-flex align-self-center mt-4">
           <h4 className="mr-4">{formFields.name}</h4>
           <span className="mb-2 ">
-            {formFields.status === STATUS.planned
-              ? (
-                <Badge pill
-                  variant="info"
-                >
-                  {translate('common.planned')}
-                </Badge>
-              )
-              : (
-                <Badge pill
-                  variant={formFields.status === STATUS.finished ? 'danger' : 'primary'}
-                >
-                  {translate('common.' + formFields.status)}
-                </Badge>
-              )
-            }
+            {renderStatusBadge(treatmentPlansDetail)}
           </span>
         </div>
         <div className="patient-info">
