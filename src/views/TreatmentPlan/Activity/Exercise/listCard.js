@@ -11,12 +11,14 @@ import {
 import { Exercise } from 'services/exercise';
 import { BsX } from 'react-icons/bs';
 
-const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly, lang }) => {
+const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang }) => {
   const [exercises, setExercises] = useState([]);
   const [ids] = exerciseIds;
 
   useEffect(() => {
-    if (exerciseIds && exerciseIds.length > 0) {
+    if (exerciseObjs && exerciseObjs.length > 0) {
+      setExercises(exerciseObjs);
+    } else if (exerciseIds && exerciseIds.length > 0) {
       Exercise.getExercisesByIds(exerciseIds, lang).then(res => {
         if (res.data) {
           setExercises(res.data);
@@ -25,7 +27,7 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly, lang }) =
     } else {
       setExercises([]);
     }
-  }, [ids, exerciseIds, lang]);
+  }, [ids, exerciseIds, lang, exerciseObjs]);
 
   return (
     <>
@@ -35,7 +37,7 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly, lang }) =
             {
               onSelectionRemove && (
                 <div className="position-absolute w-100 z-index-1">
-                  {!readyOnly && <Button
+                  {!readOnly && <Button
                     className="btn-circle-sm float-right m-1"
                     variant="light"
                     onClick={() => onSelectionRemove(exercise.id)}
@@ -91,8 +93,9 @@ const ListExerciseCard = ({ exerciseIds, onSelectionRemove, readyOnly, lang }) =
 
 ListExerciseCard.propTypes = {
   exerciseIds: PropTypes.array,
+  exerciseObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
-  readyOnly: PropTypes.bool,
+  readOnly: PropTypes.bool,
   lang: PropTypes.any
 };
 

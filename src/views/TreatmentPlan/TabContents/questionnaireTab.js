@@ -3,30 +3,25 @@ import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import CustomTable from '../../../components/Table';
-import { Questionnaire } from 'services/questionnaire';
 
 const QuestionnaireTab = ({ activities }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [questions, setQuestions] = useState([]);
+  const [questionnaires, setQuestionnaires] = useState([]);
 
   useEffect(() => {
-    if (activities.questionnaires && activities.questionnaires.length > 0) {
-      Questionnaire.getQuestionnairesByIds(activities.questionnaires).then(res => {
-        if (res.data) {
-          setQuestions(res.data);
-        }
-      });
-    } else {
-      setQuestions([]);
+    if (activities.length) {
+      const questionnaires = activities.filter(activity => activity.type === 'questionnaire' && activity.completed);
+      setQuestionnaires(questionnaires);
     }
   }, [activities]);
+
   const columns = [
+    { name: 'submitted_date', title: translate('questionnaire.submitted_date') },
     { name: 'title', title: translate('questionnaire.title') + '/' + translate('questionnaire.description') },
-    { name: 'number_of_question', title: translate('questionnaire.number_of_question') },
-    { name: 'action', title: translate('common.action') }
+    { name: 'number_of_question', title: translate('questionnaire.number_of_question') }
   ];
 
   return (
@@ -38,9 +33,15 @@ const QuestionnaireTab = ({ activities }) => {
         setCurrentPage={setCurrentPage}
         hideSearchFilter={true}
         columns={columns}
-        rows={questions.map(question => {
+        rows={questionnaires.map(questionnaire => {
           return {
-            title: 'tt'
+            title: <span
+              className="questionnaire-title"
+              dangerouslySetInnerHTML={{
+                __html: `<strong class="title">${questionnaire.title}</strong><div class="description">${questionnaire.description}</div>`
+              }}
+            />,
+            number_of_question: questionnaire.questions.length
           };
         })}
       />

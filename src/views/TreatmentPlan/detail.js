@@ -7,19 +7,21 @@ import moment from 'moment/moment';
 import * as ROUTES from 'variables/routes';
 
 import PatientInfo from 'views/Patient/Partials/patientInfo';
-import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
+import { getTreatmentPlansDetail } from '../../store/treatmentPlan/actions';
 import settings from 'settings';
-import { STATUS } from 'variables/treatmentPlan';
+import { STATUS, TAB } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
 import QuestionnaireTab from './TabContents/questionnaireTab';
 import ActivitySection from './activitySection';
+import _ from 'lodash';
 
 const ViewTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
+  const { profile } = useSelector((state) => state.auth);
 
-  const treatmentPlans = useSelector((state) => state.treatmentPlan.treatmentPlans);
+  const treatmentPlansDetail = useSelector((state) => state.treatmentPlan.treatmentPlansDetail);
   const { id, patientId } = useParams();
   const [formFields, setFormFields] = useState({
     name: '',
@@ -31,34 +33,33 @@ const ViewTreatmentPlan = () => {
     status: ''
   });
   const [weeks, setWeeks] = useState(1);
-  const [key, setKey] = useState('activity');
+  const [key, setKey] = useState(TAB.activities);
   const [activities, setActivities] = useState([]);
   const [startDate, setStartDate] = useState('');
-  const [readyOnly] = useState(true);
+  const [readOnly] = useState(true);
 
   useEffect(() => {
     if (id) {
-      dispatch(getTreatmentPlans({ id }));
+      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id }));
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, profile]);
 
   useEffect(() => {
-    if (id && treatmentPlans.length) {
-      const editingData = treatmentPlans.find(treatmentPlan => treatmentPlan.id === parseInt(id));
+    if (id && !_.isEmpty(treatmentPlansDetail)) {
       setFormFields({
-        name: editingData.name,
-        description: editingData.description,
-        patient_id: editingData.patient_id,
-        start_date: moment(editingData.start_date, settings.date_format).format(settings.date_format),
-        end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format),
-        status: editingData.status
+        name: treatmentPlansDetail.name,
+        description: treatmentPlansDetail.description,
+        patient_id: treatmentPlansDetail.patient_id,
+        start_date: moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format),
+        end_date: moment(treatmentPlansDetail.end_date, settings.date_format).format(settings.date_format),
+        status: treatmentPlansDetail.status
       });
-      setWeeks(editingData.total_of_weeks);
-      setActivities(editingData.activities);
-      setStartDate(moment(editingData.start_date, settings.date_format).format(settings.date_format));
+      setWeeks(treatmentPlansDetail.total_of_weeks);
+      setActivities(treatmentPlansDetail.activities);
+      setStartDate(moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format));
     }
     // eslint-disable-next-line
-  }, [id, treatmentPlans]);
+  }, [id, treatmentPlansDetail]);
 
   return (
     <>
@@ -117,10 +118,10 @@ const ViewTreatmentPlan = () => {
           activeKey={key}
           onSelect={(k) => setKey(k)}
         >
-          <Tab eventKey="activity" title={translate('treatment_plan.activities')}>
-            <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} setActivities={setActivities} readyOnly={readyOnly} />
+          <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities')}>
+            <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} />
           </Tab>
-          <Tab eventKey="questionnaire" title={translate('common.questionnaire')}>
+          <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaire_tab')}>
             <QuestionnaireTab activities={activities}/>
           </Tab>
         </Tabs>
