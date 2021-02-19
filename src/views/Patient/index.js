@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import _ from 'lodash';
 
 import { BsPlus } from 'react-icons/bs';
 import PropTypes from 'prop-types';
@@ -15,7 +14,6 @@ import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
 import { DeleteAction, EditAction, ViewAction } from 'components/ActionIcons';
 import AgeCalculation from 'utils/age';
-import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { getTranslate } from 'react-localize-redux';
 
@@ -25,7 +23,6 @@ const Patient = () => {
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
   const users = useSelector(state => state.user.users);
-  const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
   const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -87,13 +84,6 @@ const Patient = () => {
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
-  useEffect(() => {
-    dispatch(getTreatmentPlans({
-      page_size: pageSize,
-      page: currentPage + 1
-    }));
-  }, [currentPage, pageSize, dispatch]);
-
   const handleView = (id) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', id));
   };
@@ -128,7 +118,6 @@ const Patient = () => {
               <DeleteAction className="ml-1" disabled />
             </>
           );
-          const treatmentPlan = _.find(treatmentPlans, { patient_id: user.id });
           return {
             identity: user.identity,
             last_name: user.last_name,
@@ -136,8 +125,8 @@ const Patient = () => {
             email: user.email,
             date_of_birth: user.date_of_birth !== null ? moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
-            ongoing_treatment_plan: treatmentPlan ? treatmentPlan.name : '',
-            ongoing_treatment_status: renderStatusBadge(treatmentPlan),
+            ongoing_treatment_plan: user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
+            ongoing_treatment_status: renderStatusBadge(user.upcomingTreatmentPlan),
             next_appointment: '',
             action
           };

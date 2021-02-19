@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 
 import PatientInfo from 'views/Patient/Partials/patientInfo';
-import TreatmentHistory from './treatmentHistory';
+import TreatmentHistory from './Partials/treatmentHistory';
 
 const ViewPatient = () => {
   const { patientId } = useParams();
