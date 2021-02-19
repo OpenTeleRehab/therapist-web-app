@@ -17,6 +17,7 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly, lang
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
+  const [ids] = materialIds;
 
   useEffect(() => {
     if (materialIds && materialIds.length > 0) {
@@ -28,12 +29,12 @@ const ListQuestionnaireCard = ({ materialIds, onSelectionRemove, readyOnly, lang
     } else {
       setQuestionnaires([]);
     }
-  }, [materialIds, lang]);
+  }, [ids, materialIds, lang]);
 
   return (
     <>
       { questionnaires.map(questionnaire => (
-        <Card key={questionnaire} className="exercise-card material-card shadow-sm mb-4">
+        <Card key={questionnaire.id} className="exercise-card material-card shadow-sm mb-4">
           <div className="card-img bg-light">
             {
               onSelectionRemove && (
@@ -83,7 +84,7 @@ ListQuestionnaireCard.propTypes = {
   materialIds: PropTypes.array,
   onSelectionRemove: PropTypes.func,
   readyOnly: PropTypes.bool,
-  lang: PropTypes.string
+  lang: PropTypes.any
 };
 
 export default withLocalize(ListQuestionnaireCard);

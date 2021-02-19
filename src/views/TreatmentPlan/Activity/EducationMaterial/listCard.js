@@ -17,6 +17,7 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly, 
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
+  const [ids] = materialIds;
 
   useEffect(() => {
     if (materialIds && materialIds.length > 0) {
@@ -28,12 +29,12 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readyOnly, 
     } else {
       setMaterials([]);
     }
-  }, [materialIds, lang]);
+  }, [ids, materialIds, lang]);
 
   return (
     <>
       { materials.map(material => (
-        <Card key={material} className="exercise-card material-card shadow-sm mb-4">
+        <Card key={material.id} className="exercise-card material-card shadow-sm mb-4">
           <div className="card-img bg-light">
             {
               onSelectionRemove && (
@@ -82,7 +83,7 @@ ListEducationMaterialCard.propTypes = {
   materialIds: PropTypes.array,
   onSelectionRemove: PropTypes.func,
   readyOnly: PropTypes.bool,
-  lang: PropTypes.string
+  lang: PropTypes.any
 };
 
 export default withLocalize(ListEducationMaterialCard);
