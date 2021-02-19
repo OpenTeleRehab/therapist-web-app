@@ -13,6 +13,7 @@ import { TAB } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
 import QuestionnaireTab from './TabContents/questionnaireTab';
 import ActivitySection from './activitySection';
+import AdherenceTab from './TabContents/adherenceTab';
 import _ from 'lodash';
 import { renderStatusBadge } from '../../utils/treatmentPlan';
 
@@ -104,10 +105,13 @@ const ViewTreatmentPlan = () => {
           activeKey={key}
           onSelect={(k) => setKey(k)}
         >
-          <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities')}>
+          <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities_tab')}>
             <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} />
           </Tab>
-          <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaire_tab')}>
+          <Tab eventKey={TAB.adherence} title={translate('treatment_plan.adherence_tab')}>
+            <AdherenceTab activities={activities} startDate={treatmentPlansDetail.start_date} endDate={treatmentPlansDetail.end_date}/>
+          </Tab>
+          <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaires_tab')}>
             <QuestionnaireTab activities={activities}/>
           </Tab>
         </Tabs>
