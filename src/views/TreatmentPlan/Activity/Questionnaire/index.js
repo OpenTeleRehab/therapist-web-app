@@ -21,7 +21,7 @@ import { getQuestionnaires } from 'store/questionnaire/actions';
 let timer = null;
 const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
   const dispatch = useDispatch();
-  const { loading, questionnaires } = useSelector(state => state.questionnaire);
+  const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -29,11 +29,24 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
     search_value: ''
   });
 
+  const languages = useSelector(state => state.language.languages);
+  const [language, setLanguage] = useState('');
+  const { profile } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (filters && filters.lang) {
+      setLanguage(filters.lang);
+    } else if (profile && profile.language_id) {
+      setLanguage(profile.language_id);
+    }
+  }, [filters, profile]);
+
   useEffect(() => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getQuestionnaires({
         filter: formFields,
+        lang: language,
         page_size: pageSize,
         page: currentPage
       })).then(result => {
@@ -42,7 +55,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
         }
       });
     }, 500);
-  }, [formFields, currentPage, pageSize, dispatch]);
+  }, [language, formFields, currentPage, pageSize, dispatch]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -51,6 +64,11 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
 
   const handleClearSearch = () => {
     setFormFields({ ...formFields, search_value: '' });
+  };
+
+  const handleLanguageChange = e => {
+    const { value } = e.target;
+    setLanguage(value);
   };
 
   return (
@@ -96,6 +114,16 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
                 <Form.Control as="select" disabled>
                   <option>{translate('common.category_item')}</option>
                   <option>{translate('common.category_item')}</option>
+                </Form.Control>
+              </Form.Group>
+              <Form.Group>
+                <Form.Label>{translate('common.language')}</Form.Label>
+                <Form.Control as="select" value={language} onChange={handleLanguageChange}>
+                  {languages.map((language, index) => (
+                    <option key={index} value={language.id}>
+                      {language.name} {language.code === language.fallback && `(${translate('common.default')})`}
+                    </option>
+                  ))}
                 </Form.Control>
               </Form.Group>
             </Card.Body>
