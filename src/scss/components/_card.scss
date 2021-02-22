@@ -46,3 +46,10 @@
 	background-color: $yellow;
 	color: $orange;
 }
+
+.question-card {
+	.card-header {
+		background-color: $blue-light-2;
+		height: 45px;
+	}
+}
