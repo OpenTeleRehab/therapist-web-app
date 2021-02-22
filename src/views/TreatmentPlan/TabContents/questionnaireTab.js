@@ -35,6 +35,7 @@ const QuestionnaireTab = ({ activities }) => {
         setCurrentPage={setCurrentPage}
         hideSearchFilter={true}
         columns={columns}
+        remotePaging={false}
         rows={questionnaires.map(questionnaire => {
           return {
             submitted_date: questionnaire.submitted_date ? moment(questionnaire.submitted_date).format(settings.date_format) : '',
