@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Bar } from 'react-chartjs-2';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import settings from '../../../settings';
@@ -6,6 +6,9 @@ import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import moment from 'moment';
 import _ from 'lodash';
+import { Accordion, Card, AccordionContext } from 'react-bootstrap';
+import { BsChevronRight, BsChevronDown } from 'react-icons/bs';
+import PropTypes from 'prop-types';
 
 const AdherenceTab = () => {
   const localize = useSelector((state) => state.localize);
@@ -15,6 +18,7 @@ const AdherenceTab = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [graphData, setGraphData] = useState();
+  const [completedExercises, setCompletedExercises] = useState([]);
   const dateRangePickerRef = useRef();
 
   useEffect(() => {
@@ -32,6 +36,7 @@ const AdherenceTab = () => {
       const labels = [];
       const lineData = [];
       const barData = [];
+      const completedExerciseObjs = [];
 
       const exercises = activities.filter(activity => activity.type === 'exercise');
 
@@ -45,6 +50,7 @@ const AdherenceTab = () => {
             numberOfAllActivity++;
             if (exercise.completed) {
               numberOfCompletedActivity++;
+              completedExerciseObjs.push(exercise);
             }
 
             if (exercise.pain_level) {
@@ -82,6 +88,7 @@ const AdherenceTab = () => {
           }
         ]
       });
+      setCompletedExercises(_.chain(completedExerciseObjs).groupBy('date').value());
     }
     // eslint-disable-next-line
   }, [activities, startDate, endDate]);
@@ -96,46 +103,98 @@ const AdherenceTab = () => {
   };
 
   return (
-    <div className="card">
-      <div className="card-header form-row">
-        <div className="form-group col-xs-5">
-          <label>{translate('common.time_range')}</label>
-          <DateRangePicker
-            ref={dateRangePickerRef}
-            initialSettings={{
-              locale: {
-                format: settings.date_format,
-                cancelLabel: translate('common.clear'),
-                applyLabel: translate('common.apply')
-              }
-            }}
-            onCallback={handleOnCallback}
-            onCancel={handleCancel}
-          >
-            <input
-              type="text"
-              className="form-control"
-              placeholder={translate('common.timerange.placeholder')}
-            />
-          </DateRangePicker>
+    <div className="mb-3">
+      <div className="card mt-4">
+        <div className="card-header form-row">
+          <div className="form-group col-xs-5">
+            <label>{translate('common.time_range')}</label>
+            <DateRangePicker
+              ref={dateRangePickerRef}
+              initialSettings={{
+                locale: {
+                  format: settings.date_format,
+                  cancelLabel: translate('common.clear'),
+                  applyLabel: translate('common.apply')
+                }
+              }}
+              onCallback={handleOnCallback}
+              onCancel={handleCancel}
+            >
+              <input
+                type="text"
+                className="form-control"
+                placeholder={translate('common.timerange.placeholder')}
+              />
+            </DateRangePicker>
+          </div>
+        </div>
+        <div className="card-body row">
+          <div className="col-xl-8 col-sm-10 offset-xl-2 offset-sm-1 text-center">
+            {graphData
+              ? <Bar
+                data={graphData}
+                legend={{
+                  position: 'top',
+                  align: 'end',
+                  reverse: true
+                }}
+              />
+              : <div className="py-5 h5">{translate('common.no_data')}</div>
+            }
+          </div>
         </div>
       </div>
-      <div className="card-body row">
-        <div className="col-xl-8 col-sm-10 offset-xl-2 offset-sm-1">
-          {graphData &&
-            <Bar
-              data={graphData}
-              legend={{
-                position: 'top',
-                align: 'end',
-                reverse: true
-              }}
-            />
-          }
-        </div>
+      <div className="row">
+        {Object.keys(completedExercises).map((key, index) => {
+          return (
+            <div className="col-sm-6 mt-3" key={index}>
+              <Accordion>
+                <Card>
+                  <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="bg-blue-light-2 text-primary font-weight-bold d-flex align-items-center">
+                    <span>{moment(key).format(settings.date_format)}</span>
+                    <ContextAwareToggle eventKey={index + 1} />
+                  </Accordion.Toggle>
+                  <Accordion.Collapse eventKey={index + 1}>
+                    <Card.Body>
+                      <div className="row">
+                        {
+                          completedExercises[key].map(exercise => {
+                            return (
+                              <div className="col-sm-6" key={index}>
+                                <span className="text-primary font-weight-bold">{exercise.title}</span>
+                                <ul className="pl-3 pt-3">
+                                  <li><span className="font-weight-bold">{translate('common.complete')}:</span> {exercise.reps || 0} {translate('common.reps')}, {exercise.sets || 0} {translate('common.sets')}</li>
+                                  <li><span className="font-weight-bold">{translate('common.pain_level')}:</span> {exercise.pain_level || 0}</li>
+                                </ul>
+                              </div>
+                            );
+                          })
+                        }
+                      </div>
+                    </Card.Body>
+                  </Accordion.Collapse>
+                </Card>
+              </Accordion>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
 
 export default AdherenceTab;
+
+const ContextAwareToggle = ({ eventKey }) => {
+  const currentEventKey = useContext(AccordionContext);
+
+  if (currentEventKey === eventKey) {
+    return <BsChevronDown className="ml-auto" />;
+  }
+
+  return <BsChevronRight className="ml-auto" />;
+};
+
+ContextAwareToggle.propTypes = {
+  eventKey: PropTypes.string
+};

@@ -18,8 +18,8 @@ $info: #99C9E9;
 $danger: $red;
 $light: #EBEBEB;
 $dark: #5C5C5C;
-$light-blue: #B3D6EF;
-$light-light-blue: #E6F1FA;
+$blue-light: #B3D6EF;
+$blue-light-2: #E6F1FA;
 
 $theme-colors: (
 	"primary": $primary,
@@ -28,7 +28,8 @@ $theme-colors: (
 	"info": $info,
 	"danger": $danger,
 	"light": $light,
-	"dark": $dark
+	"dark": $dark,
+	"blue-light-2": $blue-light-2,
 );
 
 // Toasts
