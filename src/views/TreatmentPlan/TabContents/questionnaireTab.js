@@ -26,6 +26,10 @@ const QuestionnaireTab = ({ activities }) => {
     { name: 'number_of_question', title: translate('questionnaire.number_of_question') }
   ];
 
+  const defaultSoringColumns = [
+    { columnName: 'submitted_date', direction: 'desc' }
+  ];
+
   return (
     <div className="mt-3">
       <CustomTable
@@ -35,6 +39,7 @@ const QuestionnaireTab = ({ activities }) => {
         setCurrentPage={setCurrentPage}
         hideSearchFilter={true}
         columns={columns}
+        defaultSoringColumns={defaultSoringColumns}
         remotePaging={false}
         rows={questionnaires.map(questionnaire => {
           return {

@@ -4,7 +4,9 @@ import {
   SearchState,
   PagingState,
   CustomPaging,
-  IntegratedPaging
+  IntegratedPaging,
+  SortingState,
+  IntegratedSorting
 } from '@devexpress/dx-react-grid';
 import {
   Grid,
@@ -33,7 +35,7 @@ import { useSelector } from 'react-redux';
 const FilterRow = (props) => <Table.Row className="filter" {...props} />;
 const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
-const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, rightButton, hideSearchFilter, remotePaging }) => {
+const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, rightButton, hideSearchFilter, remotePaging, defaultSoringColumns }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
@@ -63,6 +65,10 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
         pageSize={pageSize}
         onPageSizeChange={setPageSize}
       />
+      <SortingState
+        defaultSorting={defaultSoringColumns}
+      />
+      <IntegratedSorting />
       {remotePaging ? <CustomPaging totalCount={totalCount} /> : <IntegratedPaging />}
       <Table columnExtensions={tableColumnExtensions} />
       <TableHeaderRow />
@@ -94,7 +100,8 @@ CustomTable.propTypes = {
   filters: PropTypes.array,
   rightButton: PropTypes.object,
   hideSearchFilter: PropTypes.bool,
-  remotePaging: PropTypes.bool
+  remotePaging: PropTypes.bool,
+  defaultSoringColumns: PropTypes.array
 };
 
 CustomTable.defaultProps = {
