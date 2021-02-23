@@ -163,7 +163,7 @@ const AdherenceTab = () => {
                               <div className="col-sm-6" key={index}>
                                 <span className="text-primary font-weight-bold">{exercise.title}</span>
                                 <ul className="pl-3 pt-3">
-                                  <li><span className="font-weight-bold">{translate('common.complete')}:</span> {exercise.reps || 0} {translate('common.reps')}, {exercise.sets || 0} {translate('common.sets')}</li>
+                                  <li><span className="font-weight-bold">{translate('common.completed')}:</span> {exercise.sets || 0} {translate('common.sets')}, {exercise.reps || 0} {translate('common.reps')}</li>
                                   <li><span className="font-weight-bold">{translate('common.pain_level')}:</span> {exercise.pain_level || 0}</li>
                                 </ul>
                               </div>
