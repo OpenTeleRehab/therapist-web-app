@@ -7,7 +7,7 @@ import { EditAction, ViewAction } from 'components/ActionIcons';
 import { getTreatmentPlans } from 'store/treatmentPlan/actions';
 import * as ROUTES from 'variables/routes';
 import CreateButton from 'views/Patient/Partials/createButton';
-import { renderStatusBadge } from '../../utils/treatmentPlan';
+import { renderStatusBadge } from 'utils/treatmentPlan';
 
 let timer = null;
 const TreatmentHistory = () => {

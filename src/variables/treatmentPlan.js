@@ -6,8 +6,8 @@ export const STATUS = {
 
 export const STATUS_VARIANTS = {
   [STATUS.planned]: 'info',
-  [STATUS.on_going]: 'primary',
-  [STATUS.finished]: 'danger'
+  [STATUS.on_going]: 'success',
+  [STATUS.finished]: 'light'
 };
 
 export const TAB = {
