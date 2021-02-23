@@ -31,9 +31,11 @@ const Dialog = (props) => {
       </Modal.Body>
 
       <Modal.Footer>
-        <Button variant="primary" onClick={onConfirm}>
-          {confirmLabel}
-        </Button>
+        {onConfirm &&
+          <Button variant="primary" onClick={onConfirm}>
+            {confirmLabel}
+          </Button>
+        }
         <Button variant="outline-dark" onClick={onCancel}>
           {cancelLabel}
         </Button>
