@@ -27,7 +27,7 @@ const PreviewList = ({
         <div className="position-absolute w-25 selected-exercise-wrapper">
           <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} />
           <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} />
-          <ListQuestionnaireCard materialIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} />
+          <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} />
         </div>
       }
     </>
