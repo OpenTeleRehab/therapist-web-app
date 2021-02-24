@@ -191,7 +191,7 @@ const CreateTreatmentPlan = () => {
   };
 
   const isPast = () => {
-    return moment().diff(moment(editingTreatmentPlan.start_date, settings.date_format), 'days') >= 0;
+    return moment().diff(moment(editingTreatmentPlan.start_date, settings.date_format), 'days', true) >= 0;
   };
 
   return (
