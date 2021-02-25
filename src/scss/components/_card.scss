@@ -40,6 +40,9 @@
   .card-title {
 	-webkit-line-clamp: 2;
   }
+	&:hover {
+		cursor: pointer;
+	}
 }
 
 .questionnaire-header {
@@ -52,4 +55,13 @@
 		background-color: $blue-light-2;
 		height: 45px;
 	}
+}
+
+.card-remove-btn-wrapper {
+	z-index: 1;
+	right: 0;
+}
+
+.modal-backdrop.show, .modal.show {
+	z-index: 1051 !important;
 }
