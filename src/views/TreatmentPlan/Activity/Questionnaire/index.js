@@ -17,9 +17,10 @@ import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { FiTwitch } from 'react-icons/fi';
 import { getQuestionnaires } from 'store/questionnaire/actions';
+import ViewQuestionnaire from './viewQuestionnaire';
 
 let timer = null;
-const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
+const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQuestionnaire, setViewQuestionnaire }) => {
   const dispatch = useDispatch();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const [pageSize, setPageSize] = useState(8);
@@ -32,6 +33,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
   const languages = useSelector(state => state.language.languages);
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
+  const [questionnaire, setQuestionnaire] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -69,6 +71,15 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
   const handleLanguageChange = e => {
     const { value } = e.target;
     setLanguage(value);
+  };
+
+  const handleViewQuestionnaire = (questionnaire) => {
+    setViewQuestionnaire(true);
+    setQuestionnaire(questionnaire);
+  };
+
+  const handleViewQuestionnaireClose = () => {
+    setViewQuestionnaire(false);
   };
 
   return (
@@ -140,7 +151,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
               <Row>
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4">
+                    <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewQuestionnaire(questionnaire)}>
                       <div className="card-img bg-light">
                         <div className="position-absolute w-100">
                           <Form.Check
@@ -190,6 +201,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
             </>
           )}
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire}/> }
         </Col>
       </Row>
     </>
@@ -199,7 +211,9 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange }) => {
 Questionnaire.propTypes = {
   translate: PropTypes.func,
   selectedMaterials: PropTypes.array,
-  onSectionChange: PropTypes.func
+  onSectionChange: PropTypes.func,
+  viewQuestionnaire: PropTypes.bool,
+  setViewQuestionnaire: PropTypes.func
 };
 
 export default withLocalize(Questionnaire);
