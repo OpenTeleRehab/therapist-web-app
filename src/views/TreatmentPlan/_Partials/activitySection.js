@@ -6,7 +6,7 @@ import { getTranslate } from 'react-localize-redux';
 import moment from 'moment';
 import _ from 'lodash';
 
-import settings from '../../settings';
+import settings from 'settings';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import AddActivity from 'views/TreatmentPlan/Activity/add';

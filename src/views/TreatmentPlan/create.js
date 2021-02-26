@@ -5,21 +5,25 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useHistory } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 import settings from 'settings';
-import { createTreatmentPlan, updateTreatmentPlan } from 'store/treatmentPlan/actions';
-import { getTreatmentPlans } from '../../store/treatmentPlan/actions';
+import {
+  createTreatmentPlan, updateTreatmentPlan,
+  getTreatmentPlans
+} from 'store/treatmentPlan/actions';
 import moment from 'moment';
 
-import CollapseToggle from 'views/TreatmentPlan/collapseToggle';
-import ActivitySection from './activitySection';
+import CollapseToggle from './_Partials/collapseToggle';
+import ActivitySection from './_Partials/activitySection';
 import PatientInfo from 'views/Patient/Partials/patientInfo';
+import TreatmentGoal from './_Partials/Goal';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { id, patientId } = useParams();
   const localize = useSelector((state) => state.localize);
-  const treatmentPlans = useSelector((state) => state.treatmentPlan.treatmentPlans);
   const translate = getTranslate(localize);
+  const { id, patientId } = useParams();
+
+  const treatmentPlans = useSelector((state) => state.treatmentPlan.treatmentPlans);
   const users = useSelector(state => state.user.users);
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
@@ -41,6 +45,7 @@ const CreateTreatmentPlan = () => {
   const [errorName, setErrorName] = useState(false);
   const [errorDescription, setErrorDescription] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
+  const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
   const [readOnly, setReadOnly] = useState(false);
 
@@ -94,6 +99,7 @@ const CreateTreatmentPlan = () => {
       });
       setEditingTreatmentPlan(editingData);
       setStartDate(moment(editingData.start_date, settings.date_format));
+      setGoals(editingData.goals || []);
       setActivities(editingData.activities || []);
       setWeeks(editingData.total_of_weeks);
     } else {
@@ -169,14 +175,26 @@ const CreateTreatmentPlan = () => {
 
     if (canSave) {
       if (id) {
-        dispatch(updateTreatmentPlan(id, { ...formFields, total_of_weeks: weeks, type: 'normal', activities }))
+        dispatch(updateTreatmentPlan(id, {
+          ...formFields,
+          total_of_weeks: weeks,
+          type: 'normal',
+          goals,
+          activities
+        }))
           .then(result => {
             if (result) {
               history.goBack();
             }
           });
       } else {
-        dispatch(createTreatmentPlan({ ...formFields, total_of_weeks: weeks, type: 'normal', activities }))
+        dispatch(createTreatmentPlan({
+          ...formFields,
+          total_of_weeks: weeks,
+          type: 'normal',
+          goals,
+          activities
+        }))
           .then(result => {
             if (result) {
               history.goBack();
@@ -221,6 +239,7 @@ const CreateTreatmentPlan = () => {
           className="ml-2"
           variant="primary"
           onClick={handleAssign}
+          disabled={readOnly}
         >
           {translate(id ? 'common.save' : 'common.assign')}
         </Button>
@@ -306,9 +325,7 @@ const CreateTreatmentPlan = () => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <h6 className="mb-4">
-                {translate('treatment_plan.treatment_goal_for_patient')} <small>{translate('treatment_plan.treatment_goal_for_patient_max_number')}</small>
-              </h6>
+              <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} />
             </Col>
           </Row>
         </Accordion.Collapse>

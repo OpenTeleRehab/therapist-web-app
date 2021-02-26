@@ -12,7 +12,7 @@ import settings from 'settings';
 import { TAB } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
 import QuestionnaireTab from './TabContents/questionnaireTab';
-import ActivitySection from './activitySection';
+import ActivitySection from './_Partials/activitySection';
 import AdherenceTab from './TabContents/adherenceTab';
 import _ from 'lodash';
 import { renderStatusBadge } from '../../utils/treatmentPlan';
