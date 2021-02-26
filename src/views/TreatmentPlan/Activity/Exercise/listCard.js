@@ -10,10 +10,13 @@ import {
 
 import { Exercise } from 'services/exercise';
 import { BsX } from 'react-icons/bs';
+import ViewExercise from './viewExercise';
 
 const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang }) => {
   const [exercises, setExercises] = useState([]);
   const [ids] = exerciseIds;
+  const [exercise, setExercise] = useState([]);
+  const [viewExercise, setViewExercise] = useState(false);
 
   useEffect(() => {
     if (exerciseObjs && exerciseObjs.length > 0) {
@@ -29,64 +32,74 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
     }
   }, [ids, exerciseIds, lang, exerciseObjs]);
 
+  const handleView = (exercise) => {
+    setExercise(exercise);
+    setViewExercise(true);
+  };
+
+  const handleViewClose = () => {
+    setViewExercise(false);
+  };
+
   return (
     <>
       { exercises.map(exercise => (
-        <Card key={exercise.id} className="exercise-card shadow-sm mb-4">
-          <div className="card-img bg-light">
-            {
-              onSelectionRemove && (
-                <div className="position-absolute w-100 z-index-1">
-                  {!readOnly && <Button
-                    className="btn-circle-sm float-right m-1"
-                    variant="light"
-                    onClick={() => onSelectionRemove(exercise.id)}
-                  >
-                    <BsX size={15} />
-                  </Button>
-                  }
-                </div>
-              )
-            }
-
-            {
-              exercise.files.length > 0 && (
-                (exercise.files[0].fileType === 'audio/mpeg' &&
-                  <div className="w-100">
-                    <audio controls className="w-100">
-                      <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
-                    </audio>
-                  </div>
-                ) ||
-                (exercise.files[0].fileType === 'video/mp4' &&
-                  <video controls className="w-100 h-100">
-                    <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="video/mp4" />
-                  </video>
-                ) ||
-                ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                  <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                  />
-                )
-              )
-            }
-          </div>
-          <Card.Body>
-            <Card.Title>
+        <div key={exercise.id} className="position-relative">
+          {
+            onSelectionRemove && (
+              <div className="position-absolute card-remove-btn-wrapper">
+                {!readOnly && <Button
+                  className="btn-circle-sm m-1"
+                  variant="light"
+                  onClick={() => onSelectionRemove(exercise.id)}
+                >
+                  <BsX size={15} />
+                </Button>
+                }
+              </div>
+            )
+          }
+          <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise)}>
+            <div className="card-img bg-light">
               {
-                exercise.title.length <= 50
-                  ? <h5 className="card-title">{ exercise.title }</h5>
-                  : (
-                    <OverlayTrigger
-                      overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                    >
-                      <h5 className="card-title">{ exercise.title }</h5>
-                    </OverlayTrigger>
+                exercise.files.length > 0 && (
+                  (exercise.files[0].fileType === 'audio/mpeg' &&
+                    <div className="w-100">
+                      <audio controls className="w-100">
+                        <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
+                      </audio>
+                    </div>
+                  ) ||
+                  (exercise.files[0].fileType === 'video/mp4' &&
+                    <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
+                    />
+                  ) ||
+                  ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
+                    <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
+                    />
                   )
+                )
               }
-            </Card.Title>
-          </Card.Body>
-        </Card>
+            </div>
+            <Card.Body>
+              <Card.Title>
+                {
+                  exercise.title.length <= 50
+                    ? <h5 className="card-title">{ exercise.title }</h5>
+                    : (
+                      <OverlayTrigger
+                        overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                      >
+                        <h5 className="card-title">{ exercise.title }</h5>
+                      </OverlayTrigger>
+                    )
+                }
+              </Card.Title>
+            </Card.Body>
+          </Card>
+        </div>
       ))}
+      { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} exercise={exercise} /> }
     </>
   );
 };

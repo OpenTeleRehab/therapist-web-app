@@ -1,6 +1,9 @@
 .exercise-card {
 	overflow: hidden;
 	height: 315px;
+	&:hover {
+		cursor: pointer;
+	}
 
 	.img-fluid {
 		max-width: 100%;
@@ -64,4 +67,17 @@
 
 .modal-backdrop.show, .modal.show {
 	z-index: 1051 !important;
+}
+
+.view-exercise-carousel {
+	.carousel-control-next, .carousel-control-prev {
+		height: 30px;
+		top: 40%;
+	}
+	.carousel-indicators {
+		height: 15px;
+	}
+	.audio-wrapper {
+		height: 120px;
+	}
 }
