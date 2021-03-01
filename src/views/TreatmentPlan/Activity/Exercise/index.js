@@ -16,9 +16,10 @@ import { BsSearch, BsX } from 'react-icons/bs';
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
+import ViewExercise from './viewExercise';
 
 let timer = null;
-const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
+const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise }) => {
   const dispatch = useDispatch();
   const { loading, exercises, filters } = useSelector(state => state.exercise);
   const [pageSize, setPageSize] = useState(8);
@@ -27,6 +28,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
   const [formFields, setFormFields] = useState({
     search_value: ''
   });
+  const [exercise, setExercise] = useState([]);
 
   const languages = useSelector(state => state.language.languages);
   const [language, setLanguage] = useState('');
@@ -68,6 +70,15 @@ const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
   const handleLanguageChange = e => {
     const { value } = e.target;
     setLanguage(value);
+  };
+
+  const handleView = (exercise) => {
+    setExercise(exercise);
+    setViewExercise(true);
+  };
+
+  const handleViewClose = () => {
+    setViewExercise(false);
   };
 
   return (
@@ -139,7 +150,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
-                    <Card className="exercise-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise)}>
                       <div className="card-img bg-light">
                         <div className="position-absolute w-100">
                           <Form.Check
@@ -152,16 +163,15 @@ const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
                         {
                           exercise.files.length > 0 && (
                             (exercise.files[0].fileType === 'audio/mpeg' &&
-                              <div className="w-100">
+                              <div className="w-100 pt-5 pl-3 pr-3">
                                 <audio controls className="w-100">
                                   <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
                                 </audio>
                               </div>
                             ) ||
                             (exercise.files[0].fileType === 'video/mp4' &&
-                              <video controls className="w-100 h-100">
-                                <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="video/mp4" />
-                              </video>
+                              <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
+                              />
                             ) ||
                             ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
                               <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
@@ -201,6 +211,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
             </>
           )}
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} exercise={exercise} /> }
         </Col>
       </Row>
     </>
@@ -210,7 +221,9 @@ const Exercise = ({ translate, selectedExercises, onSectionChange }) => {
 Exercise.propTypes = {
   translate: PropTypes.func,
   selectedExercises: PropTypes.array,
-  onSectionChange: PropTypes.func
+  onSectionChange: PropTypes.func,
+  viewExercise: PropTypes.bool,
+  setViewExercise: PropTypes.func
 };
 
 export default withLocalize(Exercise);
