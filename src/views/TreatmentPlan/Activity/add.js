@@ -19,6 +19,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
   const [selectedQuestionnaires, setSelectedQuestionnaires] = useState([]);
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [viewExercise, setViewExercise] = useState(false);
+  const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
 
   useEffect(() => {
     const dayActivity = _.findLast(activities, { week, day });
@@ -41,6 +42,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
   };
 
   const handleMaterialsChange = (checked, id) => {
+    setViewEducationMaterial(false);
     if (checked) {
       selectedMaterials.push(id);
     } else {
@@ -88,7 +90,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities }
           <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} viewExercise={viewExercise} setViewExercise={setViewExercise} />
         </Tab>
         <Tab eventKey="education" title={translate('activity.education_materials')}>
-          <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} />
+          <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} viewEducationMaterial={viewEducationMaterial} setViewEducationMaterial={setViewEducationMaterial} />
         </Tab>
         <Tab eventKey="questionnaire" title={translate('activity.questionnaires')}>
           <Questionnaire selectedMaterials={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} viewQuestionnaire={viewQuestionnaire} setViewQuestionnaire={setViewQuestionnaire} />
