@@ -17,9 +17,10 @@ import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { MdDescription } from 'react-icons/md';
 import { getEducationMaterials } from 'store/educationMaterial/actions';
+import ViewEducationMaterial from './viewEducationMaterial';
 
 let timer = null;
-const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) => {
+const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial }) => {
   const dispatch = useDispatch();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
   const [pageSize, setPageSize] = useState(8);
@@ -32,6 +33,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
   const languages = useSelector(state => state.language.languages);
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
+  const [educationMaterial, setEducationMaterial] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -69,6 +71,15 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
   const handleLanguageChange = e => {
     const { value } = e.target;
     setLanguage(value);
+  };
+
+  const handleViewEducationMaterial = (educationMaterial) => {
+    setViewEducationMaterial(true);
+    setEducationMaterial(educationMaterial);
+  };
+
+  const handleViewEducationMaterialClose = () => {
+    setViewEducationMaterial(false);
   };
 
   return (
@@ -140,7 +151,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
               <Row>
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4">
+                    <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewEducationMaterial(material)}>
                       <div className="card-img bg-light">
                         <div className="position-absolute w-100">
                           <Form.Check
@@ -190,6 +201,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
             </>
           )}
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { viewEducationMaterial && <ViewEducationMaterial showView={viewEducationMaterial} handleViewClose={handleViewEducationMaterialClose} educationMaterial={educationMaterial} />}
         </Col>
       </Row>
     </>
@@ -199,7 +211,9 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange }) =>
 EducationMaterial.propTypes = {
   translate: PropTypes.func,
   selectedMaterials: PropTypes.array,
-  onSectionChange: PropTypes.func
+  onSectionChange: PropTypes.func,
+  viewEducationMaterial: PropTypes.bool,
+  setViewEducationMaterial: PropTypes.func
 };
 
 export default withLocalize(EducationMaterial);

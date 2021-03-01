@@ -12,12 +12,15 @@ import { MdDescription } from 'react-icons/md';
 import { EducationMaterial } from 'services/educationMaterial';
 import { useSelector } from 'react-redux';
 import { BsX } from 'react-icons/bs';
+import ViewEducationMaterial from './viewEducationMaterial';
 
 const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
   const [ids] = materialIds;
+  const [viewMaterial, setViewMaterial] = useState(false);
+  const [material, setMaterial] = useState([]);
 
   useEffect(() => {
     if (materialObjs && materialObjs.length > 0) {
@@ -33,50 +36,62 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
     }
   }, [ids, materialIds, lang, materialObjs]);
 
+  const handleViewMaterial = (material) => {
+    setMaterial(material);
+    setViewMaterial(true);
+  };
+
+  const handleViewMaterialClose = () => {
+    setViewMaterial(false);
+  };
+
   return (
     <>
       { materials.map(material => (
-        <Card key={material.id} className="exercise-card material-card shadow-sm mb-4">
-          <div className="card-img bg-light">
-            {
-              onSelectionRemove && (
-                <div className="position-absolute w-100">
-                  {!readOnly && <Button
-                    className="btn-circle-sm float-right m-1"
-                    variant="light"
-                    onClick={() => onSelectionRemove(material.id)}
-                  >
-                    <BsX size={15} />
-                  </Button>
-                  }
-                </div>
-              )
-            }
-            <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
-              <MdDescription size={80} />
-              <p>{translate('activity.material').toUpperCase()}</p>
+        <div key={material.id} className="position-relative">
+          {
+            onSelectionRemove && (
+              <div className="position-absolute card-remove-btn-wrapper">
+                {!readOnly && <Button
+                  className="btn-circle-sm m-1"
+                  variant="light"
+                  onClick={() => onSelectionRemove(material.id)}
+                >
+                  <BsX size={15} />
+                </Button>
+                }
+              </div>
+            )
+          }
+          <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewMaterial(material)}>
+            <div className="card-img bg-light">
+              <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
+                <MdDescription size={80} />
+                <p>{translate('activity.material').toUpperCase()}</p>
+              </div>
             </div>
-          </div>
-          <Card.Body className="d-flex flex-column justify-content-between">
-            <Card.Title>
-              {
-                material.title.length <= 50
-                  ? <h5 className="card-title">{ material.title }</h5>
-                  : (
-                    <OverlayTrigger
-                      overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
-                    >
-                      <h5 className="card-title">{ material.title }</h5>
-                    </OverlayTrigger>
-                  )
-              }
-            </Card.Title>
-            <Card.Text>
-              {translate(material.file.fileGroupType)}
-            </Card.Text>
-          </Card.Body>
-        </Card>
+            <Card.Body className="d-flex flex-column justify-content-between">
+              <Card.Title>
+                {
+                  material.title.length <= 50
+                    ? <h5 className="card-title">{ material.title }</h5>
+                    : (
+                      <OverlayTrigger
+                        overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
+                      >
+                        <h5 className="card-title">{ material.title }</h5>
+                      </OverlayTrigger>
+                    )
+                }
+              </Card.Title>
+              <Card.Text>
+                {translate(material.file.fileGroupType)}
+              </Card.Text>
+            </Card.Body>
+          </Card>
+        </div>
       ))}
+      { viewMaterial && <ViewEducationMaterial showView={viewMaterial} handleViewClose={handleViewMaterialClose} educationMaterial={material}/> }
     </>
   );
 };
