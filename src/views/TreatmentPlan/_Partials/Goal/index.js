@@ -3,7 +3,8 @@ import {
   Badge,
   Button,
   Card,
-  Form
+  Form,
+  ListGroup
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { BsPlusCircle } from 'react-icons/all';
@@ -62,22 +63,26 @@ const TreatmentGoal = ({ goals, setGoals, readOnly }) => {
       </h6>
 
       {goals.length > 0 ? (
-        <>
-          {goals.map((goal, i) => {
-            return (
-              <Card body key={i} className="mb-2">
-                <Badge variant="info" className="mr-1">
-                  {translate(`treatment_plan.goal.frequency.option.${goal.frequency}`)}
-                </Badge>
-                {goal.title}
-                <div className="float-right">
-                  <EditAction className="ml-1" onClick={() => handleEditGoal(i)} />
-                  <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} />
-                </div>
-              </Card>
-            );
-          })}
-        </>
+        <Card className="mb-2">
+          <ListGroup variant="flush">
+            {goals.map((goal, i) => {
+              return (
+                <ListGroup.Item key={i} >
+                  <Badge variant="info" className="mr-1">
+                    {translate(`treatment_plan.goal.frequency.option.${goal.frequency}`)}
+                  </Badge>
+                  {goal.title}
+                  {!readOnly &&
+                    <div className="float-right">
+                      <EditAction className="ml-1" onClick={() => handleEditGoal(i)} />
+                      <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} />
+                    </div>
+                  }
+                </ListGroup.Item>
+              );
+            })}
+          </ListGroup>
+        </Card>
       ) : (
         <span>{translate('treatment_plan.goal.no_goals')}</span>
       )}

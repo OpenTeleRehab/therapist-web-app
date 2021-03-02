@@ -12,8 +12,8 @@ import PropTypes from 'prop-types';
 
 const AdherenceTab = () => {
   const localize = useSelector((state) => state.localize);
-  const { treatmentPlansDetail } = useSelector((state) => state.treatmentPlan);
   const translate = getTranslate(localize);
+  const { treatmentPlansDetail } = useSelector((state) => state.treatmentPlan);
   const [activities, setActivities] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
