@@ -16,6 +16,7 @@ import ActivitySection from './_Partials/activitySection';
 import AdherenceTab from './TabContents/adherenceTab';
 import _ from 'lodash';
 import { renderStatusBadge } from '../../utils/treatmentPlan';
+import GoalTrackingTab from './TabContents/goalTrakingTab';
 
 const ViewTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
@@ -113,6 +114,9 @@ const ViewTreatmentPlan = () => {
           </Tab>
           <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaires_tab')}>
             <QuestionnaireTab activities={activities}/>
+          </Tab>
+          <Tab eventKey={TAB.goal_tracking} title={translate('treatment_plan.goal_tracking_tab')}>
+            <GoalTrackingTab activities={activities}/>
           </Tab>
         </Tabs>
       </div>

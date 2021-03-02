@@ -239,7 +239,6 @@ const CreateTreatmentPlan = () => {
           className="ml-2"
           variant="primary"
           onClick={handleAssign}
-          disabled={readOnly}
         >
           {translate(id ? 'common.save' : 'common.assign')}
         </Button>
