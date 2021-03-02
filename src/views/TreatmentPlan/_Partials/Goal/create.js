@@ -46,7 +46,7 @@ const CreateTreatmentGoal = ({ show, editIndex, goals, setGoals, handleClose }) 
     }
 
     if (canSave) {
-      if (editIndex) {
+      if (editIndex !== undefined) {
         goals[editIndex] = formFields;
         setGoals(goals);
       } else {
@@ -60,10 +60,10 @@ const CreateTreatmentGoal = ({ show, editIndex, goals, setGoals, handleClose }) 
   return (
     <Dialog
       show={show}
-      title={translate(editIndex ? 'treatment_plan.goal.edit' : 'treatment_plan.goal.new')}
+      title={translate(editIndex !== undefined ? 'treatment_plan.goal.edit' : 'treatment_plan.goal.new')}
       onCancel={handleClose}
       onConfirm={handleConfirm}
-      confirmLabel={editIndex ? translate('common.save') : translate('common.add')}
+      confirmLabel={editIndex !== undefined ? translate('common.save') : translate('common.add')}
     >
       <Form>
         <Form.Group controlId="formFrequency">
