@@ -1,7 +1,8 @@
 import axios from 'utils/admin-axios';
 
-const getClinics = () => {
-  return axios.get('/clinic')
+const getClinics = (countryId) => {
+  const params = { country_id: countryId };
+  return axios.get('/clinic', { params })
     .then(
       res => {
         return res.data;

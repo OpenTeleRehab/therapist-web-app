@@ -22,12 +22,12 @@ const ConfigurationProvider = ({ children }) => {
               setLoading(false);
             }
           });
+          dispatch(getClinics(res.data.country_id));
         } else {
           setLoading(false);
         }
       });
 
-      dispatch(getClinics());
       dispatch(getCountries());
       dispatch(getLanguages());
     }
