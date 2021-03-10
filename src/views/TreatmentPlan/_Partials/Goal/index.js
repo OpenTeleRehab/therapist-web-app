@@ -109,7 +109,7 @@ const TreatmentGoal = ({ goals, setGoals, readOnly }) => {
 
       <Dialog
         show={showDeleteDialog}
-        title={translate('user.delete_confirmation_title')}
+        title={translate('treatment_plan.goal.delete_confirmation_title')}
         cancelLabel={translate('common.no')}
         onCancel={handleDeleteDialogClose}
         confirmLabel={translate('common.yes')}
