@@ -6,11 +6,14 @@ $font-family-base: Nunito, Arial, sans-serif;
 
 // Color
 $red: #FB4E4E;
-$orange:  #E35205;
-$yellow:  #EDC8A3;
+$orange: #E35205;
+$yellow: #EDC8A3;
 $green: #1AB759;
 $blue: #0077C8;
 $teal: #EAF9F0;
+$gray-500: #ADADAD;
+$gray-600: #858585;
+$gray-900: #333333;
 
 $primary: $blue;
 $secondary: #06038D;
@@ -50,6 +53,9 @@ $zindex-toast: 1080;
 // Font size
 $h1-font-size: 1.5rem;
 $headings-line-height: 1.5rem;
+$small-font-size: 14px;
+
+$text-muted: $gray-600;
 
 /* import bootstrap to set changes */
 @import '~bootstrap/scss/bootstrap';

@@ -7,3 +7,4 @@ export const VIEW_PATIENT_DETAIL = `${PATIENT}/:patientId`;
 export const TREATMENT_PLAN_CREATE_FOR_PATIENT = VIEW_PATIENT_DETAIL + '/treatment-plan/create';
 export const TREATMENT_PLAN_EDIT = VIEW_PATIENT_DETAIL + '/treatment-plan/edit/:id';
 export const VIEW_TREATMENT_PLAN_DETAIL = VIEW_PATIENT_DETAIL + '/treatment-plan/:id';
+export const CHAT_OR_CALL = '/chat-or-call';

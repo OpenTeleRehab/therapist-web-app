@@ -27,22 +27,22 @@
   }
 
   .navbar-nav {
-	margin-top: 0.5rem;
-	.nav-link {
-	  border-radius: unset;
-	  color: $white;
-	  font-weight: $font-weight-bold;
-	  padding: 0.5rem 1rem;
+		margin-top: 0.5rem;
+		.nav-link {
+	  	border-radius: unset;
+	  	color: $white;
+	  	font-weight: $font-weight-bold;
+	  	padding: 0.5rem 1rem;
 
-	  &.active {
-		background-color: theme-color('secondary');
-	  }
-	}
+	  	&.active {
+				background-color: theme-color('secondary');
+	  	}
+		}
 
-	.show > .nav-link {
-	  background: none;
-	  outline: none;
-	}
+		.show > .nav-link {
+	  	background: none;
+	  	outline: none;
+		}
   }
 
   .btn-link {
@@ -85,4 +85,37 @@
 	  }
 	}
   }
+}
+
+@include media-breakpoint-up(md) {
+	.main-nav {
+		.navbar-nav {
+			.nav-link {
+				&.has-badge {
+					position: relative;
+					padding-right: 3rem;
+					.badge {
+						right: 1.5rem;
+						top: 1rem;
+					}
+					&.md {
+						.badge {
+							right: 1.25rem;
+							top: 0.75rem;
+						}
+					}
+					&.lg {
+						padding-right: 3.5rem;
+						.badge {
+							right: 1.25rem;
+							top: 0.5rem;
+						}
+					}
+				}
+				.badge {
+					position: absolute;
+				}
+			}
+		}
+	}
 }

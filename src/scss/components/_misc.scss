@@ -22,3 +22,21 @@
 .z-index-1 {
 	z-index: 1;
 }
+
+.row-bg {
+	margin-top: -1rem;
+	background-color: $blue-light-2;
+}
+
+.badge {
+	&.circle {
+		border-radius: 50%;
+		padding: 0.25rem 0.4rem;
+		&.md {
+			padding: 0.35rem 0.25rem;
+		}
+		&.lg {
+			padding: 0.6rem 0.25rem;
+		}
+	}
+}
