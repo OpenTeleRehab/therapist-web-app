@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, NavLink, withRouter } from 'react-router-dom';
-import { Navbar, Nav, Dropdown } from 'react-bootstrap';
+import { Navbar, Nav, Dropdown, Badge } from 'react-bootstrap';
 import * as ROUTES from 'variables/routes';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
@@ -51,6 +51,14 @@ const Navigation = ({ translate }) => {
             className="nav-link"
           >
             {translate('patient')}
+          </NavLink>
+          <NavLink
+            to={ROUTES.CHAT_OR_CALL}
+            key="nav-chat-or-call"
+            className="nav-link has-badge"
+          >
+            {translate('chat_or_call')}
+            <Badge variant="danger" className="circle d-md-block">5</Badge>
           </NavLink>
 
           { profile !== undefined && (

@@ -12,6 +12,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
 import { createUser, updateUser } from 'store/user/actions';
+import { getProfile } from 'store/auth/actions';
 
 import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
@@ -47,7 +48,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     note: '',
     date_of_birth: '',
     age: '',
-    therapist_id: ''
+    therapist_id: '',
+    therapist_identity: ''
   });
   const [dob, setDob] = useState('');
 
@@ -76,7 +78,14 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     } else {
       resetData();
       if (profile !== undefined) {
-        setFormFields({ ...formFields, country_id: profile.country_id, clinic_id: profile.clinic_id, clinic_identity: getClinicIdentity(profile.clinic_id, clinics), therapist_id: profile.id });
+        setFormFields({
+          ...formFields,
+          country_id: profile.country_id,
+          clinic_id: profile.clinic_id,
+          clinic_identity: getClinicIdentity(profile.clinic_id, clinics),
+          therapist_id: profile.id,
+          therapist_identity: profile.identity
+        });
       }
     }
     // eslint-disable-next-line
@@ -185,6 +194,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         dispatch(createUser(formValues))
           .then(result => {
             if (result) {
+              dispatch(getProfile());
               handleClose();
             }
           });
@@ -355,7 +365,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
 CreatePatient.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
-  editId: PropTypes.string
+  editId: PropTypes.number
 };
 
 export default CreatePatient;
