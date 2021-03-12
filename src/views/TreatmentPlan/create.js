@@ -47,6 +47,7 @@ const CreateTreatmentPlan = () => {
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [readOnly] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -321,13 +322,13 @@ const CreateTreatmentPlan = () => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <TreatmentGoal goals={goals} setGoals={setGoals} />
+              <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} />
             </Col>
           </Row>
         </Accordion.Collapse>
         <CollapseToggle title={translate('treatment_plan.treatment_information')} eventKey="0" />
       </Accordion>
-      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} />
+      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} readOnly={readOnly} />
     </>
   );
 };
