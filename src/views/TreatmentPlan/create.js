@@ -47,7 +47,6 @@ const CreateTreatmentPlan = () => {
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
-  const [readOnly, setReadOnly] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -72,8 +71,6 @@ const CreateTreatmentPlan = () => {
       } else {
         setFormFields({ ...formFields, start_date: '' });
       }
-    } else {
-      setReadOnly(true);
     }
     // eslint-disable-next-line
   }, [startDate]);
@@ -324,13 +321,13 @@ const CreateTreatmentPlan = () => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} />
+              <TreatmentGoal goals={goals} setGoals={setGoals} />
             </Col>
           </Row>
         </Accordion.Collapse>
         <CollapseToggle title={translate('treatment_plan.treatment_information')} eventKey="0" />
       </Accordion>
-      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} readOnly={readOnly} />
+      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} />
     </>
   );
 };

@@ -17,7 +17,7 @@ const PatientList = ({ translate, patients, keyword }) => {
           <ListGroup.Item as="li" className="d-flex justify-content-between align-items-center">
             <div className="chat-room">
               Constance Mann <Badge variant="success" className="user-status">&nbsp;</Badge>
-              <p className="text-muted text-truncate small mb-0">I may busy this afternoon, may won't be able to join the meeting.</p>
+              <p className="text-muted text-truncate small mb-0">I may busy this afternoon, may would not be able to join the meeting.</p>
             </div>
             <div className="d-flex flex-column align-items-end">
               <Badge variant="primary">50</Badge>
