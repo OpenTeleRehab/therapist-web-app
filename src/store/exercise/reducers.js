@@ -19,6 +19,11 @@ export const exercise = (state = initialState, action) => {
         loading: false
       });
     }
+    case 'CLEAR_FILTER_EXERCISES_REQUEST': {
+      return Object.assign({}, state, {
+        filters: {}
+      });
+    }
     default:
       return state;
   }

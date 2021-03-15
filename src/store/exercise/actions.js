@@ -13,3 +13,7 @@ export const getExercises = payload => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const clearFilterExercises = () => async dispatch => {
+  dispatch(mutation.clearFilterExercisesRequest());
+};
