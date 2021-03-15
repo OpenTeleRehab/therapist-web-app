@@ -132,7 +132,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                 <Form.Control as="select" value={language} onChange={handleLanguageChange}>
                   {languages.map((language, index) => (
                     <option key={index} value={language.id}>
-                      {language.name} {language.code === language.fallback && `(${translate('common.default')})`}
+                      {language.name}
                     </option>
                   ))}
                 </Form.Control>

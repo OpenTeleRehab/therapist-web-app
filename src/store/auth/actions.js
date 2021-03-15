@@ -4,7 +4,10 @@ import {
   showErrorNotification,
   showSuccessNotification
 } from 'store/notification/actions';
-import { getTranslations } from '../translation/actions';
+import { getTranslations } from 'store/translation/actions';
+import { clearFilterQuestionnaires } from 'store/questionnaire/actions';
+import { clearFilterEducationMaterials } from 'store/educationMaterial/actions';
+import { clearFilterExercises } from 'store/exercise/actions';
 
 // Actions
 export const getProfile = () => async dispatch => {
@@ -27,6 +30,9 @@ export const updateProfile = (id, payload) => async dispatch => {
     dispatch(showSuccessNotification('toast_title.update_profile', 'success_message.update_profile_success'));
     dispatch(getTranslations(payload.language_id));
     dispatch(getProfile());
+    dispatch(clearFilterQuestionnaires());
+    dispatch(clearFilterEducationMaterials());
+    dispatch(clearFilterExercises());
     return true;
   } else {
     dispatch(mutation.updatePasswordFail());

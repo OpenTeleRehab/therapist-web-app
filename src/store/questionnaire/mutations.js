@@ -12,8 +12,13 @@ const getQuestionnairesFail = () => ({
   type: 'GET_QUESTIONNAIRES_FAIL'
 });
 
+const clearFilterQuestionnairesRequest = () => ({
+  type: 'CLEAR_FILTER_QUESTIONNAIRES_REQUEST'
+});
+
 export const mutation = {
   getQuestionnairesRequest,
   getQuestionnairesSuccess,
-  getQuestionnairesFail
+  getQuestionnairesFail,
+  clearFilterQuestionnairesRequest
 };

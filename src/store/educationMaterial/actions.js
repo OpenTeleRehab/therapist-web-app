@@ -13,3 +13,7 @@ export const getEducationMaterials = payload => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const clearFilterEducationMaterials = () => async dispatch => {
+  dispatch(mutation.clearFilterEducationMaterialsRequest());
+};

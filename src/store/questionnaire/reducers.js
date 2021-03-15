@@ -8,6 +8,11 @@ export const questionnaire = (state = initialState, action) => {
         filters: action.filters
       });
     }
+    case 'CLEAR_FILTER_QUESTIONNAIRES_REQUEST': {
+      return Object.assign({}, state, {
+        filters: {}
+      });
+    }
     default:
       return state;
   }

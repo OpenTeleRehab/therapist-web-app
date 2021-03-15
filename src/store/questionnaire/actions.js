@@ -13,3 +13,7 @@ export const getQuestionnaires = payload => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const clearFilterQuestionnaires = () => async dispatch => {
+  dispatch(mutation.clearFilterQuestionnairesRequest());
+};

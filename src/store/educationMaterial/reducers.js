@@ -15,6 +15,11 @@ export const educationMaterial = (state = initialState, action) => {
         loading: false
       });
     }
+    case 'CLEAR_FILTER_EDUCATION_MATERIALS_REQUEST': {
+      return Object.assign({}, state, {
+        filters: {}
+      });
+    }
     default:
       return state;
   }
