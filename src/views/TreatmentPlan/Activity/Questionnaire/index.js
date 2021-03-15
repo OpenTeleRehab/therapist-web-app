@@ -15,7 +15,7 @@ import { BsSearch, BsX } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
-import { FiTwitch } from 'react-icons/fi';
+import { RiQuestionnaireLine } from 'react-icons/ri';
 import { getQuestionnaires } from 'store/questionnaire/actions';
 import ViewQuestionnaire from './viewQuestionnaire';
 
@@ -163,7 +163,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
                         </div>
 
                         <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                          <FiTwitch size={80} />
+                          <RiQuestionnaireLine size={80} />
                           <p>{translate('activity.questionnaire').toUpperCase()}</p>
                         </div>
                       </div>
