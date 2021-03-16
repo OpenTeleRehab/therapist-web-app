@@ -53,6 +53,13 @@ const Navigation = ({ translate }) => {
             {translate('patient')}
           </NavLink>
           <NavLink
+            to={ROUTES.LIBRARY}
+            key='nav-patient'
+            className="nav-link"
+          >
+            {translate('library')}
+          </NavLink>
+          <NavLink
             to={ROUTES.CHAT_OR_CALL}
             key="nav-chat-or-call"
             className="nav-link has-badge"
