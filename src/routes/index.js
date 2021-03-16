@@ -7,11 +7,16 @@ import PrivateRoute from 'routes/privateRoute';
 
 import DashboardPage from 'views/Dashboard';
 import Patient from 'views/Patient';
+import Library from 'views/Library';
 import Profile from 'views/Profile';
 import CreateTreatmentPlan from 'views/TreatmentPlan/create';
 import ViewPatient from 'views/Patient/viewPatient';
 import ViewTreatmentPlan from 'views/TreatmentPlan/detail';
 import NotFoundPage from 'views/NotFound';
+
+import CreateExercise from 'views/Library/Exercise/create';
+import CreateEducationMaterial from 'views/Library/EducationMaterial/create';
+import CreateQuestionnaire from 'views/Library/Questionnaire/create';
 
 import * as ROUTES from 'variables/routes';
 const PRIVATE = 'private';
@@ -29,6 +34,34 @@ const routes = [
     title: 'patient',
     path: ROUTES.PATIENT,
     component: Patient,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'library',
+    path: ROUTES.LIBRARY,
+    component: Library,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'exercise.create',
+    path: ROUTES.EXERCISE_CREATE,
+    component: CreateExercise,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'education_material.create',
+    path: ROUTES.EDUCATION_MATERIAL_CREATE,
+    component: CreateEducationMaterial,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'questionnaire.create',
+    path: ROUTES.QUESTIONNAIRE_CREATE,
+    component: CreateQuestionnaire,
     exact: true,
     type: PRIVATE
   },
