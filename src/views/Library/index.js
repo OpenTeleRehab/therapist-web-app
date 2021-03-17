@@ -29,7 +29,7 @@ const Library = ({ translate }) => {
       setNewContentLink(ROUTES.QUESTIONNAIRE_CREATE);
     } else if (hash.includes('#' + VIEW_PRESET_TREATMENT)) {
       setView(VIEW_PRESET_TREATMENT);
-      setNewContentLink(ROUTES.TREATMENT_PLAN_CREATE);
+      setNewContentLink(ROUTES.LIBRARY_TREATMENT_PLAN_CREATE);
     } else {
       setView(VIEW_EXERCISE);
       setNewContentLink(ROUTES.EXERCISE_CREATE);

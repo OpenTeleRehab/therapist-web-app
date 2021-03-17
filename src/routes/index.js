@@ -89,7 +89,7 @@ const routes = [
   },
   {
     title: 'treatment_plan.create',
-    path: ROUTES.TREATMENT_PLAN_CREATE,
+    path: ROUTES.LIBRARY_TREATMENT_PLAN_CREATE,
     component: CreateTreatmentPlan,
     exact: true,
     type: PRIVATE
@@ -103,8 +103,22 @@ const routes = [
   },
   {
     title: 'treatment_plan.edit',
+    path: ROUTES.LIBRARY_TREATMENT_PLAN_EDIT,
+    component: CreateTreatmentPlan,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'treatment_plan.edit',
     path: ROUTES.TREATMENT_PLAN_EDIT,
     component: CreateTreatmentPlan,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'treatment_plan.detail',
+    path: ROUTES.LIBRARY_TREATMENT_PLAN_DETAIL,
+    component: ViewTreatmentPlan,
     exact: true,
     type: PRIVATE
   },

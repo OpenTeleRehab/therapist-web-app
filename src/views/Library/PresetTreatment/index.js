@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 
-import {
-  DeleteAction,
-  EditAction,
-  ViewAction
-} from 'components/ActionIcons';
 import CustomTable from 'components/Table';
 import { getTreatmentPlans } from 'store/treatmentPlan/actions';
+import * as ROUTES from 'variables/routes';
 
 let timer = null;
 const PresetTreatment = ({ translate }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
   const { treatmentPlans } = useSelector(state => state.treatmentPlan);
 
@@ -25,8 +23,7 @@ const PresetTreatment = ({ translate }) => {
   const columns = [
     { name: 'name', title: translate('treatment_plan.name') },
     { name: 'description', title: translate('common.description') },
-    { name: 'total_of_weeks', title: translate('common.duration') },
-    { name: 'action', title: translate('common.action') }
+    { name: 'total_of_weeks', title: translate('common.duration') }
   ];
 
   useEffect(() => {
@@ -44,6 +41,10 @@ const PresetTreatment = ({ translate }) => {
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
+  const handleRowClick = (row) => {
+    history.push(ROUTES.LIBRARY_TREATMENT_PLAN_DETAIL.replace(':id', row.id));
+  };
+
   return (
     <CustomTable
       pageSize={pageSize}
@@ -54,20 +55,14 @@ const PresetTreatment = ({ translate }) => {
       setFilters={setFilters}
       filters={filters}
       columns={columns}
+      onRowClick={handleRowClick}
       rows={treatmentPlans.map(treatmentPlan => {
-        const action = (
-          <>
-            <ViewAction className="ml-1" />
-            <EditAction className="ml-1" />
-            <DeleteAction className="ml-1" disabled />
-          </>
-        );
         const numberOfWeeks = treatmentPlan.total_of_weeks;
         return {
+          id: treatmentPlan.id,
           name: treatmentPlan.name,
           description: treatmentPlan.description,
-          total_of_weeks: `${numberOfWeeks} ${translate(numberOfWeeks > 1 ? 'common.weeks' : 'common.week')}`,
-          action
+          total_of_weeks: `${numberOfWeeks} ${translate(numberOfWeeks > 1 ? 'common.weeks' : 'common.week')}`
         };
       })}
     />

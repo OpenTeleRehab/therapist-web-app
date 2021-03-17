@@ -41,7 +41,8 @@ const getTreatmentPlans = payload => {
 };
 
 const getTreatmentPlansDetail = payload => {
-  return axiosPatient.get('/treatment-plan/get-treatment-plan-detail', { params: payload })
+  const httpRequest = payload.type === 'preset' ? axios : axiosPatient;
+  return httpRequest.get('/treatment-plan/get-treatment-plan-detail', { params: payload })
     .then(
       res => {
         return res.data;

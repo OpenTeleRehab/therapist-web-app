@@ -15,6 +15,7 @@ import CollapseToggle from './_Partials/collapseToggle';
 import ActivitySection from './_Partials/activitySection';
 import PatientInfo from 'views/Patient/Partials/patientInfo';
 import TreatmentGoal from './_Partials/Goal';
+import { getUsers } from '../../store/user/actions';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -23,8 +24,9 @@ const CreateTreatmentPlan = () => {
   const translate = getTranslate(localize);
   const { id, patientId } = useParams();
 
-  const treatmentPlans = useSelector((state) => state.treatmentPlan.treatmentPlans);
-  const users = useSelector(state => state.user.users);
+  const { treatmentPlans } = useSelector((state) => state.treatmentPlan);
+  const { users } = useSelector(state => state.user);
+  const { profile } = useSelector((state) => state.auth);
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
@@ -35,8 +37,7 @@ const CreateTreatmentPlan = () => {
     description: '',
     patient_id: patientId,
     start_date: '',
-    end_date: '',
-    patient_name: ''
+    end_date: ''
   });
   const [weeks, setWeeks] = useState(1);
   const [startDate, setStartDate] = useState('');
@@ -45,23 +46,24 @@ const CreateTreatmentPlan = () => {
   const [errorName, setErrorName] = useState(false);
   const [errorDescription, setErrorDescription] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
+  const [errorPatient, setErrorPatient] = useState(false);
   const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
   const [readOnly] = useState(false);
 
   useEffect(() => {
     if (id) {
-      dispatch(getTreatmentPlans({ id }));
+      const additionalParams = patientId ? {} : { type: 'preset' };
+      dispatch(getTreatmentPlans({ id, ...additionalParams }));
     }
-  }, [id, dispatch]);
+  }, [id, patientId, dispatch]);
 
   useEffect(() => {
-    if (patientId && users.length) {
-      const data = users.find(user => user.id === parseInt(patientId));
-      setFormFields({ ...formFields, patient_name: data.last_name + ' ' + data.first_name });
+    if (!patientId && profile) {
+      dispatch(getUsers({ therapist_id: profile.id, page_size: 999 }));
     }
     // eslint-disable-next-line
-  }, [patientId, users]);
+  }, [patientId, profile]);
 
   useEffect(() => {
     if (!isPast()) {
@@ -126,6 +128,7 @@ const CreateTreatmentPlan = () => {
 
   const handleSaveAsPreset = () => {
     let canSave = true;
+    setErrorPatient(false);
     setErrorStartDate(false);
 
     if (formFields.name === '') {
@@ -143,7 +146,13 @@ const CreateTreatmentPlan = () => {
     }
 
     if (canSave) {
-      dispatch(createTreatmentPlan({ ...formFields, total_of_weeks: weeks, type: 'preset', activities }));
+      dispatch(createTreatmentPlan({
+        ...formFields,
+        goals,
+        activities,
+        total_of_weeks: weeks,
+        type: 'preset'
+      }));
     }
   };
 
@@ -164,7 +173,14 @@ const CreateTreatmentPlan = () => {
       setErrorDescription(false);
     }
 
-    if (formFields.start_date === '') {
+    if (!formFields.patient_id) {
+      canSave = false;
+      setErrorPatient(true);
+    } else {
+      setErrorPatient(false);
+    }
+
+    if (formFields.start_date === '' || !moment(formFields.start_date, settings.date_format).isValid()) {
       canSave = false;
       setErrorStartDate(true);
     } else {
@@ -172,7 +188,7 @@ const CreateTreatmentPlan = () => {
     }
 
     if (canSave) {
-      if (id) {
+      if (id && patientId) {
         dispatch(updateTreatmentPlan(id, {
           ...formFields,
           total_of_weeks: weeks,
@@ -213,12 +229,12 @@ const CreateTreatmentPlan = () => {
   return (
     <>
       {patientId && (
-        <div className="top-content">
+        <div className="top-content mb-4">
           <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
         </div>
       )}
-      <div className="d-flex mb-4 mt-4">
-        <h4 className="mb-">{translate('treatment_plan.treatment_planning')}</h4>
+      <div className="d-flex mb-4">
+        <h4>{translate('treatment_plan.treatment_planning')}</h4>
         <Button
           className="ml-auto"
           variant="outline-primary"
@@ -226,7 +242,7 @@ const CreateTreatmentPlan = () => {
         >
           {translate('common.cancel')}
         </Button>
-        {!id && (
+        {(!id || !patientId) && (
           <Button
             className="ml-2"
             variant="primary"
@@ -240,7 +256,7 @@ const CreateTreatmentPlan = () => {
           variant="primary"
           onClick={handleAssign}
         >
-          {translate(id ? 'common.save' : 'common.assign')}
+          {translate(id && patientId ? 'common.save' : 'common.assign')}
         </Button>
       </div>
       <Accordion defaultActiveKey="0">
@@ -291,10 +307,20 @@ const CreateTreatmentPlan = () => {
                   name="patient_id"
                   onChange={handleChange}
                   value={formFields.patient_id}
-                  disabled={true}
+                  disabled={patientId}
                 >
-                  <option>{formFields.patient_name}</option>
+                  <option>{translate('placeholder.patient')}</option>
+                  {users.map(patient => (
+                    <option key={patient.id} value={patient.id}>
+                      {patient.last_name} {patient.first_name}
+                    </option>
+                  ))}
                 </Form.Control>
+                {errorPatient && (
+                  <Form.Control.Feedback type="invalid" className="d-block">
+                    {translate('error_message.treatment_plan_patient_required')}
+                  </Form.Control.Feedback>
+                )}
               </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.start_date')}</Form.Label>
