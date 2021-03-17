@@ -2,28 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
+import { BsPlus } from 'react-icons/bs';
 
 import * as ROUTES from 'variables/routes';
 import Exercise from './Exercise';
 import EducationMaterial from './EducationMaterial';
 import Questionnaire from './Questionnaire';
-import { BsPlus } from 'react-icons/bs';
+import PresetTreatment from './PresetTreatment';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
 const VIEW_QUESTIONNAIRE = 'questionnaire';
+const VIEW_PRESET_TREATMENT = 'preset_treatment';
 
 const Library = ({ translate }) => {
   const { hash } = useLocation();
   const [view, setView] = useState(undefined);
+  const [newContentLink, setNewContentLink] = useState(undefined);
 
   useEffect(() => {
     if (hash.includes('#' + VIEW_EDUCATION)) {
       setView(VIEW_EDUCATION);
+      setNewContentLink(ROUTES.EDUCATION_MATERIAL_CREATE);
     } else if (hash.includes('#' + VIEW_QUESTIONNAIRE)) {
       setView(VIEW_QUESTIONNAIRE);
+      setNewContentLink(ROUTES.QUESTIONNAIRE_CREATE);
+    } else if (hash.includes('#' + VIEW_PRESET_TREATMENT)) {
+      setView(VIEW_PRESET_TREATMENT);
+      setNewContentLink(ROUTES.TREATMENT_PLAN_CREATE);
     } else {
       setView(VIEW_EXERCISE);
+      setNewContentLink(ROUTES.EXERCISE_CREATE);
     }
   }, [hash]);
 
@@ -33,24 +42,13 @@ const Library = ({ translate }) => {
         <h1>{translate('library')}</h1>
         <div className="btn-toolbar mb-2 mb-md-0">
           <div className="btn-toolbar mb-2 mb-md-0">
-            {view === VIEW_EXERCISE
-              ? <Button
-                as={Link} to={ROUTES.EXERCISE_CREATE}>
+            {newContentLink && (
+              <Button
+                as={Link} to={newContentLink}>
                 <BsPlus size={20} className="mr-1" />
                 {translate('common.new_content')}
               </Button>
-              : view === VIEW_EDUCATION
-                ? <Button
-                  as={Link} to={ROUTES.EDUCATION_MATERIAL_CREATE}>
-                  <BsPlus size={20} className="mr-1" />
-                  {translate('common.new_content')}
-                </Button>
-                : <Button
-                  as={Link} to={ROUTES.QUESTIONNAIRE_CREATE}>
-                  <BsPlus size={20} className="mr-1" />
-                  {translate('common.new_content')}
-                </Button>
-            }
+            )}
           </div>
         </div>
       </div>
@@ -71,11 +69,17 @@ const Library = ({ translate }) => {
             {translate('library.questionnaires')}
           </Nav.Link>
         </Nav.Item>
+        <Nav.Item>
+          <Nav.Link as={Link} to={ROUTES.LIBRARY_PRESET_TREATMENT} eventKey={VIEW_PRESET_TREATMENT}>
+            {translate('library.preset_treatments')}
+          </Nav.Link>
+        </Nav.Item>
       </Nav>
 
       { view === VIEW_EXERCISE && <Exercise /> }
       { view === VIEW_EDUCATION && <EducationMaterial /> }
       { view === VIEW_QUESTIONNAIRE && <Questionnaire /> }
+      { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
     </>
   );
 };
