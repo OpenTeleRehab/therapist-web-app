@@ -15,7 +15,6 @@ import { BsSearch, BsX } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
-import { RiQuestionnaireLine } from 'react-icons/ri';
 import { getQuestionnaires } from 'store/questionnaire/actions';
 import ViewQuestionnaire from './viewQuestionnaire';
 
@@ -163,7 +162,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
                         </div>
 
                         <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                          <RiQuestionnaireLine size={80} />
+                          <img src={'/images/questionnaire.svg'} alt='questionnaire' />
                           <p>{translate('activity.questionnaire').toUpperCase()}</p>
                         </div>
                       </div>

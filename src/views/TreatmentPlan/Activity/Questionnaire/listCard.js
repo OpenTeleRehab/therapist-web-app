@@ -7,7 +7,6 @@ import {
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
-import { RiQuestionnaireLine } from 'react-icons/ri';
 
 import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
@@ -67,7 +66,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
           <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewQuestionnaire(questionnaire)}>
             <div className="card-img bg-light">
               <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                <RiQuestionnaireLine size={80} />
+                <img src={'/images/questionnaire.svg'} alt='questionnaire' />
                 <p>{translate('activity.questionnaire').toUpperCase()}</p>
               </div>
             </div>
