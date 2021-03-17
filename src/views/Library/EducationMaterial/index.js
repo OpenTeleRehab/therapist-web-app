@@ -8,21 +8,34 @@ import {
   Form,
   Tooltip,
   OverlayTrigger,
-  Button
+  Accordion
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX } from 'react-icons/bs';
+import {
+  BsCaretDownFill,
+  BsCaretRightFill,
+  BsDashSquare,
+  BsSquare
+} from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { MdDescription } from 'react-icons/md';
 import { getEducationMaterials } from 'store/educationMaterial/actions';
 import ViewEducationMaterial from './viewEducationMaterial';
+import CheckboxTree from 'react-checkbox-tree';
+import SearchInput from 'components/Form/SearchInput';
+import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
+import { getCategoryTreeData } from 'store/category/actions';
+import { CATEGORY_TYPES } from 'variables/category';
+import { FaRegCheckSquare } from 'react-icons/fa';
+import _ from 'lodash';
 
 let timer = null;
 const EducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
+  const { categoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -35,6 +48,8 @@ const EducationMaterial = ({ translate }) => {
   const { profile } = useSelector((state) => state.auth);
   const [educationMaterial, setEducationMaterial] = useState([]);
   const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [expanded, setExpanded] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -45,11 +60,17 @@ const EducationMaterial = ({ translate }) => {
   }, [filters, profile]);
 
   useEffect(() => {
+    let serializedSelectedCats = [];
+    Object.keys(selectedCategories).forEach(function (key) {
+      serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
+    });
+
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getEducationMaterials({
         filter: formFields,
         page_size: pageSize,
+        categories: serializedSelectedCats,
         lang: language,
         page: currentPage
       })).then(result => {
@@ -58,7 +79,23 @@ const EducationMaterial = ({ translate }) => {
         }
       });
     }, 500);
-  }, [language, formFields, currentPage, pageSize, dispatch]);
+  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch]);
+
+  useEffect(() => {
+    if (language) {
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
+    }
+  }, [language, dispatch]);
+
+  useEffect(() => {
+    if (categoryTreeData.length) {
+      const rootCategoryStructure = {};
+      categoryTreeData.forEach(category => {
+        rootCategoryStructure[category.value] = [];
+      });
+      setSelectedCategories(rootCategoryStructure);
+    }
+  }, [categoryTreeData]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -83,51 +120,25 @@ const EducationMaterial = ({ translate }) => {
     setViewEducationMaterial(false);
   };
 
+  const handleSetSelectedCategories = (parent, checked) => {
+    setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+  };
+
   return (
     <>
       <Row>
         <Col sm={5} md={4} lg={3}>
           <Card bg="info">
             <Card.Header>
-              <Form.Group className="search-box-with-icon">
-                <BsSearch className="search-icon" />
-                <Button
-                  variant="light"
-                  className="clear-btn"
-                  onClick={handleClearSearch}
-                >
-                  <BsX size={18} />
-                </Button>
-                <Form.Control
-                  name="search_value"
-                  value={formFields.search_value}
-                  onChange={handleChange}
-                  placeholder={translate('education_material.search')}
-                />
-              </Form.Group>
+              <SearchInput
+                name="search_value"
+                value={formFields.search_value}
+                placeholder={translate('education_material.search')}
+                onChange={handleChange}
+                onClear={handleClearSearch}
+              />
             </Card.Header>
             <Card.Body>
-              <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
-              </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
                 <Form.Control as="select" value={language} onChange={handleLanguageChange}>
@@ -138,6 +149,42 @@ const EducationMaterial = ({ translate }) => {
                   ))}
                 </Form.Control>
               </Form.Group>
+              {
+                categoryTreeData.map(category => (
+                  <Accordion key={category.value} className="mb-3" defaultActiveKey={category.value}>
+                    <Card>
+                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                        {category.label}
+                        <div className="ml-auto text-nowrap">
+                          <span className="mr-3">
+                            {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
+                          </span>
+                          <ContextAwareToggle eventKey={category.value} />
+                        </div>
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={category.value}>
+                        <Card.Body>
+                          <CheckboxTree
+                            nodes={category.children}
+                            checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
+                            expanded={expanded}
+                            onCheck={checked => handleSetSelectedCategories(category.value, checked)}
+                            onExpand={expanded => setExpanded(expanded)}
+                            icons={{
+                              check: <FaRegCheckSquare size={40} color="black" />,
+                              uncheck: <BsSquare size={40} color="black" />,
+                              halfCheck: <BsDashSquare size={40} color="black" />,
+                              expandClose: <BsCaretRightFill size={40} color="black" />,
+                              expandOpen: <BsCaretDownFill size={40} color="black" />
+                            }}
+                            showNodeIcon={false}
+                          />
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  </Accordion>
+                ))
+              }
             </Card.Body>
           </Card>
         </Col>

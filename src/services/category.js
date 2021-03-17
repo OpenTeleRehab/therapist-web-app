@@ -28,6 +28,21 @@ const getCategory = (id, language) => {
     });
 };
 
+const getCategoryTreeData = payload => {
+  return axios.get('/category-tree',
+    {
+      params: payload
+    })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const createCategory = payload => {
   return axios.post('/category', payload)
     .then(
@@ -56,5 +71,6 @@ export const Category = {
   getCategories,
   getCategory,
   createCategory,
-  updateCategory
+  updateCategory,
+  getCategoryTreeData
 };

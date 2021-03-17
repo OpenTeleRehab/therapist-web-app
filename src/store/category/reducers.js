@@ -13,7 +13,8 @@ export const category = (state = initialState, action) => {
     case 'CREATE_CATEGORY_FAIL':
     case 'UPDATE_CATEGORY_SUCCESS':
     case 'UPDATE_CATEGORY_FAIL':
-    case 'GET_CATEGORIES_FAIL': {
+    case 'GET_CATEGORIES_FAIL':
+    case 'GET_CATEGORY_TREE_DATA_FAIL': {
       return Object.assign({}, state, {
         loading: false
       });
@@ -26,6 +27,11 @@ export const category = (state = initialState, action) => {
     case 'GET_CATEGORY_SUCCESS': {
       return Object.assign({}, state, {
         category: action.data
+      });
+    }
+    case 'GET_CATEGORY_TREE_DATA_SUCCESS': {
+      return Object.assign({}, state, {
+        categoryTreeData: action.data
       });
     }
     default:
