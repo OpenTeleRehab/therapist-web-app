@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col, Form, Badge, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTranslate } from 'react-localize-redux';
 import { BsSearch, BsXCircle } from 'react-icons/bs';
-import PatientList from 'views/ChatOrCall/Partials/PatientList';
 import { getUsers } from 'store/user/actions';
+import PatientList from 'views/ChatOrCall/Partials/PatientList';
+import ChatPanel from './Partials/ChatPanel';
 
-const ChatOrCall = () => {
+const ChatOrCall = ({ translate }) => {
   const dispatch = useDispatch();
-  const localize = useSelector((state) => state.localize);
   const therapist = useSelector((state) => state.auth.profile);
   const patients = useSelector(state => state.user.users);
-  const translate = getTranslate(localize);
+  const rocketchat = useSelector(state => state.rocketchat);
 
   const [searchValue, setSearchValue] = useState('');
 
@@ -30,7 +30,7 @@ const ChatOrCall = () => {
       <Row className="row-bg">
         <Col lg={3} md={4} sm={5} className="d-flex flex-column chat-sidebar-panel">
           <div className="chat-sidebar-header pb-1">
-            <h4 className="font-weight-bold mt-3">Chat <Badge variant="primary">10</Badge></h4>
+            <h4 className="font-weight-bold mt-3">{translate('chat')} <Badge variant="primary">10</Badge></h4>
             <Form.Group className="search-box-with-icon">
               <BsSearch className="search-icon" />
               <Button
@@ -50,15 +50,28 @@ const ChatOrCall = () => {
             </Form.Group>
           </div>
           <div className="chat-patient-list">
-            <PatientList translate={translate} patients={patients} keyword={searchValue} />
+            <PatientList
+              translate={translate}
+              patients={patients}
+              keyword={searchValue}
+              selected={rocketchat.selectedPatient || {}}
+            />
           </div>
         </Col>
-        <Col lg={9} md={8} sm={7} className="chat-message-panel">
-          Content
+        <Col lg={9} md={8} sm={7} className="chat-message-panel d-flex flex-column">
+          <ChatPanel
+            translate={translate}
+            user={therapist}
+            data={rocketchat}
+          />
         </Col>
       </Row>
     </>
   );
+};
+
+ChatOrCall.propTypes = {
+  translate: PropTypes.func
 };
 
 export default ChatOrCall;

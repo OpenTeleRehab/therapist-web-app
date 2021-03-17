@@ -18,6 +18,7 @@ import { educationMaterial } from 'store/educationMaterial/reducers';
 import { questionnaire } from 'store/questionnaire/reducers';
 import { spinnerOverlay } from 'store/spinnerOverlay/reducers';
 import { category } from 'store/category/reducers';
+import { rocketchat } from 'store/rocketchat/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -32,7 +33,8 @@ export const rootReducer = {
   educationMaterial,
   questionnaire,
   spinnerOverlay,
-  category
+  category,
+  rocketchat
 };
 
 const devTool =

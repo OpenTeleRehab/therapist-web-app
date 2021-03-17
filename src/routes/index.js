@@ -13,6 +13,7 @@ import CreateTreatmentPlan from 'views/TreatmentPlan/create';
 import ViewPatient from 'views/Patient/viewPatient';
 import ViewTreatmentPlan from 'views/TreatmentPlan/detail';
 import NotFoundPage from 'views/NotFound';
+import ChatOrCall from 'views/ChatOrCall';
 
 import CreateExercise from 'views/Library/Exercise/create';
 import CreateEducationMaterial from 'views/Library/EducationMaterial/create';
@@ -69,6 +70,13 @@ const routes = [
     title: 'questionnaire.create',
     path: ROUTES.QUESTIONNAIRE_CREATE,
     component: CreateQuestionnaire,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'chat_or_call',
+    path: ROUTES.CHAT_OR_CALL,
+    component: ChatOrCall,
     exact: true,
     type: PRIVATE
   },

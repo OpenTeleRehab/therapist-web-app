@@ -23,6 +23,7 @@
   }
   &-patient-list {
     background-color: $white;
+    overflow-y: auto;
     .list-group {
       border-radius: 0;
       &-item {
@@ -34,15 +35,13 @@
         cursor: pointer;
         min-height: 61px;
         line-height: 1.25rem;
-        &:hover {
+        &:hover,
+        &.active {
           border-left-color: $primary;
           background-color: $blue-light-2;
         }
         &.active {
-          border-top-width: 0;
-          border-left-color: $primary;
           color: $body-color;
-          background-color: $blue-light-2;
         }
       }
     }
@@ -62,5 +61,9 @@
   }
   &-message-panel {
     background-color: theme-color('light');
+  }
+  &-selected-user {
+    border-bottom: 1px solid $gray-500;
+    padding: 15px 0;
   }
 }
