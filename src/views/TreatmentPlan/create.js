@@ -56,7 +56,7 @@ const CreateTreatmentPlan = () => {
   }, [id, dispatch]);
 
   useEffect(() => {
-    if (users.length) {
+    if (patientId && users.length) {
       const data = users.find(user => user.id === parseInt(patientId));
       setFormFields({ ...formFields, patient_name: data.last_name + ' ' + data.first_name });
     }
@@ -212,9 +212,11 @@ const CreateTreatmentPlan = () => {
 
   return (
     <>
-      <div className="top-content">
-        <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
-      </div>
+      {patientId && (
+        <div className="top-content">
+          <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
+        </div>
+      )}
       <div className="d-flex mb-4 mt-4">
         <h4 className="mb-">{translate('treatment_plan.treatment_planning')}</h4>
         <Button

@@ -74,6 +74,13 @@ const routes = [
   },
   {
     title: 'treatment_plan.create',
+    path: ROUTES.TREATMENT_PLAN_CREATE,
+    component: CreateTreatmentPlan,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'treatment_plan.create_for_patient',
     path: ROUTES.TREATMENT_PLAN_CREATE_FOR_PATIENT,
     component: CreateTreatmentPlan,
     exact: true,
