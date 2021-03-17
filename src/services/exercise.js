@@ -39,6 +39,19 @@ const getExercisesByIds = (exerciseIds, lang) => {
     });
 };
 
+const getExercisesByTherapistId = (therapistId, lang) => {
+  const params = { therapist_id: therapistId, lang: lang };
+  return axios.get('exercise/list/by-therapist', { params })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const createExercise = (payload, mediaUploads) => {
   const formData = new FormData();
   _.forIn(payload, (value, key) => {
@@ -107,5 +120,6 @@ export const Exercise = {
   createExercise,
   updateExercise,
   deleteExercise,
-  getExercisesByIds
+  getExercisesByIds,
+  getExercisesByTherapistId
 };

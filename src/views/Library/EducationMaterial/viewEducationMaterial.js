@@ -64,6 +64,7 @@ const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial })
                       href={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`}
                       /* eslint-disable-next-line react/jsx-no-target-blank */
                       target="_blank"
+                      rel="noopener noreferrer"
                       className="pl-2"
                     >
                       {educationMaterial.file.fileName}

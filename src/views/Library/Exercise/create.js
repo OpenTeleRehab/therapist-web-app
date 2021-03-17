@@ -8,12 +8,24 @@ import {
   OverlayTrigger,
   Row,
   Tooltip,
-  Card
+  Card,
+  Accordion
 } from 'react-bootstrap';
+import {
+  BsUpload,
+  BsXCircle,
+  BsX,
+  BsPlus,
+  BsCaretDownFill,
+  BsCaretRightFill,
+  BsSquare,
+  BsDashSquare
+} from 'react-icons/bs';
+import { FaRegCheckSquare } from 'react-icons/fa';
+import CheckboxTree from 'react-checkbox-tree';
+
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsUpload, BsXCircle, BsX, BsPlus } from 'react-icons/bs';
-import CustomTree from 'components/Tree';
 
 import * as ROUTES from 'variables/routes';
 import {
@@ -21,8 +33,11 @@ import {
   getExercise,
   updateExercise
 } from 'store/exercise/actions';
-import { getCategories } from 'store/category/actions';
+
+import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
+import _ from 'lodash';
+import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -31,7 +46,6 @@ const CreateExercise = ({ translate }) => {
 
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
-  const { categories } = useSelector((state) => state.category);
   const { profile } = useSelector((state) => state.auth);
 
   const [language, setLanguage] = useState('');
@@ -50,13 +64,8 @@ const CreateExercise = ({ translate }) => {
   const [inputFieldError, setInputFieldError] = useState([]);
   const [inputValueError, setInputValueError] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedCategoryIndexes, setSelectedCategoryIndexes] = useState([]);
-  const treeColumns = [
-    { name: 'title', title: translate('common.category') }
-  ];
-  const tableColumnExtensions = [
-    { columnName: 'title', width: 'auto', wordWrapEnabled: true }
-  ];
+  const { categoryTreeData } = useSelector((state) => state.category);
+  const [expanded, setExpanded] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -76,28 +85,25 @@ const CreateExercise = ({ translate }) => {
 
   useEffect(() => {
     if (language) {
-      dispatch(getCategories({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
     }
   }, [language, dispatch]);
+
+  useEffect(() => {
+    if (categoryTreeData.length) {
+      const rootCategoryStructure = {};
+      categoryTreeData.forEach(category => {
+        rootCategoryStructure[category.value] = [];
+      });
+      setSelectedCategories(rootCategoryStructure);
+    }
+  }, [categoryTreeData]);
 
   useEffect(() => {
     if (id && language) {
       dispatch(getExercise(id, language));
     }
   }, [id, language, dispatch]);
-
-  useEffect(() => {
-    if (categories.length) {
-      const selectedCatIndexes = [];
-      categories.forEach((cat, index) => {
-        if (selectedCategories.indexOf(cat.id) >= 0) {
-          selectedCatIndexes.push(index);
-        }
-      });
-
-      setSelectedCategoryIndexes(selectedCatIndexes);
-    }
-  }, [categories, selectedCategories]);
 
   useEffect(() => {
     if (id && exercise.id) {
@@ -108,9 +114,20 @@ const CreateExercise = ({ translate }) => {
       });
       setMediaUploads(exercise.files);
       setInputFields(exercise.additional_fields || []);
-      setSelectedCategories(exercise.categories);
+      if (categoryTreeData.length) {
+        const rootCategoryStructure = {};
+        categoryTreeData.forEach(category => {
+          const ids = [];
+          JSON.stringify(category, (key, value) => {
+            if (key === 'value') ids.push(value);
+            return value;
+          });
+          rootCategoryStructure[category.value] = _.intersectionWith(exercise.categories, ids);
+        });
+        setSelectedCategories(rootCategoryStructure);
+      }
     }
-  }, [id, exercise]);
+  }, [id, exercise, categoryTreeData]);
 
   const handleLanguageChange = e => {
     const { value } = e.target;
@@ -180,10 +197,15 @@ const CreateExercise = ({ translate }) => {
     setInputFieldError(errorInputFields);
     setInputValueError(errorValueFields);
 
+    let serializedSelectedCats = [];
+    Object.keys(selectedCategories).forEach(function (key) {
+      serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
+    });
+
     if (canSave) {
       setIsLoading(true);
       if (id) {
-        dispatch(updateExercise(id, { ...formFields, additional_fields: JSON.stringify(inputFields), categories: selectedCategories, lang: language, therapist_id: therapistId }, mediaUploads))
+        dispatch(updateExercise(id, { ...formFields, additional_fields: JSON.stringify(inputFields), categories: serializedSelectedCats, lang: language, therapist_id: therapistId }, mediaUploads))
           .then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY);
@@ -191,7 +213,7 @@ const CreateExercise = ({ translate }) => {
             setIsLoading(false);
           });
       } else {
-        dispatch(createExercise({ ...formFields, additional_fields: JSON.stringify(inputFields), categories: selectedCategories, lang: language, therapist_id: therapistId }, mediaUploads))
+        dispatch(createExercise({ ...formFields, additional_fields: JSON.stringify(inputFields), categories: serializedSelectedCats, lang: language, therapist_id: therapistId }, mediaUploads))
           .then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY);
@@ -202,9 +224,8 @@ const CreateExercise = ({ translate }) => {
     }
   };
 
-  const onSelectChange = (rowIds) => {
-    const selectedCats = categories.filter((cat, index) => rowIds.indexOf(index) >= 0).map(cat => cat.id);
-    setSelectedCategories(selectedCats);
+  const handleSetSelectedCategories = (parent, checked) => {
+    setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
   };
 
   const handleFileChange = (e) => {
@@ -240,34 +261,6 @@ const CreateExercise = ({ translate }) => {
       </div>
 
       <Form>
-        {
-          !id && (
-            <Form.Group as={Row}>
-              <Col sm={4} lg={3} xl={2}>
-                <Form.Check
-                  name="option"
-                  // onChange={handleChange}
-                  value={1}
-                  defaultChecked
-                  type="radio"
-                  label={translate('exercise.single_upload')}
-                  id="formSingleOption"
-                />
-              </Col>
-              <Col>
-                <Form.Check
-                  name="option"
-                  // onChange={handleChange}
-                  value={2}
-                  type="radio"
-                  label={translate('exercise.bulk_upload')}
-                  id="formBulkOption"
-                />
-              </Col>
-            </Form.Group>
-          )
-        }
-
         <Row>
           <Col sm={4} xl={3}>
             <div className="exercise-media">
@@ -307,7 +300,7 @@ const CreateExercise = ({ translate }) => {
               }
             </div>
           </Col>
-          <Col sm={6} xl={4}>
+          <Col sm={7} xl={8}>
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
               <Form.Control as="select" value={id ? language : ''} onChange={handleLanguageChange} disabled={!id}>
@@ -352,22 +345,42 @@ const CreateExercise = ({ translate }) => {
               />
             </Form.Group>
 
-            <div className="mb-3">
-              <CustomTree
-                columns={treeColumns}
-                treeColumnName="title"
-                tableColumnExtensions={tableColumnExtensions}
-                selection={selectedCategoryIndexes}
-                onSelectChange={onSelectChange}
-                data={categories.map(category => {
-                  return {
-                    id: category.id,
-                    title: category.title,
-                    parentId: category.parent || null
-                  };
-                })}
-              />
-            </div>
+            <Accordion className="mb-3" defaultActiveKey={1}>
+              {
+                categoryTreeData.map((category, index) => (
+                  <Card key={index}>
+                    <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="d-flex align-items-center">
+                      {category.label}
+                      <div className="ml-auto">
+                        <span className="mr-3">
+                          {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
+                        </span>
+                        <ContextAwareToggle eventKey={index + 1} />
+                      </div>
+                    </Accordion.Toggle>
+                    <Accordion.Collapse eventKey={index + 1}>
+                      <Card.Body>
+                        <CheckboxTree
+                          nodes={category.children}
+                          checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
+                          expanded={expanded}
+                          onCheck={(checked) => handleSetSelectedCategories(category.value, checked)}
+                          onExpand={expanded => setExpanded(expanded)}
+                          icons={{
+                            check: <FaRegCheckSquare size={40} color="black" />,
+                            uncheck: <BsSquare size={40} color="black" />,
+                            halfCheck: <BsDashSquare size={40} color="black" />,
+                            expandClose: <BsCaretRightFill size={40} color="black" />,
+                            expandOpen: <BsCaretDownFill size={40} color="black" />
+                          }}
+                          showNodeIcon={false}
+                        />
+                      </Card.Body>
+                    </Accordion.Collapse>
+                  </Card>
+                ))
+              }
+            </Accordion>
 
             {
               inputFields.map((inputField, index) => (

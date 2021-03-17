@@ -1,20 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
-import { Row, Col, Card, Form, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Row, Col, Card, Form, Tooltip, OverlayTrigger, Accordion } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-
+import { IoPerson } from 'react-icons/io5';
 import Spinner from 'react-bootstrap/Spinner';
+import {
+  BsCaretDownFill,
+  BsCaretRightFill,
+  BsDashSquare,
+  BsSquare
+} from 'react-icons/bs';
+
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import SearchInput from 'components/Form/SearchInput';
 import * as ROUTES from 'variables/routes';
 import ViewExercise from './view';
-import { getCategories } from 'store/category/actions';
-import CustomTree from 'components/Tree';
+import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import { EditAction } from 'components/ActionIcons';
+import _ from 'lodash';
+import CheckboxTree from 'react-checkbox-tree';
+import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
+import { FaRegCheckSquare } from 'react-icons/fa';
 
 let timer = null;
 const Exercise = ({ translate }) => {
@@ -24,9 +34,9 @@ const Exercise = ({ translate }) => {
   const { loading, exercises, filters } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
-  const { categories } = useSelector((state) => state.category);
   const [id, setId] = useState(null);
   const [showView, setShowView] = useState(false);
+  const { categoryTreeData } = useSelector((state) => state.category);
 
   const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,13 +47,7 @@ const Exercise = ({ translate }) => {
     search_value: ''
   });
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [selectedCategoryIndexes, setSelectedCategoryIndexes] = useState([]);
-  const treeColumns = [
-    { name: 'title', title: translate('common.category') }
-  ];
-  const tableColumnExtensions = [
-    { columnName: 'title', width: 'auto', wordWrapEnabled: true }
-  ];
+  const [expanded, setExpanded] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -60,31 +64,16 @@ const Exercise = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (language) {
-      dispatch(getCategories({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
-    }
-  }, [language, dispatch]);
-
-  useEffect(() => {
-    if (categories.length) {
-      const selectedCatIndexes = [];
-      categories.forEach((cat, index) => {
-        if (selectedCategories.indexOf(cat.id) >= 0) {
-          selectedCatIndexes.push(index);
-        }
-      });
-
-      setSelectedCategoryIndexes(selectedCatIndexes);
-    }
-  }, [categories, selectedCategories]);
-
-  useEffect(() => {
+    let serializedSelectedCats = [];
+    Object.keys(selectedCategories).forEach(function (key) {
+      serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
+    });
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getExercises({
         lang: language,
         filter: formFields,
-        categories: selectedCategories,
+        categories: serializedSelectedCats,
         page_size: pageSize,
         page: currentPage,
         therapist_id: therapistId
@@ -95,6 +84,26 @@ const Exercise = ({ translate }) => {
       });
     }, 500);
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
+
+  useEffect(() => {
+    if (language) {
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
+    }
+  }, [language, dispatch]);
+
+  useEffect(() => {
+    if (categoryTreeData.length) {
+      const rootCategoryStructure = {};
+      categoryTreeData.forEach(category => {
+        rootCategoryStructure[category.value] = [];
+      });
+      setSelectedCategories(rootCategoryStructure);
+    }
+  }, [categoryTreeData]);
+
+  const handleSetSelectedCategories = (parent, checked) => {
+    setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+  };
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -118,11 +127,6 @@ const Exercise = ({ translate }) => {
   const handleViewClose = () => {
     setId('');
     setShowView(false);
-  };
-
-  const onSelectChange = (rowIds) => {
-    const selectedCats = categories.filter((cat, index) => rowIds.indexOf(index) >= 0).map(cat => cat.id);
-    setSelectedCategories(selectedCats);
   };
 
   const handleEdit = (id) => {
@@ -154,20 +158,42 @@ const Exercise = ({ translate }) => {
                   ))}
                 </Form.Control>
               </Form.Group>
-              <CustomTree
-                columns={treeColumns}
-                treeColumnName="title"
-                tableColumnExtensions={tableColumnExtensions}
-                selection={selectedCategoryIndexes}
-                onSelectChange={onSelectChange}
-                data={categories.map(category => {
-                  return {
-                    id: category.id,
-                    title: category.title,
-                    parentId: category.parent || null
-                  };
-                })}
-              />
+              {
+                categoryTreeData.map(category => (
+                  <Accordion key={category.value} className="mb-3" defaultActiveKey={category.value}>
+                    <Card>
+                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                        {category.label}
+                        <div className="ml-auto text-nowrap">
+                          <span className="mr-3">
+                            {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
+                          </span>
+                          <ContextAwareToggle eventKey={category.value} />
+                        </div>
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={category.value}>
+                        <Card.Body>
+                          <CheckboxTree
+                            nodes={category.children}
+                            checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
+                            expanded={expanded}
+                            onCheck={checked => handleSetSelectedCategories(category.value, checked)}
+                            onExpand={expanded => setExpanded(expanded)}
+                            icons={{
+                              check: <FaRegCheckSquare size={40} color="black" />,
+                              uncheck: <BsSquare size={40} color="black" />,
+                              halfCheck: <BsDashSquare size={40} color="black" />,
+                              expandClose: <BsCaretRightFill size={40} color="black" />,
+                              expandOpen: <BsCaretDownFill size={40} color="black" />
+                            }}
+                            showNodeIcon={false}
+                          />
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  </Accordion>
+                ))
+              }
             </Card.Body>
           </Card>
         </Col>
@@ -183,8 +209,13 @@ const Exercise = ({ translate }) => {
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
                     {therapistId === exercise.therapist_id && (
-                      <div className="position-absolute edit-btn">
-                        <EditAction onClick={() => handleEdit(exercise.id)} />
+                      <div>
+                        <div className="position-absolute owner-btn btn-link">
+                          <IoPerson size={20} />
+                        </div>
+                        <div className="position-absolute edit-btn">
+                          <EditAction onClick={() => handleEdit(exercise.id)} />
+                        </div>
                       </div>
                     )}
                     <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise.id)}>
