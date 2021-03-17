@@ -3,19 +3,23 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { Row, Col, Card, Form, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import Spinner from 'react-bootstrap/Spinner';
+import { useHistory } from 'react-router-dom';
 
+import Spinner from 'react-bootstrap/Spinner';
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import SearchInput from 'components/Form/SearchInput';
+import * as ROUTES from 'variables/routes';
 import ViewExercise from './view';
 import { getCategories } from 'store/category/actions';
 import CustomTree from 'components/Tree';
 import { CATEGORY_TYPES } from 'variables/category';
+import { EditAction } from 'components/ActionIcons';
 
 let timer = null;
 const Exercise = ({ translate }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const { loading, exercises, filters } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
@@ -28,6 +32,7 @@ const Exercise = ({ translate }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [language, setLanguage] = useState('');
+  const [therapistId, setTherapistId] = useState('');
   const [formFields, setFormFields] = useState({
     search_value: ''
   });
@@ -47,6 +52,12 @@ const Exercise = ({ translate }) => {
       setLanguage(profile.language_id);
     }
   }, [filters, profile]);
+
+  useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
 
   useEffect(() => {
     if (language) {
@@ -75,14 +86,15 @@ const Exercise = ({ translate }) => {
         filter: formFields,
         categories: selectedCategories,
         page_size: pageSize,
-        page: currentPage
+        page: currentPage,
+        therapist_id: therapistId
       })).then(result => {
         if (result) {
           setTotalCount(result.total_count);
         }
       });
     }, 500);
-  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch]);
+  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -111,6 +123,10 @@ const Exercise = ({ translate }) => {
   const onSelectChange = (rowIds) => {
     const selectedCats = categories.filter((cat, index) => rowIds.indexOf(index) >= 0).map(cat => cat.id);
     setSelectedCategories(selectedCats);
+  };
+
+  const handleEdit = (id) => {
+    history.push(ROUTES.EXERCISE_EDIT.replace(':id', id));
   };
 
   return (
@@ -166,6 +182,11 @@ const Exercise = ({ translate }) => {
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
+                    {therapistId === exercise.therapist_id && (
+                      <div className="position-absolute edit-btn">
+                        <EditAction onClick={() => handleEdit(exercise.id)} />
+                      </div>
+                    )}
                     <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise.id)}>
                       <div className="card-img bg-light">
                         {

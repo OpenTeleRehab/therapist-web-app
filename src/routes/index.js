@@ -52,6 +52,13 @@ const routes = [
     type: PRIVATE
   },
   {
+    title: 'exercise.edit',
+    path: ROUTES.EXERCISE_EDIT,
+    component: CreateExercise,
+    exact: true,
+    type: PRIVATE
+  },
+  {
     title: 'education_material.create',
     path: ROUTES.EDUCATION_MATERIAL_CREATE,
     component: CreateEducationMaterial,

@@ -5,6 +5,7 @@ export const PROFILE_PASSWORD = '/profile#password';
 export const PATIENT = '/patient';
 export const LIBRARY = '/library';
 export const EXERCISE_CREATE = LIBRARY + '/exercise/create';
+export const EXERCISE_EDIT = LIBRARY + '/exercise/edit/:id';
 export const EDUCATION_MATERIAL_CREATE = LIBRARY + '/education_material/create';
 export const QUESTIONNAIRE_CREATE = LIBRARY + '/questionnaire/create';
 export const LIBRARY_EDUCATION = LIBRARY + '#education';

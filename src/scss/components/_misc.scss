@@ -40,3 +40,25 @@
 		}
 	}
 }
+
+// additional-field
+.additional-field {
+  .remove-btn-container {
+	position: absolute;
+	top: -12px;
+	right: -12px;
+
+	.btn-remove {
+	  background-color: $white;
+	  width: 28px;
+	  height: 28px;
+	  padding: 0;
+	  border-radius: 15px;
+
+	  &:hover {
+		background-color: $danger;
+	  }
+	}
+
+  }
+}
