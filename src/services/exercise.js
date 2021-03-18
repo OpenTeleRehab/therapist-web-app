@@ -39,9 +39,9 @@ const getExercisesByIds = (exerciseIds, lang) => {
     });
 };
 
-const getExercisesByTherapistId = (therapistId, lang) => {
+const countTherapistLibraries = (therapistId, lang) => {
   const params = { therapist_id: therapistId, lang: lang };
-  return axios.get('exercise/list/by-therapist', { params })
+  return axios.get('library/count/by-therapist', { params })
     .then(
       res => {
         return res.data;
@@ -121,5 +121,5 @@ export const Exercise = {
   updateExercise,
   deleteExercise,
   getExercisesByIds,
-  getExercisesByTherapistId
+  countTherapistLibraries
 };
