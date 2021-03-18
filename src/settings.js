@@ -1,5 +1,6 @@
 const settings = {
   date_format: 'DD/MM/YYYY',
+  chat_date_time_format: 'YYYY-MM-DDTHH:mm:ss.SSSZ',
   textMaxLength: 255,
   genders: {
     options: [

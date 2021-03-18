@@ -2,13 +2,12 @@ export default {
   chatInputToolBar: (minHeight) => ({
     backgroundColor: '#EBEBEB',
     borderTopWidth: 0,
-    marginBottom: 15,
-    minHeight
+    marginBottom: 0
   }),
   chatComposer: {
     backgroundColor: '#FFFFFF',
     color: '#333333',
-    borderRadius: '0.9375rem',
+    borderRadius: '0.25rem',
     fontFamily: 'Nunito, Arial, sans-serif',
     fontSize: '1rem',
     overflow: 'hidden',
@@ -21,7 +20,7 @@ export default {
   },
   chatSendButton: {
     position: 'absolute',
-    top: 15,
+    top: 14,
     right: 15
   },
   chatDay: {
@@ -37,6 +36,9 @@ export default {
     backgroundColor: '#0077C8',
     padding: 5
   },
+  chatSendTick: {
+    fontSize: 12
+  },
   chatMessageLeft: {
     marginLeft: 0
   },
@@ -51,6 +53,9 @@ export default {
   chatMessageTextRight: {
     fontFamily: 'Nunito, Arial, sans-serif',
     fontSize: '1rem'
+  },
+  chatTimeContainerRight: {
+    marginRight: 5
   },
   chatTimeRight: {
     fontFamily: 'Nunito, Arial, sans-serif',

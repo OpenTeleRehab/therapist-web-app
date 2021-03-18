@@ -66,14 +66,16 @@ const Navigation = ({ translate }) => {
           >
             {translate('appointment')}
           </NavLink>
-          <NavLink
-            to={ROUTES.CHAT_OR_CALL}
-            key="nav-chat-or-call"
-            className="nav-link has-badge"
-          >
-            {translate('chat_or_call')}
-            <Badge variant="danger" className="circle d-md-block">5</Badge>
-          </NavLink>
+          {profile && profile.chat_user_id && (
+            <NavLink
+              to={ROUTES.CHAT_OR_CALL}
+              key="nav-chat-or-call"
+              className="nav-link has-badge"
+            >
+              {translate('chat_or_call')}
+              <Badge variant="danger" className="circle d-md-block">5</Badge>
+            </NavLink>
+          )}
 
           { profile !== undefined && (
             <Dropdown>

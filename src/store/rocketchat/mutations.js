@@ -1,10 +1,15 @@
-const updateChatAuthTokenSuccess = (data) => ({
-  type: 'UPDATE_CHAT_AUTO_TOKEN_SUCCESS',
+const setChatAuthTokenSuccess = (data) => ({
+  type: 'SET_CHAT_AUTH_TOKEN_SUCCESS',
   data
 });
 
-const getMessageSuccess = (data) => ({
-  type: 'GET_MESSAGE_SUCCESS',
+const loadAllMessagesSuccess = (data) => ({
+  type: 'LOAD_ALL_MESSAGES_SUCCESS',
+  data
+});
+
+const prependNewMessageSuccess = (data) => ({
+  type: 'PREPEND_NEW_MESSAGE_SUCCESS',
   data
 });
 
@@ -13,8 +18,15 @@ const selectPatientSuccess = (data) => ({
   data
 });
 
+const loadLastMessageHistorySuccess = (data) => ({
+  type: 'LOAD_LAST_MESSAGE_HISTORY',
+  data
+});
+
 export const mutation = {
-  updateChatAuthTokenSuccess,
-  getMessageSuccess,
-  selectPatientSuccess
+  setChatAuthTokenSuccess,
+  loadAllMessagesSuccess,
+  prependNewMessageSuccess,
+  selectPatientSuccess,
+  loadLastMessageHistorySuccess
 };
