@@ -3,6 +3,7 @@ import { Nav, Button } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { BsPlus } from 'react-icons/bs';
+import queryString from 'query-string';
 
 import * as ROUTES from 'variables/routes';
 import Exercise from './Exercise';
@@ -16,25 +17,25 @@ const VIEW_QUESTIONNAIRE = 'questionnaire';
 const VIEW_PRESET_TREATMENT = 'preset_treatment';
 
 const Library = ({ translate }) => {
-  const { hash } = useLocation();
+  const { search } = useLocation();
   const [view, setView] = useState(undefined);
   const [newContentLink, setNewContentLink] = useState(undefined);
 
   useEffect(() => {
-    if (hash.includes('#' + VIEW_EDUCATION)) {
+    if (queryString.parse(search).tab === VIEW_EDUCATION) {
       setView(VIEW_EDUCATION);
       setNewContentLink(ROUTES.EDUCATION_MATERIAL_CREATE);
-    } else if (hash.includes('#' + VIEW_QUESTIONNAIRE)) {
+    } else if (queryString.parse(search).tab === VIEW_QUESTIONNAIRE) {
       setView(VIEW_QUESTIONNAIRE);
       setNewContentLink(ROUTES.QUESTIONNAIRE_CREATE);
-    } else if (hash.includes('#' + VIEW_PRESET_TREATMENT)) {
+    } else if (queryString.parse(search).tab === VIEW_PRESET_TREATMENT) {
       setView(VIEW_PRESET_TREATMENT);
       setNewContentLink(ROUTES.LIBRARY_TREATMENT_PLAN_CREATE);
     } else {
       setView(VIEW_EXERCISE);
       setNewContentLink(ROUTES.EXERCISE_CREATE);
     }
-  }, [hash]);
+  }, [search]);
 
   return (
     <>

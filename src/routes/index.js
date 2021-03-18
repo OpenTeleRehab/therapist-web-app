@@ -68,6 +68,13 @@ const routes = [
     type: PRIVATE
   },
   {
+    title: 'education_material.edit',
+    path: ROUTES.EDUCATION_MATERIAL_EDIT,
+    component: CreateEducationMaterial,
+    exact: true,
+    type: PRIVATE
+  },
+  {
     title: 'questionnaire.create',
     path: ROUTES.QUESTIONNAIRE_CREATE,
     component: CreateQuestionnaire,
