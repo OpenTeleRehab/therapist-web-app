@@ -7,7 +7,10 @@ const settings = {
       { text: 'Female', value: 'Female' }
     ]
   },
-  noteMaxLength: 50
+  noteMaxLength: 50,
+  educationMaterial: {
+    maxFileSize: 25 // MB
+  }
 };
 
 export default settings;

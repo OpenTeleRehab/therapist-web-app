@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   BsCaretDownFill,
   BsCaretRightFill,
-  BsDashSquare,
+  BsDashSquare, BsPersonFill,
   BsSquare
 } from 'react-icons/bs';
 
@@ -30,10 +30,14 @@ import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
+import { EditAction } from '../../../components/ActionIcons';
+import * as ROUTES from '../../../variables/routes';
+import { useHistory } from 'react-router-dom';
 
 let timer = null;
 const EducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
   const { categoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(8);
@@ -50,6 +54,7 @@ const EducationMaterial = ({ translate }) => {
   const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+  const [therapistId, setTherapistId] = useState('');
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -71,6 +76,7 @@ const EducationMaterial = ({ translate }) => {
         filter: formFields,
         page_size: pageSize,
         categories: serializedSelectedCats,
+        therapist_id: therapistId,
         lang: language,
         page: currentPage
       })).then(result => {
@@ -79,7 +85,7 @@ const EducationMaterial = ({ translate }) => {
         }
       });
     }, 500);
-  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch]);
+  }, [language, formFields, selectedCategories, therapistId, currentPage, pageSize, dispatch]);
 
   useEffect(() => {
     if (language) {
@@ -96,6 +102,12 @@ const EducationMaterial = ({ translate }) => {
       setSelectedCategories(rootCategoryStructure);
     }
   }, [categoryTreeData]);
+
+  useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -122,6 +134,10 @@ const EducationMaterial = ({ translate }) => {
 
   const handleSetSelectedCategories = (parent, checked) => {
     setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+  };
+
+  const handleEdit = (id) => {
+    history.push(ROUTES.EDUCATION_MATERIAL_EDIT.replace(':id', id));
   };
 
   return (
@@ -199,6 +215,16 @@ const EducationMaterial = ({ translate }) => {
               <Row>
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={3}>
+                    {therapistId === material.therapist_id && (
+                      <>
+                        <div className="position-absolute edit-btn">
+                          <EditAction onClick={() => handleEdit(material.id)} className="material-edit-btn" />
+                        </div>
+                        <div className="position-absolute material-own-icon">
+                          <BsPersonFill size={20} />
+                        </div>
+                      </>
+                    )}
                     <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewEducationMaterial(material)}>
                       <div className="card-img bg-light">
                         <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">

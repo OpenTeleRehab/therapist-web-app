@@ -15,6 +15,11 @@ export const educationMaterial = (state = initialState, action) => {
         loading: false
       });
     }
+    case 'GET_EDUCATION_MATERIAL_SUCCESS': {
+      return Object.assign({}, state, {
+        educationMaterial: action.data
+      });
+    }
     case 'CLEAR_FILTER_EDUCATION_MATERIALS_REQUEST': {
       return Object.assign({}, state, {
         filters: {}
