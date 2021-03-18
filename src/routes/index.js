@@ -8,6 +8,7 @@ import PrivateRoute from 'routes/privateRoute';
 import DashboardPage from 'views/Dashboard';
 import Patient from 'views/Patient';
 import Library from 'views/Library';
+import Appointment from 'views/Appointment';
 import Profile from 'views/Profile';
 import CreateTreatmentPlan from 'views/TreatmentPlan/create';
 import ViewPatient from 'views/Patient/viewPatient';
@@ -77,6 +78,13 @@ const routes = [
     title: 'chat_or_call',
     path: ROUTES.CHAT_OR_CALL,
     component: ChatOrCall,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'appointment',
+    path: ROUTES.APPOINTMENT,
+    component: Appointment,
     exact: true,
     type: PRIVATE
   },

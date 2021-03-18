@@ -19,6 +19,7 @@ import { questionnaire } from 'store/questionnaire/reducers';
 import { spinnerOverlay } from 'store/spinnerOverlay/reducers';
 import { category } from 'store/category/reducers';
 import { rocketchat } from 'store/rocketchat/reducers';
+import { appointment } from 'store/appointment/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -34,7 +35,8 @@ export const rootReducer = {
   questionnaire,
   spinnerOverlay,
   category,
-  rocketchat
+  rocketchat,
+  appointment
 };
 
 const devTool =

@@ -60,6 +60,13 @@ const Navigation = ({ translate }) => {
             {translate('library')}
           </NavLink>
           <NavLink
+            to={ROUTES.APPOINTMENT}
+            key='nav-appointment'
+            className="nav-link"
+          >
+            {translate('appointment')}
+          </NavLink>
+          <NavLink
             to={ROUTES.CHAT_OR_CALL}
             key="nav-chat-or-call"
             className="nav-link has-badge"
