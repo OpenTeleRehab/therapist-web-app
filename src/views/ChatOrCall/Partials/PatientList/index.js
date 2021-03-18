@@ -1,12 +1,20 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import moment from 'moment';
+import settings from 'settings';
 import { ListGroup, Badge } from 'react-bootstrap';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectPatientToChat } from 'store/rocketchat/actions';
+import { getUniqueId } from 'utils/general';
+import RocketchatContext from 'context/RocketchatContext';
 
-const PatientList = ({ translate, patients, keyword, selected }) => {
+const PatientList = ({ translate, patients, keyword, therapist }) => {
   const dispatch = useDispatch();
+  const chatSocket = useContext(RocketchatContext);
+  const { selectedPatient, lastMessages } = useSelector(state => state.rocketchat);
+  const selected = selectedPatient || {};
 
+  // search patient name
   let patientList = patients;
   if (keyword.length >= 2 && patients.length) {
     const searchValue = keyword.toLowerCase();
@@ -17,7 +25,38 @@ const PatientList = ({ translate, patients, keyword, selected }) => {
   }
 
   const handleSelectPatientToChat = (index) => {
-    dispatch(selectPatientToChat(patientList[index]));
+    const selected = patientList[index];
+    dispatch(selectPatientToChat(selected));
+
+    // load messages history
+    const options = {
+      msg: 'method',
+      method: 'loadHistory',
+      id: getUniqueId(therapist.id),
+      params: [
+        `${therapist.chat_user_id}${selected.chat_user_id}`,
+        null,
+        9999,
+        { $date: new Date().getTime() }
+      ]
+    };
+    chatSocket.send(JSON.stringify(options));
+  };
+
+  const getLastMessageByPatient = (chatUserId) => {
+    return lastMessages.filter((msg) => {
+      return msg.rid.includes(chatUserId);
+    });
+  };
+
+  const getLastMessageText = (chatUserId) => {
+    const lastMessage = getLastMessageByPatient(chatUserId);
+    return lastMessage.length ? lastMessage[0].text : '';
+  };
+
+  const getLastMessageDate = (chatUserId) => {
+    const lastMessage = getLastMessageByPatient(chatUserId);
+    return lastMessage.length ? moment(lastMessage[0].createdAt).format(settings.date_format) : '';
   };
 
   return (
@@ -35,11 +74,11 @@ const PatientList = ({ translate, patients, keyword, selected }) => {
                 <div className="chat-room">
                   {patient.last_name} {patient.first_name}
                   <Badge variant="success" className="user-status ml-1">&nbsp;</Badge>
-                  <p className="text-muted text-truncate small mb-0">I may busy this afternoon, may would not be able to join the meeting.</p>
+                  <p className="text-muted text-truncate small mb-0">{getLastMessageText(patient.chat_user_id)}</p>
                 </div>
                 <div className="d-flex flex-column align-items-end">
                   <Badge variant="primary">50</Badge>
-                  <p className="text-muted small mb-0">30/12/2021</p>
+                  <p className="text-muted small mb-0">{getLastMessageDate(patient.chat_user_id)}</p>
                 </div>
               </ListGroup.Item>
             </ListGroup>
@@ -58,7 +97,7 @@ PatientList.propTypes = {
   translate: PropTypes.func,
   patients: PropTypes.array,
   keyword: PropTypes.string,
-  selected: PropTypes.object
+  therapist: PropTypes.object
 };
 
 export default PatientList;

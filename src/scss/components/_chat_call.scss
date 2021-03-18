@@ -59,11 +59,14 @@
       width: 80%;
     }
   }
-  &-message-panel {
+  &-message-wrapper {
     background-color: theme-color('light');
   }
   &-selected-user {
     border-bottom: 1px solid $gray-500;
     padding: 15px 0;
+  }
+  &-message-panel {
+    height: calc(100vh - 150px);
   }
 }

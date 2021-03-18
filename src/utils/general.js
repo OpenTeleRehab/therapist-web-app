@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const generateHash = (length = 17) => {
   let hash = '';
   const randomStr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -6,4 +8,8 @@ export const generateHash = (length = 17) => {
   }
 
   return hash;
+};
+
+export const getUniqueId = (userId = 0) => {
+  return _.uniqueId(`therapist-${userId}_`);
 };

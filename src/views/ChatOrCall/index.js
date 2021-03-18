@@ -9,10 +9,8 @@ import ChatPanel from './Partials/ChatPanel';
 
 const ChatOrCall = ({ translate }) => {
   const dispatch = useDispatch();
-  const therapist = useSelector((state) => state.auth.profile);
+  const therapist = useSelector(state => state.auth.profile);
   const patients = useSelector(state => state.user.users);
-  const rocketchat = useSelector(state => state.rocketchat);
-
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
@@ -54,16 +52,12 @@ const ChatOrCall = ({ translate }) => {
               translate={translate}
               patients={patients}
               keyword={searchValue}
-              selected={rocketchat.selectedPatient || {}}
+              therapist={therapist}
             />
           </div>
         </Col>
-        <Col lg={9} md={8} sm={7} className="chat-message-panel d-flex flex-column">
-          <ChatPanel
-            translate={translate}
-            user={therapist}
-            data={rocketchat}
-          />
+        <Col lg={9} md={8} sm={7} className="chat-message-wrapper d-flex flex-column">
+          <ChatPanel translate={translate} therapist={therapist} />
         </Col>
       </Row>
     </>
