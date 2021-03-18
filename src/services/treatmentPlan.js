@@ -53,9 +53,22 @@ const getTreatmentPlansDetail = payload => {
     });
 };
 
+const deleteTreatmentPlan = id => {
+  return axios.delete(`/treatment-plan/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const TreatmentPlan = {
   createTreatmentPlan,
   updateTreatmentPlan,
   getTreatmentPlans,
-  getTreatmentPlansDetail
+  getTreatmentPlansDetail,
+  deleteTreatmentPlan
 };

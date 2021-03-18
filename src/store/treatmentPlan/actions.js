@@ -61,3 +61,17 @@ export const getTreatmentPlansDetail = payload => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const deleteTreatmentPlans = id => async (dispatch, getState) => {
+  dispatch(mutation.deleteTreatmentPlansRequest());
+  const data = await TreatmentPlan.deleteTreatmentPlan(id);
+  if (data.success) {
+    dispatch(mutation.deleteTreatmentPlansSuccess());
+    dispatch(showSuccessNotification('toast_title.delete_treatment_plan', data.message));
+    return true;
+  } else {
+    dispatch(mutation.deleteTreatmentPlansFail());
+    dispatch(showErrorNotification('toast_title.delete_treatment_plan', data.message));
+    return false;
+  }
+};

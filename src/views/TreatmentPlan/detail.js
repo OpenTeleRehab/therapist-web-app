@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getTranslate } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom';
 import {
   Button,
   Dropdown, DropdownButton,
@@ -14,7 +14,10 @@ import moment from 'moment/moment';
 import * as ROUTES from 'variables/routes';
 
 import PatientInfo from 'views/Patient/Partials/patientInfo';
-import { getTreatmentPlansDetail } from '../../store/treatmentPlan/actions';
+import {
+  deleteTreatmentPlans,
+  getTreatmentPlansDetail
+} from '../../store/treatmentPlan/actions';
 import settings from 'settings';
 import { TAB } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
@@ -24,8 +27,10 @@ import AdherenceTab from './TabContents/adherenceTab';
 import _ from 'lodash';
 import { renderStatusBadge } from '../../utils/treatmentPlan';
 import GoalTrackingTab from './TabContents/goalTrakingTab';
+import Dialog from 'components/Dialog';
 
 const ViewTreatmentPlan = () => {
+  const history = useHistory();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
@@ -47,6 +52,7 @@ const ViewTreatmentPlan = () => {
   const [activities, setActivities] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [readOnly] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -71,6 +77,22 @@ const ViewTreatmentPlan = () => {
     }
     // eslint-disable-next-line
   }, [id, treatmentPlansDetail]);
+
+  const handleDelete = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setShowDeleteDialog(false);
+  };
+
+  const handleDeleteDialogConfirm = () => {
+    dispatch(deleteTreatmentPlans(id)).then(result => {
+      if (result) {
+        history.push(ROUTES.LIBRARY_PRESET_TREATMENT);
+      }
+    });
+  };
 
   return (
     <>
@@ -110,7 +132,7 @@ const ViewTreatmentPlan = () => {
                 <Dropdown.Item as={Link} to={ROUTES.LIBRARY_TREATMENT_PLAN_EDIT.replace(':id', id)}>
                   {translate('common.edit')}
                 </Dropdown.Item>
-                <Dropdown.Item disabled>{translate('common.delete')}</Dropdown.Item>
+                <Dropdown.Item onClick={handleDelete}>{translate('common.delete')}</Dropdown.Item>
               </DropdownButton>
             </>
           )}
@@ -162,6 +184,17 @@ const ViewTreatmentPlan = () => {
           }
         </Tabs>
       </div>
+
+      <Dialog
+        show={showDeleteDialog}
+        title={translate('treatment_plan.preset.delete_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleDeleteDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleDeleteDialogConfirm}
+      >
+        <p>{translate('common.delete_confirmation_message')}</p>
+      </Dialog>
     </>
   );
 };

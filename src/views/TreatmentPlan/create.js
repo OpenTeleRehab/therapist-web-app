@@ -210,7 +210,7 @@ const CreateTreatmentPlan = () => {
           activities
         }))
           .then(result => {
-            if (result) {
+            if (result && patientId) {
               history.goBack();
             }
           });
