@@ -10,6 +10,9 @@ import Exercise from './Exercise';
 import EducationMaterial from './EducationMaterial';
 import Questionnaire from './Questionnaire';
 import PresetTreatment from './PresetTreatment';
+import Dialog from 'components/Dialog';
+import { updateFavorite } from 'store/exercise/actions';
+import { useDispatch } from 'react-redux';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -18,8 +21,15 @@ const VIEW_PRESET_TREATMENT = 'preset_treatment';
 
 const Library = ({ translate }) => {
   const { search } = useLocation();
+  const dispatch = useDispatch();
   const [view, setView] = useState(undefined);
   const [newContentLink, setNewContentLink] = useState(undefined);
+  const [showSwitchFavoriteDialog, setShowSwitchFavoriteDialog] = useState(false);
+  const [id, setId] = useState(null);
+  const [formFields, setFormFields] = useState({
+    is_favorite: 0,
+    therapist_id: null
+  });
 
   useEffect(() => {
     if (queryString.parse(search).tab === VIEW_EDUCATION) {
@@ -36,6 +46,25 @@ const Library = ({ translate }) => {
       setNewContentLink(ROUTES.EXERCISE_CREATE);
     }
   }, [search]);
+
+  const handleSwitchFavorite = (id, isFavorite, therapistId) => {
+    setId(id);
+    setFormFields({ ...formFields, is_favorite: isFavorite, therapist_id: therapistId });
+    setShowSwitchFavoriteDialog(true);
+  };
+
+  const handleSwitchFavoriteDialogClose = () => {
+    setId(null);
+    setShowSwitchFavoriteDialog(false);
+  };
+
+  const handleSwitchFavoriteDialogConfirm = () => {
+    dispatch(updateFavorite(id, formFields)).then(result => {
+      if (result) {
+        handleSwitchFavoriteDialogClose(true);
+      }
+    });
+  };
 
   return (
     <>
@@ -77,10 +106,20 @@ const Library = ({ translate }) => {
         </Nav.Item>
       </Nav>
 
-      { view === VIEW_EXERCISE && <Exercise /> }
+      { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} /> }
       { view === VIEW_EDUCATION && <EducationMaterial /> }
       { view === VIEW_QUESTIONNAIRE && <Questionnaire /> }
       { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
+      <Dialog
+        show={showSwitchFavoriteDialog}
+        title={translate('library.switchFavorite_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleSwitchFavoriteDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleSwitchFavoriteDialogConfirm}
+      >
+        <p>{translate('common.switchFavorite_confirmation_message')}</p>
+      </Dialog>
     </>
   );
 };

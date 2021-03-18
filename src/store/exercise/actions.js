@@ -57,6 +57,22 @@ export const updateExercise = (id, payload, mediaUploads) => async dispatch => {
   }
 };
 
+export const updateFavorite = (id, payload) => async (dispatch, getState) => {
+  dispatch(mutation.updateFavoriteRequest());
+  const data = await Exercise.updateFavorite(id, payload);
+  if (data.success) {
+    dispatch(mutation.updateFavoriteSuccess());
+    const filters = getState().exercise.filters;
+    dispatch(getExercises({ ...filters, therapist_id: payload.therapist_id }));
+    dispatch(showSuccessNotification('toast_title.update_exercise', data.message));
+    return true;
+  } else {
+    dispatch(mutation.updateFavoriteFail());
+    dispatch(showErrorNotification('toast_title.update_exercise', data.message));
+    return false;
+  }
+};
+
 export const deleteExercise = id => async (dispatch, getState) => {
   dispatch(mutation.deleteExerciseRequest());
   const data = await Exercise.deleteExercise(id);

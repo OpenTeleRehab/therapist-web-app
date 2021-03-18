@@ -20,14 +20,14 @@ import * as ROUTES from 'variables/routes';
 import ViewExercise from './view';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
-import { EditAction } from 'components/ActionIcons';
+import { EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
 import _ from 'lodash';
 import CheckboxTree from 'react-checkbox-tree';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { FaRegCheckSquare } from 'react-icons/fa';
 
 let timer = null;
-const Exercise = ({ translate }) => {
+const Exercise = ({ translate, handleSwitchFavorite }) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -208,6 +208,12 @@ const Exercise = ({ translate }) => {
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
+                    <div className="position-absolute favorite-btn">
+                      {exercise.is_favorite
+                        ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, therapistId)} />
+                        : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, therapistId)} />
+                      }
+                    </div>
                     {therapistId === exercise.therapist_id && (
                       <div>
                         <div className="position-absolute owner-btn btn-link">
@@ -280,7 +286,8 @@ const Exercise = ({ translate }) => {
 };
 
 Exercise.propTypes = {
-  translate: PropTypes.func
+  translate: PropTypes.func,
+  handleSwitchFavorite: PropTypes.func
 };
 
 export default withLocalize(Exercise);

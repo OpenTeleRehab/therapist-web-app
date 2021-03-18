@@ -51,6 +51,18 @@ const updateExerciseFail = () => ({
   type: 'UPDATE_EXERCISE_FAIL'
 });
 
+const updateFavoriteRequest = () => ({
+  type: 'UPDATE_FAVORITE_REQUEST'
+});
+
+const updateFavoriteSuccess = () => ({
+  type: 'UPDATE_FAVORITE_SUCCESS'
+});
+
+const updateFavoriteFail = () => ({
+  type: 'UPDATE_FAVORITE_FAIL'
+});
+
 const deleteExerciseRequest = () => ({
   type: 'DELETE_EXERCISE_REQUEST'
 });
@@ -84,5 +96,8 @@ export const mutation = {
   deleteExerciseRequest,
   deleteExerciseSuccess,
   deleteExerciseFail,
-  clearFilterExercisesRequest
+  clearFilterExercisesRequest,
+  updateFavoriteRequest,
+  updateFavoriteFail,
+  updateFavoriteSuccess
 };
