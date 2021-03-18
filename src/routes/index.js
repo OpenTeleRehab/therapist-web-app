@@ -61,6 +61,13 @@ const routes = [
     type: PRIVATE
   },
   {
+    title: 'exercise.copy',
+    path: ROUTES.EXERCISE_COPY,
+    component: CreateExercise,
+    exact: true,
+    type: PRIVATE
+  },
+  {
     title: 'education_material.create',
     path: ROUTES.EDUCATION_MATERIAL_CREATE,
     component: CreateEducationMaterial,

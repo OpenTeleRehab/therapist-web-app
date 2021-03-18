@@ -23,9 +23,9 @@ import {
 } from 'react-icons/bs';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import CheckboxTree from 'react-checkbox-tree';
-
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import _ from 'lodash';
 
 import * as ROUTES from 'variables/routes';
 import {
@@ -36,13 +36,13 @@ import {
 
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
-import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const isCopy = useRouteMatch(ROUTES.EXERCISE_COPY);
 
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
@@ -108,7 +108,7 @@ const CreateExercise = ({ translate }) => {
   useEffect(() => {
     if (id && exercise.id) {
       setFormFields({
-        title: exercise.title,
+        title: isCopy ? `${exercise.title} (${translate('common.copy')})` : exercise.title,
         include_feedback: exercise.include_feedback,
         get_pain_level: exercise.get_pain_level
       });
@@ -127,6 +127,7 @@ const CreateExercise = ({ translate }) => {
         setSelectedCategories(rootCategoryStructure);
       }
     }
+    // eslint-disable-next-line
   }, [id, exercise, categoryTreeData]);
 
   const handleLanguageChange = e => {
@@ -204,8 +205,17 @@ const CreateExercise = ({ translate }) => {
 
     if (canSave) {
       setIsLoading(true);
-      if (id) {
-        dispatch(updateExercise(id, { ...formFields, additional_fields: JSON.stringify(inputFields), categories: serializedSelectedCats, lang: language, therapist_id: therapistId }, mediaUploads))
+      if (id && !isCopy) {
+        dispatch(updateExercise(
+          id, {
+            ...formFields,
+            additional_fields: JSON.stringify(inputFields),
+            categories: serializedSelectedCats,
+            lang: language,
+            therapist_id: therapistId
+          },
+          mediaUploads
+        ))
           .then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY);
@@ -213,7 +223,17 @@ const CreateExercise = ({ translate }) => {
             setIsLoading(false);
           });
       } else {
-        dispatch(createExercise({ ...formFields, additional_fields: JSON.stringify(inputFields), categories: serializedSelectedCats, lang: language, therapist_id: therapistId }, mediaUploads))
+        dispatch(createExercise(
+          {
+            ...formFields,
+            additional_fields: JSON.stringify(inputFields),
+            categories: serializedSelectedCats,
+            lang: language,
+            therapist_id: therapistId,
+            copy_id: isCopy ? id : null
+          },
+          mediaUploads
+        ))
           .then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY);
@@ -257,7 +277,7 @@ const CreateExercise = ({ translate }) => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1>{id ? translate('exercise.edit') : translate('exercise.create')}</h1>
+        <h1>{id ? isCopy ? translate('exercise.copy') : translate('exercise.edit') : translate('exercise.create')}</h1>
       </div>
 
       <Form>

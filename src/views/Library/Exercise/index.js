@@ -20,7 +20,7 @@ import * as ROUTES from 'variables/routes';
 import ViewExercise from './view';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
-import { EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
+import { CopyAction, EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
 import _ from 'lodash';
 import CheckboxTree from 'react-checkbox-tree';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
@@ -133,6 +133,10 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
     history.push(ROUTES.EXERCISE_EDIT.replace(':id', id));
   };
 
+  const handleCopy = (id) => {
+    history.push(ROUTES.EXERCISE_COPY.replace(':id', id));
+  };
+
   return (
     <>
       <Row>
@@ -224,6 +228,11 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
                         {therapistId === exercise.therapist_id && (
                           <div className="edit-btn">
                             <EditAction onClick={() => handleEdit(exercise.id)} />
+                          </div>
+                        )}
+                        {!exercise.therapist_id && (
+                          <div className="edit-btn">
+                            <CopyAction onClick={() => handleCopy(exercise.id)} />
                           </div>
                         )}
                       </div>
