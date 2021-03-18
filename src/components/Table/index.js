@@ -35,7 +35,11 @@ import { useSelector } from 'react-redux';
 const FilterRow = (props) => <Table.Row className="filter" {...props} />;
 const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDivider={false} />;
 
-const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, currentPage, setCurrentPage, totalCount, setSearchValue, setFilters, filters, rightButton, hideSearchFilter, remotePaging, defaultSoringColumns }) => {
+const CustomTable = ({
+  rows, columns, columnExtensions, pageSize, setPageSize, currentPage,
+  setCurrentPage, totalCount, setSearchValue, setFilters, onRowClick, filters,
+  rightButton, hideSearchFilter, remotePaging, defaultSoringColumns
+}) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showFilter, setShowFilter] = useState(false);
@@ -70,7 +74,10 @@ const CustomTable = ({ rows, columns, columnExtensions, pageSize, setPageSize, c
       />
       <IntegratedSorting />
       {remotePaging ? <CustomPaging totalCount={totalCount} /> : <IntegratedPaging />}
-      <Table columnExtensions={tableColumnExtensions} />
+      {onRowClick
+        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} />} />
+        : <Table columnExtensions={tableColumnExtensions} />
+      }
       <TableHeaderRow />
       {showFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
       <TableFixedColumns rightColumns={rightColumns} cellComponent={FixedColumnCell} />
@@ -97,6 +104,7 @@ CustomTable.propTypes = {
   totalCount: PropTypes.number,
   setSearchValue: PropTypes.func,
   setFilters: PropTypes.func,
+  onRowClick: PropTypes.func,
   filters: PropTypes.array,
   rightButton: PropTypes.object,
   hideSearchFilter: PropTypes.bool,
@@ -110,3 +118,16 @@ CustomTable.defaultProps = {
 };
 
 export default CustomTable;
+
+const TableRow = ({ row, handleClick, ...rest }) => (
+  <Table.Row
+    {...rest}
+    onClick={() => handleClick(row)}
+    style={{ cursor: 'pointer' }}
+  />
+);
+
+TableRow.propTypes = {
+  row: PropTypes.object,
+  handleClick: PropTypes.func
+};

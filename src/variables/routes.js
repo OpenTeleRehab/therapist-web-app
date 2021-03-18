@@ -11,7 +11,9 @@ export const QUESTIONNAIRE_CREATE = LIBRARY + '/questionnaire/create';
 export const LIBRARY_EDUCATION = LIBRARY + '#education';
 export const LIBRARY_QUESTIONNAIRE = LIBRARY + '#questionnaire';
 export const LIBRARY_PRESET_TREATMENT = LIBRARY + '#preset_treatment';
-export const TREATMENT_PLAN_CREATE = '/treatment-plan/create';
+export const LIBRARY_TREATMENT_PLAN_CREATE = LIBRARY + '/treatment-plan/create';
+export const LIBRARY_TREATMENT_PLAN_DETAIL = LIBRARY + '/treatment-plan/:id';
+export const LIBRARY_TREATMENT_PLAN_EDIT = LIBRARY + '/treatment-plan/edit/:id';
 
 export const VIEW_PATIENT_DETAIL = `${PATIENT}/:patientId`;
 export const TREATMENT_PLAN_CREATE_FOR_PATIENT = VIEW_PATIENT_DETAIL + '/treatment-plan/create';

@@ -1,13 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { getTranslate } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, Link } from 'react-router-dom';
-import { OverlayTrigger, Tab, Tabs, Tooltip } from 'react-bootstrap';
+import { useParams, Link, useHistory } from 'react-router-dom';
+import {
+  Button,
+  Dropdown, DropdownButton,
+  OverlayTrigger,
+  Tab,
+  Tabs,
+  Tooltip
+} from 'react-bootstrap';
 import moment from 'moment/moment';
 import * as ROUTES from 'variables/routes';
 
 import PatientInfo from 'views/Patient/Partials/patientInfo';
-import { getTreatmentPlansDetail } from '../../store/treatmentPlan/actions';
+import {
+  deleteTreatmentPlans,
+  getTreatmentPlansDetail
+} from '../../store/treatmentPlan/actions';
 import settings from 'settings';
 import { TAB } from 'variables/treatmentPlan';
 import EllipsisText from 'react-ellipsis-text';
@@ -17,8 +27,10 @@ import AdherenceTab from './TabContents/adherenceTab';
 import _ from 'lodash';
 import { renderStatusBadge } from '../../utils/treatmentPlan';
 import GoalTrackingTab from './TabContents/goalTrakingTab';
+import Dialog from 'components/Dialog';
 
 const ViewTreatmentPlan = () => {
+  const history = useHistory();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
@@ -40,12 +52,14 @@ const ViewTreatmentPlan = () => {
   const [activities, setActivities] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [readOnly] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     if (id) {
-      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id }));
+      const additionalParams = patientId ? {} : { type: 'preset' };
+      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams }));
     }
-  }, [id, dispatch, profile]);
+  }, [id, patientId, dispatch, profile]);
 
   useEffect(() => {
     if (id && !_.isEmpty(treatmentPlansDetail)) {
@@ -64,20 +78,64 @@ const ViewTreatmentPlan = () => {
     // eslint-disable-next-line
   }, [id, treatmentPlansDetail]);
 
+  const handleDelete = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setShowDeleteDialog(false);
+  };
+
+  const handleDeleteDialogConfirm = () => {
+    dispatch(deleteTreatmentPlans(id)).then(result => {
+      if (result) {
+        history.push(ROUTES.LIBRARY_PRESET_TREATMENT);
+      }
+    });
+  };
+
   return (
     <>
-      <div className="top-content">
-        <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
-      </div>
-      <div className="mt-3">
-        <span>
-          <Link to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId)}>&lt; {translate('treatment_plan.back_to_list')}</Link>
-        </span>
-        <div className="d-flex align-self-center mt-4">
-          <h4 className="mr-4">{formFields.name}</h4>
-          <span className="mb-2 ">
-            {renderStatusBadge(treatmentPlansDetail)}
-          </span>
+      {patientId && (
+        <div className="top-content mb-4">
+          <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
+        </div>
+      )}
+      <div>
+        <div className="d-flex align-self-center">
+          <h4>{formFields.name}</h4>
+          {patientId ? (
+            <>
+              <span className="mb-2 ml-3">
+                {renderStatusBadge(treatmentPlansDetail)}
+              </span>
+              <Button
+                className="ml-auto"
+                variant="outline-primary"
+                as={Link}
+                to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId)}
+              >
+                &lt; {translate('treatment_plan.back_to_list')}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                className="ml-auto mr-2"
+                variant="outline-primary"
+                as={Link}
+                to={ROUTES.LIBRARY_PRESET_TREATMENT}
+              >
+                &lt; {translate('treatment_plan.back_to_preset_list')}
+              </Button>
+              <DropdownButton alignRight variant="primary" title={translate('common.action')}>
+                <Dropdown.Item as={Link} to={ROUTES.LIBRARY_TREATMENT_PLAN_EDIT.replace(':id', id)}>
+                  {translate('common.edit')}
+                </Dropdown.Item>
+                <Dropdown.Item onClick={handleDelete}>{translate('common.delete')}</Dropdown.Item>
+              </DropdownButton>
+            </>
+          )}
         </div>
         <div className="patient-info">
           <span className="mr-4">
@@ -109,17 +167,34 @@ const ViewTreatmentPlan = () => {
           <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities_tab')}>
             <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} />
           </Tab>
-          <Tab eventKey={TAB.adherence} title={translate('treatment_plan.adherence_tab')}>
-            <AdherenceTab activities={activities} startDate={treatmentPlansDetail.start_date} endDate={treatmentPlansDetail.end_date}/>
-          </Tab>
-          <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaires_tab')}>
-            <QuestionnaireTab activities={activities}/>
-          </Tab>
-          <Tab eventKey={TAB.goal_tracking} title={translate('treatment_plan.goal_tracking_tab')}>
-            <GoalTrackingTab activities={activities}/>
-          </Tab>
+          {patientId &&
+            <Tab eventKey={TAB.adherence} title={translate('treatment_plan.adherence_tab')}>
+              <AdherenceTab activities={activities} startDate={treatmentPlansDetail.start_date} endDate={treatmentPlansDetail.end_date}/>
+            </Tab>
+          }
+          {patientId &&
+            <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaires_tab')}>
+              <QuestionnaireTab activities={activities}/>
+            </Tab>
+          }
+          {patientId &&
+            <Tab eventKey={TAB.goal_tracking} title={translate('treatment_plan.goal_tracking_tab')}>
+              <GoalTrackingTab activities={activities}/>
+            </Tab>
+          }
         </Tabs>
       </div>
+
+      <Dialog
+        show={showDeleteDialog}
+        title={translate('treatment_plan.preset.delete_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleDeleteDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleDeleteDialogConfirm}
+      >
+        <p>{translate('common.delete_confirmation_message')}</p>
+      </Dialog>
     </>
   );
 };

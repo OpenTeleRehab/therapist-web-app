@@ -41,7 +41,20 @@ const getTreatmentPlans = payload => {
 };
 
 const getTreatmentPlansDetail = payload => {
-  return axiosPatient.get('/treatment-plan/get-treatment-plan-detail', { params: payload })
+  const httpRequest = payload.type === 'preset' ? axios : axiosPatient;
+  return httpRequest.get('/treatment-plan/get-treatment-plan-detail', { params: payload })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
+const deleteTreatmentPlan = id => {
+  return axios.delete(`/treatment-plan/${id}`)
     .then(
       res => {
         return res.data;
@@ -56,5 +69,6 @@ export const TreatmentPlan = {
   createTreatmentPlan,
   updateTreatmentPlan,
   getTreatmentPlans,
-  getTreatmentPlansDetail
+  getTreatmentPlansDetail,
+  deleteTreatmentPlan
 };
