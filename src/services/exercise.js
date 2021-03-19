@@ -52,6 +52,18 @@ const countTherapistLibraries = (therapistId, lang) => {
     });
 };
 
+const updateFavorite = (id, payload) => {
+  return axios.post(`/library/updateFavorite/by-therapist/${id}`, payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const createExercise = (payload, mediaUploads) => {
   const formData = new FormData();
   _.forIn(payload, (value, key) => {
@@ -121,5 +133,6 @@ export const Exercise = {
   updateExercise,
   deleteExercise,
   getExercisesByIds,
-  countTherapistLibraries
+  countTherapistLibraries,
+  updateFavorite
 };
