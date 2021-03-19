@@ -4,6 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { BsPlus } from 'react-icons/bs';
 import queryString from 'query-string';
+import { CATEGORY_TYPES } from 'variables/category';
 
 import * as ROUTES from 'variables/routes';
 import Exercise from './Exercise';
@@ -13,6 +14,7 @@ import PresetTreatment from './PresetTreatment';
 import Dialog from 'components/Dialog';
 import { updateFavorite as updateFavoriteEducationMaterial } from 'store/educationMaterial/actions';
 import { updateFavorite as updateFavoriteExercise } from 'store/exercise/actions';
+import { updateFavorite as updateFavoriteQuestionnaire } from 'store/questionnaire/actions';
 import { useDispatch } from 'react-redux';
 
 const VIEW_EXERCISE = 'exercise';
@@ -63,14 +65,14 @@ const Library = ({ translate }) => {
 
   const handleSwitchFavoriteDialogConfirm = () => {
     switch (type) {
-      case 'exercise':
-        dispatch(updateFavoriteExercise(id, formFields)).then(result => {
+      case CATEGORY_TYPES.QUESTIONNAIRE:
+        dispatch(updateFavoriteQuestionnaire(id, formFields)).then(result => {
           if (result) {
             handleSwitchFavoriteDialogClose(true);
           }
         });
         break;
-      case 'education-material':
+      case CATEGORY_TYPES.MATERIAL:
         dispatch(updateFavoriteEducationMaterial(id, formFields)).then(result => {
           if (result) {
             handleSwitchFavoriteDialogClose(true);
@@ -129,7 +131,7 @@ const Library = ({ translate }) => {
 
       { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} /> }
       { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} /> }
-      { view === VIEW_QUESTIONNAIRE && <Questionnaire /> }
+      { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} /> }
       { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
       <Dialog
         show={showSwitchFavoriteDialog}

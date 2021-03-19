@@ -16,9 +16,24 @@ const clearFilterQuestionnairesRequest = () => ({
   type: 'CLEAR_FILTER_QUESTIONNAIRES_REQUEST'
 });
 
+const updateFavoriteRequest = () => ({
+  type: 'UPDATE_FAVORITE_REQUEST'
+});
+
+const updateFavoriteSuccess = () => ({
+  type: 'UPDATE_FAVORITE_SUCCESS'
+});
+
+const updateFavoriteFail = () => ({
+  type: 'UPDATE_FAVORITE_FAIL'
+});
+
 export const mutation = {
   getQuestionnairesRequest,
   getQuestionnairesSuccess,
   getQuestionnairesFail,
-  clearFilterQuestionnairesRequest
+  clearFilterQuestionnairesRequest,
+  updateFavoriteRequest,
+  updateFavoriteSuccess,
+  updateFavoriteFail
 };

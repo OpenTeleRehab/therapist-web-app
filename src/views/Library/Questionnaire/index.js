@@ -28,10 +28,12 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import { FaRegCheckSquare } from 'react-icons/fa';
+import { EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
 import _ from 'lodash';
+import { IoPerson } from 'react-icons/io5/index';
 
 let timer = null;
-const Questionnaire = ({ translate }) => {
+const Questionnaire = ({ translate, handleSwitchFavorite }) => {
   const dispatch = useDispatch();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
@@ -49,6 +51,7 @@ const Questionnaire = ({ translate }) => {
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+  const [therapistId, setTherapistId] = useState('');
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -57,6 +60,12 @@ const Questionnaire = ({ translate }) => {
       setLanguage(profile.language_id);
     }
   }, [filters, profile]);
+
+  useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
 
   useEffect(() => {
     let serializedSelectedCats = [];
@@ -71,14 +80,15 @@ const Questionnaire = ({ translate }) => {
         categories: serializedSelectedCats,
         lang: language,
         page_size: pageSize,
-        page: currentPage
+        page: currentPage,
+        therapist_id: therapistId
       })).then(result => {
         if (result) {
           setTotalCount(result.total_count);
         }
       });
     }, 500);
-  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch]);
+  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   useEffect(() => {
     if (language) {
@@ -198,31 +208,51 @@ const Questionnaire = ({ translate }) => {
               <Row>
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewQuestionnaire(questionnaire)}>
-                      <div className="card-img bg-light">
-                        <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                          <img src={'/images/questionnaire.svg'} alt='questionnaire' />
-                          <p>{translate('activity.questionnaire').toUpperCase()}</p>
-                        </div>
-                      </div>
-                      <Card.Body className="d-flex flex-column justify-content-between">
-                        <Card.Title>
-                          {
-                            questionnaire.title.length <= 50
-                              ? <h5 className="card-title">{ questionnaire.title }</h5>
-                              : (
-                                <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
-                                >
-                                  <h5 className="card-title">{ questionnaire.title }</h5>
-                                </OverlayTrigger>
-                              )
+                    <Card className="exercise-card material-card shadow-sm mb-4">
+                      <div className="top-bar">
+                        <div className="favorite-btn">
+                          {questionnaire.is_favorite
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 0, therapistId, CATEGORY_TYPES.QUESTIONNAIRE)} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 1, therapistId, CATEGORY_TYPES.QUESTIONNAIRE)} />
                           }
-                        </Card.Title>
-                        <Card.Text>
-                          <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
-                        </Card.Text>
-                      </Card.Body>
+                        </div>
+                        {therapistId === questionnaire.therapist_id && (
+                          <div className="owner-btn">
+                            <IoPerson size={20} />
+                          </div>
+                        )}
+                        {therapistId === questionnaire.therapist_id && (
+                          <div className="edit-btn">
+                            <EditAction />
+                          </div>
+                        )}
+                      </div>
+                      <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
+                        <div className="card-img bg-light">
+                          <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
+                            <img src={'/images/questionnaire.svg'} alt='questionnaire' />
+                            <p>{translate('activity.questionnaire').toUpperCase()}</p>
+                          </div>
+                        </div>
+                        <Card.Body className="d-flex flex-column justify-content-between">
+                          <Card.Title>
+                            {
+                              questionnaire.title.length <= 50
+                                ? <h5 className="card-title">{ questionnaire.title }</h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">{ questionnaire.title }</h5>
+                                  </OverlayTrigger>
+                                )
+                            }
+                          </Card.Title>
+                          <Card.Text>
+                            <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
+                          </Card.Text>
+                        </Card.Body>
+                      </div>
                     </Card>
                   </Col>
                 ))}
@@ -247,7 +277,8 @@ const Questionnaire = ({ translate }) => {
 };
 
 Questionnaire.propTypes = {
-  translate: PropTypes.func
+  translate: PropTypes.func,
+  handleSwitchFavorite: PropTypes.func
 };
 
 export default withLocalize(Questionnaire);
