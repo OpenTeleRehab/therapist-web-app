@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { Button, Col, Form, Row, Accordion, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import * as ROUTES from '../../../variables/routes';
 import {
   createEducationMaterial,
@@ -28,6 +28,7 @@ const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const isCopy = useRouteMatch(ROUTES.EDUCATION_MATERIAL_COPY);
   const { maxFileSize } = settings.educationMaterial;
 
   const { languages } = useSelector(state => state.language);
@@ -90,7 +91,7 @@ const CreateEducationMaterial = ({ translate }) => {
   useEffect(() => {
     if (id && educationMaterial.id) {
       setFormFields({
-        title: educationMaterial.title
+        title: isCopy ? `${educationMaterial.title} (${translate('common.copy')})` : educationMaterial.title
       });
       setMaterialFile(educationMaterial.file);
       if (categoryTreeData.length) {
@@ -106,6 +107,7 @@ const CreateEducationMaterial = ({ translate }) => {
         setSelectedCategories(rootCategoryStructure);
       }
     }
+    // eslint-disable-next-line
   }, [id, educationMaterial, categoryTreeData]);
 
   const handleLanguageChange = e => {
@@ -147,7 +149,7 @@ const CreateEducationMaterial = ({ translate }) => {
 
     if (canSave) {
       setIsLoading(true);
-      if (id) {
+      if (id && !isCopy) {
         dispatch(updateEducationMaterial(id, { ...formFields, categories: serializedSelectedCats, lang: language, therapist_id: therapistId }))
           .then(result => {
             if (result) {
@@ -156,7 +158,13 @@ const CreateEducationMaterial = ({ translate }) => {
             setIsLoading(false);
           });
       } else {
-        dispatch(createEducationMaterial({ ...formFields, categories: serializedSelectedCats, lang: language, therapist_id: therapistId }))
+        dispatch(createEducationMaterial({
+          ...formFields,
+          categories: serializedSelectedCats,
+          lang: language,
+          therapist_id: therapistId,
+          copy_id: isCopy ? id : ''
+        }))
           .then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY_EDUCATION);
@@ -182,7 +190,7 @@ const CreateEducationMaterial = ({ translate }) => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1>{id ? translate('education_material.edit') : translate('education_material.create')}</h1>
+        <h1>{id ? isCopy ? translate('education_material.copy') : translate('education_material.edit') : translate('education_material.create')}</h1>
       </div>
 
       <Form>

@@ -230,7 +230,7 @@ const CreateExercise = ({ translate }) => {
             categories: serializedSelectedCats,
             lang: language,
             therapist_id: therapistId,
-            copy_id: isCopy ? id : null
+            copy_id: isCopy ? id : ''
           },
           mediaUploads
         ))
