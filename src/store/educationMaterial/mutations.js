@@ -51,6 +51,18 @@ const updateEducationMaterialFail = () => ({
   type: 'UPDATE_EDUCATION_MATERIAL_FAIL'
 });
 
+const updateFavoriteRequest = () => ({
+  type: 'UPDATE_FAVORITE_REQUEST'
+});
+
+const updateFavoriteSuccess = () => ({
+  type: 'UPDATE_FAVORITE_SUCCESS'
+});
+
+const updateFavoriteFail = () => ({
+  type: 'UPDATE_FAVORITE_FAIL'
+});
+
 const deleteEducationMaterialRequest = () => ({
   type: 'DELETE_EDUCATION_MATERIAL_REQUEST'
 });
@@ -84,5 +96,8 @@ export const mutation = {
   deleteEducationMaterialRequest,
   deleteEducationMaterialSuccess,
   deleteEducationMaterialFail,
-  clearFilterEducationMaterialsRequest
+  clearFilterEducationMaterialsRequest,
+  updateFavoriteRequest,
+  updateFavoriteSuccess,
+  updateFavoriteFail
 };
