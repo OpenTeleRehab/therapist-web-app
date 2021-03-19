@@ -208,59 +208,63 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
-                    <div className="position-absolute favorite-btn">
-                      {exercise.is_favorite
-                        ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, therapistId)} />
-                        : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, therapistId)} />
-                      }
-                    </div>
-                    {therapistId === exercise.therapist_id && (
-                      <div>
-                        <div className="position-absolute owner-btn btn-link">
-                          <IoPerson size={20} />
-                        </div>
-                        <div className="position-absolute edit-btn">
-                          <EditAction onClick={() => handleEdit(exercise.id)} />
-                        </div>
-                      </div>
-                    )}
-                    <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise.id)}>
-                      <div className="card-img bg-light">
-                        {
-                          exercise.files.length > 0 && (
-                            (exercise.files[0].fileType === 'audio/mpeg' &&
-                              <div className="w-100 pt-5 pl-3 pr-3">
-                                <audio controls className="w-100">
-                                  <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
-                                </audio>
-                              </div>
-                            ) ||
-                            (exercise.files[0].fileType === 'video/mp4' &&
-                              <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
-                              />
-                            ) ||
-                            ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                              <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                              />
-                            )
-                          )
-                        }
-                      </div>
-                      <Card.Body>
-                        <Card.Title>
-                          {
-                            exercise.title.length <= 50
-                              ? <h5 className="card-title">{ exercise.title }</h5>
-                              : (
-                                <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                                >
-                                  <h5 className="card-title">{ exercise.title }</h5>
-                                </OverlayTrigger>
-                              )
+                    <Card className="exercise-card shadow-sm mb-4">
+                      <div className="top-bar">
+                        <div className="favorite-btn">
+                          {exercise.is_favorite
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, therapistId)} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, therapistId)} />
                           }
-                        </Card.Title>
-                      </Card.Body>
+                        </div>
+                        {therapistId === exercise.therapist_id && (
+                          <div className="owner-btn">
+                            <IoPerson size={20} />
+                          </div>
+                        )}
+                        {therapistId === exercise.therapist_id && (
+                          <div className="edit-btn">
+                            <EditAction onClick={() => handleEdit(exercise.id)} />
+                          </div>
+                        )}
+                      </div>
+                      <div className="card-container" onClick={() => handleView(exercise.id)}>
+                        <div className="card-img bg-light">
+                          {
+                            exercise.files.length > 0 && (
+                              (exercise.files[0].fileType === 'audio/mpeg' &&
+                                <div className="w-100 pt-5 pl-3 pr-3">
+                                  <audio controls className="w-100">
+                                    <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
+                                  </audio>
+                                </div>
+                              ) ||
+                              (exercise.files[0].fileType === 'video/mp4' &&
+                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
+                                />
+                              ) ||
+                              ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
+                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
+                                />
+                              )
+                            )
+                          }
+                        </div>
+                        <Card.Body>
+                          <Card.Title>
+                            {
+                              exercise.title.length <= 50
+                                ? <h5 className="card-title">{ exercise.title }</h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">{ exercise.title }</h5>
+                                  </OverlayTrigger>
+                                )
+                            }
+                          </Card.Title>
+                        </Card.Body>
+                      </div>
                     </Card>
                   </Col>
                 ))}
