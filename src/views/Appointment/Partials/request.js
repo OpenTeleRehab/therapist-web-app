@@ -4,8 +4,9 @@ import { DeleteAction, ApproveAction } from 'components/ActionIcons';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
 import _ from 'lodash';
+import PropType from 'prop-types';
 
-const Request = () => {
+const Request = ({ handleApprove }) => {
   const { appointments } = useSelector((state) => state.appointment);
   const [requests, setRequests] = useState([]);
 
@@ -31,7 +32,7 @@ const Request = () => {
                   return (
                     <div className="d-flex mt-3" key={appointment.id}>
                       <span>{appointment.patient.first_name + ' ' + appointment.patient.last_name}</span>
-                      <ApproveAction className="ml-auto" />
+                      <ApproveAction className="ml-auto" onClick={() => handleApprove(appointment.patient_id)} />
                       <DeleteAction className="ml-1" />
                     </div>
                   );
@@ -43,6 +44,10 @@ const Request = () => {
       }
     </ListGroup>
   );
+};
+
+Request.propTypes = {
+  handleApprove: PropType.func
 };
 
 export default Request;

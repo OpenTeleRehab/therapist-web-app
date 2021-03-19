@@ -5,8 +5,9 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { getTranslate } from 'react-localize-redux';
 import _ from 'lodash';
+import PropType from 'prop-types';
 
-const AppointmentList = () => {
+const AppointmentList = ({ handleEdit }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { appointments } = useSelector((state) => state.appointment);
@@ -38,7 +39,7 @@ const AppointmentList = () => {
                         <div>{moment(appointment.end_date).utc().format('hh:mm A')}</div>
                       </div>
                       <span>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</span>
-                      <EditAction className="ml-auto" />
+                      <EditAction className="ml-auto" onClick={() => handleEdit(appointment.id)} />
                       <DeleteAction className="ml-1" />
                     </div>
                   );
@@ -50,6 +51,10 @@ const AppointmentList = () => {
       }
     </ListGroup>
   );
+};
+
+AppointmentList.propTypes = {
+  handleEdit: PropType.number
 };
 
 export default AppointmentList;
