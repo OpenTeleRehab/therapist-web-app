@@ -9,23 +9,39 @@ import Cancellation from './Partials/cancellation';
 import { getAppointments } from 'store/appointment/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
-import settings from 'settings';
 import moment from 'moment';
+import 'moment/min/locales';
+import allLocales from '@fullcalendar/core/locales-all';
+import settings from 'settings';
 
 const Appointment = ({ translate }) => {
   const dispatch = useDispatch();
   const { appointments } = useSelector((state) => state.appointment);
+  const { languages } = useSelector(state => state.language);
   const { profile } = useSelector((state) => state.auth);
   const calendarRef = useRef();
   const [events, setEvents] = useState([]);
   const [date, setDate] = useState('');
   const [selectedDate, setSelectedDate] = useState();
+  const [locale, setLocale] = useState('');
 
   useEffect(() => {
-    if (date) {
-      dispatch(getAppointments({ date, selected_date: selectedDate, therapist_id: profile.id }));
+    if (date && profile) {
+      dispatch(getAppointments({
+        date: moment(date).locale('en').format(settings.date_format),
+        selected_date: selectedDate ? moment(selectedDate).locale('en').format(settings.date_format) : null,
+        therapist_id: profile.id
+      }));
     }
   }, [date, selectedDate, profile, dispatch]);
+
+  useEffect(() => {
+    if (languages.length && profile) {
+      const language = languages.find(lang => lang.id === profile.language_id);
+      setLocale(language.code);
+      moment.locale(language.code);
+    }
+  }, [languages, profile]);
 
   useEffect(() => {
     if (appointments.calendarData) {
@@ -42,15 +58,17 @@ const Appointment = ({ translate }) => {
 
   const handleViewChange = (info) => {
     setSelectedDate('');
-    setDate(moment(info.view.currentStart).format(settings.date_format));
+    setDate(moment(info.view.currentStart));
   };
 
   const handleDateClick = (info) => {
-    setSelectedDate(moment(info.startStr).format(settings.date_format));
+    setSelectedDate(moment(info.startStr));
   };
 
   const handleEventClick = (info) => {
-    setSelectedDate(moment(info.event.startStr).format(settings.date_format));
+    const calendarApi = calendarRef.current.getApi();
+    calendarApi.select(info.event.startStr);
+    setSelectedDate(moment(info.event.startStr));
   };
 
   return (
@@ -58,6 +76,8 @@ const Appointment = ({ translate }) => {
       <Col sm={12} xl={7}>
         <FullCalendar
           ref={calendarRef}
+          locales={allLocales}
+          locale={locale}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
           selectable={true}
@@ -66,6 +86,7 @@ const Appointment = ({ translate }) => {
           eventContent={renderEventContent}
           eventClick={handleEventClick}
           datesSet={handleViewChange}
+          unselectAuto={false}
         />
       </Col>
       <Col sm={12} xl={5}>
