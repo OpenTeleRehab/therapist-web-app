@@ -31,10 +31,13 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 import { EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
 import _ from 'lodash';
 import { IoPerson } from 'react-icons/io5/index';
+import * as ROUTES from '../../../variables/routes';
+import { useHistory } from 'react-router-dom';
 
 let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(8);
@@ -106,6 +109,12 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
     }
   }, [categoryTreeData]);
 
+  useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
+
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
@@ -131,6 +140,10 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
 
   const handleSetSelectedCategories = (parent, checked) => {
     setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+  };
+
+  const handleEdit = (id) => {
+    history.push(ROUTES.QUESTIONNAIRE_EDIT.replace(':id', id));
   };
 
   return (
@@ -223,7 +236,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
                         )}
                         {therapistId === questionnaire.therapist_id && (
                           <div className="edit-btn">
-                            <EditAction />
+                            <EditAction onClick={() => handleEdit(questionnaire.id)}/>
                           </div>
                         )}
                       </div>
