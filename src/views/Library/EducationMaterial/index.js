@@ -14,7 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   BsCaretDownFill,
   BsCaretRightFill,
-  BsDashSquare, BsPersonFill,
+  BsDashSquare,
   BsSquare
 } from 'react-icons/bs';
 
@@ -30,12 +30,13 @@ import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
-import { EditAction } from '../../../components/ActionIcons';
+import { EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
 import * as ROUTES from '../../../variables/routes';
 import { useHistory } from 'react-router-dom';
+import { IoPerson } from 'react-icons/io5/index';
 
 let timer = null;
-const EducationMaterial = ({ translate }) => {
+const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
@@ -215,41 +216,51 @@ const EducationMaterial = ({ translate }) => {
               <Row>
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={3}>
-                    {therapistId === material.therapist_id && (
-                      <>
-                        <div className="position-absolute edit-btn">
-                          <EditAction onClick={() => handleEdit(material.id)} className="material-edit-btn" />
-                        </div>
-                        <div className="position-absolute material-own-icon">
-                          <BsPersonFill size={20} />
-                        </div>
-                      </>
-                    )}
-                    <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewEducationMaterial(material)}>
-                      <div className="card-img bg-light">
-                        <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
-                          <MdDescription size={80} />
-                          <p>{translate('activity.material').toUpperCase()}</p>
-                        </div>
-                      </div>
-                      <Card.Body className="d-flex flex-column justify-content-between">
-                        <Card.Title>
-                          {
-                            material.title.length <= 50
-                              ? <h5 className="card-title">{ material.title }</h5>
-                              : (
-                                <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
-                                >
-                                  <h5 className="card-title">{ material.title }</h5>
-                                </OverlayTrigger>
-                              )
+                    <Card className="exercise-card material-card shadow-sm mb-4">
+                      <div className="top-bar">
+                        <div className="favorite-btn">
+                          {material.is_favorite
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(material.id, 0, therapistId, 'education-material')} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, therapistId, 'education-material')} />
                           }
-                        </Card.Title>
-                        <Card.Text>
-                          {translate(material.file.fileGroupType)}
-                        </Card.Text>
-                      </Card.Body>
+                        </div>
+                        {therapistId === material.therapist_id && (
+                          <div className="owner-btn">
+                            <IoPerson size={20} />
+                          </div>
+                        )}
+                        {therapistId === material.therapist_id && (
+                          <div className="edit-btn">
+                            <EditAction onClick={() => handleEdit(material.id)} />
+                          </div>
+                        )}
+                      </div>
+                      <div className="card-container" onClick={() => handleViewEducationMaterial(material)}>
+                        <div className="card-img bg-light">
+                          <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
+                            <MdDescription size={80} />
+                            <p>{translate('activity.material').toUpperCase()}</p>
+                          </div>
+                        </div>
+                        <Card.Body className="d-flex flex-column justify-content-between">
+                          <Card.Title>
+                            {
+                              material.title.length <= 50
+                                ? <h5 className="card-title">{ material.title }</h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">{ material.title }</h5>
+                                  </OverlayTrigger>
+                                )
+                            }
+                          </Card.Title>
+                          <Card.Text>
+                            {translate(material.file.fileGroupType)}
+                          </Card.Text>
+                        </Card.Body>
+                      </div>
                     </Card>
                   </Col>
                 ))}
@@ -274,7 +285,8 @@ const EducationMaterial = ({ translate }) => {
 };
 
 EducationMaterial.propTypes = {
-  translate: PropTypes.func
+  translate: PropTypes.func,
+  handleSwitchFavorite: PropTypes.func
 };
 
 export default withLocalize(EducationMaterial);

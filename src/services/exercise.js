@@ -53,7 +53,7 @@ const countTherapistLibraries = (therapistId, lang) => {
 };
 
 const updateFavorite = (id, payload) => {
-  return axios.post(`/library/updateFavorite/by-therapist/${id}`, payload)
+  return axios.post(`/exercise/updateFavorite/by-therapist/${id}`, payload)
     .then(
       res => {
         return res.data;

@@ -11,7 +11,8 @@ import EducationMaterial from './EducationMaterial';
 import Questionnaire from './Questionnaire';
 import PresetTreatment from './PresetTreatment';
 import Dialog from 'components/Dialog';
-import { updateFavorite } from 'store/exercise/actions';
+import { updateFavorite as updateFavoriteEducationMaterial } from 'store/educationMaterial/actions';
+import { updateFavorite as updateFavoriteExercise } from 'store/exercise/actions';
 import { useDispatch } from 'react-redux';
 
 const VIEW_EXERCISE = 'exercise';
@@ -26,6 +27,7 @@ const Library = ({ translate }) => {
   const [newContentLink, setNewContentLink] = useState(undefined);
   const [showSwitchFavoriteDialog, setShowSwitchFavoriteDialog] = useState(false);
   const [id, setId] = useState(null);
+  const [type, setType] = useState(null);
   const [formFields, setFormFields] = useState({
     is_favorite: 0,
     therapist_id: null
@@ -47,8 +49,9 @@ const Library = ({ translate }) => {
     }
   }, [search]);
 
-  const handleSwitchFavorite = (id, isFavorite, therapistId) => {
+  const handleSwitchFavorite = (id, isFavorite, therapistId, type) => {
     setId(id);
+    setType(type);
     setFormFields({ ...formFields, is_favorite: isFavorite, therapist_id: therapistId });
     setShowSwitchFavoriteDialog(true);
   };
@@ -59,11 +62,29 @@ const Library = ({ translate }) => {
   };
 
   const handleSwitchFavoriteDialogConfirm = () => {
-    dispatch(updateFavorite(id, formFields)).then(result => {
-      if (result) {
-        handleSwitchFavoriteDialogClose(true);
-      }
-    });
+    switch (type) {
+      case 'exercise':
+        dispatch(updateFavoriteExercise(id, formFields)).then(result => {
+          if (result) {
+            handleSwitchFavoriteDialogClose(true);
+          }
+        });
+        break;
+      case 'education-material':
+        dispatch(updateFavoriteEducationMaterial(id, formFields)).then(result => {
+          if (result) {
+            handleSwitchFavoriteDialogClose(true);
+          }
+        });
+        break;
+      default:
+        dispatch(updateFavoriteExercise(id, formFields)).then(result => {
+          if (result) {
+            handleSwitchFavoriteDialogClose(true);
+          }
+        });
+        break;
+    }
   };
 
   return (
@@ -107,7 +128,7 @@ const Library = ({ translate }) => {
       </Nav>
 
       { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} /> }
-      { view === VIEW_EDUCATION && <EducationMaterial /> }
+      { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} /> }
       { view === VIEW_QUESTIONNAIRE && <Questionnaire /> }
       { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
       <Dialog

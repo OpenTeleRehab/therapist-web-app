@@ -62,6 +62,18 @@ const updateEducationMaterial = (id, payload) => {
     });
 };
 
+const updateFavorite = (id, payload) => {
+  return axios.post(`/education-material/updateFavorite/by-therapist/${id}`, payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const deleteEducationMaterial = id => {
   return axios.delete(`/education-material/${id}`)
     .then(
@@ -93,5 +105,6 @@ export const EducationMaterial = {
   createEducationMaterial,
   updateEducationMaterial,
   getEducationMaterial,
-  deleteEducationMaterial
+  deleteEducationMaterial,
+  updateFavorite
 };

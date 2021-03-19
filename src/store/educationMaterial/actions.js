@@ -29,6 +29,22 @@ export const getEducationMaterial = (id, language) => async dispatch => {
   }
 };
 
+export const updateFavorite = (id, payload) => async (dispatch, getState) => {
+  dispatch(mutation.updateFavoriteRequest());
+  const data = await EducationMaterial.updateFavorite(id, payload);
+  if (data.success) {
+    dispatch(mutation.updateFavoriteSuccess());
+    const filters = getState().educationMaterial.filters;
+    dispatch(getEducationMaterials({ ...filters, therapist_id: payload.therapist_id }));
+    dispatch(showSuccessNotification('toast_title.update_education_material', data.message));
+    return true;
+  } else {
+    dispatch(mutation.updateFavoriteFail());
+    dispatch(showErrorNotification('toast_title.update_education_material', data.message));
+    return false;
+  }
+};
+
 export const createEducationMaterial = (payload) => async dispatch => {
   dispatch(mutation.createEducationMaterialRequest());
   const data = await EducationMaterial.createEducationMaterial(payload);
