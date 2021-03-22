@@ -114,7 +114,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
       setErrorFrom(false);
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'LT').isValid() || formattedFrom === formattedTo) {
+    if (formattedTo === '' || !moment(formattedTo, 'LT').isValid() || formattedFrom === formattedTo || to.isBefore(from)) {
       canSave = false;
       setErrorTo(true);
     } else {
