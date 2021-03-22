@@ -32,6 +32,7 @@ const Appointment = ({ translate }) => {
   useEffect(() => {
     if (date && profile) {
       dispatch(getAppointments({
+        now: moment().format('YYYY-MM-DD HH:mm:ss'),
         date: moment(date).locale('en').format(settings.date_format),
         selected_date: selectedDate ? moment(selectedDate).locale('en').format(settings.date_format) : null,
         therapist_id: profile.id
