@@ -1,5 +1,5 @@
 .toast {
-	position: absolute;
+	position: fixed;
 	z-index: $zindex-toast;
 	top: $grid-gutter-width / 2;
 	right: $grid-gutter-width / 2;

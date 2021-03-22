@@ -30,7 +30,12 @@ import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
-import { EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
+import {
+  CopyAction,
+  EditAction,
+  FavoriteAction,
+  NonFavoriteAction
+} from 'components/ActionIcons';
 import * as ROUTES from '../../../variables/routes';
 import { useHistory } from 'react-router-dom';
 import { IoPerson } from 'react-icons/io5/index';
@@ -141,6 +146,10 @@ const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
     history.push(ROUTES.EDUCATION_MATERIAL_EDIT.replace(':id', id));
   };
 
+  const handleCopy = (id) => {
+    history.push(ROUTES.EDUCATION_MATERIAL_COPY.replace(':id', id));
+  };
+
   return (
     <>
       <Row>
@@ -232,6 +241,11 @@ const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
                         {therapistId === material.therapist_id && (
                           <div className="edit-btn">
                             <EditAction onClick={() => handleEdit(material.id)} />
+                          </div>
+                        )}
+                        {!material.therapist_id && (
+                          <div className="edit-btn">
+                            <CopyAction onClick={() => handleCopy(material.id)} />
                           </div>
                         )}
                       </div>

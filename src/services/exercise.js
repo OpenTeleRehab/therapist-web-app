@@ -73,6 +73,8 @@ const createExercise = (payload, mediaUploads) => {
   _.forIn(mediaUploads, (value, key) => {
     if (value.file) {
       formData.append(key, value.file);
+    } else {
+      formData.append('media_files[]', value.id);
     }
   });
 

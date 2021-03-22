@@ -61,6 +61,13 @@ const routes = [
     type: PRIVATE
   },
   {
+    title: 'exercise.copy',
+    path: ROUTES.EXERCISE_COPY,
+    component: CreateExercise,
+    exact: true,
+    type: PRIVATE
+  },
+  {
     title: 'education_material.create',
     path: ROUTES.EDUCATION_MATERIAL_CREATE,
     component: CreateEducationMaterial,
@@ -70,6 +77,13 @@ const routes = [
   {
     title: 'education_material.edit',
     path: ROUTES.EDUCATION_MATERIAL_EDIT,
+    component: CreateEducationMaterial,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'education_material.copy',
+    path: ROUTES.EDUCATION_MATERIAL_COPY,
     component: CreateEducationMaterial,
     exact: true,
     type: PRIVATE
