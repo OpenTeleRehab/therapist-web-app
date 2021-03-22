@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { Button, Col, Form, Row, Accordion, Card } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import * as ROUTES from '../../../variables/routes';
 import {
   createQuestionnaire,
@@ -28,6 +28,7 @@ const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { id } = useParams();
+  const isCopy = useRouteMatch(ROUTES.QUESTIONNAIRE_COPY);
 
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
@@ -83,7 +84,7 @@ const CreateQuestionnaire = ({ translate }) => {
   useEffect(() => {
     if (id && questionnaire.id) {
       setFormFields({
-        title: questionnaire.title,
+        title: isCopy ? `${questionnaire.title} (${translate('common.copy')})` : questionnaire.title,
         description: questionnaire.description
       });
       setQuestions(questionnaire.questions);
@@ -100,6 +101,7 @@ const CreateQuestionnaire = ({ translate }) => {
         setSelectedCategories(rootCategoryStructure);
       }
     }
+    // eslint-disable-next-line
   }, [id, questionnaire, categoryTreeData]);
 
   useEffect(() => {
@@ -160,7 +162,7 @@ const CreateQuestionnaire = ({ translate }) => {
 
     if (canSave) {
       setIsLoading(true);
-      if (id) {
+      if (id && !isCopy) {
         dispatch(updateQuestionnaire(id, { ...formFields, categories: serializedSelectedCats, lang: language, questions, therapist_id: therapistId }))
           .then(result => {
             if (result) {
@@ -169,7 +171,14 @@ const CreateQuestionnaire = ({ translate }) => {
             setIsLoading(false);
           });
       } else {
-        dispatch(createQuestionnaire({ ...formFields, categories: serializedSelectedCats, lang: language, questions, therapist_id: therapistId }))
+        dispatch(createQuestionnaire({
+          ...formFields,
+          categories: serializedSelectedCats,
+          lang: language,
+          questions,
+          therapist_id: therapistId,
+          copy_id: isCopy ? id : ''
+        }))
           .then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY_QUESTIONNAIRE);
@@ -187,7 +196,7 @@ const CreateQuestionnaire = ({ translate }) => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1>{ id ? translate('questionnaire.edit') : translate('questionnaire.create')}</h1>
+        <h1>{ id ? isCopy ? translate('questionnaire.copy') : translate('questionnaire.edit') : translate('questionnaire.create')}</h1>
       </div>
       <Form>
         <Row>
@@ -284,7 +293,7 @@ const CreateQuestionnaire = ({ translate }) => {
               language={language}
               questionTitleError={questionTitleError}
               answerFieldError={answerFieldError}
-              modifiable={!questionnaire.is_used || !id}
+              modifiable={!questionnaire.is_used || !id || isCopy}
             />
             <Form.Group>
               <Button

@@ -28,7 +28,12 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import { FaRegCheckSquare } from 'react-icons/fa';
-import { EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
+import {
+  CopyAction,
+  EditAction,
+  FavoriteAction,
+  NonFavoriteAction
+} from 'components/ActionIcons';
 import _ from 'lodash';
 import { IoPerson } from 'react-icons/io5/index';
 import * as ROUTES from '../../../variables/routes';
@@ -146,6 +151,10 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
     history.push(ROUTES.QUESTIONNAIRE_EDIT.replace(':id', id));
   };
 
+  const handleCopy = (id) => {
+    history.push(ROUTES.QUESTIONNAIRE_COPY.replace(':id', id));
+  };
+
   return (
     <>
       <Row>
@@ -237,6 +246,11 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
                         {therapistId === questionnaire.therapist_id && (
                           <div className="edit-btn">
                             <EditAction onClick={() => handleEdit(questionnaire.id)}/>
+                          </div>
+                        )}
+                        {!questionnaire.therapist_id && (
+                          <div className="edit-btn">
+                            <CopyAction onClick={() => handleCopy(questionnaire.id)} />
                           </div>
                         )}
                       </div>
