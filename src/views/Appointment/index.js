@@ -13,6 +13,7 @@ import moment from 'moment';
 import 'moment/min/locales';
 import allLocales from '@fullcalendar/core/locales-all';
 import settings from 'settings';
+import CreateAppointment from './Partials/create';
 
 const Appointment = ({ translate }) => {
   const dispatch = useDispatch();
@@ -24,6 +25,9 @@ const Appointment = ({ translate }) => {
   const [date, setDate] = useState('');
   const [selectedDate, setSelectedDate] = useState();
   const [locale, setLocale] = useState('');
+  const [show, setShow] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [selectedPatientId, setSelectedPatientId] = useState(null);
 
   useEffect(() => {
     if (date && profile) {
@@ -71,6 +75,22 @@ const Appointment = ({ translate }) => {
     setSelectedDate(moment(info.event.startStr));
   };
 
+  const handleClose = () => {
+    setEditId('');
+    setSelectedPatientId('');
+    setShow(false);
+  };
+
+  const handleEdit = (id) => {
+    setEditId(id);
+    setShow(true);
+  };
+
+  const handleApprove = (id) => {
+    setSelectedPatientId(id);
+    setShow(true);
+  };
+
   return (
     <Row>
       <Col sm={12} xl={7}>
@@ -87,12 +107,41 @@ const Appointment = ({ translate }) => {
           eventClick={handleEventClick}
           datesSet={handleViewChange}
           unselectAuto={false}
+          customButtons={{
+            addAppointmentButton: {
+              text: translate('appointment.add_appointment'),
+              click: function () {
+                setShow(true);
+              }
+            },
+            clearButton: {
+              text: translate('appointment.clear'),
+              click: function () {
+                calendarRef.current.getApi().unselect();
+                setSelectedDate('');
+              }
+            }
+          }}
+          headerToolbar={{
+            left: 'title',
+            right: 'addAppointmentButton clearButton today prev,next'
+          }}
         />
+        {
+          show && <CreateAppointment
+            handleClose={handleClose}
+            show={show}
+            editId={editId}
+            filterDate={moment(date).locale('en').format(settings.date_format)}
+            selectedDate={selectedDate ? moment(selectedDate).locale('en').format(settings.date_format) : null}
+            selectedPatientId={selectedPatientId}
+          />
+        }
       </Col>
       <Col sm={12} xl={5}>
         <Tabs defaultActiveKey="list" id="uncontrolled-tab-example">
           <Tab eventKey="list" title={translate('appointment.appointment_list')}>
-            <List />
+            <List handleEdit={handleEdit} />
           </Tab>
           <Tab
             eventKey="request"
@@ -104,7 +153,7 @@ const Appointment = ({ translate }) => {
                 }
               </div>
             }>
-            <Request />
+            <Request handleApprove={handleApprove} />
           </Tab>
           <Tab
             eventKey="cancel"

@@ -12,6 +12,32 @@ const getAppointments = payload => {
     });
 };
 
+const createAppointment = payload => {
+  return axios.post('/appointment', payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
+const updateAppointment = (id, payload) => {
+  return axios.put(`/appointment/${id}`, payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Appointment = {
-  getAppointments
+  getAppointments,
+  createAppointment,
+  updateAppointment
 };
