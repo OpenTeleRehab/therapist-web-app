@@ -86,8 +86,8 @@ const deleteEducationMaterial = id => {
     });
 };
 
-const getEducationMaterialsByIds = (materialIds, lang) => {
-  const params = { material_ids: materialIds, lang: lang };
+const getEducationMaterialsByIds = (materialIds, lang, therapistId) => {
+  const params = { material_ids: materialIds, lang: lang, therapist_id: therapistId };
   return axios.get('education-material/list/by-ids', { params })
     .then(
       res => {

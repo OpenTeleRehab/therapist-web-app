@@ -10,10 +10,11 @@ import {
 
 import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
-import { BsX } from 'react-icons/bs';
+import { BsX, BsHeartFill, BsHeart } from 'react-icons/bs';
 import ViewQuestionnaire from './viewQuestionnaire';
+import { IoPerson } from 'react-icons/io5';
 
-const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectionRemove, readOnly, lang }) => {
+const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
@@ -25,7 +26,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
     if (questionnaireObjs && questionnaireObjs.length > 0) {
       setQuestionnaires(questionnaireObjs);
     } else if (questionnaireIds && questionnaireIds.length > 0) {
-      Questionnaire.getQuestionnairesByIds(questionnaireIds, lang).then(res => {
+      Questionnaire.getQuestionnairesByIds(questionnaireIds, lang, therapistId).then(res => {
         if (res.data) {
           setQuestionnaires(res.data);
         }
@@ -33,7 +34,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
     } else {
       setQuestionnaires([]);
     }
-  }, [ids, questionnaireIds, lang, questionnaireObjs]);
+  }, [ids, questionnaireIds, lang, questionnaireObjs, therapistId]);
 
   const handleViewQuestionnaire = (questionnaire) => {
     setViewQuestionnaire(true);
@@ -48,46 +49,60 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
     <>
       { questionnaires.map(questionnaire => (
         <div key={questionnaire.id} className="position-relative">
-          {
-            onSelectionRemove && (
-              <div className="position-absolute card-remove-btn-wrapper">
-                {!readOnly &&
-                <Button
-                  className="btn-circle-sm m-1"
-                  variant="light"
-                  onClick={() => onSelectionRemove(questionnaire.id)}
-                >
-                  <BsX size={15}/>
-                </Button>
+          <Card className="exercise-card material-card shadow-sm mb-4">
+            <div className="top-bar">
+              <div className="favorite-btn btn-link">
+                {questionnaire.is_favorite
+                  ? <BsHeartFill size={25} />
+                  : <BsHeart size={25} />
                 }
               </div>
-            )
-          }
-          <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewQuestionnaire(questionnaire)}>
-            <div className="card-img bg-light">
-              <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                <img src={'/images/questionnaire.svg'} alt='questionnaire' />
-                <p>{translate('activity.questionnaire').toUpperCase()}</p>
-              </div>
+              {therapistId === questionnaire.therapist_id && (
+                <div className="owner-btn">
+                  <IoPerson size={20} />
+                </div>
+              )}
+              {
+                onSelectionRemove && (
+                  <div className="card-remove-btn-wrapper">
+                    {!readOnly && <Button
+                      className="btn-circle-sm m-1"
+                      variant="light"
+                      onClick={() => onSelectionRemove(questionnaire.id)}
+                    >
+                      <BsX size={15} />
+                    </Button>
+                    }
+                  </div>
+                )
+              }
             </div>
-            <Card.Body className="d-flex flex-column justify-content-between">
-              <Card.Title>
-                {
-                  questionnaire.title.length <= 50
-                    ? <h5 className="card-title">{ questionnaire.title }</h5>
-                    : (
-                      <OverlayTrigger
-                        overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
-                      >
-                        <h5 className="card-title">{ questionnaire.title }</h5>
-                      </OverlayTrigger>
-                    )
-                }
-              </Card.Title>
-              <Card.Text>
-                <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
-              </Card.Text>
-            </Card.Body>
+            <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
+              <div className="card-img bg-light">
+                <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
+                  <img src={'/images/questionnaire.svg'} alt='questionnaire' />
+                  <p>{translate('activity.questionnaire').toUpperCase()}</p>
+                </div>
+              </div>
+              <Card.Body className="d-flex flex-column justify-content-between">
+                <Card.Title>
+                  {
+                    questionnaire.title.length <= 50
+                      ? <h5 className="card-title">{ questionnaire.title }</h5>
+                      : (
+                        <OverlayTrigger
+                          overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
+                        >
+                          <h5 className="card-title">{ questionnaire.title }</h5>
+                        </OverlayTrigger>
+                      )
+                  }
+                </Card.Title>
+                <Card.Text>
+                  <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
+                </Card.Text>
+              </Card.Body>
+            </div>
           </Card>
         </div>
       ))}
@@ -101,7 +116,8 @@ ListQuestionnaireCard.propTypes = {
   questionnaireObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
-  lang: PropTypes.any
+  lang: PropTypes.any,
+  therapistId: PropTypes.string
 };
 
 export default withLocalize(ListQuestionnaireCard);

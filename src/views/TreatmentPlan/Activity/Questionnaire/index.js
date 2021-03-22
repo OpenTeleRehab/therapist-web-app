@@ -11,12 +11,13 @@ import {
   Button
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX } from 'react-icons/bs';
+import { BsSearch, BsX, BsHeart, BsHeartFill } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { getQuestionnaires } from 'store/questionnaire/actions';
 import ViewQuestionnaire from './viewQuestionnaire';
+import { IoPerson } from 'react-icons/io5';
 
 let timer = null;
 const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQuestionnaire, setViewQuestionnaire }) => {
@@ -33,6 +34,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
   const [questionnaire, setQuestionnaire] = useState([]);
+  const [therapistId, setTherapistId] = useState('');
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -43,20 +45,27 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
   }, [filters, profile]);
 
   useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
+
+  useEffect(() => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getQuestionnaires({
         filter: formFields,
         lang: language,
         page_size: pageSize,
-        page: currentPage
+        page: currentPage,
+        therapist_id: therapistId
       })).then(result => {
         if (result) {
           setTotalCount(result.total_count);
         }
       });
     }, 500);
-  }, [language, formFields, currentPage, pageSize, dispatch]);
+  }, [language, formFields, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -150,40 +159,52 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
               <Row>
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewQuestionnaire(questionnaire)}>
-                      <div className="card-img bg-light">
-                        <div className="position-absolute w-100">
-                          <Form.Check
-                            type="checkbox"
-                            className="float-right action"
-                            checked={selectedMaterials.includes(questionnaire.id)}
-                            onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
-                          />
-                        </div>
-
-                        <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                          <img src={'/images/questionnaire.svg'} alt='questionnaire' />
-                          <p>{translate('activity.questionnaire').toUpperCase()}</p>
-                        </div>
-                      </div>
-                      <Card.Body className="d-flex flex-column justify-content-between">
-                        <Card.Title>
-                          {
-                            questionnaire.title.length <= 50
-                              ? <h5 className="card-title">{ questionnaire.title }</h5>
-                              : (
-                                <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
-                                >
-                                  <h5 className="card-title">{ questionnaire.title }</h5>
-                                </OverlayTrigger>
-                              )
+                    <Card className="exercise-card material-card shadow-sm mb-4">
+                      <div className="top-bar">
+                        <div className="favorite-btn btn-link">
+                          {questionnaire.is_favorite
+                            ? <BsHeartFill size={25} />
+                            : <BsHeart size={25} />
                           }
-                        </Card.Title>
-                        <Card.Text>
-                          <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
-                        </Card.Text>
-                      </Card.Body>
+                        </div>
+                        {therapistId === questionnaire.therapist_id && (
+                          <div className="owner-btn">
+                            <IoPerson size={20} />
+                          </div>
+                        )}
+                        <Form.Check
+                          type="checkbox"
+                          className="float-right action"
+                          checked={selectedMaterials.includes(questionnaire.id)}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
+                        />
+                      </div>
+                      <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
+                        <div className="card-img bg-light">
+                          <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
+                            <img src={'/images/questionnaire.svg'} alt='questionnaire' />
+                            <p>{translate('activity.questionnaire').toUpperCase()}</p>
+                          </div>
+                        </div>
+                        <Card.Body className="d-flex flex-column justify-content-between">
+                          <Card.Title>
+                            {
+                              questionnaire.title.length <= 50
+                                ? <h5 className="card-title">{ questionnaire.title }</h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">{ questionnaire.title }</h5>
+                                  </OverlayTrigger>
+                                )
+                            }
+                          </Card.Title>
+                          <Card.Text>
+                            <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
+                          </Card.Text>
+                        </Card.Body>
+                      </div>
                     </Card>
                   </Col>
                 ))}

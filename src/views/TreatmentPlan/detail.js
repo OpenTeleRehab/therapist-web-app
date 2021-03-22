@@ -57,7 +57,7 @@ const ViewTreatmentPlan = () => {
   useEffect(() => {
     if (id) {
       const additionalParams = patientId ? {} : { type: 'preset' };
-      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams }));
+      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
   }, [id, patientId, dispatch, profile]);
 

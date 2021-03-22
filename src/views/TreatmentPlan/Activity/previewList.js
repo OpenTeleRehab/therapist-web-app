@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 
 import { BiChevronLeftCircle } from 'react-icons/bi';
+import { useSelector } from 'react-redux';
 
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
@@ -13,6 +14,7 @@ const PreviewList = ({
   onExerciseRemove, onMaterialRemove, onQuestionnaireRemove
 }) => {
   const [isShow, setIsShow] = useState(false);
+  const { profile } = useSelector((state) => state.auth);
 
   const handleShow = () => {
     setIsShow(!isShow);
@@ -25,9 +27,9 @@ const PreviewList = ({
       </div>
       { isShow &&
         <div className="position-absolute w-25 selected-exercise-wrapper">
-          <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} />
-          <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} />
-          <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} />
+          <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} therapistId={profile.id} />
+          <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} therapistId={profile.id} />
+          <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} therapistId={profile.id} />
         </div>
       }
     </>

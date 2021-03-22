@@ -26,10 +26,12 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [weekToRemove, setWeekToRemove] = useState(0);
   const { profile } = useSelector((state) => state.auth);
   const [lang, setLang] = useState('');
+  const [therapistId, setTherapistId] = useState('');
 
   useEffect(() => {
     if (profile) {
       setLang(profile.language_id);
+      setTherapistId(profile.id);
     }
   }, [profile]);
 
@@ -159,9 +161,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
-            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} />
-            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} />
-            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} />
+            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
+            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
+            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
 
             <div className="text-center">
               {!readOnly && <Button
