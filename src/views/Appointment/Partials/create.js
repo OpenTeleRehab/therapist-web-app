@@ -114,7 +114,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
       setErrorFrom(false);
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'LT').isValid()) {
+    if (formattedTo === '' || !moment(formattedTo, 'LT').isValid() || formattedFrom === formattedTo) {
       canSave = false;
       setErrorTo(true);
     } else {
@@ -122,37 +122,35 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
     }
 
     if (canSave) {
+      const data = {
+        patient_id: patientId,
+        therapist_id: profile.id,
+        date: formattedDate,
+        from: formattedFrom,
+        to: formattedTo
+      };
+
+      const filter = {
+        now: moment().format('YYYY-MM-DD HH:mm:ss'),
+        date: filterDate,
+        therapist_id: profile.id,
+        selected_date: selectedDate
+      };
+
       if (editId) {
-        dispatch(updateAppointment(
-          editId,
-          {
-            patient_id: patientId,
-            therapist_id: profile.id,
-            date: formattedDate,
-            from: formattedFrom,
-            to: formattedTo
-          },
-          { date: filterDate, therapist_id: profile.id, selected_date: selectedDate }
-        )).then(result => {
-          if (result) {
-            handleClose();
-          }
-        });
+        dispatch(updateAppointment(editId, data, filter))
+          .then(result => {
+            if (result) {
+              handleClose();
+            }
+          });
       } else {
-        dispatch(createAppointment(
-          {
-            patient_id: patientId,
-            therapist_id: profile.id,
-            date: formattedDate,
-            from: formattedFrom,
-            to: formattedTo
-          },
-          { date: filterDate, therapist_id: profile.id, selected_date: selectedDate }
-        )).then(result => {
-          if (result) {
-            handleClose();
-          }
-        });
+        dispatch(createAppointment(data, filter))
+          .then(result => {
+            if (result) {
+              handleClose();
+            }
+          });
       }
     }
   };
