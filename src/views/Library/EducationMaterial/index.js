@@ -41,7 +41,7 @@ import { useHistory } from 'react-router-dom';
 import { IoPerson } from 'react-icons/io5/index';
 
 let timer = null;
-const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
+const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
@@ -60,7 +60,6 @@ const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
   const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
-  const [therapistId, setTherapistId] = useState('');
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -108,12 +107,6 @@ const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
       setSelectedCategories(rootCategoryStructure);
     }
   }, [categoryTreeData]);
-
-  useEffect(() => {
-    if (profile !== undefined) {
-      setTherapistId(profile.id);
-    }
-  }, [profile]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -229,8 +222,8 @@ const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {material.is_favorite
-                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(material.id, 0, therapistId, CATEGORY_TYPES.MATERIAL)} />
-                            : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, therapistId, CATEGORY_TYPES.MATERIAL)} />
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(material.id, 0, CATEGORY_TYPES.MATERIAL)} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, CATEGORY_TYPES.MATERIAL)} />
                           }
                         </div>
                         {therapistId === material.therapist_id && (
@@ -300,7 +293,8 @@ const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
 
 EducationMaterial.propTypes = {
   translate: PropTypes.func,
-  handleSwitchFavorite: PropTypes.func
+  handleSwitchFavorite: PropTypes.func,
+  therapistId: PropTypes.string
 };
 
 export default withLocalize(EducationMaterial);

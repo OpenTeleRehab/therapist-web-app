@@ -15,7 +15,9 @@ import Dialog from 'components/Dialog';
 import { updateFavorite as updateFavoriteEducationMaterial } from 'store/educationMaterial/actions';
 import { updateFavorite as updateFavoriteExercise } from 'store/exercise/actions';
 import { updateFavorite as updateFavoriteQuestionnaire } from 'store/questionnaire/actions';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Exercise as exerciseService } from 'services/exercise';
+import settings from 'settings';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -34,6 +36,11 @@ const Library = ({ translate }) => {
     is_favorite: 0,
     therapist_id: null
   });
+  const [totalActivityCount, setTotalActivityCount] = useState(0);
+  const [therapistId, setTherapistId] = useState('');
+  const { profile } = useSelector((state) => state.auth);
+  const languages = useSelector(state => state.language.languages);
+  const [language, setLanguage] = useState('');
 
   useEffect(() => {
     if (queryString.parse(search).tab === VIEW_EDUCATION) {
@@ -51,7 +58,29 @@ const Library = ({ translate }) => {
     }
   }, [search]);
 
-  const handleSwitchFavorite = (id, isFavorite, therapistId, type) => {
+  useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
+
+  useEffect(() => {
+    if (languages) {
+      setLanguage(languages[0].id);
+    }
+  }, [languages]);
+
+  useEffect(() => {
+    if (therapistId) {
+      exerciseService.countTherapistLibraries(therapistId, language).then(res => {
+        if (res.data) {
+          setTotalActivityCount(res.data);
+        }
+      });
+    }
+  }, [therapistId, language]);
+
+  const handleSwitchFavorite = (id, isFavorite, type) => {
     setId(id);
     setType(type);
     setFormFields({ ...formFields, is_favorite: isFavorite, therapist_id: therapistId });
@@ -95,7 +124,7 @@ const Library = ({ translate }) => {
         <h1>{translate('library')}</h1>
         <div className="btn-toolbar mb-2 mb-md-0">
           <div className="btn-toolbar mb-2 mb-md-0">
-            {newContentLink && (
+            {newContentLink && totalActivityCount < settings.maxActivities && (
               <Button
                 as={Link} to={newContentLink}>
                 <BsPlus size={20} className="mr-1" />
@@ -129,9 +158,9 @@ const Library = ({ translate }) => {
         </Nav.Item>
       </Nav>
 
-      { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} /> }
-      { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} /> }
-      { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} /> }
+      { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} /> }
+      { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} /> }
+      { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} /> }
       { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
       <Dialog
         show={showSwitchFavoriteDialog}
