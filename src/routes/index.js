@@ -103,6 +103,13 @@ const routes = [
     type: PRIVATE
   },
   {
+    title: 'questionnaire.copy',
+    path: ROUTES.QUESTIONNAIRE_COPY,
+    component: CreateQuestionnaire,
+    exact: true,
+    type: PRIVATE
+  },
+  {
     title: 'chat_or_call',
     path: ROUTES.CHAT_OR_CALL,
     component: ChatOrCall,
