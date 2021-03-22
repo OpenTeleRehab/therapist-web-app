@@ -8,6 +8,11 @@ export const questionnaire = (state = initialState, action) => {
         filters: action.filters
       });
     }
+    case 'GET_QUESTIONNAIRE_SUCCESS': {
+      return Object.assign({}, state, {
+        questionnaire: action.data
+      });
+    }
     case 'CLEAR_FILTER_QUESTIONNAIRES_REQUEST': {
       return Object.assign({}, state, {
         filters: {}

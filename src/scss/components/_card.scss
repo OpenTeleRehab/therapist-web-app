@@ -81,11 +81,44 @@
 .question-card {
 	.card-header {
 		background-color: $blue-light-2;
-		height: 45px;
+	}
+	.remove-btn {
+		background-color: $white;
+		width: 25px;
+		height: 25px;
+		padding: 0;
+		border-radius: 15px;
+
 		&:hover {
-			cursor: pointer;
+			background-color: $danger;
 		}
 	}
+}
+
+.view-question-card-header {
+	background-color: $blue-light-2;
+	height: 45px;
+	&:hover {
+		cursor: pointer;
+	}
+}
+
+.remove-btn[disabled] {
+	background: none;
+
+	&:hover {
+		background: none;
+	}
+}
+
+.drag-button:hover {
+	cursor:grabbing;
+}
+
+.upload-btn {
+	opacity: 0;
+	right: 0;
+	top: 0;
 }
 
 .card-remove-btn-wrapper {
@@ -110,13 +143,19 @@
 	}
 }
 
-.material-edit-btn {
+.questionnaire-edit-btn {
 	color: $white;
+	right: 20px;
+	z-index: 1;
+	top: 0;
 }
 
-.material-own-icon {
+.questionnaire-own-icon {
 	top: 0;
 	left: 50%;
 	z-index: 1;
+	color: $white;
+}
+.edit-icon-color {
 	color: $white;
 }

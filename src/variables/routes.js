@@ -12,6 +12,7 @@ export const EDUCATION_MATERIAL_CREATE = LIBRARY + '/education_material/create';
 export const EDUCATION_MATERIAL_EDIT = LIBRARY + '/education_material/edit/:id';
 export const EDUCATION_MATERIAL_COPY = LIBRARY + '/education_material/copy/:id';
 export const QUESTIONNAIRE_CREATE = LIBRARY + '/questionnaire/create';
+export const QUESTIONNAIRE_EDIT = LIBRARY + '/questionnaire/edit/:id';
 export const LIBRARY_EDUCATION = LIBRARY + '?tab=education';
 export const LIBRARY_QUESTIONNAIRE = LIBRARY + '?tab=questionnaire';
 export const LIBRARY_PRESET_TREATMENT = LIBRARY + '?tab=preset_treatment';

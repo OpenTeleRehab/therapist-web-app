@@ -96,6 +96,13 @@ const routes = [
     type: PRIVATE
   },
   {
+    title: 'questionnaire.edit',
+    path: ROUTES.QUESTIONNAIRE_EDIT,
+    component: CreateQuestionnaire,
+    exact: true,
+    type: PRIVATE
+  },
+  {
     title: 'chat_or_call',
     path: ROUTES.CHAT_OR_CALL,
     component: ChatOrCall,
