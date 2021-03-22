@@ -212,8 +212,8 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {exercise.is_favorite
-                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, therapistId, 'exercise')} />
-                            : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, therapistId, 'exercise')} />
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, therapistId, CATEGORY_TYPES.EXERCISE)} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, therapistId, CATEGORY_TYPES.EXERCISE)} />
                           }
                         </div>
                         {therapistId === exercise.therapist_id && (

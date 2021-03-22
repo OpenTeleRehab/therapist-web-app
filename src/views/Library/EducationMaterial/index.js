@@ -220,8 +220,8 @@ const EducationMaterial = ({ translate, handleSwitchFavorite }) => {
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {material.is_favorite
-                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(material.id, 0, therapistId, 'education-material')} />
-                            : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, therapistId, 'education-material')} />
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(material.id, 0, therapistId, CATEGORY_TYPES.MATERIAL)} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, therapistId, CATEGORY_TYPES.MATERIAL)} />
                           }
                         </div>
                         {therapistId === material.therapist_id && (

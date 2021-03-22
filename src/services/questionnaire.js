@@ -25,7 +25,20 @@ const getQuestionnairesByIds = (materialIds, lang) => {
     });
 };
 
+const updateFavorite = (id, payload) => {
+  return axios.post(`/questionnaire/updateFavorite/by-therapist/${id}`, payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Questionnaire = {
   getQuestionnaires,
-  getQuestionnairesByIds
+  getQuestionnairesByIds,
+  updateFavorite
 };
