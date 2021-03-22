@@ -26,8 +26,8 @@ const getExercise = (id, language) => {
     });
 };
 
-const getExercisesByIds = (exerciseIds, lang) => {
-  const params = { exercise_ids: exerciseIds, lang: lang };
+const getExercisesByIds = (exerciseIds, lang, therapistId) => {
+  const params = { exercise_ids: exerciseIds, lang: lang, therapist_id: therapistId };
   return axios.get('exercise/list/by-ids', { params })
     .then(
       res => {

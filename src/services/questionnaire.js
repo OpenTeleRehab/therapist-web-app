@@ -86,8 +86,8 @@ const deleteQuestionnaire = id => {
     });
 };
 
-const getQuestionnairesByIds = (materialIds, lang) => {
-  const params = { questionnaire_ids: materialIds, lang: lang };
+const getQuestionnairesByIds = (materialIds, lang, therapistId) => {
+  const params = { questionnaire_ids: materialIds, lang: lang, therapist_id: therapistId };
   return axios.get('questionnaire/list/by-ids', { params })
     .then(
       res => {

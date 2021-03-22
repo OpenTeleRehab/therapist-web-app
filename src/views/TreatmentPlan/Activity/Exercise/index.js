@@ -11,12 +11,13 @@ import {
   Button
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX } from 'react-icons/bs';
+import { BsSearch, BsX, BsHeart, BsHeartFill } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
 import ViewExercise from './viewExercise';
+import { IoPerson } from 'react-icons/io5';
 
 let timer = null;
 const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise }) => {
@@ -29,6 +30,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
     search_value: ''
   });
   const [exercise, setExercise] = useState([]);
+  const [therapistId, setTherapistId] = useState('');
 
   const languages = useSelector(state => state.language.languages);
   const [language, setLanguage] = useState('');
@@ -43,20 +45,27 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
   }, [filters, profile]);
 
   useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
+
+  useEffect(() => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getExercises({
         lang: language,
         filter: formFields,
         page_size: pageSize,
-        page: currentPage
+        page: currentPage,
+        therapist_id: therapistId
       })).then(result => {
         if (result) {
           setTotalCount(result.total_count);
         }
       });
     }, 500);
-  }, [language, formFields, currentPage, pageSize, dispatch]);
+  }, [language, formFields, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -150,51 +159,64 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={3}>
-                    <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise)}>
-                      <div className="card-img bg-light">
-                        <div className="position-absolute w-100">
-                          <Form.Check
-                            type="checkbox"
-                            className="float-right action"
-                            checked={selectedExercises.includes(exercise.id)}
-                            onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
-                          />
-                        </div>
-                        {
-                          exercise.files.length > 0 && (
-                            (exercise.files[0].fileType === 'audio/mpeg' &&
-                              <div className="w-100 pt-5 pl-3 pr-3">
-                                <audio controls className="w-100">
-                                  <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
-                                </audio>
-                              </div>
-                            ) ||
-                            (exercise.files[0].fileType === 'video/mp4' &&
-                              <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
-                              />
-                            ) ||
-                            ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                              <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                              />
-                            )
-                          )
-                        }
-                      </div>
-                      <Card.Body>
-                        <Card.Title>
-                          {
-                            exercise.title.length <= 50
-                              ? <h5 className="card-title">{ exercise.title }</h5>
-                              : (
-                                <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                                >
-                                  <h5 className="card-title">{ exercise.title }</h5>
-                                </OverlayTrigger>
-                              )
+                    <Card className="exercise-card shadow-sm mb-4">
+                      <div className="top-bar">
+                        <div className="favorite-btn btn-link">
+                          {exercise.is_favorite
+                            ? <BsHeartFill size={25} />
+                            : <BsHeart size={25} />
                           }
-                        </Card.Title>
-                      </Card.Body>
+                        </div>
+                        {therapistId === exercise.therapist_id && (
+                          <div className="owner-btn">
+                            <IoPerson size={20} />
+                          </div>
+                        )}
+                        <Form.Check
+                          type="checkbox"
+                          className="action"
+                          checked={selectedExercises.includes(exercise.id)}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
+                        />
+                      </div>
+                      <div className="card-container" onClick={() => handleView(exercise)}>
+                        <div className="card-img bg-light">
+                          {
+                            exercise.files.length > 0 && (
+                              (exercise.files[0].fileType === 'audio/mpeg' &&
+                                <div className="w-100 pt-5 pl-3 pr-3">
+                                  <audio controls className="w-100">
+                                    <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
+                                  </audio>
+                                </div>
+                              ) ||
+                              (exercise.files[0].fileType === 'video/mp4' &&
+                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
+                                />
+                              ) ||
+                              ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
+                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
+                                />
+                              )
+                            )
+                          }
+                        </div>
+                        <Card.Body>
+                          <Card.Title>
+                            {
+                              exercise.title.length <= 50
+                                ? <h5 className="card-title">{ exercise.title }</h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">{ exercise.title }</h5>
+                                  </OverlayTrigger>
+                                )
+                            }
+                          </Card.Title>
+                        </Card.Body>
+                      </div>
                     </Card>
                   </Col>
                 ))}

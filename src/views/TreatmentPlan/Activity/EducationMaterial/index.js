@@ -11,10 +11,12 @@ import {
   Button
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX } from 'react-icons/bs';
+import { BsSearch, BsX, BsHeart, BsHeartFill } from 'react-icons/bs';
+import { IoPerson } from 'react-icons/io5';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
+
 import { MdDescription } from 'react-icons/md';
 import { getEducationMaterials } from 'store/educationMaterial/actions';
 import ViewEducationMaterial from './viewEducationMaterial';
@@ -34,6 +36,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
   const [educationMaterial, setEducationMaterial] = useState([]);
+  const [therapistId, setTherapistId] = useState('');
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -44,20 +47,27 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
   }, [filters, profile]);
 
   useEffect(() => {
+    if (profile !== undefined) {
+      setTherapistId(profile.id);
+    }
+  }, [profile]);
+
+  useEffect(() => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getEducationMaterials({
         filter: formFields,
         page_size: pageSize,
         lang: language,
-        page: currentPage
+        page: currentPage,
+        therapist_id: therapistId
       })).then(result => {
         if (result) {
           setTotalCount(result.total_count);
         }
       });
     }, 500);
-  }, [language, formFields, currentPage, pageSize, dispatch]);
+  }, [language, formFields, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -151,40 +161,52 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
               <Row>
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4" onClick={() => handleViewEducationMaterial(material)}>
-                      <div className="card-img bg-light">
-                        <div className="position-absolute w-100">
-                          <Form.Check
-                            type="checkbox"
-                            className="float-right action"
-                            checked={selectedMaterials.includes(material.id)}
-                            onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
-                          />
-                        </div>
-
-                        <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
-                          <MdDescription size={80} />
-                          <p>{translate('activity.material').toUpperCase()}</p>
-                        </div>
-                      </div>
-                      <Card.Body className="d-flex flex-column justify-content-between">
-                        <Card.Title>
-                          {
-                            material.title.length <= 50
-                              ? <h5 className="card-title">{ material.title }</h5>
-                              : (
-                                <OverlayTrigger
-                                  overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
-                                >
-                                  <h5 className="card-title">{ material.title }</h5>
-                                </OverlayTrigger>
-                              )
+                    <Card className="exercise-card material-card shadow-sm mb-4">
+                      <div className="top-bar">
+                        <div className="favorite-btn btn-link">
+                          {material.is_favorite
+                            ? <BsHeartFill size={25} />
+                            : <BsHeart size={25} />
                           }
-                        </Card.Title>
-                        <Card.Text>
-                          {translate(material.file.fileGroupType)}
-                        </Card.Text>
-                      </Card.Body>
+                        </div>
+                        {therapistId === material.therapist_id && (
+                          <div className="owner-btn">
+                            <IoPerson size={20} />
+                          </div>
+                        )}
+                        <Form.Check
+                          type="checkbox"
+                          className="float-right action"
+                          checked={selectedMaterials.includes(material.id)}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
+                        />
+                      </div>
+                      <div className="card-container" onClick={() => handleViewEducationMaterial(material)}>
+                        <div className="card-img bg-light">
+                          <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
+                            <MdDescription size={80} />
+                            <p>{translate('activity.material').toUpperCase()}</p>
+                          </div>
+                        </div>
+                        <Card.Body className="d-flex flex-column justify-content-between">
+                          <Card.Title>
+                            {
+                              material.title.length <= 50
+                                ? <h5 className="card-title">{ material.title }</h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">{ material.title }</h5>
+                                  </OverlayTrigger>
+                                )
+                            }
+                          </Card.Title>
+                          <Card.Text>
+                            {translate(material.file.fileGroupType)}
+                          </Card.Text>
+                        </Card.Body>
+                      </div>
                     </Card>
                   </Col>
                 ))}

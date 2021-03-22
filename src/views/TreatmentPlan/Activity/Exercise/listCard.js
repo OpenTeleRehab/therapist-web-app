@@ -9,10 +9,11 @@ import {
 } from 'react-bootstrap';
 
 import { Exercise } from 'services/exercise';
-import { BsX } from 'react-icons/bs';
+import { BsX, BsHeart, BsHeartFill } from 'react-icons/bs';
 import ViewExercise from './viewExercise';
+import { IoPerson } from 'react-icons/io5';
 
-const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang }) => {
+const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
   const [exercises, setExercises] = useState([]);
   const [ids] = exerciseIds;
   const [exercise, setExercise] = useState([]);
@@ -22,7 +23,7 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
     if (exerciseObjs && exerciseObjs.length > 0) {
       setExercises(exerciseObjs);
     } else if (exerciseIds && exerciseIds.length > 0) {
-      Exercise.getExercisesByIds(exerciseIds, lang).then(res => {
+      Exercise.getExercisesByIds(exerciseIds, lang, therapistId).then(res => {
         if (res.data) {
           setExercises(res.data);
         }
@@ -30,7 +31,7 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
     } else {
       setExercises([]);
     }
-  }, [ids, exerciseIds, lang, exerciseObjs]);
+  }, [ids, exerciseIds, lang, exerciseObjs, therapistId]);
 
   const handleView = (exercise) => {
     setExercise(exercise);
@@ -45,57 +46,72 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
     <>
       { exercises.map(exercise => (
         <div key={exercise.id} className="position-relative">
-          {
-            onSelectionRemove && (
-              <div className="position-absolute card-remove-btn-wrapper">
-                {!readOnly && <Button
-                  className="btn-circle-sm m-1"
-                  variant="light"
-                  onClick={() => onSelectionRemove(exercise.id)}
-                >
-                  <BsX size={15} />
-                </Button>
+          <Card className="exercise-card shadow-sm mb-4">
+            <div className="top-bar">
+              <div className="favorite-btn btn-link">
+                {exercise.is_favorite
+                  ? <BsHeartFill size={25} />
+                  : <BsHeart size={25} />
                 }
               </div>
-            )
-          }
-          <Card className="exercise-card shadow-sm mb-4" onClick={() => handleView(exercise)}>
-            <div className="card-img bg-light">
+              {therapistId === exercise.therapist_id && (
+                <div className="owner-btn">
+                  <IoPerson size={20} />
+                </div>
+              )}
               {
-                exercise.files.length > 0 && (
-                  (exercise.files[0].fileType === 'audio/mpeg' &&
-                    <div className="w-100">
-                      <audio controls className="w-100">
-                        <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
-                      </audio>
-                    </div>
-                  ) ||
-                  (exercise.files[0].fileType === 'video/mp4' &&
-                    <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
-                    />
-                  ) ||
-                  ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                    <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                    />
-                  )
+                onSelectionRemove && (
+                  <div className="card-remove-btn-wrapper">
+                    {!readOnly && <Button
+                      className="btn-circle-sm m-1"
+                      variant="light"
+                      onClick={() => onSelectionRemove(exercise.id)}
+                    >
+                      <BsX size={15} />
+                    </Button>
+                    }
+                  </div>
                 )
               }
             </div>
-            <Card.Body>
-              <Card.Title>
+            <div className="card-container" onClick={() => handleView(exercise)}>
+              <div className="card-img bg-light">
                 {
-                  exercise.title.length <= 50
-                    ? <h5 className="card-title">{ exercise.title }</h5>
-                    : (
-                      <OverlayTrigger
-                        overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                      >
-                        <h5 className="card-title">{ exercise.title }</h5>
-                      </OverlayTrigger>
+                  exercise.files.length > 0 && (
+                    (exercise.files[0].fileType === 'audio/mpeg' &&
+                      <div className="w-100">
+                        <audio controls className="w-100">
+                          <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
+                        </audio>
+                      </div>
+                    ) ||
+                    (exercise.files[0].fileType === 'video/mp4' &&
+                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
+                      />
+                    ) ||
+                    ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
+                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
+                      />
                     )
+                  )
                 }
-              </Card.Title>
-            </Card.Body>
+              </div>
+              <Card.Body>
+                <Card.Title>
+                  {
+                    exercise.title.length <= 50
+                      ? <h5 className="card-title">{ exercise.title }</h5>
+                      : (
+                        <OverlayTrigger
+                          overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                        >
+                          <h5 className="card-title">{ exercise.title }</h5>
+                        </OverlayTrigger>
+                      )
+                  }
+                </Card.Title>
+              </Card.Body>
+            </div>
           </Card>
         </div>
       ))}
@@ -109,7 +125,8 @@ ListExerciseCard.propTypes = {
   exerciseObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
-  lang: PropTypes.any
+  lang: PropTypes.any,
+  therapistId: PropTypes.string
 };
 
 export default withLocalize(ListExerciseCard);
