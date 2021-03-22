@@ -11,7 +11,8 @@ const settings = {
   noteMaxLength: 50,
   educationMaterial: {
     maxFileSize: 25 // MB
-  }
+  },
+  maxActivities: 15
 };
 
 export default settings;

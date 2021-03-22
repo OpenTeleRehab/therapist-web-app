@@ -27,7 +27,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { FaRegCheckSquare } from 'react-icons/fa';
 
 let timer = null;
-const Exercise = ({ translate, handleSwitchFavorite }) => {
+const Exercise = ({ translate, handleSwitchFavorite, therapistId }) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -42,7 +42,6 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [language, setLanguage] = useState('');
-  const [therapistId, setTherapistId] = useState('');
   const [formFields, setFormFields] = useState({
     search_value: ''
   });
@@ -56,12 +55,6 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
       setLanguage(profile.language_id);
     }
   }, [filters, profile]);
-
-  useEffect(() => {
-    if (profile !== undefined) {
-      setTherapistId(profile.id);
-    }
-  }, [profile]);
 
   useEffect(() => {
     let serializedSelectedCats = [];
@@ -216,8 +209,8 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {exercise.is_favorite
-                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, therapistId, CATEGORY_TYPES.EXERCISE)} />
-                            : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, therapistId, CATEGORY_TYPES.EXERCISE)} />
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, CATEGORY_TYPES.EXERCISE)} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, CATEGORY_TYPES.EXERCISE)} />
                           }
                         </div>
                         {therapistId === exercise.therapist_id && (
@@ -300,7 +293,8 @@ const Exercise = ({ translate, handleSwitchFavorite }) => {
 
 Exercise.propTypes = {
   translate: PropTypes.func,
-  handleSwitchFavorite: PropTypes.func
+  handleSwitchFavorite: PropTypes.func,
+  therapistId: PropTypes.string
 };
 
 export default withLocalize(Exercise);

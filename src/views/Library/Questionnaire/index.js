@@ -35,7 +35,7 @@ import * as ROUTES from '../../../variables/routes';
 import { useHistory } from 'react-router-dom';
 
 let timer = null;
-const Questionnaire = ({ translate, handleSwitchFavorite }) => {
+const Questionnaire = ({ translate, handleSwitchFavorite, therapistId }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
@@ -54,7 +54,6 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
-  const [therapistId, setTherapistId] = useState('');
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -63,12 +62,6 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
       setLanguage(profile.language_id);
     }
   }, [filters, profile]);
-
-  useEffect(() => {
-    if (profile !== undefined) {
-      setTherapistId(profile.id);
-    }
-  }, [profile]);
 
   useEffect(() => {
     let serializedSelectedCats = [];
@@ -108,12 +101,6 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
       setSelectedCategories(rootCategoryStructure);
     }
   }, [categoryTreeData]);
-
-  useEffect(() => {
-    if (profile !== undefined) {
-      setTherapistId(profile.id);
-    }
-  }, [profile]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -225,8 +212,8 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {questionnaire.is_favorite
-                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 0, therapistId, CATEGORY_TYPES.QUESTIONNAIRE)} />
-                            : <FavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 1, therapistId, CATEGORY_TYPES.QUESTIONNAIRE)} />
+                            ? <NonFavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 0, CATEGORY_TYPES.QUESTIONNAIRE)} />
+                            : <FavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 1, CATEGORY_TYPES.QUESTIONNAIRE)} />
                           }
                         </div>
                         {therapistId === questionnaire.therapist_id && (
@@ -291,7 +278,8 @@ const Questionnaire = ({ translate, handleSwitchFavorite }) => {
 
 Questionnaire.propTypes = {
   translate: PropTypes.func,
-  handleSwitchFavorite: PropTypes.func
+  handleSwitchFavorite: PropTypes.func,
+  therapistId: PropTypes.string
 };
 
 export default withLocalize(Questionnaire);
