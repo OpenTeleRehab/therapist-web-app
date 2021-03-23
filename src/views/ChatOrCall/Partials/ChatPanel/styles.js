@@ -1,9 +1,9 @@
 export default {
-  chatInputToolBar: (minHeight) => ({
+  chatInputToolBar: {
     backgroundColor: '#EBEBEB',
     borderTopWidth: 0,
     marginBottom: 0
-  }),
+  },
   chatComposer: {
     backgroundColor: '#FFFFFF',
     color: '#333333',
@@ -20,7 +20,7 @@ export default {
   },
   chatSendButton: {
     position: 'absolute',
-    top: 14,
+    bottom: 13,
     right: 15
   },
   chatDay: {

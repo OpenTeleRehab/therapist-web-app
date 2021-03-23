@@ -1,7 +1,10 @@
 export const initialState = {
+  chatRooms: [],
   messages: [],
-  lastMessages: [],
-  unread: 0,
+  isConnected: false,
+  isOnChatPage: false,
+  subscribeIds: undefined,
   authToken: undefined,
-  selectedPatient: undefined
+  authTokenExpiredAt: null,
+  selectedRoom: undefined
 };

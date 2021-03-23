@@ -16,133 +16,172 @@ import { Alert } from 'react-bootstrap';
 import { MdSend } from 'react-icons/md';
 import styles from './styles';
 import { generateHash } from 'utils/general';
+import { sendNewMessage } from 'utils/rocketchat';
 import settings from 'settings';
-import { useSelector } from 'react-redux';
 
 const MIN_COMPOSER_HEIGHT = 50;
-const MIN_OUTER_HEIGHT = 150;
-const ChatPanel = ({ translate, therapist }) => {
-  const { selectedPatient, messages } = useSelector(state => state.rocketchat);
+const MIN_MSG_OUTER_HEIGHT = 150;
+const ChatPanel = (
+  {
+    translate,
+    userStatus,
+    therapist,
+    socket,
+    selectedRoom,
+    messages
+  }) => {
   const [allMessages, setAllMessages] = useState(messages || []);
+  const [msgOuterHeight, setMsgOuterHeight] = useState(MIN_MSG_OUTER_HEIGHT);
   const [composerHeight, setComposerHeight] = useState(MIN_COMPOSER_HEIGHT);
-  let outerHeight = MIN_OUTER_HEIGHT;
+  const [chatText, setChatText] = useState('');
+  const [isSendByEnter, setIsSendByEnter] = useState(false);
+
+  const restoreAutoHeight = () => {
+    setComposerHeight(MIN_COMPOSER_HEIGHT);
+    setMsgOuterHeight(MIN_MSG_OUTER_HEIGHT);
+    setChatText('');
+  };
 
   useEffect(() => {
     setAllMessages(messages);
+    restoreAutoHeight();
   }, [messages]);
 
   const handleAutoResize = (e) => {
-    const diffValue = e.target.scrollHeight - MIN_COMPOSER_HEIGHT;
-    if (diffValue > 0 && e.target.value !== '') {
-      outerHeight = MIN_OUTER_HEIGHT + diffValue;
+    if (isSendByEnter) {
+      setIsSendByEnter(false);
+      return true;
+    }
+    const { value, scrollHeight } = e.target;
+    const diffValue = scrollHeight - MIN_COMPOSER_HEIGHT;
+    setChatText(value.trimLeft());
+    if (diffValue > 0 && value !== '') {
+      setMsgOuterHeight(MIN_MSG_OUTER_HEIGHT + diffValue);
       setComposerHeight(e.target.scrollHeight);
-    } else {
-      outerHeight = MIN_OUTER_HEIGHT;
-      setComposerHeight(MIN_COMPOSER_HEIGHT);
+    } else if (value === '') {
+      restoreAutoHeight();
+    }
+  };
+
+  const handleSendOnEnterKey = (e) => {
+    const { key, shiftKey } = e.nativeEvent;
+    if (!shiftKey && key === 'Enter') {
+      setIsSendByEnter(true);
+      if (chatText.trim() !== '') {
+        const newMessage = [{
+          _id: generateHash(),
+          text: chatText.trim(),
+          createdAt: new Date(),
+          user: {
+            _id: therapist.chat_user_id
+          }
+        }];
+        handleSendMessage(newMessage);
+      }
     }
   };
 
   const handleSendMessage = (newMessage) => {
-    console.log(newMessage);
+    if (newMessage[0]._id === undefined) {
+      newMessage[0]._id = newMessage[0].id;
+    }
+    newMessage[0].pending = true;
     setAllMessages((previousMessages) => GiftedChat.append(previousMessages, newMessage));
+    restoreAutoHeight();
+
+    // post new message to rocket chat
+    newMessage[0].rid = selectedRoom.rid;
+    sendNewMessage(socket, newMessage[0], therapist.id);
   };
 
-  const renderInputToolbar = (props) => {
-    return <InputToolbar {...props} containerStyle={styles.chatInputToolBar(composerHeight)} />;
-  };
-
-  const renderComposer = (props) => {
+  const renderInputToolbar = (giftedChatProps) => {
     return (
-      <Composer
-        {...props}
-        composerHeight={composerHeight}
-        textInputStyle={styles.chatComposer}
-        textInputProps={{
-          onChange: (e) => handleAutoResize(e)
-        }}
+      <InputToolbar
+        {...giftedChatProps}
+        containerStyle={styles.chatInputToolBar}
+        renderComposer={() => (
+          <Composer
+            {...giftedChatProps}
+            composerHeight={composerHeight}
+            textInputStyle={styles.chatComposer}
+            placeholder={translate(`placeholder.${selectedRoom.enabled ? 'type.message' : 'disabled.chat'}`)}
+            placeholderTextColor={selectedRoom.enabled ? '#A1A1A1' : '#0077C8'}
+            textInputProps={{
+              onKeyPress: (e) => handleSendOnEnterKey(e),
+              onChange: (e) => handleAutoResize(e),
+              editable: selectedRoom.enabled === 1
+            }}
+          />
+        )}
+        renderSend={() => (
+          <Send {...giftedChatProps} containerStyle={styles.chatSendButton}>
+            <MdSend size={22} color="#0077C8" />
+          </Send>
+        )}
       />
     );
   };
 
-  const renderSend = (props) => {
+  const renderMessage = (giftedChatProps) => {
     return (
-      <Send {...props} containerStyle={styles.chatSendButton}>
-        <MdSend size={22} color="#0077C8" />
-      </Send>
-    );
-  };
-
-  const renderDay = (props) => {
-    return <Day {...props} dateFormat={settings.date_format} textStyle={styles.chatDay} />;
-  };
-
-  const renderBubble = (props) => {
-    return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          right: styles.chatBubbleRight,
-          left: styles.chatBubbleLeft
-        }}
-        tickStyle={styles.chatSendTick}
-      />
-    );
-  };
-
-  const renderMessage = (props) => {
-    return <Message {...props} containerStyle={{ right: styles.chatMessageRight, left: styles.chatMessageLeft }} />;
-  };
-
-  const renderMessageText = (props) => {
-    return (
-      <MessageText
-        {...props}
-        textStyle={{
-          right: styles.chatMessageTextRight,
-          left: styles.chatMessageTextLeft
-        }}
-      />
-    );
-  };
-
-  const renderTime = (props) => {
-    return (
-      <Time
-        {...props}
-        textStyle={{ right: styles.chatTimeRight, left: styles.chatTimeLeft }}
-        containerStyle={{ right: styles.chatTimeContainerRight }}
+      <Message
+        {...giftedChatProps}
+        containerStyle={{ right: styles.chatMessageRight, left: styles.chatMessageLeft }}
+        renderBubble={() => (
+          <Bubble
+            {...giftedChatProps}
+            wrapperStyle={{ right: styles.chatBubbleRight, left: styles.chatBubbleLeft }}
+            tickStyle={styles.chatSendTick}
+            renderMessageText={() => (
+              <MessageText
+                {...giftedChatProps}
+                textStyle={{
+                  right: styles.chatMessageTextRight,
+                  left: styles.chatMessageTextLeft
+                }}
+              />
+            )}
+            renderTime={() => (
+              <Time
+                {...giftedChatProps}
+                textStyle={{ right: styles.chatTimeRight, left: styles.chatTimeLeft }}
+                containerStyle={{ right: styles.chatTimeContainerRight }}
+              />
+            )}
+          />
+        )}
+        renderDay={() => (
+          <Day {...giftedChatProps} dateFormat={settings.date_format} textStyle={styles.chatDay} />
+        )}
+        renderAvatar={null}
       />
     );
   };
 
   return (
     <>
-      {selectedPatient ? (
+      {selectedRoom ? (
         <>
           <div className="chat-selected-user">
-            <h4 className="font-weight-bold mb-0">{selectedPatient.last_name} {selectedPatient.first_name}</h4>
+            <h4 className="font-weight-bold mb-0 d-flex align-items-center">
+              {selectedRoom.name}
+              {userStatus(selectedRoom, 'md')}
+            </h4>
           </div>
-          <div className="chat-message-panel" style={{ height: `calc(100vh - ${outerHeight}px)` }}>
+          <div className="chat-message-panel" style={{ height: `calc(100vh - ${msgOuterHeight}px)` }}>
             <GiftedChat
-              placeholder={translate('chat.type.message')}
+              text={chatText}
               messages={allMessages}
               user={{ _id: therapist.chat_user_id }}
               messageIdGenerator={() => generateHash()}
               onSend={(newMessage) => handleSendMessage(newMessage)}
-              renderInputToolbar={renderInputToolbar}
-              renderComposer={renderComposer}
-              renderSend={renderSend}
-              renderDay={renderDay}
-              renderBubble={renderBubble}
               renderMessage={renderMessage}
-              renderMessageText={renderMessageText}
-              renderTime={renderTime}
-              renderAvatar={null}
+              renderInputToolbar={renderInputToolbar}
             />
           </div>
         </>
       ) : (
-        <Alert variant="info" className="mt-3">Please select any patient to chat.</Alert>
+        <Alert variant="primary" className="mt-3">{translate('chat_message.please_select_patient')}</Alert>
       )}
     </>
   );
@@ -150,7 +189,11 @@ const ChatPanel = ({ translate, therapist }) => {
 
 ChatPanel.propTypes = {
   translate: PropTypes.func,
-  therapist: PropTypes.object
+  userStatus: PropTypes.func,
+  therapist: PropTypes.object,
+  socket: PropTypes.object,
+  selectedRoom: PropTypes.object,
+  messages: PropTypes.array
 };
 
 export default ChatPanel;
