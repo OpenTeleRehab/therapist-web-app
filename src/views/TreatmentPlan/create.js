@@ -146,13 +146,32 @@ const CreateTreatmentPlan = () => {
     }
 
     if (canSave) {
-      dispatch(createTreatmentPlan({
-        ...formFields,
-        goals,
-        activities,
-        total_of_weeks: weeks,
-        type: 'preset'
-      }));
+      if (id) {
+        dispatch(updateTreatmentPlan(id, {
+          ...formFields,
+          goals,
+          activities,
+          total_of_weeks: weeks,
+          type: 'preset'
+        }))
+          .then(result => {
+            if (result && !patientId) {
+              history.goBack();
+            }
+          });
+      } else {
+        dispatch(createTreatmentPlan({
+          ...formFields,
+          goals,
+          activities,
+          total_of_weeks: weeks,
+          type: 'preset'
+        })).then(result => {
+          if (result && !patientId) {
+            history.goBack();
+          }
+        });
+      }
     }
   };
 
@@ -234,7 +253,7 @@ const CreateTreatmentPlan = () => {
         </div>
       )}
       <div className="d-flex mb-4">
-        <h4>{translate('treatment_plan.treatment_planning')}</h4>
+        <h4>{translate(`${patientId ? 'treatment_plan.treatment_planning' : 'treatment_plan.preset'}`)}</h4>
         <Button
           className="ml-auto"
           variant="outline-primary"
@@ -248,7 +267,7 @@ const CreateTreatmentPlan = () => {
             variant="primary"
             onClick={handleSaveAsPreset}
           >
-            {translate('treatment_plan.save_as_preset')}
+            {translate(`${patientId ? 'treatment_plan.save_as_preset' : 'common.save'}`)}
           </Button>
         )}
         <Button
