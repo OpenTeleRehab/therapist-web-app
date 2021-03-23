@@ -9,7 +9,7 @@ export const FavoriteAction = ({ className, ...rest }) => (
     overlay={<Tooltip><Translate id="common.favorite" /></Tooltip>}
   >
     <Button variant="link" className={`p-0 ${className}`} {...rest}>
-      <BsHeart size={25} />
+      <BsHeart size={22} />
     </Button>
   </OverlayTrigger>
 );
@@ -19,7 +19,7 @@ export const NonFavoriteAction = ({ className, ...rest }) => (
     overlay={<Tooltip><Translate id="common.nonFavorite" /></Tooltip>}
   >
     <Button variant="link" className={`p-0 ${className}`} {...rest}>
-      <BsHeartFill size={25} />
+      <BsHeartFill size={22} />
     </Button>
   </OverlayTrigger>
 );

@@ -38,10 +38,10 @@ import {
 } from 'components/ActionIcons';
 import * as ROUTES from '../../../variables/routes';
 import { useHistory } from 'react-router-dom';
-import { IoPerson } from 'react-icons/io5/index';
+import { IoPerson } from 'react-icons/io5';
 
 let timer = null;
-const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId }) => {
+const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
@@ -262,7 +262,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId }) => 
                             <EditAction onClick={() => handleEdit(material.id)} />
                           </div>
                         )}
-                        {!material.therapist_id && (
+                        {!material.therapist_id && allowCreateContent && (
                           <div className="edit-btn">
                             <CopyAction onClick={() => handleCopy(material.id)} />
                           </div>
@@ -320,7 +320,8 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId }) => 
 EducationMaterial.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
-  therapistId: PropTypes.string
+  therapistId: PropTypes.string,
+  allowCreateContent: PropTypes.bool
 };
 
 export default withLocalize(EducationMaterial);

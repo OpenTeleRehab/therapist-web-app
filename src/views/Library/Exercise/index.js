@@ -27,7 +27,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { FaRegCheckSquare } from 'react-icons/fa';
 
 let timer = null;
-const Exercise = ({ translate, handleSwitchFavorite, therapistId }) => {
+const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -249,7 +249,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId }) => {
                             <EditAction onClick={() => handleEdit(exercise.id)} />
                           </div>
                         )}
-                        {!exercise.therapist_id && (
+                        {!exercise.therapist_id && allowCreateContent && (
                           <div className="edit-btn">
                             <CopyAction onClick={() => handleCopy(exercise.id)} />
                           </div>
@@ -320,7 +320,8 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId }) => {
 Exercise.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
-  therapistId: PropTypes.string
+  therapistId: PropTypes.string,
+  allowCreateContent: PropTypes.bool
 };
 
 export default withLocalize(Exercise);
