@@ -8,10 +8,21 @@ import {
   Form,
   Tooltip,
   OverlayTrigger,
-  Button
+  Button,
+  Accordion
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
+import {
+  BsSearch,
+  BsX,
+  BsHeart,
+  BsHeartFill,
+  BsPerson,
+  BsCaretDownFill,
+  BsCaretRightFill,
+  BsDashSquare,
+  BsSquare
+} from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
@@ -19,16 +30,25 @@ import Spinner from 'react-bootstrap/Spinner';
 import { MdDescription } from 'react-icons/md';
 import { getEducationMaterials } from 'store/educationMaterial/actions';
 import ViewEducationMaterial from './viewEducationMaterial';
+import CheckboxTree from 'react-checkbox-tree';
+import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
+import { getCategoryTreeData } from 'store/category/actions';
+import { CATEGORY_TYPES } from 'variables/category';
+import { FaRegCheckSquare } from 'react-icons/fa';
+import _ from 'lodash';
 
 let timer = null;
 const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial }) => {
   const dispatch = useDispatch();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
+  const { educationMaterialCategoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
-    search_value: ''
+    search_value: '',
+    favorites_only: false,
+    my_contents_only: false
   });
 
   const languages = useSelector(state => state.language.languages);
@@ -36,6 +56,8 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
   const { profile } = useSelector((state) => state.auth);
   const [educationMaterial, setEducationMaterial] = useState([]);
   const [therapistId, setTherapistId] = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [expanded, setExpanded] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -52,10 +74,30 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
   }, [profile]);
 
   useEffect(() => {
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }, CATEGORY_TYPES.MATERIAL));
+  }, [language, dispatch]);
+
+  useEffect(() => {
+    if (educationMaterialCategoryTreeData.length) {
+      const rootCategoryStructure = {};
+      educationMaterialCategoryTreeData.forEach(category => {
+        rootCategoryStructure[category.value] = [];
+      });
+      setSelectedCategories(rootCategoryStructure);
+    }
+  }, [educationMaterialCategoryTreeData]);
+
+  useEffect(() => {
+    let serializedSelectedCats = [];
+    Object.keys(selectedCategories).forEach(function (key) {
+      serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
+    });
+
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getEducationMaterials({
         filter: formFields,
+        categories: serializedSelectedCats,
         page_size: pageSize,
         lang: language,
         page: currentPage,
@@ -66,20 +108,28 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
         }
       });
     }, 500);
-  }, [language, formFields, currentPage, pageSize, dispatch, therapistId]);
+  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+    setCurrentPage(1);
   };
 
   const handleClearSearch = () => {
     setFormFields({ ...formFields, search_value: '' });
+    setCurrentPage(1);
   };
 
   const handleLanguageChange = e => {
     const { value } = e.target;
     setLanguage(value);
+  };
+
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
+    setCurrentPage(1);
   };
 
   const handleViewEducationMaterial = (educationMaterial) => {
@@ -89,6 +139,11 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
 
   const handleViewEducationMaterialClose = () => {
     setViewEducationMaterial(false);
+  };
+
+  const handleSetSelectedCategories = (parent, checked) => {
+    setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+    setCurrentPage(1);
   };
 
   return (
@@ -116,25 +171,23 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
             </Card.Header>
             <Card.Body>
               <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
+                <Form.Check
+                  custom
+                  type="checkbox"
+                  name="favorites_only"
+                  label={translate('library.show_favorites_only')}
+                  id="showFavoriteMaterialsOnly"
+                  onChange={handleCheckBoxChange}
+                />
+                <Form.Check
+                  custom
+                  type="checkbox"
+                  name="my_contents_only"
+                  className="mt-3"
+                  label={translate('library.show_my_contents_only')}
+                  id="showMyMaterialsOnly"
+                  onChange={handleCheckBoxChange}
+                />
               </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
@@ -146,6 +199,42 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                   ))}
                 </Form.Control>
               </Form.Group>
+              {
+                educationMaterialCategoryTreeData.map(category => (
+                  <Accordion key={category.value} className="mb-3" defaultActiveKey={category.value}>
+                    <Card>
+                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                        {category.label}
+                        <div className="ml-auto text-nowrap">
+                          <span className="mr-3">
+                            {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
+                          </span>
+                          <ContextAwareToggle eventKey={category.value} />
+                        </div>
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={category.value}>
+                        <Card.Body>
+                          <CheckboxTree
+                            nodes={category.children}
+                            checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
+                            expanded={expanded}
+                            onCheck={checked => handleSetSelectedCategories(category.value, checked)}
+                            onExpand={expanded => setExpanded(expanded)}
+                            icons={{
+                              check: <FaRegCheckSquare size={40} color="black" />,
+                              uncheck: <BsSquare size={40} color="black" />,
+                              halfCheck: <BsDashSquare size={40} color="black" />,
+                              expandClose: <BsCaretRightFill size={40} color="black" />,
+                              expandOpen: <BsCaretDownFill size={40} color="black" />
+                            }}
+                            showNodeIcon={false}
+                          />
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  </Accordion>
+                ))
+              }
             </Card.Body>
           </Card>
         </Col>

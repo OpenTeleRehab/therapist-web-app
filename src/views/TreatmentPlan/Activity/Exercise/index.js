@@ -8,25 +8,45 @@ import {
   Form,
   Tooltip,
   OverlayTrigger,
-  Button
+  Button,
+  Accordion
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
+import {
+  BsSearch,
+  BsX,
+  BsHeart,
+  BsHeartFill,
+  BsPerson,
+  BsCaretDownFill,
+  BsCaretRightFill,
+  BsDashSquare,
+  BsSquare
+} from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
 import ViewExercise from './viewExercise';
+import { getCategoryTreeData } from 'store/category/actions';
+import { CATEGORY_TYPES } from 'variables/category';
+import CheckboxTree from 'react-checkbox-tree';
+import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
+import { FaRegCheckSquare } from 'react-icons/fa';
+import _ from 'lodash';
 
 let timer = null;
 const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise }) => {
   const dispatch = useDispatch();
   const { loading, exercises, filters } = useSelector(state => state.exercise);
+  const { exerciseCategoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
-    search_value: ''
+    search_value: '',
+    favorites_only: false,
+    my_contents_only: false
   });
   const [exercise, setExercise] = useState([]);
   const [therapistId, setTherapistId] = useState('');
@@ -34,6 +54,8 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
   const languages = useSelector(state => state.language.languages);
   const [language, setLanguage] = useState('');
   const { profile } = useSelector((state) => state.auth);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [expanded, setExpanded] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -50,11 +72,31 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
   }, [profile]);
 
   useEffect(() => {
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }, CATEGORY_TYPES.EXERCISE));
+  }, [language, dispatch]);
+
+  useEffect(() => {
+    if (exerciseCategoryTreeData.length) {
+      const rootCategoryStructure = {};
+      exerciseCategoryTreeData.forEach(category => {
+        rootCategoryStructure[category.value] = [];
+      });
+      setSelectedCategories(rootCategoryStructure);
+    }
+  }, [exerciseCategoryTreeData]);
+
+  useEffect(() => {
+    let serializedSelectedCats = [];
+    Object.keys(selectedCategories).forEach(function (key) {
+      serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
+    });
+
     clearTimeout(timer);
     timer = setTimeout(() => {
       dispatch(getExercises({
         lang: language,
         filter: formFields,
+        categories: serializedSelectedCats,
         page_size: pageSize,
         page: currentPage,
         therapist_id: therapistId
@@ -64,15 +106,17 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
         }
       });
     }, 500);
-  }, [language, formFields, currentPage, pageSize, dispatch, therapistId]);
+  }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+    setCurrentPage(1);
   };
 
   const handleClearSearch = () => {
     setFormFields({ ...formFields, search_value: '' });
+    setCurrentPage(1);
   };
 
   const handleLanguageChange = e => {
@@ -87,6 +131,17 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
 
   const handleViewClose = () => {
     setViewExercise(false);
+  };
+
+  const handleSetSelectedCategories = (parent, checked) => {
+    setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+    setCurrentPage(1);
+  };
+
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
+    setCurrentPage(1);
   };
 
   return (
@@ -114,25 +169,23 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
             </Card.Header>
             <Card.Body>
               <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
-              </Form.Group>
-              <Form.Group>
-                <Form.Label>{translate('common.category')}</Form.Label>
-                <Form.Control as="select" disabled>
-                  <option>{translate('common.category_item')}</option>
-                  <option>{translate('common.category_item')}</option>
-                </Form.Control>
+                <Form.Check
+                  custom
+                  type="checkbox"
+                  name="favorites_only"
+                  label={translate('library.show_favorites_only')}
+                  id="showFavoriteExercisesOnly"
+                  onChange={handleCheckBoxChange}
+                />
+                <Form.Check
+                  custom
+                  type="checkbox"
+                  name="my_contents_only"
+                  className="mt-3"
+                  label={translate('library.show_my_contents_only')}
+                  id="showMyExercisesOnly"
+                  onChange={handleCheckBoxChange}
+                />
               </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
@@ -144,6 +197,42 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                   ))}
                 </Form.Control>
               </Form.Group>
+              {
+                exerciseCategoryTreeData.map(category => (
+                  <Accordion key={category.value} className="mb-3" defaultActiveKey={category.value}>
+                    <Card>
+                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                        {category.label}
+                        <div className="ml-auto text-nowrap">
+                          <span className="mr-3">
+                            {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
+                          </span>
+                          <ContextAwareToggle eventKey={category.value} />
+                        </div>
+                      </Accordion.Toggle>
+                      <Accordion.Collapse eventKey={category.value}>
+                        <Card.Body>
+                          <CheckboxTree
+                            nodes={category.children}
+                            checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
+                            expanded={expanded}
+                            onCheck={checked => handleSetSelectedCategories(category.value, checked)}
+                            onExpand={expanded => setExpanded(expanded)}
+                            icons={{
+                              check: <FaRegCheckSquare size={40} color="black" />,
+                              uncheck: <BsSquare size={40} color="black" />,
+                              halfCheck: <BsDashSquare size={40} color="black" />,
+                              expandClose: <BsCaretRightFill size={40} color="black" />,
+                              expandOpen: <BsCaretDownFill size={40} color="black" />
+                            }}
+                            showNodeIcon={false}
+                          />
+                        </Card.Body>
+                      </Accordion.Collapse>
+                    </Card>
+                  </Accordion>
+                ))
+              }
             </Card.Body>
           </Card>
         </Col>

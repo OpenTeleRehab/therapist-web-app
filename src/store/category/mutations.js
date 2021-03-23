@@ -28,9 +28,10 @@ const getCategoryTreeDataRequest = () => ({
   type: 'GET_CATEGORY_TREE_DATA_REQUEST'
 });
 
-const getCategoryTreeDataSuccess = (data) => ({
+const getCategoryTreeDataSuccess = (data, activityType) => ({
   type: 'GET_CATEGORY_TREE_DATA_SUCCESS',
-  data
+  data,
+  activityType
 });
 
 const getCategoryTreeDataFail = () => ({
