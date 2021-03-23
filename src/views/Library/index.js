@@ -27,6 +27,7 @@ const VIEW_PRESET_TREATMENT = 'preset_treatment';
 const Library = ({ translate }) => {
   const { search } = useLocation();
   const dispatch = useDispatch();
+  const { treatmentPlans } = useSelector(state => state.treatmentPlan);
   const [view, setView] = useState(undefined);
   const [newContentLink, setNewContentLink] = useState(undefined);
   const [showSwitchFavoriteDialog, setShowSwitchFavoriteDialog] = useState(false);
@@ -39,8 +40,6 @@ const Library = ({ translate }) => {
   const [allowCreateContent, setAllowCreateContent] = useState(false);
   const [therapistId, setTherapistId] = useState('');
   const { profile } = useSelector((state) => state.auth);
-  const languages = useSelector(state => state.language.languages);
-  const [language, setLanguage] = useState('');
 
   useEffect(() => {
     if (queryString.parse(search).tab === VIEW_EDUCATION) {
@@ -65,20 +64,18 @@ const Library = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (languages) {
-      setLanguage(languages[0].id);
-    }
-  }, [languages]);
-
-  useEffect(() => {
     if (therapistId) {
-      exerciseService.countTherapistLibraries(therapistId, language).then(res => {
-        if (res.data) {
-          setAllowCreateContent(res.data < settings.maxActivities);
-        }
-      });
+      if (view === VIEW_PRESET_TREATMENT) {
+        setAllowCreateContent(treatmentPlans.length < settings.maxPresetTreatments);
+      } else {
+        exerciseService.countTherapistLibraries(therapistId).then(res => {
+          if (res.data) {
+            setAllowCreateContent(res.data < settings.maxActivities);
+          }
+        });
+      }
     }
-  }, [therapistId, language]);
+  }, [therapistId, view, treatmentPlans]);
 
   const handleSwitchFavorite = (id, isFavorite, type) => {
     setId(id);
