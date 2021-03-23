@@ -40,7 +40,7 @@ import * as ROUTES from '../../../variables/routes';
 import { useHistory } from 'react-router-dom';
 
 let timer = null;
-const Questionnaire = ({ translate, handleSwitchFavorite, therapistId }) => {
+const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
@@ -261,7 +261,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId }) => {
                             <EditAction onClick={() => handleEdit(questionnaire.id)}/>
                           </div>
                         )}
-                        {!questionnaire.therapist_id && (
+                        {!questionnaire.therapist_id && allowCreateContent && (
                           <div className="edit-btn">
                             <CopyAction onClick={() => handleCopy(questionnaire.id)} />
                           </div>
@@ -319,7 +319,8 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId }) => {
 Questionnaire.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
-  therapistId: PropTypes.string
+  therapistId: PropTypes.string,
+  allowCreateContent: PropTypes.bool
 };
 
 export default withLocalize(Questionnaire);
