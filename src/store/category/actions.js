@@ -31,11 +31,11 @@ export const getCategory = (id, language) => async dispatch => {
   }
 };
 
-export const getCategoryTreeData = payload => async dispatch => {
+export const getCategoryTreeData = (payload, type = null) => async dispatch => {
   dispatch(mutation.getCategoryTreeDataRequest());
   const data = await Category.getCategoryTreeData(payload);
   if (data.success) {
-    dispatch(mutation.getCategoryTreeDataSuccess(data.data));
+    dispatch(mutation.getCategoryTreeDataSuccess(data.data, type));
   } else {
     dispatch(mutation.getCategoryTreeDataFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));

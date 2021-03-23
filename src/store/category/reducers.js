@@ -1,4 +1,5 @@
 import { initialState } from './states';
+import { CATEGORY_TYPES } from 'variables/category';
 
 export const category = (state = initialState, action) => {
   switch (action.type) {
@@ -30,6 +31,20 @@ export const category = (state = initialState, action) => {
       });
     }
     case 'GET_CATEGORY_TREE_DATA_SUCCESS': {
+      if (action.activityType === CATEGORY_TYPES.EXERCISE) {
+        return Object.assign({}, state, {
+          exerciseCategoryTreeData: action.data
+        });
+      } else if (action.activityType === CATEGORY_TYPES.MATERIAL) {
+        return Object.assign({}, state, {
+          educationMaterialCategoryTreeData: action.data
+        });
+      } else if (action.activityType === CATEGORY_TYPES.QUESTIONNAIRE) {
+        return Object.assign({}, state, {
+          questionnaireCategoryTreeData: action.data
+        });
+      }
+
       return Object.assign({}, state, {
         categoryTreeData: action.data
       });
