@@ -95,9 +95,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
   }, [language, formFields, selectedCategories, therapistId, currentPage, pageSize, dispatch]);
 
   useEffect(() => {
-    if (language) {
-      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
-    }
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
   }, [language, dispatch]);
 
   useEffect(() => {
@@ -210,7 +208,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                       <Accordion.Collapse eventKey={category.value}>
                         <Card.Body>
                           <CheckboxTree
-                            nodes={category.children}
+                            nodes={category.children || []}
                             checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
                             expanded={expanded}
                             onCheck={checked => handleSetSelectedCategories(category.value, checked)}
