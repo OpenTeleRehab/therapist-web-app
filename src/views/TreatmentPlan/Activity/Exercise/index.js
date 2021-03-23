@@ -111,10 +111,12 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+    setCurrentPage(1);
   };
 
   const handleClearSearch = () => {
     setFormFields({ ...formFields, search_value: '' });
+    setCurrentPage(1);
   };
 
   const handleLanguageChange = e => {
@@ -133,11 +135,13 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
 
   const handleSetSelectedCategories = (parent, checked) => {
     setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+    setCurrentPage(1);
   };
 
   const handleCheckBoxChange = e => {
     const { name, checked } = e.target;
     setFormFields({ ...formFields, [name]: checked });
+    setCurrentPage(1);
   };
 
   return (

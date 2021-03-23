@@ -111,10 +111,12 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+    setCurrentPage(1);
   };
 
   const handleClearSearch = () => {
     setFormFields({ ...formFields, search_value: '' });
+    setCurrentPage(1);
   };
 
   const handleLanguageChange = e => {
@@ -125,6 +127,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
   const handleCheckBoxChange = e => {
     const { name, checked } = e.target;
     setFormFields({ ...formFields, [name]: checked });
+    setCurrentPage(1);
   };
 
   const handleViewQuestionnaire = (questionnaire) => {
@@ -138,6 +141,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
 
   const handleSetSelectedCategories = (parent, checked) => {
     setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
+    setCurrentPage(1);
   };
 
   return (
