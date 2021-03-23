@@ -9,9 +9,8 @@ import {
 } from 'react-bootstrap';
 
 import { Exercise } from 'services/exercise';
-import { BsX, BsHeart, BsHeartFill } from 'react-icons/bs';
+import { BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
 import ViewExercise from './viewExercise';
-import { IoPerson } from 'react-icons/io5';
 
 const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
   const [exercises, setExercises] = useState([]);
@@ -50,13 +49,13 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
             <div className="top-bar">
               <div className="favorite-btn btn-link">
                 {exercise.is_favorite
-                  ? <BsHeartFill size={25} />
-                  : <BsHeart size={25} />
+                  ? <BsHeartFill size={20} />
+                  : <BsHeart size={20} />
                 }
               </div>
               {therapistId === exercise.therapist_id && (
                 <div className="owner-btn">
-                  <IoPerson size={20} />
+                  <BsPerson size={20} />
                 </div>
               )}
               {

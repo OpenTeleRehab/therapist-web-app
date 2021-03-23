@@ -11,13 +11,12 @@ import {
   Button
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX, BsHeart, BsHeartFill } from 'react-icons/bs';
+import { BsSearch, BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { getQuestionnaires } from 'store/questionnaire/actions';
 import ViewQuestionnaire from './viewQuestionnaire';
-import { IoPerson } from 'react-icons/io5';
 
 let timer = null;
 const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQuestionnaire, setViewQuestionnaire }) => {
@@ -163,13 +162,13 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
                           {questionnaire.is_favorite
-                            ? <BsHeartFill size={25} />
-                            : <BsHeart size={25} />
+                            ? <BsHeartFill size={20} />
+                            : <BsHeart size={20} />
                           }
                         </div>
                         {therapistId === questionnaire.therapist_id && (
                           <div className="owner-btn">
-                            <IoPerson size={20} />
+                            <BsPerson size={20} />
                           </div>
                         )}
                         <Form.Check

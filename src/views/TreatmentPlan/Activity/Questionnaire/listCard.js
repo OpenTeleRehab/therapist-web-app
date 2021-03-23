@@ -10,9 +10,8 @@ import {
 
 import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
-import { BsX, BsHeartFill, BsHeart } from 'react-icons/bs';
+import { BsX, BsHeartFill, BsHeart, BsPerson } from 'react-icons/bs';
 import ViewQuestionnaire from './viewQuestionnaire';
-import { IoPerson } from 'react-icons/io5';
 
 const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
   const localize = useSelector((state) => state.localize);
@@ -53,13 +52,13 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
             <div className="top-bar">
               <div className="favorite-btn btn-link">
                 {questionnaire.is_favorite
-                  ? <BsHeartFill size={25} />
-                  : <BsHeart size={25} />
+                  ? <BsHeartFill size={20} />
+                  : <BsHeart size={20} />
                 }
               </div>
               {therapistId === questionnaire.therapist_id && (
                 <div className="owner-btn">
-                  <IoPerson size={20} />
+                  <BsPerson size={20} />
                 </div>
               )}
               {
