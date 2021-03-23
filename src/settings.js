@@ -12,7 +12,8 @@ const settings = {
   educationMaterial: {
     maxFileSize: 25 // MB
   },
-  maxActivities: 15
+  maxActivities: 15,
+  maxPresetTreatments: 5
 };
 
 export default settings;
