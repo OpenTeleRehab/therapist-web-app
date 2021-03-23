@@ -1,18 +1,18 @@
-const getLanguagesRequest = () => ({
-  type: 'GET_LANGUAGES_REQUEST'
+const getSettingsRequest = () => ({
+  type: 'GET_SETTINGS_REQUEST'
 });
 
-const getLanguagesSuccess = (data) => ({
-  type: 'GET_LANGUAGES_SUCCESS',
+const getSettingsSuccess = (data) => ({
+  type: 'GET_SETTINGS_SUCCESS',
   data
 });
 
-const getLanguagesFail = () => ({
-  type: 'GET_LANGUAGES_FAIL'
+const getSettingsFail = () => ({
+  type: 'GET_SETTINGS_FAIL'
 });
 
 export const mutation = {
-  getLanguagesRequest,
-  getLanguagesSuccess,
-  getLanguagesFail
+  getSettingsRequest,
+  getSettingsSuccess,
+  getSettingsFail
 };

@@ -12,7 +12,7 @@ import { clinic } from 'store/clinic/reducers';
 import { country } from 'store/country/reducers';
 import { user } from 'store/user/reducers';
 import { treatmentPlan } from 'store/treatmentPlan/reducers';
-import { language } from 'store/setting/reducers';
+import { language } from 'store/language/reducers';
 import { exercise } from 'store/exercise/reducers';
 import { educationMaterial } from 'store/educationMaterial/reducers';
 import { questionnaire } from 'store/questionnaire/reducers';
@@ -21,6 +21,7 @@ import { category } from 'store/category/reducers';
 import { rocketchat } from 'store/rocketchat/reducers';
 import { appointment } from 'store/appointment/reducers';
 import { patient } from 'store/patient/reducers';
+import { setting } from 'store/setting/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -38,7 +39,8 @@ export const rootReducer = {
   category,
   rocketchat,
   appointment,
-  patient
+  patient,
+  setting
 };
 
 const devTool =

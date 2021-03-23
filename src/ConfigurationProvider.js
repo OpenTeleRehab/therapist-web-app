@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getTranslations } from 'store/translation/actions';
 import { getCountries } from 'store/country/actions';
 import { getClinics } from 'store/clinic/actions';
-import { getLanguages } from 'store/setting/actions';
+import { getLanguages } from 'store/language/actions';
 import { getProfile } from 'store/auth/actions';
 import { setChatSubscribeIds } from 'store/rocketchat/actions';
 import { initialChatSocket } from 'utils/rocketchat';
