@@ -43,7 +43,9 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId }) => {
   const [totalCount, setTotalCount] = useState(0);
   const [language, setLanguage] = useState('');
   const [formFields, setFormFields] = useState({
-    search_value: ''
+    search_value: '',
+    favorites_only: false,
+    my_contents_only: false
   });
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
@@ -103,6 +105,11 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId }) => {
     setFormFields({ ...formFields, [name]: value });
   };
 
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
+  };
+
   const handleLanguageChange = e => {
     const { value } = e.target;
     setLanguage(value);
@@ -139,12 +146,31 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId }) => {
               <SearchInput
                 name="search_value"
                 value={formFields.search_value}
-                placeholder={translate('education_material.search')}
+                placeholder={translate('exercise.search')}
                 onChange={handleChange}
                 onClear={handleClearSearch}
               />
             </Card.Header>
             <Card.Body>
+              <Form.Group>
+                <Form.Check
+                  custom
+                  type="checkbox"
+                  name="favorites_only"
+                  label={translate('library.show_favorites_only')}
+                  id="showFavoritesOnly"
+                  onChange={handleCheckBoxChange}
+                />
+                <Form.Check
+                  custom
+                  type="checkbox"
+                  name="my_contents_only"
+                  className="mt-3"
+                  label={translate('library.show_my_contents_only')}
+                  id="showMyContentsOnly"
+                  onChange={handleCheckBoxChange}
+                />
+              </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
                 <Form.Control as="select" value={language} onChange={handleLanguageChange}>
