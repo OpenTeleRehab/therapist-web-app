@@ -1,10 +1,57 @@
+const setWebsocketConnectionSuccess = (data) => ({
+  type: 'SET_WEBSOCKET_CONNECTION_SUCCESS',
+  data
+});
+
 const setChatAuthTokenSuccess = (data) => ({
   type: 'SET_CHAT_AUTH_TOKEN_SUCCESS',
   data
 });
 
-const loadAllMessagesSuccess = (data) => ({
-  type: 'LOAD_ALL_MESSAGES_SUCCESS',
+const setChatSubscribeIdsSuccess = (data) => ({
+  type: 'SET_CHAT_SUBSCRIBE_IDS_SUCCESS',
+  data
+});
+
+const getChatRoomsSuccess = (data) => ({
+  type: 'GET_CHAT_ROOMS_SUCCESS',
+  data
+});
+
+const getChatRoomsFail = () => ({
+  type: 'GET_CHAT_ROOMS_FAIL'
+});
+
+const getChatUsersStatusSuccess = (data) => ({
+  type: 'GET_CHAT_USERS_STATUS_SUCCESS',
+  data
+});
+
+const getChatUsersStatusFail = () => ({
+  type: 'GET_CHAT_USERS_STATUS_FAIL'
+});
+
+const getLastMessagesSuccess = (data) => ({
+  type: 'GET_LAST_MESSAGES_SUCCESS',
+  data
+});
+
+const getLastMessagesFail = () => ({
+  type: 'GET_LAST_MESSAGES_FAIL'
+});
+
+const selectRoomSuccess = (data) => ({
+  type: 'SELECT_ROOM_SUCCESS',
+  data
+});
+
+const updateUnreadSuccess = (data) => ({
+  type: 'UPDATE_UNREAD_SUCCESS',
+  data
+});
+
+const getMessagesInRoomSuccess = (data) => ({
+  type: 'GET_MESSAGES_IN_ROOM_SUCCESS',
   data
 });
 
@@ -13,20 +60,36 @@ const prependNewMessageSuccess = (data) => ({
   data
 });
 
-const selectPatientSuccess = (data) => ({
-  type: 'SELECT_PATIENT_SUCCESS',
+const updateLastMessageSuccess = (data) => ({
+  type: 'UPDATE_LAST_MESSAGE_SUCCESS',
   data
 });
 
-const loadLastMessageHistorySuccess = (data) => ({
-  type: 'LOAD_LAST_MESSAGE_HISTORY',
+const setIsOnChatPageSuccess = (data) => ({
+  type: 'SET_IS_ON_CHAT_PAGE_SUCCESS',
+  data
+});
+
+const updateChatUserStatusSuccess = (data) => ({
+  type: 'UPDATE_CHAT_USER_STATUS_SUCCESS',
   data
 });
 
 export const mutation = {
+  setWebsocketConnectionSuccess,
   setChatAuthTokenSuccess,
-  loadAllMessagesSuccess,
+  setChatSubscribeIdsSuccess,
+  getChatRoomsSuccess,
+  getChatRoomsFail,
+  getChatUsersStatusSuccess,
+  getChatUsersStatusFail,
+  getLastMessagesSuccess,
+  getLastMessagesFail,
+  selectRoomSuccess,
+  updateUnreadSuccess,
+  getMessagesInRoomSuccess,
   prependNewMessageSuccess,
-  selectPatientSuccess,
-  loadLastMessageHistorySuccess
+  updateLastMessageSuccess,
+  setIsOnChatPageSuccess,
+  updateChatUserStatusSuccess
 };

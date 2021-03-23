@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link, NavLink, withRouter } from 'react-router-dom';
 import { Navbar, Nav, Dropdown, Badge } from 'react-bootstrap';
 import * as ROUTES from 'variables/routes';
@@ -6,19 +6,48 @@ import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
+import { unSubscribeEvent, chatLogout } from 'utils/rocketchat';
+import RocketchatContext from 'context/RocketchatContext';
 
 const Navigation = ({ translate }) => {
   const { keycloak } = useKeycloak();
-  const [show, setShow] = useState(false);
+  const chatSocket = useContext(RocketchatContext);
   const { profile } = useSelector((state) => state.auth);
+  const { chatRooms, isConnected, subscribeIds } = useSelector((state) => state.rocketchat);
+  const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const handleConfirm = () => {
+    if (isConnected) {
+      unSubscribeEvent(chatSocket, subscribeIds.roomMessageId);
+      unSubscribeEvent(chatSocket, subscribeIds.notifyLoggedId);
+      chatLogout(chatSocket, subscribeIds.loginId);
+      setTimeout(() => {
+        chatSocket.close();
+      }, 1000);
+    }
     if (keycloak.authenticated) {
       keycloak.logout();
     }
   };
+
+  // total unread
+  let unreadMessage = 0;
+  chatRooms.forEach(room => {
+    if (room.enabled) {
+      unreadMessage += room.unread;
+    }
+  });
+
+  // dynamic classes base on unread
+  let navClasses = '';
+  let badgeClasses = '';
+  if (unreadMessage > 0) {
+    const digit = unreadMessage.toString().length;
+    navClasses = digit === 3 ? ' has-badge lg' : digit === 2 ? ' has-badge md' : ' has-badge';
+    badgeClasses = digit === 3 ? ' lg' : digit === 2 ? ' md' : '';
+  }
 
   return (
     <Navbar bg="primary" variant="dark" expand="xl" sticky="top" className="main-nav">
@@ -70,10 +99,14 @@ const Navigation = ({ translate }) => {
             <NavLink
               to={ROUTES.CHAT_OR_CALL}
               key="nav-chat-or-call"
-              className="nav-link has-badge"
+              className={`nav-link${navClasses}`}
             >
               {translate('chat_or_call')}
-              <Badge variant="danger" className="circle d-md-block">5</Badge>
+              {unreadMessage > 0 && (
+                <Badge variant="danger" className={`circle text-light d-md-block${badgeClasses}`}>
+                  {unreadMessage}
+                </Badge>
+              )}
             </NavLink>
           )}
 

@@ -13,7 +13,7 @@
       min-height: 1.5rem;
       min-width: 1.5rem;
       border-radius: 50%;
-      padding: 0.35rem 0.25rem 0;
+      padding: 0;
     }
   }
   &-sidebar-header {
@@ -21,7 +21,7 @@
     padding-left: 15px;
     background-color: $blue-light-2;
   }
-  &-patient-list {
+  &-room-list {
     background-color: $white;
     overflow-y: auto;
     .list-group {
@@ -45,12 +45,28 @@
         }
       }
     }
-    .user-status {
-      &.badge {
-        min-width: 10px;
-        min-height: 10px;
-        padding: 0 5px;
-      }
+  }
+  &-user-status {
+    margin-left: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    &.md {
+      margin-left: 5px;
+      width: 14px;
+      height: 14px;
+    }
+    &.online {
+      background-color: $green;
+    }
+    &.offline {
+      background-color: $gray-500;
+    }
+    &.busy {
+      background-color: $red;
+    }
+    &.away {
+      background-color: $yellow;
     }
   }
   &-room {

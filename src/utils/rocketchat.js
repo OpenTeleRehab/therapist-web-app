@@ -1,28 +1,25 @@
 import {
+  isWebsocketConnected,
   setChatAuthToken,
-  loadLastMessageHistory,
-  loadAllMessagesInRoom,
-  prependNewMessageInRoom
+  getMessagesInRoom,
+  prependNewMessage,
+  updateChatUserStatus
 } from 'store/rocketchat/actions';
+import { showErrorNotification } from 'store/notification/actions';
+import { USER_STATUS } from 'variables/rocketchat';
 import { getUniqueId } from './general';
 
-const lastMessages = [];
-let lastLoadHistoryId = '';
-let isLoadLastHistory = true;
-
-export const initialChatSocket = (dispatch, profile) => {
+export const initialChatSocket = (dispatch, subscribeIds, username, password) => {
   let isConnected = false;
-  const loginId = getUniqueId(profile.id);
-  const subscribeId = getUniqueId(profile.id);
+  const { loginId, roomMessageId, notifyLoggedId } = subscribeIds;
 
   // register websocket
   const socket = new WebSocket(process.env.REACT_APP_ROCKET_CHAT_WEBSOCKET);
 
   // observer
-  socket.onmessage = function (e) {
+  socket.onmessage = (e) => {
     const response = JSON.parse(e.data);
-    // console.log('socket = ', response);
-    const { msg, id, result, subs, collection, fields } = response;
+    const { id, msg, result, error, collection, fields } = response;
 
     // create connection
     if (!isConnected && msg === undefined && socket.readyState === 1) {
@@ -36,103 +33,155 @@ export const initialChatSocket = (dispatch, profile) => {
     }
 
     if (msg === 'ping') {
+      // Keep connection alive
       socket.send(JSON.stringify({ msg: 'pong' }));
     } else if (msg === 'connected') {
       // connection success => login
+      dispatch(isWebsocketConnected(true));
       const options = {
         msg: 'method',
         method: 'login',
         id: loginId,
         params: [
           {
-            user: { username: profile.identity },
+            user: { username },
             password: {
-              digest: profile.chat_password,
+              digest: password,
               algorithm: 'sha-256'
             }
           }
         ]
       };
       socket.send(JSON.stringify(options));
-    } else if (msg === 'result' && id === loginId && result.id === profile.chat_user_id) {
-      // login success => subscribe chat room(s) event
-      dispatch(setChatAuthToken(result.token));
-      const options = {
-        msg: 'sub',
-        id: subscribeId,
-        name: 'stream-room-messages',
-        params: ['__my_messages__', false]
-      };
-      socket.send(JSON.stringify(options));
-    } else if (msg === 'ready' && subs[0] === subscribeId) {
-      // subscribe success => load last message for available rooms
-      isLoadLastHistory = true;
-      loadLastMessageInChatRoom(socket, profile.id, profile.chat_rooms);
-    } else if (msg === 'result' && result.messages && isLoadLastHistory) {
-      // load last message success
-      const { _id, rid, msg, ts, u } = result.messages[0] || {};
-      if (rid !== undefined) {
-        lastMessages.push({
-          rid,
-          _id,
-          text: msg,
-          createdAt: new Date(ts.$date),
-          user: { _id: u._id }
+    } else if (msg === 'result') {
+      if (error !== undefined) {
+        dispatch(showErrorNotification('toast_title.error_message', `Websocket: ${error.reason}`));
+      } else if (id === loginId && result) {
+        // login success
+
+        // set auth token
+        const { token, tokenExpires } = result;
+        const authTokenExpiredAt = new Date(tokenExpires.$date);
+        dispatch(setChatAuthToken({ authToken: token, authTokenExpiredAt }));
+
+        // subscribe chat room message
+        subscribeChatRoomMessage(socket, roomMessageId);
+
+        // subscribe to user logged status (patient)
+        setTimeout(() => {
+          subscribeUserLoggedStatus(socket, notifyLoggedId);
+        }, 1000);
+      } else if (result && result.messages) {
+        // load messages in a room
+        const allMessages = [];
+        result.messages.forEach(message => {
+          const { _id, msg, ts, u } = message;
+          allMessages.push({
+            _id,
+            text: msg,
+            createdAt: new Date(ts.$date),
+            user: { _id: u._id },
+            received: true,
+            pending: false
+          });
         });
+        dispatch(getMessagesInRoom(allMessages));
       }
-      if (id === lastLoadHistoryId) {
-        isLoadLastHistory = false;
-        dispatch(loadLastMessageHistory(lastMessages));
-      }
-    } else if (msg === 'result' && result.messages && !isLoadLastHistory) {
-      // load all messages in a room
-      const allMessages = [];
-      result.messages.forEach(message => {
-        const { _id, msg, ts, u } = message;
-        allMessages.push({
+    } else if (msg === 'changed') {
+      if (collection === 'stream-room-messages') {
+        // trigger change in chat room
+        const { _id, rid, msg, ts, u } = fields.args[0];
+        const newMessage = {
           _id,
+          rid,
           text: msg,
           createdAt: new Date(ts.$date),
           user: { _id: u._id },
           received: true,
-          pending: false
-        });
-      });
-      dispatch(loadAllMessagesInRoom(allMessages));
-    } else if (msg === 'changed' && collection === 'stream-room-messages') {
-      // trigger change in chat room
-      const { _id, msg, ts, u } = fields.args[0];
-      const newMessage = {
-        _id,
-        text: msg,
-        createdAt: new Date(ts.$date),
-        user: { _id: u._id },
-        received: true,
-        pending: false
-      };
-      dispatch(prependNewMessageInRoom(newMessage));
+          pending: false,
+          unread: 0
+        };
+        dispatch(prependNewMessage(newMessage));
+      } else if (collection === 'stream-notify-logged') {
+        // trigger user logged status
+        const res = fields.args[0];
+        const data = {
+          _id: res[0],
+          status: USER_STATUS[res[2]]
+        };
+        dispatch(updateChatUserStatus(data));
+      }
     }
   };
 
   return socket;
 };
 
-const loadLastMessageInChatRoom = (socket, userId, rooms) => {
-  rooms.forEach((room, index) => {
-    if (index === rooms.length - 1) {
-      lastLoadHistoryId = getUniqueId(userId);
-    }
-    const options = {
-      msg: 'method',
-      method: 'loadHistory',
-      id: lastLoadHistoryId || getUniqueId(userId),
-      params: [
-        room,
-        null,
-        1,
-        { $date: new Date().getTime() }
-      ]
-    };
-    socket.send(JSON.stringify(options));
-  });
+// TODO set specific iterm per page on first load with infinite scroll
+export const loadHistoryInRoom = (socket, roomId, therapistId) => {
+  const options = {
+    msg: 'method',
+    method: 'loadHistory',
+    id: getUniqueId(therapistId),
+    params: [
+      roomId,
+      null,
+      999999,
+      { $date: new Date().getTime() }
+    ]
+  };
+  socket.send(JSON.stringify(options));
+};
+
+export const sendNewMessage = (socket, newMessage, therapistId) => {
+  const options = {
+    msg: 'method',
+    method: 'sendMessage',
+    id: getUniqueId(therapistId),
+    params: [
+      {
+        rid: newMessage.rid,
+        _id: newMessage._id,
+        msg: newMessage.text
+      }
+    ]
+  };
+  socket.send(JSON.stringify(options));
+};
+
+export const unSubscribeEvent = (socket, subId) => {
+  const options = {
+    msg: 'unsub',
+    id: subId
+  };
+  socket.send(JSON.stringify(options));
+};
+
+export const chatLogout = (socket, id) => {
+  const options = {
+    msg: 'method',
+    method: 'logout',
+    id
+  };
+  socket.send(JSON.stringify(options));
+};
+
+const subscribeChatRoomMessage = (socket, id) => {
+  const options = {
+    msg: 'sub',
+    id,
+    name: 'stream-room-messages',
+    params: ['__my_messages__', false]
+  };
+  socket.send(JSON.stringify(options));
+};
+
+const subscribeUserLoggedStatus = (socket, id) => {
+  const options = {
+    msg: 'sub',
+    id,
+    name: 'stream-notify-logged',
+    params: ['user-status', false]
+  };
+  socket.send(JSON.stringify(options));
 };

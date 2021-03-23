@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import moment from 'moment';
+import settings from 'settings';
 
 export const generateHash = (length = 17) => {
   let hash = '';
@@ -12,4 +14,8 @@ export const generateHash = (length = 17) => {
 
 export const getUniqueId = (userId = 0) => {
   return _.uniqueId(`therapist-${userId}_`);
+};
+
+export const formatDate = (date) => {
+  return date ? moment(date).format(settings.date_format) : '';
 };

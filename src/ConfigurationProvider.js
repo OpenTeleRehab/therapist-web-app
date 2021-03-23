@@ -5,11 +5,13 @@ import { getTranslations } from 'store/translation/actions';
 import { getCountries } from 'store/country/actions';
 import { getClinics } from 'store/clinic/actions';
 import { getLanguages } from 'store/setting/actions';
-import { getProfile } from './store/auth/actions';
-import { initialChatSocket } from './utils/rocketchat';
+import { getProfile } from 'store/auth/actions';
+import { setChatSubscribeIds } from 'store/rocketchat/actions';
+import { initialChatSocket } from 'utils/rocketchat';
+import { getUniqueId } from 'utils/general';
 
 import SplashScreen from 'components/SplashScreen';
-import RocketchatContext from './context/RocketchatContext';
+import RocketchatContext from 'context/RocketchatContext';
 
 let chatSocket = null;
 
@@ -40,7 +42,13 @@ const ConfigurationProvider = ({ children }) => {
 
   useEffect(() => {
     if (profile !== undefined) {
-      chatSocket = initialChatSocket(dispatch, profile);
+      const subscribeIds = {
+        loginId: getUniqueId(profile.id),
+        roomMessageId: getUniqueId(profile.id),
+        notifyLoggedId: getUniqueId(profile.id)
+      };
+      dispatch(setChatSubscribeIds(subscribeIds));
+      chatSocket = initialChatSocket(dispatch, subscribeIds, profile.identity, profile.chat_password);
     }
   }, [profile, dispatch]);
 
