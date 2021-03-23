@@ -11,9 +11,9 @@ export const renderStatusBadge = (treatmentPlan) => {
   }
 
   let status = STATUS.planned;
-  if (moment().diff(moment(treatmentPlan.end_date, settings.date_format), 'days', true) > 0) {
+  if (moment().startOf('day').diff(moment(treatmentPlan.end_date, settings.date_format), 'days', true) > 0) {
     status = STATUS.finished;
-  } else if (moment().diff(moment(treatmentPlan.start_date, settings.date_format), 'days', true) >= 0) {
+  } else if (moment().startOf('day').diff(moment(treatmentPlan.start_date, settings.date_format), 'days', true) >= 0) {
     status = STATUS.on_going;
   }
 
