@@ -84,9 +84,7 @@ const CreateExercise = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (language) {
-      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
-    }
+    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
   }, [language, dispatch]);
 
   useEffect(() => {
@@ -381,7 +379,7 @@ const CreateExercise = ({ translate }) => {
                     <Accordion.Collapse eventKey={index + 1}>
                       <Card.Body>
                         <CheckboxTree
-                          nodes={category.children}
+                          nodes={category.children || []}
                           checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
                           expanded={expanded}
                           onCheck={(checked) => handleSetSelectedCategories(category.value, checked)}
