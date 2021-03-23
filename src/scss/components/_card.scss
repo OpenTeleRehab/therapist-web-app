@@ -7,10 +7,14 @@
 
 	.img-fluid {
 		max-width: 100%;
-		height: 177px;
+		height: 157px;
 	}
 	.card-img {
-		height: 177px;
+		height: 157px;
+	}
+
+  	.card-body {
+	  height: 120px;
 	}
 
 	.card-title {
@@ -33,7 +37,7 @@
 .owner-btn {
   top: 0;
   z-index: 1;
-  color: $white;
+  color: $primary;
 }
 
 .favorite-btn {
@@ -45,8 +49,23 @@
   }
 }
 
+.btn-link {
+  color: $primary;
+
+  :hover {
+	color: $secondary;
+  }
+}
+
+a {
+  color: $primary;
+
+  :hover {
+	color: $secondary;
+  }
+}
+
 .top-bar {
-  position: absolute;
   display: flex;
   justify-content: space-between;
   width: 100%;
