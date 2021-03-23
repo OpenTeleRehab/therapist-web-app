@@ -4,13 +4,13 @@ import { withLocalize } from 'react-localize-redux';
 import { Row, Col, Card, Form, Tooltip, OverlayTrigger, Accordion } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { IoPerson } from 'react-icons/io5';
 import Spinner from 'react-bootstrap/Spinner';
 import {
   BsCaretDownFill,
   BsCaretRightFill,
   BsDashSquare,
-  BsSquare
+  BsSquare,
+  BsPerson
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
@@ -239,7 +239,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                         </div>
                         {therapistId === exercise.therapist_id && (
                           <div className="owner-btn">
-                            <IoPerson size={20} />
+                            <BsPerson size={20} />
                           </div>
                         )}
                         {therapistId === exercise.therapist_id && (

@@ -15,7 +15,8 @@ import {
   BsCaretDownFill,
   BsCaretRightFill,
   BsDashSquare,
-  BsSquare
+  BsSquare,
+  BsPerson
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
@@ -35,8 +36,7 @@ import {
   NonFavoriteAction
 } from 'components/ActionIcons';
 import _ from 'lodash';
-import { IoPerson } from 'react-icons/io5/index';
-import * as ROUTES from '../../../variables/routes';
+import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
 
 let timer = null;
@@ -251,7 +251,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                         </div>
                         {therapistId === questionnaire.therapist_id && (
                           <div className="owner-btn">
-                            <IoPerson size={20} />
+                            <BsPerson size={20} />
                           </div>
                         )}
                         {therapistId === questionnaire.therapist_id && (

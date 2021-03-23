@@ -11,8 +11,7 @@ import {
   Button
 } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsX, BsHeart, BsHeartFill } from 'react-icons/bs';
-import { IoPerson } from 'react-icons/io5';
+import { BsSearch, BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
@@ -165,13 +164,13 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
                           {material.is_favorite
-                            ? <BsHeartFill size={25} />
-                            : <BsHeart size={25} />
+                            ? <BsHeartFill size={20} />
+                            : <BsHeart size={20} />
                           }
                         </div>
                         {therapistId === material.therapist_id && (
                           <div className="owner-btn">
-                            <IoPerson size={20} />
+                            <BsPerson size={20} />
                           </div>
                         )}
                         <Form.Check

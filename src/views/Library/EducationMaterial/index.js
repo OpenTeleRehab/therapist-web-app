@@ -15,7 +15,8 @@ import {
   BsCaretDownFill,
   BsCaretRightFill,
   BsDashSquare,
-  BsSquare
+  BsSquare,
+  BsPerson
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
@@ -36,9 +37,8 @@ import {
   FavoriteAction,
   NonFavoriteAction
 } from 'components/ActionIcons';
-import * as ROUTES from '../../../variables/routes';
+import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
-import { IoPerson } from 'react-icons/io5';
 
 let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
@@ -252,7 +252,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                         </div>
                         {therapistId === material.therapist_id && (
                           <div className="owner-btn">
-                            <IoPerson size={20} />
+                            <BsPerson size={20} />
                           </div>
                         )}
                         {therapistId === material.therapist_id && (
