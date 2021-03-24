@@ -32,7 +32,7 @@ const Appointment = ({ translate }) => {
   useEffect(() => {
     if (date && profile) {
       dispatch(getAppointments({
-        now: moment().format('YYYY-MM-DD HH:mm:ss'),
+        now: moment().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         date: moment(date).locale('en').format(settings.date_format),
         selected_date: selectedDate ? moment(selectedDate).locale('en').format(settings.date_format) : null,
         therapist_id: profile.id
@@ -43,8 +43,13 @@ const Appointment = ({ translate }) => {
   useEffect(() => {
     if (languages.length && profile) {
       const language = languages.find(lang => lang.id === profile.language_id);
-      setLocale(language.code);
-      moment.locale(language.code);
+      if (language) {
+        setLocale(language.code);
+        moment.locale(language.code);
+      } else {
+        setLocale('en-us');
+        moment.locale('en-us');
+      }
     }
   }, [languages, profile]);
 
