@@ -19,6 +19,11 @@ const Pagination = ({ pageSize, totalCount, currentPage, setCurrentPage, showMax
     setCurrentPage(page);
   };
 
+  const handlePageSizeChange = e => {
+    setCurrentPage(1);
+    setPageSize(e.target.value);
+  };
+
   recordStart = totalCount <= 0 ? 0 : 1 + (currentPage - 1) * pageSize;
   recordEnd = Math.min(currentPage * pageSize, totalCount);
 
@@ -42,7 +47,7 @@ const Pagination = ({ pageSize, totalCount, currentPage, setCurrentPage, showMax
       </div>
 
       <Form inline className="float-right mr-5">
-        <Form.Control as="select" value={pageSize} onChange={(e) => setPageSize(e.target.value)}>
+        <Form.Control as="select" value={pageSize} onChange={handlePageSizeChange}>
           {
             pageSizes.map(size => (
               <option key={size} value={size}>{size}</option>
