@@ -15,7 +15,7 @@ export const setChatSubscribeIds = (payload) => (dispatch) => {
   dispatch(mutation.setChatSubscribeIdsSuccess(payload));
 };
 
-export const getChatRooms = (therapistId, chatUserId) => async dispatch => {
+export const getChatRooms = (therapistId, chatUserId, roomIds) => async dispatch => {
   const payload = {
     therapist_id: therapistId,
     page_size: 999999,
@@ -26,19 +26,22 @@ export const getChatRooms = (therapistId, chatUserId) => async dispatch => {
     const chatRooms = [];
     data.data.forEach(user => {
       if (user.chat_user_id) {
-        chatRooms.push({
-          rid: `${chatUserId}${user.chat_user_id}`,
-          name: `${user.last_name} ${user.first_name}`,
-          enabled: user.enabled,
-          unread: 0,
-          u: {
-            _id: user.chat_user_id,
-            username: user.identity,
-            status: 'offline'
-          },
-          lastMessage: {},
-          totalMessages: 0
-        });
+        const fIndex = roomIds.findIndex(r => r.includes(user.chat_user_id));
+        if (fIndex > -1) {
+          chatRooms.push({
+            rid: roomIds[fIndex],
+            name: `${user.last_name} ${user.first_name}`,
+            enabled: user.enabled,
+            unread: 0,
+            u: {
+              _id: user.chat_user_id,
+              username: user.identity,
+              status: 'offline'
+            },
+            lastMessage: {},
+            totalMessages: 0
+          });
+        }
       }
     });
     dispatch(mutation.getChatRoomsSuccess(chatRooms));
@@ -81,16 +84,18 @@ export const getLastMessages = (authUserId, roomIds) => async (dispatch, getStat
   const data = await Rocketchat.getLastMessages(roomIds, authUserId, authToken);
   if (data.success) {
     data.ims.forEach(message => {
-      const { rid, msg, _id, ts, u } = message.lastMessage;
-      const fIndex = chatRooms.findIndex(cr => cr.rid === rid);
-      if (fIndex > -1) {
-        chatRooms[fIndex].lastMessage = {
-          _id,
-          text: msg,
-          createdAt: ts,
-          u: { _id: u._id }
-        };
-        chatRooms[fIndex].totalMessages = message.msgs;
+      if (message.lastMessage) {
+        const { rid, msg, _id, ts, u } = message.lastMessage;
+        const fIndex = chatRooms.findIndex(cr => cr.rid === rid);
+        if (fIndex > -1) {
+          chatRooms[fIndex].lastMessage = {
+            _id,
+            text: msg,
+            createdAt: ts,
+            u: { _id: u._id }
+          };
+          chatRooms[fIndex].totalMessages = message.msgs;
+        }
       }
     });
     dispatch(mutation.getLastMessagesSuccess(chatRooms));
