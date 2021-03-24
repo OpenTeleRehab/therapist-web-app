@@ -57,6 +57,11 @@ const CustomTable = ({
     setShowFilter(!showFilter);
   };
 
+  const handlePageSizeChange = value => {
+    setCurrentPage(0);
+    setPageSize(value);
+  };
+
   return (
     <Grid
       rows={rows}
@@ -67,7 +72,7 @@ const CustomTable = ({
         currentPage={currentPage}
         onCurrentPageChange={setCurrentPage}
         pageSize={pageSize}
-        onPageSizeChange={setPageSize}
+        onPageSizeChange={handlePageSizeChange}
       />
       <SortingState
         defaultSorting={defaultSoringColumns}
