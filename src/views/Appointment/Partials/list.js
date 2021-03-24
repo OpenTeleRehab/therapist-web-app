@@ -23,6 +23,10 @@ const AppointmentList = ({ handleEdit }) => {
     }
   }, [appointments]);
 
+  const isPast = (datetime) => {
+    return moment(datetime).isBefore(moment());
+  };
+
   return (
     <ListGroup variant="flush">
       {
@@ -35,12 +39,12 @@ const AppointmentList = ({ handleEdit }) => {
                   return (
                     <div className="d-flex mt-3" key={appointment.id}>
                       <div className="pr-3 mr-3 border-right">
-                        <div>{moment(appointment.start_date).utc().format('hh:mm A')}</div>
-                        <div>{moment(appointment.end_date).utc().format('hh:mm A')}</div>
+                        <div>{moment(appointment.start_date).format('hh:mm A')}</div>
+                        <div>{moment(appointment.end_date).format('hh:mm A')}</div>
                       </div>
                       <span>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</span>
-                      <EditAction className="ml-auto" onClick={() => handleEdit(appointment.id)} />
-                      <DeleteAction className="ml-1" />
+                      <EditAction className="ml-auto" onClick={() => handleEdit(appointment.id)} disabled={isPast(appointment.end_date)} />
+                      <DeleteAction className="ml-1" disabled={isPast(appointment.end_date)} />
                     </div>
                   );
                 })

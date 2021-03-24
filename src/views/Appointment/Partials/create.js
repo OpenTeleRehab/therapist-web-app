@@ -56,9 +56,9 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
     if (editId && appointments) {
       const appointment = appointments.approves.find(item => item.id === editId);
       setPatientId(appointment.patient_id);
-      setDate(moment(appointment.start_date).utc());
-      setFrom(moment(appointment.start_date).utc());
-      setTo(moment(appointment.end_date).utc());
+      setDate(moment(appointment.start_date));
+      setFrom(moment(appointment.start_date));
+      setTo(moment(appointment.end_date));
     }
   }, [editId, appointments]);
 
@@ -73,8 +73,8 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
   }, [date]);
 
   useEffect(() => {
-    if (moment(from, settings.date_format + ' LT', true).isValid()) {
-      setFormattedFrom(moment(from).format('LT'));
+    if (moment(from, settings.date_format + ' hh:mm A', true).isValid()) {
+      setFormattedFrom(moment(from).format('hh:mm A'));
     } else {
       setFormattedFrom('');
     }
@@ -82,8 +82,8 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
   }, [from]);
 
   useEffect(() => {
-    if (moment(to, settings.date_format + ' LT', true).isValid()) {
-      setFormattedTo(moment(to).format('LT'));
+    if (moment(to, settings.date_format + ' hh:mm A', true).isValid()) {
+      setFormattedTo(moment(to).format('hh:mm A'));
     } else {
       setFormattedTo('');
     }
@@ -107,14 +107,14 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
       setErrorDate(false);
     }
 
-    if (formattedFrom === '' || !moment(formattedFrom, 'LT').isValid()) {
+    if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').isValid()) {
       canSave = false;
       setErrorFrom(true);
     } else {
       setErrorFrom(false);
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'LT').isValid() || formattedFrom === formattedTo || to.isBefore(from)) {
+    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || to.isBefore(from)) {
       canSave = false;
       setErrorTo(true);
     } else {
