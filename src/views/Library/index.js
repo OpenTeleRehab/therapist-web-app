@@ -69,7 +69,7 @@ const Library = ({ translate }) => {
         setAllowCreateContent(treatmentPlans.length < settings.maxPresetTreatments);
       } else {
         exerciseService.countTherapistLibraries(therapistId).then(res => {
-          if (res.data) {
+          if (res.data || res.data === 0) {
             setAllowCreateContent(res.data < settings.maxActivities);
           }
         });
