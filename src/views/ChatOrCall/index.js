@@ -22,8 +22,8 @@ const ChatOrCall = ({ translate }) => {
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
-    if (therapist && therapist.chat_user_id) {
-      dispatch(getChatRooms(therapist.id, therapist.chat_user_id));
+    if (therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
+      dispatch(getChatRooms(therapist.id, therapist.chat_user_id, therapist.chat_rooms));
     }
     dispatch(setIsOnChatPage(true));
     return () => {
