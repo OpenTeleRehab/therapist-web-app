@@ -13,19 +13,16 @@ const Navigation = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const chatSocket = useContext(RocketchatContext);
   const { profile } = useSelector((state) => state.auth);
-  const { chatRooms, isConnected, subscribeIds } = useSelector((state) => state.rocketchat);
+  const { chatRooms, isChatConnected, subscribeIds } = useSelector((state) => state.rocketchat);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const handleConfirm = () => {
-    if (isConnected) {
+    if (isChatConnected) {
       unSubscribeEvent(chatSocket, subscribeIds.roomMessageId);
       unSubscribeEvent(chatSocket, subscribeIds.notifyLoggedId);
       chatLogout(chatSocket, subscribeIds.loginId);
-      setTimeout(() => {
-        chatSocket.close();
-      }, 1000);
     }
     if (keycloak.authenticated) {
       keycloak.logout();

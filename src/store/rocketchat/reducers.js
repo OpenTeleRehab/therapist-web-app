@@ -4,13 +4,13 @@ export const rocketchat = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_WEBSOCKET_CONNECTION_SUCCESS': {
       return Object.assign({}, state, {
-        isConnected: action.data
+        isChatConnected: action.data
       });
     }
-    case 'SET_CHAT_AUTH_TOKEN_SUCCESS': {
+    case 'CHAT_USER_LOGIN_SUCCESS': {
       return Object.assign({}, state, {
         authToken: action.data.authToken,
-        authTokenExpiredAt: action.data.authTokenExpiredAt
+        tokenExpiredAt: action.data.tokenExpiredAt
       });
     }
     case 'SET_CHAT_SUBSCRIBE_IDS_SUCCESS': {

@@ -1,6 +1,6 @@
 import {
-  isWebsocketConnected,
-  setChatAuthToken,
+  connectWebsocket,
+  authenticateChatUser,
   getMessagesInRoom,
   prependNewMessage,
   updateChatUserStatus
@@ -17,12 +17,18 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
   const socket = new WebSocket(process.env.REACT_APP_ROCKET_CHAT_WEBSOCKET);
 
   // observer
+  socket.onclose = (e) => {
+    if (e.target.readyState === socket.CLOSED) {
+      dispatch(connectWebsocket(false));
+    }
+  };
   socket.onmessage = (e) => {
     const response = JSON.parse(e.data);
-    const { id, msg, result, error, collection, fields } = response;
+    const { id, result, error, collection, fields } = response;
+    const resMessage = response.msg;
 
     // create connection
-    if (!isConnected && msg === undefined && socket.readyState === 1) {
+    if (!isConnected && resMessage === undefined && socket.readyState === socket.OPEN) {
       isConnected = true;
       const options = {
         msg: 'connect',
@@ -32,12 +38,12 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
       socket.send(JSON.stringify(options));
     }
 
-    if (msg === 'ping') {
+    if (resMessage === 'ping') {
       // Keep connection alive
       socket.send(JSON.stringify({ msg: 'pong' }));
-    } else if (msg === 'connected') {
+    } else if (resMessage === 'connected') {
       // connection success => login
-      dispatch(isWebsocketConnected(true));
+      dispatch(connectWebsocket(true));
       const options = {
         msg: 'method',
         method: 'login',
@@ -53,7 +59,7 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
         ]
       };
       socket.send(JSON.stringify(options));
-    } else if (msg === 'result') {
+    } else if (resMessage === 'result') {
       if (error !== undefined) {
         dispatch(showErrorNotification('toast_title.error_message', `Websocket: ${error.reason}`));
       } else if (id === loginId && result) {
@@ -61,8 +67,8 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
 
         // set auth token
         const { token, tokenExpires } = result;
-        const authTokenExpiredAt = new Date(tokenExpires.$date);
-        dispatch(setChatAuthToken({ authToken: token, authTokenExpiredAt }));
+        const tokenExpiredAt = new Date(tokenExpires.$date);
+        dispatch(authenticateChatUser({ authToken: token, tokenExpiredAt }));
 
         // subscribe chat room message
         subscribeChatRoomMessage(socket, roomMessageId);
@@ -87,7 +93,7 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
         });
         dispatch(getMessagesInRoom(allMessages));
       }
-    } else if (msg === 'changed') {
+    } else if (resMessage === 'changed') {
       if (collection === 'stream-room-messages') {
         // trigger change in chat room
         const { _id, rid, msg, ts, u } = fields.args[0];
@@ -110,6 +116,9 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
           status: USER_STATUS[res[2]]
         };
         dispatch(updateChatUserStatus(data));
+      } else if (resMessage === 'removed' && collection === 'users') {
+        // close connection on logout
+        socket.close();
       }
     }
   };

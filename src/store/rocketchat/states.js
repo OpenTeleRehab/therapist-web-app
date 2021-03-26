@@ -1,10 +1,10 @@
 export const initialState = {
   chatRooms: [],
   messages: [],
-  isConnected: false,
+  isChatConnected: false,
   isOnChatPage: false,
   subscribeIds: undefined,
   authToken: undefined,
-  authTokenExpiredAt: null,
+  tokenExpiredAt: null,
   selectedRoom: undefined
 };

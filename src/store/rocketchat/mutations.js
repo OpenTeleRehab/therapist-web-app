@@ -3,8 +3,8 @@ const setWebsocketConnectionSuccess = (data) => ({
   data
 });
 
-const setChatAuthTokenSuccess = (data) => ({
-  type: 'SET_CHAT_AUTH_TOKEN_SUCCESS',
+const chatUserLoginSuccess = (data) => ({
+  type: 'CHAT_USER_LOGIN_SUCCESS',
   data
 });
 
@@ -77,7 +77,7 @@ const updateChatUserStatusSuccess = (data) => ({
 
 export const mutation = {
   setWebsocketConnectionSuccess,
-  setChatAuthTokenSuccess,
+  chatUserLoginSuccess,
   setChatSubscribeIdsSuccess,
   getChatRoomsSuccess,
   getChatRoomsFail,
