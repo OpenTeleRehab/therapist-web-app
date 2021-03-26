@@ -6,3 +6,9 @@ export const USER_STATUS = {
   ONLINE: 'online',
   OFFLINE: 'offline'
 };
+
+export const CHAT_TYPES = {
+  TEXT: 'text',
+  IMAGE: 'image',
+  VIDEO: 'video'
+};

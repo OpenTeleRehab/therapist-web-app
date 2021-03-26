@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ListGroup, Badge } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { selectRoom } from 'store/rocketchat/actions';
+import { getMessagesForSelectedRoom, selectRoom } from 'store/rocketchat/actions';
 import { formatDate } from 'utils/general';
-import { loadHistoryInRoom } from 'utils/rocketchat';
 import _ from 'lodash';
 
 const ChatRoomList = (
@@ -14,8 +13,7 @@ const ChatRoomList = (
     chatRooms,
     selectedRoom,
     keyword,
-    therapist,
-    socket
+    therapist
   }
 ) => {
   const dispatch = useDispatch();
@@ -34,7 +32,7 @@ const ChatRoomList = (
   const handleSelectRoomToChat = (index) => {
     const selected = roomList[index];
     dispatch(selectRoom(selected));
-    loadHistoryInRoom(socket, selected.rid, therapist.id);
+    dispatch(getMessagesForSelectedRoom(selected.rid, therapist.chat_user_id));
   };
 
   return (
@@ -50,19 +48,19 @@ const ChatRoomList = (
                 active={room.rid === selected.rid}
                 onClick={() => handleSelectRoomToChat(index)}
               >
-                <div className="chat-room">
+                <div className="chat-room-item">
                   <p className="mb-0 d-flex align-items-center">
                     {room.name}
                     {userStatus(room)}
                   </p>
-                  <p className="text-muted text-truncate small mb-0">{lastMessage.text || ''}</p>
+                  <p className="text-muted text-truncate small mb-0">{lastMessage.msg || ''}</p>
                 </div>
                 {room.rid !== selected.rid && (
                   <div className="d-flex flex-column align-items-end">
                     {unread > 0 && (
                       <Badge variant="primary" className="d-flex align-items-center justify-content-center">{unread}</Badge>
                     )}
-                    <p className="text-muted small mb-0">{formatDate(lastMessage.createdAt)}</p>
+                    <p className="text-muted small mb-0">{formatDate(lastMessage._updatedAt)}</p>
                   </div>
                 )}
               </ListGroup.Item>
@@ -84,8 +82,7 @@ ChatRoomList.propTypes = {
   chatRooms: PropTypes.array,
   selectedRoom: PropTypes.object,
   keyword: PropTypes.string,
-  therapist: PropTypes.object,
-  socket: PropTypes.object
+  therapist: PropTypes.object
 };
 
 export default ChatRoomList;

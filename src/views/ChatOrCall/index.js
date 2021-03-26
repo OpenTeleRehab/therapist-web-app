@@ -98,12 +98,11 @@ const ChatOrCall = ({ translate }) => {
                 selectedRoom={selectedRoom}
                 keyword={searchValue}
                 therapist={therapist}
-                socket={chatSocket}
                 userStatus={renderUserStatus}
               />
             </div>
           </Col>
-          <Col lg={9} md={8} sm={7} className="chat-message-wrapper d-flex flex-column">
+          <Col lg={9} md={8} sm={7} className="d-flex flex-column chat-message-panel">
             <ChatPanel
               translate={translate}
               therapist={therapist}

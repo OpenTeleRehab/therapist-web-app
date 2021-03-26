@@ -50,13 +50,17 @@ const updateUnreadSuccess = (data) => ({
   data
 });
 
-const getMessagesInRoomSuccess = (data) => ({
-  type: 'GET_MESSAGES_IN_ROOM_SUCCESS',
+const getMessagesForSelectedRoomSuccess = (data) => ({
+  type: 'GET_MESSAGES_FOR_SELECTED_ROOM_SUCCESS',
   data
 });
 
-const prependNewMessageSuccess = (data) => ({
-  type: 'PREPEND_NEW_MESSAGE_SUCCESS',
+const getMessagesForSelectedRoomFail = () => ({
+  type: 'GET_MESSAGES_FOR_SELECTED_ROOM_FAIL'
+});
+
+const appendNewMessageSuccess = (data) => ({
+  type: 'APPEND_NEW_MESSAGE_SUCCESS',
   data
 });
 
@@ -87,8 +91,9 @@ export const mutation = {
   getLastMessagesFail,
   selectRoomSuccess,
   updateUnreadSuccess,
-  getMessagesInRoomSuccess,
-  prependNewMessageSuccess,
+  getMessagesForSelectedRoomSuccess,
+  getMessagesForSelectedRoomFail,
+  appendNewMessageSuccess,
   updateLastMessageSuccess,
   setIsOnChatPageSuccess,
   updateChatUserStatusSuccess
