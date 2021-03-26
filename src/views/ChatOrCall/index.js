@@ -12,13 +12,13 @@ import {
 import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
 import ChatPanel from 'views/ChatOrCall/Partials/ChatPanel';
 import RocketchatContext from 'context/RocketchatContext';
-import { USER_STATUS_VARIANTS } from 'variables/rocketchat';
+import { USER_STATUS } from 'variables/rocketchat';
 
 const ChatOrCall = ({ translate }) => {
   const dispatch = useDispatch();
   const chatSocket = useContext(RocketchatContext);
   const therapist = useSelector(state => state.auth.profile);
-  const { authToken, chatRooms, messages, selectedRoom, isConnected } = useSelector(state => state.rocketchat);
+  const { authToken, chatRooms, messages, selectedRoom, isChatConnected } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const ChatOrCall = ({ translate }) => {
 
   const getTotalOnlineUsers = () => {
     const onlineStatus = chatRooms.filter(room => {
-      return room.u.status === USER_STATUS_VARIANTS.ONLINE;
+      return room.u.status === USER_STATUS.ONLINE;
     });
     return onlineStatus.length;
   };
@@ -59,7 +59,7 @@ const ChatOrCall = ({ translate }) => {
 
   return (
     <>
-      {!isConnected ? (
+      {!isChatConnected ? (
         <Alert variant="warning" className="justify-content-center text-center py-5">
           <h3 className="mb-0">{translate('chat_message.server_down')}</h3>
         </Alert>

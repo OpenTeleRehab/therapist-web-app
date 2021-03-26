@@ -3,12 +3,12 @@ import { User } from 'services/user';
 import { mutation } from './mutations';
 import { showErrorNotification } from 'store/notification/actions';
 
-export const isWebsocketConnected = (payload) => (dispatch) => {
+export const connectWebsocket = (payload) => (dispatch) => {
   dispatch(mutation.setWebsocketConnectionSuccess(payload));
 };
 
-export const setChatAuthToken = (payload) => (dispatch) => {
-  dispatch(mutation.setChatAuthTokenSuccess(payload));
+export const authenticateChatUser = (payload) => (dispatch) => {
+  dispatch(mutation.chatUserLoginSuccess(payload));
 };
 
 export const setChatSubscribeIds = (payload) => (dispatch) => {
