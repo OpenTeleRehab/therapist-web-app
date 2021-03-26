@@ -24,6 +24,19 @@ axiosInstance.interceptors.request.use(
     if (token) {
       try {
         const tokenRefreshed = await keycloak.updateToken(TOKEN_VALIDITY);
+        if (tokenRefreshed) {
+          axios.put(
+            process.env.REACT_APP_API_BASE_URL + '/user/update-last-access',
+            {},
+            {
+              headers: {
+                [HEADER_ACCEPT]: CONTENT_TYPE_JSON,
+                [HEADER_CONTENT_TYPE]: CONTENT_TYPE_JSON,
+                [HEADER_AUTHORIZATION]: `${AUTHORIZATION_BEARER} ${keycloak.token}`
+              }
+            }
+          );
+        }
         token = tokenRefreshed ? keycloak.token : token;
         config.headers = {
           ...config.headers,
