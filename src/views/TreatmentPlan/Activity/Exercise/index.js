@@ -27,7 +27,7 @@ import {
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
-import ViewExercise from './viewExercise';
+import ViewExercise from 'views/Library/Exercise/view';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import CheckboxTree from 'react-checkbox-tree';
@@ -289,7 +289,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                             )
                           }
                         </div>
-                        <Card.Body>
+                        <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
                               exercise.title.length <= 50
@@ -303,6 +303,11 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                                 )
                             }
                           </Card.Title>
+                          {exercise.sets > 0 && (
+                            <Card.Text>
+                              {translate('exercise.number_of_sets_and_reps', { sets: exercise.sets, reps: exercise.reps })}
+                            </Card.Text>
+                          )}
                         </Card.Body>
                       </div>
                     </Card>
