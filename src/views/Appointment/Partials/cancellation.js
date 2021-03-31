@@ -15,7 +15,7 @@ const Cancellation = () => {
   useEffect(() => {
     if (appointments.cancelRequests) {
       const groupedData = _.chain(appointments.cancelRequests)
-        .groupBy((item) => moment(item.start_date).utc().format('dddd, MMMM DD YYYY'))
+        .groupBy((item) => moment.utc(item.start_date).local().format('dddd, MMMM DD YYYY'))
         .map((value, key) => ({ date: key, cancels: value }))
         .value();
       setCancellations(groupedData);

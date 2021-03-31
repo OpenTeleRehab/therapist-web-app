@@ -14,6 +14,7 @@ import 'moment/min/locales';
 import allLocales from '@fullcalendar/core/locales-all';
 import settings from 'settings';
 import CreateAppointment from './Partials/create';
+import _ from 'lodash';
 
 const Appointment = ({ translate }) => {
   const dispatch = useDispatch();
@@ -32,9 +33,10 @@ const Appointment = ({ translate }) => {
   useEffect(() => {
     if (date && profile) {
       dispatch(getAppointments({
-        now: moment().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+        now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         date: moment(date).locale('en').format(settings.date_format),
-        selected_date: selectedDate ? moment(selectedDate).locale('en').format(settings.date_format) : null,
+        selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+        selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
         therapist_id: profile.id
       }));
     }
@@ -55,7 +57,13 @@ const Appointment = ({ translate }) => {
 
   useEffect(() => {
     if (appointments.calendarData) {
-      const approvedAppointments = appointments.calendarData.map(appointment => {
+      const groupedCalendarData = _.chain(appointments.calendarData)
+        .groupBy((item) =>
+          moment.utc(item.start_date).local().format('YYYY-MM-DD')
+        )
+        .map((value, key) => ({ date: key, total: value.length }))
+        .value();
+      const approvedAppointments = groupedCalendarData.map(appointment => {
         return {
           title: translate('appointment.number_of_appointments', { numberOfAppointments: appointment.total }),
           date: appointment.date
@@ -92,8 +100,9 @@ const Appointment = ({ translate }) => {
     setShow(true);
   };
 
-  const handleApprove = (id) => {
-    setSelectedPatientId(id);
+  const handleApprove = (id, patientId) => {
+    setSelectedPatientId(patientId);
+    setEditId(id);
     setShow(true);
   };
 
@@ -138,8 +147,7 @@ const Appointment = ({ translate }) => {
             handleClose={handleClose}
             show={show}
             editId={editId}
-            filterDate={moment(date).locale('en').format(settings.date_format)}
-            selectedDate={selectedDate ? moment(selectedDate).locale('en').format(settings.date_format) : null}
+            selectedDate={selectedDate}
             selectedPatientId={selectedPatientId}
           />
         }

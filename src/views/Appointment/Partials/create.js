@@ -10,7 +10,7 @@ import moment from 'moment';
 import settings from 'settings';
 import { createAppointment, updateAppointment } from 'store/appointment/actions';
 
-const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDate, selectedDate }) => {
+const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedDate }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const { profile } = useSelector((state) => state.auth);
@@ -42,25 +42,29 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
 
   useEffect(() => {
     if (!editId && selectedDate) {
-      setDate(moment(selectedDate, settings.date_format));
+      setDate(selectedDate);
     }
   }, [selectedDate, editId]);
 
   useEffect(() => {
-    if (!editId && selectedPatientId) {
-      setPatientId(selectedPatientId);
-    }
-  }, [editId, selectedPatientId]);
-
-  useEffect(() => {
     if (editId && appointments) {
-      const appointment = appointments.approves.find(item => item.id === editId);
-      setPatientId(appointment.patient_id);
-      setDate(moment(appointment.start_date));
-      setFrom(moment(appointment.start_date));
-      setTo(moment(appointment.end_date));
+      let appointment = null;
+      if (selectedPatientId) {
+        appointment = appointments.requests.find(
+          item => item.id === editId);
+      } else {
+        appointment = appointments.approves.find(
+          item => item.id === editId);
+      }
+
+      if (appointment) {
+        setPatientId(appointment.patient_id);
+        setDate(moment.utc(appointment.start_date).local());
+        setFrom(moment.utc(appointment.start_date).local());
+        setTo(moment.utc(appointment.end_date).local());
+      }
     }
-  }, [editId, appointments]);
+  }, [editId, appointments, selectedPatientId]);
 
   useEffect(() => {
     const yesterday = moment().subtract(1, 'day');
@@ -114,7 +118,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
       setErrorFrom(false);
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || to.isBefore(from)) {
+    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || moment(formattedTo).isBefore(moment(formattedFrom))) {
       canSave = false;
       setErrorTo(true);
     } else {
@@ -125,16 +129,16 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, filterDat
       const data = {
         patient_id: patientId,
         therapist_id: profile.id,
-        date: formattedDate,
-        from: formattedFrom,
-        to: formattedTo
+        from: moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().format('YYYY-MM-DD HH:mm:ss'),
+        to: moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().format('YYYY-MM-DD HH:mm:ss')
       };
 
       const filter = {
-        now: moment().format('YYYY-MM-DD HH:mm:ss'),
-        date: filterDate,
-        therapist_id: profile.id,
-        selected_date: selectedDate
+        now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+        date: moment(date).locale('en').format(settings.date_format),
+        selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+        selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+        therapist_id: profile.id
       };
 
       if (editId) {
@@ -269,7 +273,6 @@ CreatePatient.propTypes = {
   handleClose: PropTypes.func,
   selectedPatientId: PropTypes.number,
   editId: PropTypes.number,
-  filterDate: PropTypes.string,
   selectedDate: PropTypes.string
 };
 

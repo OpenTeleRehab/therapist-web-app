@@ -16,7 +16,7 @@ const AppointmentList = ({ handleEdit }) => {
   useEffect(() => {
     if (appointments.approves) {
       const groupedData = _.chain(appointments.approves)
-        .groupBy((item) => moment(item.start_date).utc().format('dddd, MMMM DD YYYY'))
+        .groupBy((item) => moment.utc(item.start_date).local().format('dddd, MMMM DD YYYY'))
         .map((value, key) => ({ date: key, approves: value }))
         .value();
       setApprovedAppointments(groupedData);
@@ -39,8 +39,8 @@ const AppointmentList = ({ handleEdit }) => {
                   return (
                     <div className="d-flex mt-3" key={appointment.id}>
                       <div className="pr-3 mr-3 border-right">
-                        <div>{moment(appointment.start_date).format('hh:mm A')}</div>
-                        <div>{moment(appointment.end_date).format('hh:mm A')}</div>
+                        <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
+                        <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
                       <span>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</span>
                       <EditAction className="ml-auto" onClick={() => handleEdit(appointment.id)} disabled={isPast(appointment.end_date)} />
