@@ -32,13 +32,14 @@ const Appointment = ({ translate }) => {
 
   useEffect(() => {
     if (date && profile) {
-      dispatch(getAppointments({
+      const filter = {
         now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         date: moment(date).locale('en').format(settings.date_format),
         selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
         selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
         therapist_id: profile.id
-      }));
+      };
+      dispatch(getAppointments(filter));
     }
   }, [date, selectedDate, profile, dispatch]);
 
@@ -179,7 +180,7 @@ const Appointment = ({ translate }) => {
                 }
               </div>
             }>
-            <Cancellation />
+            <Cancellation selectedDate={selectedDate} date={date}/>
           </Tab>
         </Tabs>
       </Col>
