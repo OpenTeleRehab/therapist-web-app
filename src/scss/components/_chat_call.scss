@@ -46,6 +46,12 @@
       }
     }
   }
+  &-room-item {
+    width: 65%;
+    @include media-breakpoint-up(md) {
+      width: 80%;
+    }
+  }
   &-user-status {
     margin-left: 3px;
     width: 10px;
@@ -69,20 +75,63 @@
       background-color: $yellow;
     }
   }
-  &-room {
-    width: 65%;
-    @include media-breakpoint-up(md) {
-      width: 80%;
+  &-message {
+    &-panel {
+      background-color: theme-color('light');
+    }
+    &-header {
+      border-bottom: 1px solid $gray-500;
+      padding: 15px 0;
+    }
+    &-list {
+      overflow-y: auto;
+    }
+    &-day {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-bold;
+      color: $gray-700;
+    }
+    &-bubble {
+      padding: 10px;
+      border-radius: 0.9375rem;
+      min-height: 20px;
+      &.left {
+        background-color: $white;
+        margin-right: 3.75rem;
+      }
+      &.right {
+        background-color: $blue;
+        margin-left: 3.75rem;
+        justify-content: flex-end;
+        color: $white;
+      }
+    }
+    &-info {
+      font-size: 12px;
     }
   }
-  &-message-wrapper {
-    background-color: theme-color('light');
+  &-input-toolbar {
+    position: relative;
+    .form-control {
+      min-height: 50px;
+      padding: 13px 48px 13px 15px;
+      line-height: 22px;
+      overflow-y: hidden;
+      resize: none;
+      border-color: $light;
+      border-radius: $border-radius-lg;
+      &:focus {
+        box-shadow: none;
+        border-color: $light;
+      }
+    }
   }
-  &-selected-user {
-    border-bottom: 1px solid $gray-500;
-    padding: 15px 0;
-  }
-  &-message-panel {
-    height: calc(100vh - 150px);
+  &-send-btn {
+    position: absolute;
+    right: 13px;
+    bottom: 12px;
+    &:focus {
+      box-shadow: none;
+    }
   }
 }

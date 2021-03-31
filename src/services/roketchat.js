@@ -38,7 +38,21 @@ const getLastMessages = (chatRooms, authUserId, authToken) => {
     });
 };
 
+const getMessagesInRoom = (roomId, authUserId, authToken) => {
+  const instance = createInstance(authUserId, authToken);
+  const fields = JSON.stringify({ msg: 1, _updatedAt: 1, u: 1, unread: 1 });
+  return instance.get(`/im.messages?roomId=${roomId}&fields=${fields}&count=999999`)
+    .then(
+      res => {
+        return res.data;
+      }
+    ).catch(e => {
+      return e.response.data;
+    });
+};
+
 export const Rocketchat = {
   getUserStatus,
-  getLastMessages
+  getLastMessages,
+  getMessagesInRoom
 };

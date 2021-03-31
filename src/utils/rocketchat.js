@@ -1,8 +1,8 @@
+// @see https://developer.rocket.chat/api/realtime-api
 import {
   connectWebsocket,
   authenticateChatUser,
-  getMessagesInRoom,
-  prependNewMessage,
+  appendNewMessage,
   updateChatUserStatus
 } from 'store/rocketchat/actions';
 import { showErrorNotification } from 'store/notification/actions';
@@ -77,37 +77,22 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
         setTimeout(() => {
           subscribeUserLoggedStatus(socket, notifyLoggedId);
         }, 1000);
-      } else if (result && result.messages) {
-        // load messages in a room
-        const allMessages = [];
-        result.messages.forEach(message => {
-          const { _id, msg, ts, u } = message;
-          allMessages.push({
-            _id,
-            text: msg,
-            createdAt: new Date(ts.$date),
-            user: { _id: u._id },
-            received: true,
-            pending: false
-          });
-        });
-        dispatch(getMessagesInRoom(allMessages));
       }
     } else if (resMessage === 'changed') {
       if (collection === 'stream-room-messages') {
         // trigger change in chat room
-        const { _id, rid, msg, ts, u } = fields.args[0];
+        const { _id, rid, msg, _updatedAt, u } = fields.args[0];
         const newMessage = {
           _id,
           rid,
-          text: msg,
-          createdAt: new Date(ts.$date),
-          user: { _id: u._id },
+          msg,
+          _updatedAt: new Date(_updatedAt.$date),
+          u: { _id: u._id },
           received: true,
           pending: false,
           unread: 0
         };
-        dispatch(prependNewMessage(newMessage));
+        dispatch(appendNewMessage(newMessage));
       } else if (collection === 'stream-notify-logged') {
         // trigger user logged status
         const res = fields.args[0];
@@ -126,34 +111,23 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
   return socket;
 };
 
-// TODO set specific iterm per page on first load with infinite scroll
-export const loadHistoryInRoom = (socket, roomId, therapistId) => {
-  const options = {
-    msg: 'method',
-    method: 'loadHistory',
-    id: getUniqueId(therapistId),
-    params: [
-      roomId,
-      null,
-      999999,
-      { $date: new Date().getTime() }
-    ]
-  };
-  socket.send(JSON.stringify(options));
-};
-
 export const sendNewMessage = (socket, newMessage, therapistId) => {
   const options = {
     msg: 'method',
     method: 'sendMessage',
     id: getUniqueId(therapistId),
-    params: [
-      {
-        rid: newMessage.rid,
-        _id: newMessage._id,
-        msg: newMessage.text
-      }
-    ]
+    params: [{ ...newMessage }]
+  };
+  socket.send(JSON.stringify(options));
+};
+
+// @TODO look like the method is not working
+export const markMessagesAsRead = (socket, roomId, therapistId) => {
+  const options = {
+    msg: 'method',
+    method: 'readMessages',
+    id: getUniqueId(therapistId),
+    params: [roomId]
   };
   socket.send(JSON.stringify(options));
 };

@@ -28,14 +28,9 @@ export const rocketchat = (state = initialState, action) => {
         selectedRoom: action.data
       });
     }
-    case 'GET_MESSAGES_IN_ROOM_SUCCESS': {
+    case 'GET_MESSAGES_FOR_SELECTED_ROOM_SUCCESS': {
       return Object.assign({}, state, {
         messages: action.data
-      });
-    }
-    case 'PREPEND_NEW_MESSAGE_SUCCESS': {
-      return Object.assign({}, state, {
-        messages: [action.data, ...state.messages]
       });
     }
     case 'SET_IS_ON_CHAT_PAGE_SUCCESS': {

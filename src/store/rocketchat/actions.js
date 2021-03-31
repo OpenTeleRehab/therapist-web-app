@@ -85,13 +85,13 @@ export const getLastMessages = (authUserId, roomIds) => async (dispatch, getStat
   if (data.success) {
     data.ims.forEach(message => {
       if (message.lastMessage) {
-        const { rid, msg, _id, ts, u } = message.lastMessage;
+        const { _id, _updatedAt, rid, msg, u } = message.lastMessage;
         const fIndex = chatRooms.findIndex(cr => cr.rid === rid);
         if (fIndex > -1) {
           chatRooms[fIndex].lastMessage = {
             _id,
-            text: msg,
-            createdAt: ts,
+            msg,
+            _updatedAt,
             u: { _id: u._id }
           };
           chatRooms[fIndex].totalMessages = message.msgs;
@@ -107,8 +107,18 @@ export const getLastMessages = (authUserId, roomIds) => async (dispatch, getStat
   }
 };
 
-export const getMessagesInRoom = (payload) => async (dispatch) => {
-  dispatch(mutation.getMessagesInRoomSuccess(payload));
+export const getMessagesForSelectedRoom = (roomId, authUserId) => async (dispatch, getState) => {
+  const { authToken } = getState().rocketchat;
+  const data = await Rocketchat.getMessagesInRoom(roomId, authUserId, authToken);
+  if (data.success) {
+    const reversedMessages = data.messages.reverse();
+    dispatch(mutation.getMessagesForSelectedRoomSuccess(reversedMessages));
+    return true;
+  } else {
+    dispatch(mutation.getMessagesForSelectedRoomFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+    return false;
+  }
 };
 
 export const selectRoom = (payload) => (dispatch, getState) => {
@@ -123,14 +133,15 @@ export const selectRoom = (payload) => (dispatch, getState) => {
   }
 };
 
-export const prependNewMessage = (payload) => (dispatch, getState) => {
+export const appendNewMessage = (payload) => (dispatch, getState) => {
   const { messages, chatRooms, selectedRoom } = getState().rocketchat;
   let currentRoom = false;
   if (selectedRoom !== undefined && selectedRoom.rid === payload.rid) {
     currentRoom = true;
     const fIndex = messages.findIndex(msg => msg._id === payload._id);
     if (fIndex === -1) {
-      dispatch(mutation.prependNewMessageSuccess(payload));
+      messages.push(payload);
+      dispatch(mutation.appendNewMessageSuccess(messages));
     }
   }
   const fIndex = chatRooms.findIndex(cr => cr.rid === payload.rid);
