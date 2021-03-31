@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { Row, Col, Card, Form, Tooltip, OverlayTrigger, Accordion } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
 import {
   BsCaretDownFill,
@@ -29,13 +29,11 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 let timer = null;
 const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const { loading, exercises, filters } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
-  const [id, setId] = useState(null);
-  const [showView, setShowView] = useState(false);
+  const [previewExercise, setPreviewExercise] = useState(null);
   const { categoryTreeData } = useSelector((state) => state.category);
 
   const [pageSize, setPageSize] = useState(8);
@@ -122,21 +120,12 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
   };
 
   const handleView = (id) => {
-    setId(id);
-    setShowView(true);
+    const exercise = exercises.find(exercise => exercise.id === id);
+    setPreviewExercise(exercise);
   };
 
   const handleViewClose = () => {
-    setId('');
-    setShowView(false);
-  };
-
-  const handleEdit = (id) => {
-    history.push(ROUTES.EXERCISE_EDIT.replace(':id', id));
-  };
-
-  const handleCopy = (id) => {
-    history.push(ROUTES.EXERCISE_COPY.replace(':id', id));
+    setPreviewExercise(null);
   };
 
   return (
@@ -248,12 +237,12 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                         )}
                         {therapistId === exercise.therapist_id && (
                           <div className="edit-btn">
-                            <EditAction onClick={() => handleEdit(exercise.id)} />
+                            <EditAction as={Link} to={ROUTES.EXERCISE_EDIT.replace(':id', exercise.id)} />
                           </div>
                         )}
                         {!exercise.therapist_id && allowCreateContent && (
                           <div className="edit-btn">
-                            <CopyAction onClick={() => handleCopy(exercise.id)} />
+                            <CopyAction as={Link} to={ROUTES.EXERCISE_COPY.replace(':id', exercise.id)} />
                           </div>
                         )}
                       </div>
@@ -279,7 +268,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                             )
                           }
                         </div>
-                        <Card.Body>
+                        <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
                               exercise.title.length <= 50
@@ -293,6 +282,11 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                                 )
                             }
                           </Card.Title>
+                          {exercise.sets > 0 && (
+                            <Card.Text>
+                              {translate('exercise.number_of_sets_and_reps', { sets: exercise.sets, reps: exercise.reps })}
+                            </Card.Text>
+                          )}
                         </Card.Body>
                       </div>
                     </Card>
@@ -314,7 +308,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
         </Col>
       </Row>
-      {showView && <ViewExercise showView={showView} handleViewClose={handleViewClose} id={id} />}
+      {previewExercise && <ViewExercise showView handleViewClose={handleViewClose} exercise={previewExercise} />}
     </>
   );
 };

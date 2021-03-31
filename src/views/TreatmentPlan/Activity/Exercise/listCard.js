@@ -10,9 +10,9 @@ import {
 
 import { Exercise } from 'services/exercise';
 import { BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
-import ViewExercise from './viewExercise';
+import ViewExercise from 'views/Library/Exercise/view';
 
-const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
+const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
   const [exercises, setExercises] = useState([]);
   const [ids] = exerciseIds;
   const [exercise, setExercise] = useState([]);
@@ -95,7 +95,7 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
                   )
                 }
               </div>
-              <Card.Body>
+              <Card.Body className="d-flex flex-column justify-content-between">
                 <Card.Title>
                   {
                     exercise.title.length <= 50
@@ -109,6 +109,11 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
                       )
                   }
                 </Card.Title>
+                {exercise.sets > 0 && (
+                  <Card.Text>
+                    {translate('exercise.number_of_sets_and_reps', { sets: exercise.sets, reps: exercise.reps })}
+                  </Card.Text>
+                )}
               </Card.Body>
             </div>
           </Card>
@@ -120,6 +125,7 @@ const ListExerciseCard = ({ exerciseIds, exerciseObjs, onSelectionRemove, readOn
 };
 
 ListExerciseCard.propTypes = {
+  translate: PropTypes.func,
   exerciseIds: PropTypes.array,
   exerciseObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
