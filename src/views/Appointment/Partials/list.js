@@ -24,7 +24,7 @@ const AppointmentList = ({ handleEdit }) => {
   }, [appointments]);
 
   const isPast = (datetime) => {
-    return moment(datetime).isBefore(moment());
+    return datetime.isBefore(moment());
   };
 
   return (
@@ -43,8 +43,8 @@ const AppointmentList = ({ handleEdit }) => {
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
                       <span>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</span>
-                      <EditAction className="ml-auto" onClick={() => handleEdit(appointment.id)} disabled={isPast(appointment.end_date)} />
-                      <DeleteAction className="ml-1" disabled={isPast(appointment.end_date)} />
+                      <EditAction className="ml-auto" onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
+                      <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} />
                     </div>
                   );
                 })

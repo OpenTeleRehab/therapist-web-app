@@ -4,3 +4,4 @@ export * from './ViewAction';
 export * from './ApproveAction';
 export * from './FavoriteAction';
 export * from './CopyAction';
+export * from './CancelAction';

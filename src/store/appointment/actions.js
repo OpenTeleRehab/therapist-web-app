@@ -45,3 +45,33 @@ export const updateAppointment = (id, payload, filter) => async (dispatch) => {
     return false;
   }
 };
+
+export const updateAppointmentStatus = (id, payload, filter) => async (dispatch) => {
+  dispatch(mutation.updateAppointmentStatusRequest());
+  const data = await Appointment.updateAppointmentStatus(id, payload);
+  if (data.success) {
+    dispatch(mutation.updateAppointmentStatusSuccess());
+    dispatch(getAppointments(filter));
+    dispatch(showSuccessNotification('toast_title.edit_appointment', data.message));
+    return true;
+  } else {
+    dispatch(mutation.updateAppointmentStatusFail());
+    dispatch(showErrorNotification('toast_title.edit_appointment', data.message));
+    return false;
+  }
+};
+
+export const deleteAppointment = (id, filter) => async (dispatch, getState) => {
+  dispatch(mutation.deleteAppointmentRequest());
+  const data = await Appointment.deleteAppointment(id);
+  if (data.success) {
+    dispatch(mutation.deleteAppointmentSuccess());
+    dispatch(getAppointments(filter));
+    dispatch(showSuccessNotification('toast_title.delete_appointment', data.message));
+    return true;
+  } else {
+    dispatch(mutation.deleteAppointmentFail());
+    dispatch(showErrorNotification('toast_title.delete_appointment', data.message));
+    return false;
+  }
+};

@@ -36,8 +36,34 @@ const updateAppointment = (id, payload) => {
     });
 };
 
+const updateAppointmentStatus = (id, payload) => {
+  return axios.post(`/appointment/updateStatus/${id}`, payload)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
+const deleteAppointment = id => {
+  return axios.delete(`/appointment/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Appointment = {
   getAppointments,
   createAppointment,
-  updateAppointment
+  updateAppointment,
+  updateAppointmentStatus,
+  deleteAppointment
 };

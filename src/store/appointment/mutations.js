@@ -35,6 +35,31 @@ const updateAppointmentFail = () => ({
   type: 'UPDATE_APPOINTMENT_FAIL'
 });
 
+const updateAppointmentStatusRequest = () => ({
+  type: 'UPDATE_APPOINTMENT_STATUS_REQUEST'
+});
+
+const updateAppointmentStatusSuccess = () => ({
+  type: 'UPDATE_APPOINTMENT_STATUS_SUCCESS'
+});
+
+const updateAppointmentStatusFail = () => ({
+  type: 'UPDATE_APPOINTMENT_STATUS_FAIL'
+});
+
+const deleteAppointmentRequest = () => ({
+  type: 'DELETE_APPOINTMENT_REQUEST'
+});
+
+const deleteAppointmentSuccess = (data) => ({
+  type: 'DELETE_APPOINTMENT_SUCCESS',
+  data
+});
+
+const deleteAppointmentFail = () => ({
+  type: 'DELETE_APPOINTMENT_FAIL'
+});
+
 export const mutation = {
   getAppointmentsFail,
   getAppointmentsRequest,
@@ -44,5 +69,11 @@ export const mutation = {
   createAppointmentFail,
   updateAppointmentRequest,
   updateAppointmentSuccess,
-  updateAppointmentFail
+  updateAppointmentFail,
+  updateAppointmentStatusRequest,
+  updateAppointmentStatusSuccess,
+  updateAppointmentStatusFail,
+  deleteAppointmentRequest,
+  deleteAppointmentSuccess,
+  deleteAppointmentFail
 };
