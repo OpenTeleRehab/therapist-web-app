@@ -156,7 +156,7 @@ const Appointment = ({ translate }) => {
       <Col sm={12} xl={5}>
         <Tabs defaultActiveKey="list" id="uncontrolled-tab-example">
           <Tab eventKey="list" title={translate('appointment.appointment_list')}>
-            <List handleEdit={handleEdit} />
+            <List handleEdit={handleEdit} selectedDate={selectedDate} date={date} />
           </Tab>
           <Tab
             eventKey="request"
