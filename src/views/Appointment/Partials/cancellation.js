@@ -9,6 +9,7 @@ import 'moment/min/locales';
 import PropTypes from 'prop-types';
 
 import Dialog from 'components/Dialog';
+import { APPOINTMENT_STATUS } from 'variables/appointment';
 import settings from 'settings';
 import { updateAppointmentStatus, deleteAppointment } from 'store/appointment/actions';
 
@@ -20,14 +21,12 @@ const Cancellation = ({ selectedDate, date }) => {
   const { appointments } = useSelector((state) => state.appointment);
   const [cancellations, setCancellations] = useState([]);
   const [id, setId] = useState('');
+  const [showSwitchStatusDialog, setShowSwitchStatusDialog] = useState(false);
+  const [showDeleteAppointmentDialog, setShowDeleteAppointmentDialog] = useState(false);
   const [formFields, setFormFields] = useState({
     status: ''
   });
 
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showSwitchStatusDialog, setShowSwitchStatusDialog] = useState(false);
-  const [messageTitle, setMessageTitle] = useState('');
-  const [messageContent, setMessageContent] = useState('');
   useEffect(() => {
     if (appointments.cancelRequests) {
       const groupedData = _.chain(appointments.cancelRequests)
@@ -38,22 +37,15 @@ const Cancellation = ({ selectedDate, date }) => {
     }
   }, [appointments]);
 
-  const handleSwitchStatus = (id, status, action) => {
-    setId(id);
-    setFormFields({ ...formFields, status: status });
-    setShowSwitchStatusDialog(true);
-    if (action === 'cancel') {
-      setMessageContent(translate('appointment.cancel.message'));
-      setMessageTitle(translate('appointment.cancel'));
-    } else {
-      setMessageContent(translate('appointment.approve.message'));
-      setMessageTitle('appointment.approve');
-    }
-  };
-
   const handleSwitchStatusDialogClose = () => {
     setId(null);
     setShowSwitchStatusDialog(false);
+  };
+
+  const handleSwitchStatus = (id, status) => {
+    setId(id);
+    setFormFields({ ...formFields, status: status });
+    setShowSwitchStatusDialog(true);
   };
 
   const handleSwitchStatusDialogConfirm = () => {
@@ -71,14 +63,14 @@ const Cancellation = ({ selectedDate, date }) => {
     });
   };
 
-  const handleDelete = (id) => {
+  const handleDeleteAppointment = (id) => {
     setId(id);
-    setShowDeleteDialog(true);
+    setShowDeleteAppointmentDialog(true);
   };
 
   const handleDeleteDialogClose = () => {
     setId(null);
-    setShowDeleteDialog(false);
+    setShowDeleteAppointmentDialog(false);
   };
 
   const handleDeleteDialogConfirm = () => {
@@ -113,8 +105,8 @@ const Cancellation = ({ selectedDate, date }) => {
                           <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                         </div>
                         <span>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</span>
-                        <ApproveAction className="ml-auto" onClick={() => handleDelete(appointment.id)} />
-                        <CancelAction className="ml-1" onClick={() => handleSwitchStatus(appointment.id, 'approved', 'cancel')} />
+                        <ApproveAction className="ml-auto" onClick={() => handleDeleteAppointment(appointment.id)} />
+                        <CancelAction className="ml-1" onClick={() => handleSwitchStatus(appointment.id, APPOINTMENT_STATUS.approved)} />
                       </div>
                     );
                   })
@@ -126,23 +118,23 @@ const Cancellation = ({ selectedDate, date }) => {
       </ListGroup>
       <Dialog
         show={showSwitchStatusDialog}
-        title={messageTitle}
+        title={translate('appointment.cancel')}
         cancelLabel={translate('common.no')}
         onCancel={handleSwitchStatusDialogClose}
         confirmLabel={translate('common.yes')}
         onConfirm={handleSwitchStatusDialogConfirm}
       >
-        <p>{messageContent}</p>
+        <p>{translate('appointment.cancel.message')}</p>
       </Dialog>
       <Dialog
-        show={showDeleteDialog}
-        title={translate('appointment.delete.title')}
+        show={showDeleteAppointmentDialog}
+        title={translate('appointment.accept.cancel.title')}
         cancelLabel={translate('common.no')}
         onCancel={handleDeleteDialogClose}
         confirmLabel={translate('common.yes')}
         onConfirm={handleDeleteDialogConfirm}
       >
-        <p>{translate('appointment.delete.content')}</p>
+        <p>{translate('appointment.accept.cancel.content')}</p>
       </Dialog>
     </>
   );
@@ -150,7 +142,8 @@ const Cancellation = ({ selectedDate, date }) => {
 
 Cancellation.propTypes = {
   selectedDate: PropTypes.string,
-  date: PropTypes.string
+  date: PropTypes.string,
+  handleSwitchStatus: PropTypes.func
 };
 
 export default Cancellation;
