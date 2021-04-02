@@ -18,3 +18,11 @@ const AgeCalculation = (value, translate) => {
 };
 
 export default AgeCalculation;
+
+export const AgeInYear = (value) => {
+  var today = new Date();
+  var birthDate = new Date(value);
+  var year = today.getFullYear() - birthDate.getFullYear();
+
+  return year;
+};
