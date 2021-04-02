@@ -168,7 +168,7 @@ const Appointment = ({ translate }) => {
                 }
               </div>
             }>
-            <Request handleApprove={handleApprove} />
+            <Request handleApprove={handleApprove} selectedDate={selectedDate} date={date} />
           </Tab>
           <Tab
             eventKey="cancel"
@@ -180,7 +180,7 @@ const Appointment = ({ translate }) => {
                 }
               </div>
             }>
-            <Cancellation selectedDate={selectedDate} date={date}/>
+            <Cancellation selectedDate={selectedDate} date={date} />
           </Tab>
         </Tabs>
       </Col>
