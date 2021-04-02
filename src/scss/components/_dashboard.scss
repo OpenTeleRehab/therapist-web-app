@@ -1,0 +1,22 @@
+.dashboard-top-card {
+	background-color: $blue-light-2;
+	.card-number {
+		color: $blue;
+	}
+	.card-text {
+		color: $black;
+	}
+}
+
+.top-card-container {
+	margin-bottom: 25px;
+}
+
+.chart-header {
+	background-color: $blue-light-2;
+}
+.card-text-center {
+	text-align: center;
+	color: $black;
+	font-size: 20px;
+}
