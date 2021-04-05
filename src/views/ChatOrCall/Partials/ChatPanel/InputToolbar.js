@@ -2,15 +2,25 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Form } from 'react-bootstrap';
 import { MdSend } from 'react-icons/md';
+import { ImAttachment } from 'react-icons/im';
+import { toMB, isValidFileSize } from 'utils/file';
+import AttachmentDialog from './AttachmentDialog';
+import { useDispatch } from 'react-redux';
+import { postAttachmentMessage } from 'store/rocketchat/actions';
+import { showErrorNotification } from 'store/notification/actions';
+import settings from 'settings';
 
 const INPUT_MIN_HEIGHT = 50;
 
 const InputToolbar = (props) => {
+  const dispatch = useDispatch();
   const textAreaRef = useRef(null);
   const [parentHeight, setParentHeight] = useState(INPUT_MIN_HEIGHT);
   const [textAreaHeight, setTextAreaHeight] = useState(INPUT_MIN_HEIGHT);
   const [enterKeyIsPressed, setEnterKeyIsPressed] = useState(false);
   const [text, setText] = useState('');
+  const [attachment, setAttachment] = useState(null);
+  const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
     if (textAreaRef && textAreaRef.current) {
@@ -57,30 +67,94 @@ const InputToolbar = (props) => {
     props.onSend(text);
   };
 
+  const onAttachmentChangeHandler = (e) => {
+    const file = e.target.files[0];
+    const fileSize = toMB(file.size).toFixed(2);
+    const isValidSize = isValidFileSize(fileSize);
+    if (!isValidSize) {
+      dispatch(showErrorNotification(
+        'toast_title.error_message',
+        props.translate('common.error_message_invalid_file_size', { size: settings.fileMaxUploadSize }))
+      );
+      return false;
+    }
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setAttachment({
+        url: reader.result,
+        type: file.type,
+        caption: '',
+        file
+      });
+      setShowDialog(true);
+    };
+  };
+
+  const onCaptionChangeHandler = (e) => {
+    setAttachment({ ...attachment, caption: e.target.value.trimLeft() });
+  };
+
+  const onCancelSendAttachment = () => {
+    setShowDialog(false);
+    setAttachment(null);
+  };
+
+  const onConfirmSendAttachment = () => {
+    dispatch(postAttachmentMessage(attachment));
+    setShowDialog(false);
+    setAttachment(null);
+  };
+
   return (
-    <Form.Group className="chat-input-toolbar mt-2 mb-0" style={{ minHeight: parentHeight }}>
-      <Form.Control
-        name="chatText"
-        value={text}
-        ref={textAreaRef}
-        as="textarea"
-        rows={1}
-        onChange={(e) => onChangeHandler(e)}
-        onKeyPress={(e) => onKeyPressHandler(e)}
-        placeholder={props.placeholder}
-        style={{ height: textAreaHeight }}
-      />
-      {text.length > 0 && (
-        <Button variant="" className="chat-send-btn p-0" onClick={() => onSendHandler()}>
-          <MdSend size={22} color="#0077C8" />
+    <>
+      <Form.Group className="d-flex align-items-end chat-input-toolbar" style={{ minHeight: parentHeight }}>
+        <div className="position-relative chat-composer">
+          <Form.Control
+            name="chatText"
+            value={text}
+            ref={textAreaRef}
+            as="textarea"
+            rows={1}
+            onChange={(e) => onChangeHandler(e)}
+            onKeyPress={(e) => onKeyPressHandler(e)}
+            placeholder={props.translate('placeholder.type.message')}
+            style={{ height: textAreaHeight }}
+          />
+          {text.length > 0 && (
+            <Button variant="" className="chat-send-btn p-0" onClick={() => onSendHandler()}>
+              <MdSend size={22} color="#0077C8" />
+            </Button>
+          )}
+        </div>
+        <Button variant="" className="chat-add-attachment-btn position-relative p-0">
+          <input
+            type="file"
+            name="attachments"
+            className="position-absolute upload-btn"
+            accept="video/*, image/*"
+            onChange={(e) => onAttachmentChangeHandler(e)}
+          />
+          <ImAttachment size={20} color="#858585" />
+          <span className="d-none d-md-block">{props.translate('common.attach_file')}</span>
         </Button>
+      </Form.Group>
+      {showDialog && (
+        <AttachmentDialog
+          translate={props.translate}
+          show={showDialog}
+          attachment={attachment}
+          onCaptionChanged={onCaptionChangeHandler}
+          onCancel={onCancelSendAttachment}
+          onConfirm={onConfirmSendAttachment}
+        />
       )}
-    </Form.Group>
+    </>
   );
 };
 
 InputToolbar.propTypes = {
-  placeholder: PropTypes.string,
+  translate: PropTypes.func,
   onSend: PropTypes.func,
   onInputSizeChanged: PropTypes.func
 };

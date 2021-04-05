@@ -1,12 +1,13 @@
 // @see https://developer.rocket.chat/api/realtime-api
 import {
-  connectWebsocket,
-  authenticateChatUser,
   appendNewMessage,
+  authenticateChatUser,
+  connectWebsocket,
+  getMessagesForSelectedRoom,
   updateChatUserStatus
 } from 'store/rocketchat/actions';
 import { showErrorNotification } from 'store/notification/actions';
-import { USER_STATUS } from 'variables/rocketchat';
+import { CHAT_TYPES, USER_STATUS } from 'variables/rocketchat';
 import { getUniqueId } from './general';
 
 export const initialChatSocket = (dispatch, subscribeIds, username, password) => {
@@ -77,21 +78,19 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
         setTimeout(() => {
           subscribeUserLoggedStatus(socket, notifyLoggedId);
         }, 1000);
+      } else if (result && result.messages) {
+        const allMessages = [];
+        const reversedMessages = result.messages.reverse();
+        reversedMessages.forEach((message) => {
+          const data = getMessageObject(message);
+          allMessages.push(data);
+        });
+        dispatch(getMessagesForSelectedRoom(allMessages));
       }
     } else if (resMessage === 'changed') {
       if (collection === 'stream-room-messages') {
         // trigger change in chat room
-        const { _id, rid, msg, _updatedAt, u } = fields.args[0];
-        const newMessage = {
-          _id,
-          rid,
-          msg,
-          _updatedAt: new Date(_updatedAt.$date),
-          u: { _id: u._id },
-          received: true,
-          pending: false,
-          unread: 0
-        };
+        const newMessage = getMessageObject(fields.args[0]);
         dispatch(appendNewMessage(newMessage));
       } else if (collection === 'stream-notify-logged') {
         // trigger user logged status
@@ -109,6 +108,17 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
   };
 
   return socket;
+};
+
+// TODO set specific iterm per page on first load with infinite scroll
+export const loadMessagesInRoom = (socket, roomId, patientId) => {
+  const options = {
+    msg: 'method',
+    method: 'loadHistory',
+    id: getUniqueId(patientId),
+    params: [roomId, null, 999999, { $date: new Date().getTime() }]
+  };
+  socket.send(JSON.stringify(options));
 };
 
 export const sendNewMessage = (socket, newMessage, therapistId) => {
@@ -147,6 +157,42 @@ export const chatLogout = (socket, id) => {
     id
   };
   socket.send(JSON.stringify(options));
+};
+
+export const getMessageObject = (message) => {
+  const { _id, rid, msg, _updatedAt, u, unread, attachments, file } = message;
+  let attachment = null;
+  let type = CHAT_TYPES.TEXT;
+  if (file && attachments) {
+    const attachedFile = attachments[0];
+    attachment = {
+      title: file.name,
+      type: file.type,
+      caption: attachedFile.description || ''
+    };
+    if (file.type === 'video/mp4') {
+      attachment.url = `${process.env.REACT_APP_ROCKET_CHAT_BASE_URL}${attachedFile.video_url}`;
+      type = CHAT_TYPES.VIDEO;
+    } else {
+      attachment.url = `${process.env.REACT_APP_ROCKET_CHAT_BASE_URL}${attachedFile.image_url}`;
+      attachment.height = attachedFile.image_dimensions.height;
+      attachment.width = attachedFile.image_dimensions.width;
+      type = CHAT_TYPES.IMAGE;
+    }
+  }
+
+  return {
+    _id,
+    rid,
+    msg,
+    _updatedAt: _updatedAt.$date ? new Date(_updatedAt.$date) : _updatedAt,
+    u: { _id: u._id },
+    received: true,
+    pending: false,
+    unread: !!unread,
+    type,
+    attachment
+  };
 };
 
 const subscribeChatRoomMessage = (socket, id) => {

@@ -55,10 +55,6 @@ const getMessagesForSelectedRoomSuccess = (data) => ({
   data
 });
 
-const getMessagesForSelectedRoomFail = () => ({
-  type: 'GET_MESSAGES_FOR_SELECTED_ROOM_FAIL'
-});
-
 const appendNewMessageSuccess = (data) => ({
   type: 'APPEND_NEW_MESSAGE_SUCCESS',
   data
@@ -92,7 +88,6 @@ export const mutation = {
   selectRoomSuccess,
   updateUnreadSuccess,
   getMessagesForSelectedRoomSuccess,
-  getMessagesForSelectedRoomFail,
   appendNewMessageSuccess,
   updateLastMessageSuccess,
   setIsOnChatPageSuccess,

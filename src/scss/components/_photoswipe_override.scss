@@ -1,0 +1,12 @@
+.pswp {
+  &__bg {
+    opacity: .75 !important;
+  }
+  &__button--download {
+    background: none !important;
+  }
+  &__caption__center {
+    color: $white !important;
+    font-size: $font-size-sm !important;
+  }
+}

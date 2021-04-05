@@ -1,6 +1,8 @@
 @import '~bootstrap/scss/bootstrap';
 @import './custom';
 @import '~react-checkbox-tree/src/scss/react-checkbox-tree.scss';
+@import '~photoswipe/dist/photoswipe.css';
+@import '~photoswipe/dist/default-skin/default-skin.css';
 
 @import './components/navbar',
 		'./components/toast',
@@ -14,4 +16,5 @@
 		'./components/spinner_overlay',
 		'./components/misc',
 		'./components/chat_call',
-		'./components/dashboard';
+		'./components/dashboard',
+		'./components/photoswipe_override';

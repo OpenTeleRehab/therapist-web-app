@@ -99,6 +99,7 @@ const ChatOrCall = ({ translate }) => {
                 keyword={searchValue}
                 therapist={therapist}
                 userStatus={renderUserStatus}
+                socket={chatSocket}
               />
             </div>
           </Col>

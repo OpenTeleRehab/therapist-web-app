@@ -2,6 +2,7 @@ import { Rocketchat } from 'services/roketchat';
 import { User } from 'services/user';
 import { mutation } from './mutations';
 import { showErrorNotification } from 'store/notification/actions';
+import { getMessageObject } from 'utils/rocketchat';
 
 export const connectWebsocket = (payload) => (dispatch) => {
   dispatch(mutation.setWebsocketConnectionSuccess(payload));
@@ -83,17 +84,11 @@ export const getLastMessages = (authUserId, roomIds) => async (dispatch, getStat
   const { authToken, chatRooms } = getState().rocketchat;
   const data = await Rocketchat.getLastMessages(roomIds, authUserId, authToken);
   if (data.success) {
-    data.ims.forEach(message => {
+    data.ims.forEach((message) => {
       if (message.lastMessage) {
-        const { _id, _updatedAt, rid, msg, u } = message.lastMessage;
-        const fIndex = chatRooms.findIndex(cr => cr.rid === rid);
+        const fIndex = chatRooms.findIndex(cr => cr.rid === message.lastMessage.rid);
         if (fIndex > -1) {
-          chatRooms[fIndex].lastMessage = {
-            _id,
-            msg,
-            _updatedAt,
-            u: { _id: u._id }
-          };
+          chatRooms[fIndex].lastMessage = getMessageObject(message.lastMessage);
           chatRooms[fIndex].totalMessages = message.msgs;
         }
       }
@@ -107,18 +102,8 @@ export const getLastMessages = (authUserId, roomIds) => async (dispatch, getStat
   }
 };
 
-export const getMessagesForSelectedRoom = (roomId, authUserId) => async (dispatch, getState) => {
-  const { authToken } = getState().rocketchat;
-  const data = await Rocketchat.getMessagesInRoom(roomId, authUserId, authToken);
-  if (data.success) {
-    const reversedMessages = data.messages.reverse();
-    dispatch(mutation.getMessagesForSelectedRoomSuccess(reversedMessages));
-    return true;
-  } else {
-    dispatch(mutation.getMessagesForSelectedRoomFail());
-    dispatch(showErrorNotification('toast_title.error_message', data.message));
-    return false;
-  }
+export const getMessagesForSelectedRoom = (payload) => (dispatch) => {
+  dispatch(mutation.getMessagesForSelectedRoomSuccess(payload));
 };
 
 export const selectRoom = (payload) => (dispatch, getState) => {
@@ -168,4 +153,11 @@ export const updateChatUserStatus = (payload) => (dispatch, getState) => {
       dispatch(mutation.updateChatUserStatusSuccess(chatRooms));
     }
   }
+};
+
+export const postAttachmentMessage = (attachment) => async (dispatch, getState) => {
+  const { authToken } = getState().rocketchat;
+  const { profile } = getState().auth;
+  const data = await Rocketchat.sendAttachmentMessage('4NRfsjQREobfB5Sgwcuvyr8QZJpwQqNBAX', profile.chat_user_id, authToken, attachment);
+  console.log(data);
 };
