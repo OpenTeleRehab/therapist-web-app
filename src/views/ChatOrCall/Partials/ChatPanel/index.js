@@ -6,7 +6,7 @@ import { sendNewMessage } from 'utils/rocketchat';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
 
-const MIN_MSG_OUTER_HEIGHT = 200;
+const MIN_MSG_OUTER_HEIGHT = 205;
 const ChatPanel = (
   {
     translate,
@@ -46,14 +46,15 @@ const ChatPanel = (
             </h4>
           </div>
           <Message
+            translate={translate}
             messages={messages}
             currentUser={therapist.chat_user_id}
             msgOuterHeight={msgOuterHeight}
           />
           <InputToolbar
-            placeholder={translate('placeholder.type.message')}
             onSend={handleSendMessage}
             onInputSizeChanged={handleInputSizeChanged}
+            translate={translate}
           />
         </>
       ) : (

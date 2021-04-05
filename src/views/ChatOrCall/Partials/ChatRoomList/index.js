@@ -2,9 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { ListGroup, Badge } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { getMessagesForSelectedRoom, selectRoom } from 'store/rocketchat/actions';
+import { selectRoom } from 'store/rocketchat/actions';
 import { formatDate } from 'utils/general';
 import _ from 'lodash';
+import { loadMessagesInRoom } from 'utils/rocketchat';
+import { CHAT_TYPES } from 'variables/rocketchat';
 
 const ChatRoomList = (
   {
@@ -13,7 +15,8 @@ const ChatRoomList = (
     chatRooms,
     selectedRoom,
     keyword,
-    therapist
+    therapist,
+    socket
   }
 ) => {
   const dispatch = useDispatch();
@@ -32,7 +35,7 @@ const ChatRoomList = (
   const handleSelectRoomToChat = (index) => {
     const selected = roomList[index];
     dispatch(selectRoom(selected));
-    dispatch(getMessagesForSelectedRoom(selected.rid, therapist.chat_user_id));
+    loadMessagesInRoom(socket, selected.rid, therapist.id);
   };
 
   return (
@@ -40,6 +43,12 @@ const ChatRoomList = (
       {roomList.length ? (
         roomList.map((room, index) => {
           const { unread, lastMessage } = room;
+          let lastMsg = lastMessage.msg || '';
+          let className = 'text-muted';
+          if (lastMessage.type !== CHAT_TYPES.TEXT) {
+            lastMsg = translate('chat_attachment.title');
+            className = 'text-primary';
+          }
           return (
             <ListGroup as="ul" key={index}>
               <ListGroup.Item
@@ -53,7 +62,7 @@ const ChatRoomList = (
                     {room.name}
                     {userStatus(room)}
                   </p>
-                  <p className="text-muted text-truncate small mb-0">{lastMessage.msg || ''}</p>
+                  <p className={`${className} text-truncate small mb-0`}>{lastMsg}</p>
                 </div>
                 {room.rid !== selected.rid && (
                   <div className="d-flex flex-column align-items-end">
@@ -82,7 +91,8 @@ ChatRoomList.propTypes = {
   chatRooms: PropTypes.array,
   selectedRoom: PropTypes.object,
   keyword: PropTypes.string,
-  therapist: PropTypes.object
+  therapist: PropTypes.object,
+  socket: PropTypes.object
 };
 
 export default ChatRoomList;

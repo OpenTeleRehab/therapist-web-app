@@ -59,6 +59,11 @@
 		background-color: $danger;
 	  }
 	}
-
   }
+}
+
+video {
+	&.hide-full-screen::-webkit-media-controls-fullscreen-button {
+		display: none;
+	}
 }

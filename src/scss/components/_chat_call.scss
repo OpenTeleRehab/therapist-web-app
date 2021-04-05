@@ -106,12 +106,20 @@
         color: $white;
       }
     }
+    &-attachment {
+      width: 320px;
+      max-width: 320px;
+      img,
+      video {
+        cursor: pointer;
+      }
+    }
     &-info {
       font-size: 12px;
     }
   }
   &-input-toolbar {
-    position: relative;
+    margin: 15px 0;
     .form-control {
       min-height: 50px;
       padding: 13px 48px 13px 15px;
@@ -126,12 +134,47 @@
       }
     }
   }
+  &-composer {
+    width: 92%;
+  }
   &-send-btn {
     position: absolute;
     right: 13px;
     bottom: 12px;
     &:focus {
       box-shadow: none;
+    }
+  }
+  &-add-attachment-btn {
+    width: 50px;
+    height: 50px;
+    font-size: $font-size-sm;
+    background-color: $white;
+    border-radius: $border-radius-lg;
+    margin-left: 15px;
+    color: $gray-600;
+    border-color: $light;
+    &:hover,
+    &:focus {
+      color: $gray-600;
+      box-shadow: none;
+    }
+    .upload-btn {
+      width: 50px;
+      height: 50px;
+      @include media-breakpoint-up(md) {
+        width: 100px;
+      }
+    }
+    @include media-breakpoint-up(md) {
+      width: 100px;
+    }
+  }
+  &-attachment-overview {
+    video {
+      &:focus {
+        outline: none;
+      }
     }
   }
 }

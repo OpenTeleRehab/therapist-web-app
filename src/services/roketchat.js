@@ -38,10 +38,12 @@ const getLastMessages = (chatRooms, authUserId, authToken) => {
     });
 };
 
-const getMessagesInRoom = (roomId, authUserId, authToken) => {
+const sendAttachmentMessage = (roomId, authUserId, authToken, attachment) => {
   const instance = createInstance(authUserId, authToken);
-  const fields = JSON.stringify({ msg: 1, _updatedAt: 1, u: 1, unread: 1 });
-  return instance.get(`/im.messages?roomId=${roomId}&fields=${fields}&count=999999`)
+  const formData = new FormData();
+  formData.append('description', attachment.caption);
+  formData.append('file', attachment.file);
+  return instance.post(`/rooms.upload/${roomId}`, formData)
     .then(
       res => {
         return res.data;
@@ -54,5 +56,5 @@ const getMessagesInRoom = (roomId, authUserId, authToken) => {
 export const Rocketchat = {
   getUserStatus,
   getLastMessages,
-  getMessagesInRoom
+  sendAttachmentMessage
 };

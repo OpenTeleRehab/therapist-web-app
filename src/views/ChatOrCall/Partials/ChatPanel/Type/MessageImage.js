@@ -1,12 +1,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-export const MessageImage = ({ text }) => {
-  return <p className="mb-0">{text}</p>;
+export const MessageImage = ({ attachment, index, onClick }) => {
+  return (
+    <div className="chat-message-attachment">
+      <img
+        src={attachment.url}
+        alt={attachment.title} className="w-100"
+        onClick={() => onClick(index)}
+      />
+      {attachment.caption && (
+        <figcaption>{attachment.caption}</figcaption>
+      )}
+    </div>
+  );
 };
 
 MessageImage.propTypes = {
-  text: PropTypes.string
+  attachment: PropTypes.object,
+  index: PropTypes.number,
+  onClick: PropTypes.func
 };
 
 export default MessageImage;
