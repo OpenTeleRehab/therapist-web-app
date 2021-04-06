@@ -118,7 +118,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
       setErrorFrom(false);
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || moment(formattedTo).isBefore(moment(formattedFrom))) {
+    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').isBefore(moment(formattedFrom, 'hh:mm A'))) {
       canSave = false;
       setErrorTo(true);
     } else {
@@ -129,8 +129,8 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
       const data = {
         patient_id: patientId,
         therapist_id: profile.id,
-        from: moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().format('YYYY-MM-DD HH:mm:ss'),
-        to: moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().format('YYYY-MM-DD HH:mm:ss')
+        from: moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+        to: moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss')
       };
 
       const filter = {
