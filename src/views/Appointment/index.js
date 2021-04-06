@@ -60,7 +60,7 @@ const Appointment = ({ translate }) => {
     if (appointments.calendarData) {
       const groupedCalendarData = _.chain(appointments.calendarData)
         .groupBy((item) =>
-          moment.utc(item.start_date).local().format('YYYY-MM-DD')
+          moment.utc(item.start_date).local().locale('en').format('YYYY-MM-DD')
         )
         .map((value, key) => ({ date: key, total: value.length }))
         .value();
