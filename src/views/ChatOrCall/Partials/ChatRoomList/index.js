@@ -14,6 +14,7 @@ const ChatRoomList = (
     userStatus,
     chatRooms,
     selectedRoom,
+    hideChatPanel,
     keyword,
     therapist,
     socket
@@ -36,6 +37,7 @@ const ChatRoomList = (
     const selected = roomList[index];
     dispatch(selectRoom(selected));
     loadMessagesInRoom(socket, selected.rid, therapist.id);
+    hideChatPanel(false);
   };
 
   return (
@@ -90,6 +92,7 @@ ChatRoomList.propTypes = {
   userStatus: PropTypes.func,
   chatRooms: PropTypes.array,
   selectedRoom: PropTypes.object,
+  hideChatPanel: PropTypes.func,
   keyword: PropTypes.string,
   therapist: PropTypes.object,
   socket: PropTypes.object
