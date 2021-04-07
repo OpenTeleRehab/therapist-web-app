@@ -88,6 +88,11 @@ const CreateExercise = ({ translate }) => {
     }
   }, [profile]);
 
+  const enableButtons = () => {
+    const languageObj = languages.find(item => item.id === parseInt(language, 10));
+    return languageObj && languageObj.code === languageObj.fallback;
+  };
+
   useEffect(() => {
     dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
   }, [language, dispatch]);
@@ -469,17 +474,19 @@ const CreateExercise = ({ translate }) => {
               inputFields.map((inputField, index) => (
                 <Card key={index} className="bg-light mb-3 additional-field">
                   <Card.Body>
-                    <div className="remove-btn-container">
-                      <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{translate('common.remove')}</Tooltip>}>
-                        <Button
-                          variant="outline-danger"
-                          className="btn-remove"
-                          onClick={() => handleRemoveFields(index)}
-                        >
-                          <BsX size={20} />
-                        </Button>
-                      </OverlayTrigger>
-                    </div>
+                    {enableButtons() &&
+                      <div className="remove-btn-container">
+                        <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{translate('common.remove')}</Tooltip>}>
+                          <Button
+                            variant="outline-danger"
+                            className="btn-remove"
+                            onClick={() => handleRemoveFields(index)}
+                          >
+                            <BsX size={20} />
+                          </Button>
+                        </OverlayTrigger>
+                      </div>
+                    }
                     <Form.Group controlId={`formLabel${index}`}>
                       <Form.Label>{translate('exercise.additional_field.label')}</Form.Label>
                       <span className="text-dark ml-1">*</span>
@@ -514,15 +521,17 @@ const CreateExercise = ({ translate }) => {
               ))
             }
 
-            <Form.Group>
-              <Button
-                variant="link"
-                onClick={handleAddFields}
-                className="p-0"
-              >
-                <BsPlus size={20} /> {translate('exercise.additional_field.add_more_field')}
-              </Button>
-            </Form.Group>
+            {enableButtons() &&
+              <Form.Group>
+                <Button
+                  variant="link"
+                  onClick={handleAddFields}
+                  className="p-0"
+                >
+                  <BsPlus size={20} /> {translate('exercise.additional_field.add_more_field')}
+                </Button>
+              </Form.Group>
+            }
 
             <Form.Group>
               <Button
