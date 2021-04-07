@@ -2,7 +2,7 @@ import { Rocketchat } from 'services/roketchat';
 import { User } from 'services/user';
 import { mutation } from './mutations';
 import { showErrorNotification } from 'store/notification/actions';
-import { getMessageObject } from 'utils/rocketchat';
+import { getMessage } from 'utils/general';
 
 export const connectWebsocket = (payload) => (dispatch) => {
   dispatch(mutation.setWebsocketConnectionSuccess(payload));
@@ -19,6 +19,7 @@ export const setChatSubscribeIds = (payload) => (dispatch) => {
 export const getChatRooms = (therapistId, chatUserId, roomIds) => async dispatch => {
   const payload = {
     therapist_id: therapistId,
+    enabled: 1,
     page_size: 999999,
     page: 1
   };
@@ -32,7 +33,6 @@ export const getChatRooms = (therapistId, chatUserId, roomIds) => async dispatch
           chatRooms.push({
             rid: roomIds[fIndex],
             name: `${user.last_name} ${user.first_name}`,
-            enabled: user.enabled,
             unread: 0,
             u: {
               _id: user.chat_user_id,
@@ -88,7 +88,7 @@ export const getLastMessages = (authUserId, roomIds) => async (dispatch, getStat
       if (message.lastMessage) {
         const fIndex = chatRooms.findIndex(cr => cr.rid === message.lastMessage.rid);
         if (fIndex > -1) {
-          chatRooms[fIndex].lastMessage = getMessageObject(message.lastMessage);
+          chatRooms[fIndex].lastMessage = getMessage(message.lastMessage, authUserId, authToken);
           chatRooms[fIndex].totalMessages = message.msgs;
         }
       }
