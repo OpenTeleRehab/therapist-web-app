@@ -59,10 +59,8 @@ export const getChatUsersStatus = (authUserId) => async (dispatch, getState) => 
   const userIds = [];
   const mapIndex = [];
   chatRooms.forEach((room, idx) => {
-    if (room.enabled) {
-      userIds.push(room.u._id);
-      mapIndex[room.u._id] = idx;
-    }
+    userIds.push(room.u._id);
+    mapIndex[room.u._id] = idx;
   });
   if (userIds.length) {
     const data = await Rocketchat.getUserStatus(userIds, authUserId, authToken);
@@ -109,17 +107,16 @@ export const getMessagesForSelectedRoom = (payload) => (dispatch) => {
 export const selectRoom = (payload) => (dispatch, getState) => {
   dispatch(mutation.selectRoomSuccess(payload));
   const { chatRooms } = getState().rocketchat;
-  if (chatRooms.enabled) {
-    const fIndex = chatRooms.findIndex(cr => cr.rid === payload.rid);
-    if (chatRooms[fIndex].unread > 0) {
-      chatRooms[fIndex].unread = 0;
-      dispatch(mutation.updateUnreadSuccess(chatRooms));
-    }
+  const fIndex = chatRooms.findIndex(cr => cr.rid === payload.rid);
+  if (chatRooms[fIndex].unread > 0) {
+    chatRooms[fIndex].unread = 0;
+    dispatch(mutation.updateUnreadSuccess(chatRooms));
   }
 };
 
 export const appendNewMessage = (payload) => (dispatch, getState) => {
   const { messages, chatRooms, selectedRoom } = getState().rocketchat;
+  const { profile } = getState().auth;
   let currentRoom = false;
   if (selectedRoom !== undefined && selectedRoom.rid === payload.rid) {
     currentRoom = true;
@@ -131,7 +128,7 @@ export const appendNewMessage = (payload) => (dispatch, getState) => {
   }
   const fIndex = chatRooms.findIndex(cr => cr.rid === payload.rid);
   if (fIndex > -1) {
-    if (!currentRoom) {
+    if (!currentRoom && profile.chat_user_id !== payload.u._id) {
       chatRooms[fIndex].unread += 1;
     }
     chatRooms[fIndex].totalMessages += 1;
@@ -155,9 +152,16 @@ export const updateChatUserStatus = (payload) => (dispatch, getState) => {
   }
 };
 
-export const postAttachmentMessage = (attachment) => async (dispatch, getState) => {
+export const postAttachmentMessage = (roomId, attachment) => async (dispatch, getState) => {
   const { authToken } = getState().rocketchat;
   const { profile } = getState().auth;
-  const data = await Rocketchat.sendAttachmentMessage('4NRfsjQREobfB5Sgwcuvyr8QZJpwQqNBAX', profile.chat_user_id, authToken, attachment);
-  console.log(data);
+  const data = await Rocketchat.sendAttachmentMessage(roomId, profile.chat_user_id, authToken, attachment);
+  if (data.success) {
+    dispatch(mutation.sendAttachmentMessagesSuccess());
+    return true;
+  } else {
+    dispatch(mutation.sendAttachmentMessagesFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+    return false;
+  }
 };

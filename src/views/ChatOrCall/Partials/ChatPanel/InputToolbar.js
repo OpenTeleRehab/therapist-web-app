@@ -101,7 +101,7 @@ const InputToolbar = (props) => {
   };
 
   const onConfirmSendAttachment = () => {
-    dispatch(postAttachmentMessage(attachment));
+    dispatch(postAttachmentMessage(props.roomId, attachment));
     setShowDialog(false);
     setAttachment(null);
   };
@@ -156,7 +156,8 @@ const InputToolbar = (props) => {
 InputToolbar.propTypes = {
   translate: PropTypes.func,
   onSend: PropTypes.func,
-  onInputSizeChanged: PropTypes.func
+  onInputSizeChanged: PropTypes.func,
+  roomId: PropTypes.string
 };
 
 export default InputToolbar;

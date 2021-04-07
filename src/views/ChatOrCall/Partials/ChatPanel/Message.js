@@ -47,7 +47,7 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
             if (idx > 0) {
               isSameDay = hasSameDay(messages[idx - 1], message);
             }
-            if (idx === messages.length - 1) {
+            if (idx === messages.length - 1 && messageEndRef.current) {
               messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
             }
             if (message.type === CHAT_TYPES.IMAGE) {

@@ -60,6 +60,7 @@ const ChatPanel = (
             onSend={handleSendMessage}
             onInputSizeChanged={handleInputSizeChanged}
             translate={translate}
+            roomId={selectedRoom.rid}
           />
         </>
       ) : (

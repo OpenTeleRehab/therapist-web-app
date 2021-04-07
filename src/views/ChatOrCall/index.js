@@ -49,12 +49,7 @@ const ChatOrCall = ({ translate }) => {
   };
 
   const renderUserStatus = (room, infix = '') => {
-    let className = `chat-user-status ${infix} `;
-    if (!room.enabled) {
-      className += 'offline';
-    } else {
-      className += `${room.u.status}`;
-    }
+    const className = `chat-user-status ${infix} ${room.u.status}`;
     return <span className={className}>&nbsp;</span>;
   };
 

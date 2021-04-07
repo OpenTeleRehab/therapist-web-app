@@ -32,9 +32,7 @@ const Navigation = ({ translate }) => {
   // total unread
   let unreadMessage = 0;
   chatRooms.forEach(room => {
-    if (room.enabled) {
-      unreadMessage += room.unread;
-    }
+    unreadMessage += room.unread;
   });
 
   // dynamic classes base on unread

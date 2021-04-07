@@ -75,6 +75,14 @@ const updateChatUserStatusSuccess = (data) => ({
   data
 });
 
+const sendAttachmentMessagesSuccess = () => ({
+  type: 'SEND_ATTACHMENT_MESSAGES_SUCCESS'
+});
+
+const sendAttachmentMessagesFail = () => ({
+  type: 'SEND_ATTACHMENT_MESSAGES_FAIL'
+});
+
 export const mutation = {
   setWebsocketConnectionSuccess,
   chatUserLoginSuccess,
@@ -91,5 +99,7 @@ export const mutation = {
   appendNewMessageSuccess,
   updateLastMessageSuccess,
   setIsOnChatPageSuccess,
-  updateChatUserStatusSuccess
+  updateChatUserStatusSuccess,
+  sendAttachmentMessagesSuccess,
+  sendAttachmentMessagesFail
 };
