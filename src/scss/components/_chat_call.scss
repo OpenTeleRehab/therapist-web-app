@@ -82,11 +82,6 @@
     &-header {
       border-bottom: 1px solid $gray-500;
       padding: 15px 0;
-      .btn-audio-call,
-      .btn-video-call {
-        height: 44px;
-        width: 44px;
-      }
     }
     &-list {
       overflow-y: auto;
@@ -181,73 +176,5 @@
         outline: none;
       }
     }
-  }
-}
-
-.panel-no-sidebar {
-  .chat-sidebar-panel {
-    max-width: 0;
-    display: none !important;
-  }
-  .chat-message-wrapper {
-    padding: 0;
-    max-width: 100%;
-    flex: 0 0 100%;
-  }
-}
-
-.calling {
-  position: relative;
-  height: calc(100vh - 61px);
-  width: 100%;
-  .sidebar-toggle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    &:focus {
-      box-shadow: none;
-    }
-  }
-  .incoming {
-    background-color: $black;
-    height: 100%;
-    width: 100%;
-    &-participant {
-      h2 {
-        color: $white;
-        font-weight: 700;
-        font-size: 38px;
-        margin: 0 0 15px 0;
-      }
-      p {
-        color: $primary;
-        font-style: italic;
-        font-size: 18px;
-      }
-    }
-    &-options {
-      margin: 0 0 44px 0;
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        li {
-          color: $white;
-          padding: 0 5px;
-          .btn-video-call,
-          .btn-end-call {
-            border-radius: 50%;
-            height: 46px;
-            width: 46px;
-          }
-        }
-      }
-    }
-  }
-}
-
-@include media-breakpoint-up(xl) {
-  .calling {
-    height: calc(100vh - 70px);
   }
 }
