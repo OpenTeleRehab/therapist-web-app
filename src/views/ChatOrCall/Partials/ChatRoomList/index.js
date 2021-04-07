@@ -47,7 +47,7 @@ const ChatRoomList = (
           const { unread, lastMessage } = room;
           let lastMsg = lastMessage.msg || '';
           let className = 'text-muted';
-          if (lastMessage.type !== undefined && lastMessage.type !== CHAT_TYPES.TEXT) {
+          if (lastMessage.type !== CHAT_TYPES.TEXT) {
             lastMsg = translate('chat_attachment.title');
             className = 'text-primary';
           }
