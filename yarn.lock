@@ -2182,9 +2182,9 @@
     "@webassemblyjs/wast-parser" "1.9.0"
     "@xtuc/long" "4.2.2"
 
-"@webessentials/react-jitsi@webessentials/react-jitsi#master":
+"@webessentials/react-jitsi@git+https://github.com/webessentials/react-jitsi.git":
   version "1.0.4"
-  resolved "https://codeload.github.com/webessentials/react-jitsi/tar.gz/6790ba1a057a9b6fe170c08c85a94585e5048aa9"
+  resolved "git+https://github.com/webessentials/react-jitsi.git#6790ba1a057a9b6fe170c08c85a94585e5048aa9"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
