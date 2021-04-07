@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Alert } from 'react-bootstrap';
+import { Alert, Button } from 'react-bootstrap';
 import { generateHash } from 'utils/general';
 import { sendNewMessage } from 'utils/rocketchat';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
+import { BsChevronLeft } from 'react-icons/bs';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
 const ChatPanel = (
@@ -14,7 +15,8 @@ const ChatPanel = (
     therapist,
     socket,
     selectedRoom,
-    messages
+    messages,
+    hideChatPanel
   }) => {
   const [msgOuterHeight, setMsgOuterHeight] = useState(MIN_MSG_OUTER_HEIGHT);
 
@@ -41,6 +43,9 @@ const ChatPanel = (
         <>
           <div className="chat-message-header">
             <h4 className="font-weight-bold mb-0 d-flex align-items-center">
+              <Button variant="link" className="d-md-none btn-back" onClick={() => hideChatPanel(true)}>
+                <BsChevronLeft size={18} color="#0077C8" />
+              </Button>
               {selectedRoom.name}
               {userStatus(selectedRoom, 'md')}
             </h4>
@@ -70,7 +75,8 @@ ChatPanel.propTypes = {
   therapist: PropTypes.object,
   socket: PropTypes.object,
   selectedRoom: PropTypes.object,
-  messages: PropTypes.array
+  messages: PropTypes.array,
+  hideChatPanel: PropTypes.func
 };
 
 export default ChatPanel;

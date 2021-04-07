@@ -20,6 +20,7 @@ const ChatOrCall = ({ translate }) => {
   const therapist = useSelector(state => state.auth.profile);
   const { authToken, chatRooms, messages, selectedRoom, isChatConnected } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
+  const [hideChatPanel, setHideChatPanel] = useState(true);
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
@@ -65,7 +66,7 @@ const ChatOrCall = ({ translate }) => {
         </Alert>
       ) : (
         <Row className="row-bg">
-          <Col lg={3} md={4} sm={5} className="d-flex flex-column chat-sidebar-panel">
+          <Col lg={3} md={4} sm={12} className={`d-md-flex flex-column chat-sidebar-panel ${hideChatPanel ? 'd-flex' : 'd-none'}`}>
             <div className="chat-sidebar-header pb-1">
               <h4 className="font-weight-bold mt-3 d-flex align-items-center">
                 {translate('chat')}&nbsp;
@@ -100,10 +101,11 @@ const ChatOrCall = ({ translate }) => {
                 therapist={therapist}
                 userStatus={renderUserStatus}
                 socket={chatSocket}
+                hideChatPanel={setHideChatPanel}
               />
             </div>
           </Col>
-          <Col lg={9} md={8} sm={7} className="d-flex flex-column chat-message-panel">
+          <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
             <ChatPanel
               translate={translate}
               therapist={therapist}
@@ -111,6 +113,7 @@ const ChatOrCall = ({ translate }) => {
               selectedRoom={selectedRoom}
               messages={messages}
               userStatus={renderUserStatus}
+              hideChatPanel={setHideChatPanel}
             />
           </Col>
         </Row>
