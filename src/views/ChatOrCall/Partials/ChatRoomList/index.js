@@ -31,7 +31,7 @@ const ChatRoomList = (
       return room.name.toLowerCase().includes(searchValue);
     });
   }
-  roomList = _.orderBy(roomList, ['unread', 'enabled', 'name'], ['desc', 'desc', 'asc']);
+  roomList = _.orderBy(roomList, ['unread', 'u.status', 'name'], ['desc', 'desc', 'asc']);
 
   const handleSelectRoomToChat = (index) => {
     const selected = roomList[index];
@@ -47,7 +47,7 @@ const ChatRoomList = (
           const { unread, lastMessage } = room;
           let lastMsg = lastMessage.msg || '';
           let className = 'text-muted';
-          if (lastMessage.type !== CHAT_TYPES.TEXT) {
+          if (lastMessage.type !== undefined && lastMessage.type !== CHAT_TYPES.TEXT) {
             lastMsg = translate('chat_attachment.title');
             className = 'text-primary';
           }
