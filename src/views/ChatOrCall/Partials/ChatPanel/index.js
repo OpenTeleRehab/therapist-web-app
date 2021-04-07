@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Button } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import { generateHash } from 'utils/general';
 import { sendNewMessage } from 'utils/rocketchat';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
-import {
-  IoCallOutline,
-  IoVideocamOutline
-} from 'react-icons/all';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
 const ChatPanel = (
@@ -18,9 +14,7 @@ const ChatPanel = (
     therapist,
     socket,
     selectedRoom,
-    messages,
-    isIncomingCall,
-    isVideoCall
+    messages
   }) => {
   const [msgOuterHeight, setMsgOuterHeight] = useState(MIN_MSG_OUTER_HEIGHT);
 
@@ -41,35 +35,15 @@ const ChatPanel = (
     sendNewMessage(socket, newMessage, therapist.id);
   };
 
-  const onAudioCall = () => {
-    isVideoCall(false);
-    isIncomingCall(true);
-  };
-
-  const onVideoCall = () => {
-    isVideoCall(true);
-    isIncomingCall(true);
-  };
-
   return (
     <>
       {selectedRoom ? (
         <>
-          <div className="chat-message-header d-flex justify-content-between align-items-center">
+          <div className="chat-message-header">
             <h4 className="font-weight-bold mb-0 d-flex align-items-center">
               {selectedRoom.name}
               {userStatus(selectedRoom, 'md')}
             </h4>
-
-            <div className="d-flex justify-content-end">
-              <Button variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => onAudioCall()}>
-                <IoCallOutline size={18} />
-              </Button>
-
-              <Button variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => onVideoCall()}>
-                <IoVideocamOutline size={18} />
-              </Button>
-            </div>
           </div>
           <Message
             translate={translate}
@@ -96,9 +70,7 @@ ChatPanel.propTypes = {
   therapist: PropTypes.object,
   socket: PropTypes.object,
   selectedRoom: PropTypes.object,
-  messages: PropTypes.array,
-  isIncomingCall: PropTypes.func,
-  isVideoCall: PropTypes.func
+  messages: PropTypes.array
 };
 
 export default ChatPanel;
