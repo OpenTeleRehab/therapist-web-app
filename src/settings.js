@@ -12,8 +12,6 @@ const settings = {
   educationMaterial: {
     maxFileSize: 25 // MB
   },
-  maxActivities: 15,
-  maxPresetTreatments: 5,
   maxAge: 80,
   minAge: 0,
   ageGap: 10,

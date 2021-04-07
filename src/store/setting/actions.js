@@ -4,13 +4,13 @@ import {
   showErrorNotification
 } from 'store/notification/actions';
 
-export const getLanguages = () => async dispatch => {
-  dispatch(mutation.getLanguagesRequest());
-  const data = await Setting.getLanguage();
+export const getSettings = () => async dispatch => {
+  dispatch(mutation.getSettingsRequest());
+  const data = await Setting.getSettings();
   if (data.success) {
-    dispatch(mutation.getLanguagesSuccess(data.data));
+    dispatch(mutation.getSettingsSuccess(data.data));
   } else {
-    dispatch(mutation.getLanguagesFail());
+    dispatch(mutation.getSettingsFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };

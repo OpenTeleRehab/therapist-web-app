@@ -1,10 +1,10 @@
 import { initialState } from './states';
 
-export const setting = (state = initialState, action) => {
+export const language = (state = initialState, action) => {
   switch (action.type) {
-    case 'GET_SETTINGS_SUCCESS': {
+    case 'GET_LANGUAGES_SUCCESS': {
       return Object.assign({}, state, {
-        systemLimits: action.data.system_limits
+        languages: action.data
       });
     }
     default:

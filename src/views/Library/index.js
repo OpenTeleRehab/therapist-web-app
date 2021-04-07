@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { BsPlus } from 'react-icons/bs';
 import queryString from 'query-string';
 import { CATEGORY_TYPES } from 'variables/category';
+import { SYSTEM_TYPES } from 'variables/systemLimit';
 
 import * as ROUTES from 'variables/routes';
 import Exercise from './Exercise';
@@ -15,9 +16,10 @@ import Dialog from 'components/Dialog';
 import { updateFavorite as updateFavoriteEducationMaterial } from 'store/educationMaterial/actions';
 import { updateFavorite as updateFavoriteExercise } from 'store/exercise/actions';
 import { updateFavorite as updateFavoriteQuestionnaire } from 'store/questionnaire/actions';
+import { getSettings } from 'store/setting/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { Exercise as exerciseService } from 'services/exercise';
-import settings from 'settings';
+import _ from 'lodash';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -33,6 +35,7 @@ const Library = ({ translate }) => {
   const [showSwitchFavoriteDialog, setShowSwitchFavoriteDialog] = useState(false);
   const [id, setId] = useState(null);
   const [type, setType] = useState(null);
+  const [maxLibraries, setMaxLibraries] = useState(20);
   const [formFields, setFormFields] = useState({
     is_favorite: 0,
     therapist_id: null
@@ -40,6 +43,7 @@ const Library = ({ translate }) => {
   const [allowCreateContent, setAllowCreateContent] = useState(false);
   const [therapistId, setTherapistId] = useState('');
   const { profile } = useSelector((state) => state.auth);
+  const { systemLimits } = useSelector((state) => state.setting);
 
   useEffect(() => {
     if (queryString.parse(search).tab === VIEW_EDUCATION) {
@@ -58,6 +62,19 @@ const Library = ({ translate }) => {
   }, [search]);
 
   useEffect(() => {
+    dispatch(getSettings());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (systemLimits.length) {
+      const limitLibrary = systemLimits.find(systemLimit => systemLimit.content_type === SYSTEM_TYPES.LIBRARIES);
+      if (!_.isEmpty(limitLibrary)) {
+        setMaxLibraries(limitLibrary.value);
+      }
+    }
+  }, [dispatch, systemLimits]);
+
+  useEffect(() => {
     if (profile !== undefined) {
       setTherapistId(profile.id);
     }
@@ -65,17 +82,13 @@ const Library = ({ translate }) => {
 
   useEffect(() => {
     if (therapistId) {
-      if (view === VIEW_PRESET_TREATMENT) {
-        setAllowCreateContent(treatmentPlans.length < settings.maxPresetTreatments);
-      } else {
-        exerciseService.countTherapistLibraries(therapistId).then(res => {
-          if (res.data || res.data === 0) {
-            setAllowCreateContent(res.data < settings.maxActivities);
-          }
-        });
-      }
+      exerciseService.countTherapistLibraries(therapistId).then(res => {
+        if (res.data) {
+          setAllowCreateContent(res.data < maxLibraries);
+        }
+      });
     }
-  }, [therapistId, view, treatmentPlans]);
+  }, [therapistId, view, treatmentPlans, maxLibraries]);
 
   const handleSwitchFavorite = (id, isFavorite, type) => {
     setId(id);

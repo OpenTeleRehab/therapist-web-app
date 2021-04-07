@@ -1,7 +1,7 @@
 import axios from 'utils/admin-axios';
 
-const getSettings = payload => {
-  return axios.get('/settings', { params: payload })
+const getLanguages = () => {
+  return axios.get('/language')
     .then(
       res => {
         return res.data;
@@ -12,6 +12,6 @@ const getSettings = payload => {
     });
 };
 
-export const Setting = {
-  getSettings
+export const Language = {
+  getLanguages
 };
