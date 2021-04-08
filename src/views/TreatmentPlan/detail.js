@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getTranslate } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Link, useHistory } from 'react-router-dom';
+import { BiEdit } from 'react-icons/bi';
 import {
   Button,
   Dropdown, DropdownButton,
@@ -94,6 +95,10 @@ const ViewTreatmentPlan = () => {
     });
   };
 
+  const handleOnClick = () => {
+    history.push(ROUTES.TREATMENT_PLAN_EDIT.replace(':patientId', patientId).replace(':id', id));
+  };
+
   return (
     <>
       {patientId && (
@@ -116,6 +121,16 @@ const ViewTreatmentPlan = () => {
                 to={ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId)}
               >
                 &lt; {translate('treatment_plan.back_to_list')}
+              </Button>
+
+              <Button
+                className={'ml-3'}
+                variant="primary"
+                as={Button}
+                onClick={handleOnClick}
+              >
+                <BiEdit className="mr-1" />
+                {translate('treatment_plan.edit')}
               </Button>
             </>
           ) : (
