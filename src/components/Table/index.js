@@ -38,7 +38,7 @@ const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDi
 const CustomTable = ({
   rows, columns, columnExtensions, pageSize, setPageSize, currentPage,
   setCurrentPage, totalCount, setSearchValue, setFilters, onRowClick, filters,
-  rightButton, hideSearchFilter, remotePaging, defaultSoringColumns
+  rightButton, hideSearchFilter, remotePaging, defaultSoringColumns, defaultHiddenColumnNames
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -86,7 +86,7 @@ const CustomTable = ({
       <TableHeaderRow />
       {showFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
       <TableFixedColumns rightColumns={rightColumns} cellComponent={FixedColumnCell} />
-      <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} />
+      <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} defaultHiddenColumnNames={defaultHiddenColumnNames} />
 
       <Toolbar />
       {!hideSearchFilter && <SearchPanel inputComponent={SearchInput} /> }
@@ -114,7 +114,8 @@ CustomTable.propTypes = {
   rightButton: PropTypes.object,
   hideSearchFilter: PropTypes.bool,
   remotePaging: PropTypes.bool,
-  defaultSoringColumns: PropTypes.array
+  defaultSoringColumns: PropTypes.array,
+  defaultHiddenColumnNames: PropTypes.array
 };
 
 CustomTable.defaultProps = {
