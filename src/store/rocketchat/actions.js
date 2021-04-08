@@ -16,9 +16,10 @@ export const setChatSubscribeIds = (payload) => (dispatch) => {
   dispatch(mutation.setChatSubscribeIdsSuccess(payload));
 };
 
-export const getChatRooms = (therapistId, chatUserId, roomIds) => async dispatch => {
+export const getChatRooms = () => async (dispatch, getState) => {
+  const { profile } = getState().auth;
   const payload = {
-    therapist_id: therapistId,
+    therapist_id: profile.id,
     enabled: 1,
     page_size: 999999,
     page: 1
@@ -26,6 +27,7 @@ export const getChatRooms = (therapistId, chatUserId, roomIds) => async dispatch
   const data = await User.getUsers(payload);
   if (data.success) {
     const chatRooms = [];
+    const roomIds = profile.chat_rooms;
     data.data.forEach(user => {
       if (user.chat_user_id) {
         const fIndex = roomIds.findIndex(r => r.includes(user.chat_user_id));
@@ -54,8 +56,9 @@ export const getChatRooms = (therapistId, chatUserId, roomIds) => async dispatch
   }
 };
 
-export const getChatUsersStatus = (authUserId) => async (dispatch, getState) => {
+export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
   const { authToken, chatRooms } = getState().rocketchat;
+  const authUserId = getState().auth.profile.chat_user_id;
   const userIds = [];
   const mapIndex = [];
   chatRooms.forEach((room, idx) => {
@@ -78,8 +81,9 @@ export const getChatUsersStatus = (authUserId) => async (dispatch, getState) => 
   }
 };
 
-export const getLastMessages = (authUserId, roomIds) => async (dispatch, getState) => {
+export const getLastMessages = (roomIds) => async (dispatch, getState) => {
   const { authToken, chatRooms } = getState().rocketchat;
+  const authUserId = getState().auth.profile.chat_user_id;
   const data = await Rocketchat.getLastMessages(roomIds, authUserId, authToken);
   if (data.success) {
     data.ims.forEach((message) => {
