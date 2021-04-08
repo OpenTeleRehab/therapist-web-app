@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Row, Col, Form, Badge, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsSearch, BsXCircle } from 'react-icons/bs';
+import Jitsi from 'react-jitsi';
 import {
   setIsOnChatPage,
   getChatRooms,
@@ -21,6 +22,7 @@ const ChatOrCall = ({ translate }) => {
   const { authToken, chatRooms, messages, selectedRoom, isChatConnected } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
   const [hideChatPanel, setHideChatPanel] = useState(true);
+  const showJitsi = false;
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
@@ -116,6 +118,10 @@ const ChatOrCall = ({ translate }) => {
               userStatus={renderUserStatus}
               hideChatPanel={setHideChatPanel}
             />
+
+            {showJitsi && (
+              <Jitsi />
+            )}
           </Col>
         </Row>
       )}
