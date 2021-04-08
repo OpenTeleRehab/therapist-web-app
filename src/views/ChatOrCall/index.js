@@ -13,6 +13,7 @@ import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
 import ChatPanel from 'views/ChatOrCall/Partials/ChatPanel';
 import RocketchatContext from 'context/RocketchatContext';
 import { USER_STATUS } from 'variables/rocketchat';
+import Jitsi from '@webessentials/react-jitsi';
 
 const ChatOrCall = ({ translate }) => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const ChatOrCall = ({ translate }) => {
   const { authToken, chatRooms, messages, selectedRoom, isChatConnected } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
   const [hideChatPanel, setHideChatPanel] = useState(true);
+  const showJitsi = false;
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
@@ -116,6 +118,10 @@ const ChatOrCall = ({ translate }) => {
               userStatus={renderUserStatus}
               hideChatPanel={setHideChatPanel}
             />
+
+            {showJitsi &&
+              <Jitsi />
+            }
           </Col>
         </Row>
       )}
