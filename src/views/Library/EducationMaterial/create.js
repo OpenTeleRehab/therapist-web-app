@@ -133,7 +133,7 @@ const CreateEducationMaterial = ({ translate }) => {
       setTitleError(false);
     }
 
-    if (!id && (formFields.file === undefined || toMB(formFields.file.size) > maxFileSize)) {
+    if (!materialFile && (formFields.file === undefined || toMB(formFields.file.size) > maxFileSize)) {
       canSave = false;
       setFileError(true);
     } else {

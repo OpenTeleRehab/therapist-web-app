@@ -21,26 +21,28 @@ const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial })
         <Row>
           <Col sm={12} xl={12}>
             { educationMaterial &&
-                <div className = "exercise-media">
-                  { educationMaterial.file.fileType === 'audio/mpeg' &&
+              <>
+                {educationMaterial.file ? (
+                  <div className = "exercise-media">
+                    { educationMaterial.file.fileType === 'audio/mpeg' &&
                     <div className="img-thumbnail w-100 pt-2">
                       <audio controls className="w-100">
                         <source src={educationMaterial.file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`} type="audio/ogg" />
                       </audio>
                     </div>
-                  }
+                    }
 
-                  { (educationMaterial.file.fileType !== 'audio/mpeg' && educationMaterial.file.fileType !== 'video/mp4' && educationMaterial.file.fileType !== 'application/pdf') &&
+                    { (educationMaterial.file.fileType !== 'audio/mpeg' && educationMaterial.file.fileType !== 'video/mp4' && educationMaterial.file.fileType !== 'application/pdf') &&
                     <img src={educationMaterial.file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`} alt="..." className="w-100 img-thumbnail"/>
-                  }
+                    }
 
-                  { educationMaterial.file.fileType === 'video/mp4' &&
+                    { educationMaterial.file.fileType === 'video/mp4' &&
                     <video className="w-100 img-thumbnail" controls>
                       <source src={educationMaterial.file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`} type="video/mp4" />
                     </video>
-                  }
+                    }
 
-                  { educationMaterial.file.fileType === 'application/pdf' &&
+                    { educationMaterial.file.fileType === 'application/pdf' &&
                     <object
                       data={educationMaterial.file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`}
                       type="application/pdf"
@@ -56,20 +58,24 @@ const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial })
                         <p>This browser does not support PDF!</p>
                       </iframe>
                     </object>
-                  }
+                    }
 
-                  <Form.Text className="text-muted">
-                    {translate(educationMaterial.file.fileGroupType)}:
-                    <a
-                      href={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="pl-2"
-                    >
-                      {educationMaterial.file.fileName}
-                    </a>
-                  </Form.Text>
-                </div>
+                    <Form.Text className="text-muted">
+                      {translate(educationMaterial.file.fileGroupType)}:
+                      <a
+                        href={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="pl-2"
+                      >
+                        {educationMaterial.file.fileName}
+                      </a>
+                    </Form.Text>
+                  </div>
+                ) : (
+                  <div>{translate('common.no_file_translate')}</div>
+                )}
+              </>
             }
           </Col>
         </Row>
