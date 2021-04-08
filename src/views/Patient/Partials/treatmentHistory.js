@@ -63,7 +63,7 @@ const TreatmentHistory = () => {
 
   return (
     <>
-      <div className="mt-3 d-flex">
+      <div className="mt-4 d-flex">
         <h5>
           {translate('treatment_plan.treatment_history')}
         </h5>
@@ -75,6 +75,7 @@ const TreatmentHistory = () => {
         >
           &lt; {translate('patient.back_to_list')}
         </Button>
+        <CreateButton />
       </div>
       <div className="mt-3">
         <CustomTable
@@ -89,7 +90,6 @@ const TreatmentHistory = () => {
           columns={columns}
           columnExtensions={columnExtensions}
           onRowClick={handleRowClick}
-          rightButton={<CreateButton />}
           rows={treatmentPlans.map(treatmentPlan => {
             return {
               id: treatmentPlan.id,
