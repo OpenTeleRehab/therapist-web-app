@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Row, Col, Form, Badge, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsSearch, BsXCircle } from 'react-icons/bs';
-import Jitsi from '@webessentials/react-jitsi';
+import Jitsi from 'react-jitsi';
 import {
   setIsOnChatPage,
   getChatRooms,
