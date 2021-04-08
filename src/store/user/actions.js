@@ -18,21 +18,19 @@ export const createUser = payload => async (dispatch, getState) => {
     return true;
   } else {
     dispatch(mutation.createUserFail());
-    dispatch(showErrorNotification('New patient account', data.message));
+    dispatch(showErrorNotification('toast_title.new_patient_account', data.message));
     return false;
   }
 };
 
 export const getUsers = payload => async dispatch => {
   dispatch(mutation.getUsersRequest());
-  // dispatch(showSpinner(true));
   const data = await User.getUsers(payload);
   if (data.success) {
     dispatch(mutation.getUsersSuccess(data.data, payload));
     return data.info;
   } else {
     dispatch(mutation.getUsersFail());
-    // dispatch(showSpinner(false));
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };

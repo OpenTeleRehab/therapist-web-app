@@ -1,7 +1,8 @@
 import axios from 'utils/patient-axios';
+import { getCountryIsoCode } from 'utils/country';
 
 const getAppointments = payload => {
-  return axios.get('/appointment', { params: payload })
+  return axios.get('/appointment', { params: payload, headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
@@ -13,7 +14,7 @@ const getAppointments = payload => {
 };
 
 const createAppointment = payload => {
-  return axios.post('/appointment', payload)
+  return axios.post('/appointment', payload, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
@@ -25,7 +26,7 @@ const createAppointment = payload => {
 };
 
 const updateAppointment = (id, payload) => {
-  return axios.put(`/appointment/${id}`, payload)
+  return axios.put(`/appointment/${id}`, payload, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
@@ -37,7 +38,7 @@ const updateAppointment = (id, payload) => {
 };
 
 const updateAppointmentStatus = (id, payload) => {
-  return axios.post(`/appointment/updateStatus/${id}`, payload)
+  return axios.post(`/appointment/updateStatus/${id}`, payload, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
@@ -49,7 +50,7 @@ const updateAppointmentStatus = (id, payload) => {
 };
 
 const deleteAppointment = id => {
-  return axios.delete(`/appointment/${id}`)
+  return axios.delete(`/appointment/${id}`, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
