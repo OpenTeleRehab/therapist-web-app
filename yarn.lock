@@ -2208,8 +2208,8 @@
     "@xtuc/long" "4.2.2"
 
 "@webessentials/react-jitsi@webessentials/react-jitsi#master":
-  version "1.1.0"
-  resolved "https://codeload.github.com/webessentials/react-jitsi/tar.gz/71aa43d50443f9305e7545ff6b22fddd0222b2f5"
+  version "1.1.1"
+  resolved "https://codeload.github.com/webessentials/react-jitsi/tar.gz/59e98cedac0be43a93a89e6be286150f370536c8"
 
 "@xtuc/ieee754@^1.2.0":
   version "1.2.0"
