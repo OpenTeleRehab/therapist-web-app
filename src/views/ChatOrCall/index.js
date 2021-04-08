@@ -6,7 +6,7 @@ import { BsSearch, BsXCircle } from 'react-icons/bs';
 import {
   setIsOnChatPage,
   getChatRooms,
-  getChatUsersStatus,
+  getCurrentChatUsersStatus,
   getLastMessages
 } from 'store/rocketchat/actions';
 import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
@@ -24,7 +24,7 @@ const ChatOrCall = ({ translate }) => {
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
-      dispatch(getChatRooms(therapist.id, therapist.chat_user_id, therapist.chat_rooms));
+      dispatch(getChatRooms());
     }
     dispatch(setIsOnChatPage(true));
     return () => {
@@ -34,10 +34,16 @@ const ChatOrCall = ({ translate }) => {
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && authToken && chatRooms.length) {
-      dispatch(getChatUsersStatus(therapist.chat_user_id));
-      if (therapist.chat_rooms.length) {
-        dispatch(getLastMessages(therapist.chat_user_id, therapist.chat_rooms));
-      }
+      dispatch(getCurrentChatUsersStatus());
+      // TODO get unread messages in each room
+      // https://developer.rocket.chat/api/realtime-api/method-calls/get-subscriptions
+      setTimeout(() => {
+        const roomIds = [];
+        chatRooms.forEach((room) => {
+          roomIds.push(room.rid);
+        });
+        dispatch(getLastMessages(roomIds));
+      }, 1000);
     }
   }, [dispatch, therapist, authToken, chatRooms]);
 

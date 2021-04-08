@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { selectRoom } from 'store/rocketchat/actions';
 import { formatDate } from 'utils/general';
 import _ from 'lodash';
-import { loadMessagesInRoom } from 'utils/rocketchat';
+import { loadMessagesInRoom, markMessagesAsRead } from 'utils/rocketchat';
 import { CHAT_TYPES } from 'variables/rocketchat';
 
 const ChatRoomList = (
@@ -37,6 +37,9 @@ const ChatRoomList = (
     const selected = roomList[index];
     dispatch(selectRoom(selected));
     loadMessagesInRoom(socket, selected.rid, therapist.id);
+    setTimeout(() => {
+      markMessagesAsRead(socket, selected.rid, therapist.id);
+    }, 1000);
     hideChatPanel(false);
   };
 

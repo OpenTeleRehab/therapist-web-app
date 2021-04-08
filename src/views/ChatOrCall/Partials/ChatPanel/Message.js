@@ -7,6 +7,7 @@ import settings from 'settings';
 import MessageText from './Type/MessageText';
 import MessageImage from './Type/MessageImage';
 import MessageVideo from './Type/MessageVideo';
+import { GiCheckMark } from 'react-icons/gi';
 
 const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
   const messageEndRef = useRef(null);
@@ -78,8 +79,11 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
                     ) : (
                       <MessageVideo attachment={message.attachment} />
                     )}
-                    <div className={`d-flex flex-row ${isSameOwner ? 'justify-content-end' : 'justify-content-start'}`}>
-                      <span className="chat-message-info">{moment(message._updatedAt).format('LT')}</span>
+                    <div className={`d-flex flex-row align-items-center ${isSameOwner ? 'justify-content-end' : 'justify-content-start'} chat-message-info`}>
+                      <span className="chat-message-time">{moment(message._updatedAt).format('LT')}</span>
+                      {direction === 'right' && (
+                        <span className="chat-message-tick ml-1 pb-1"><GiCheckMark size={10} color="#FFFFFF" /></span>
+                      )}
                     </div>
                   </div>
                 </div>
