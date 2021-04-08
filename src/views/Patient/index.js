@@ -12,7 +12,6 @@ import * as ROUTES from 'variables/routes';
 import CreatePatient from './create';
 import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
-import { DeleteAction, EditAction, ViewAction } from 'components/ActionIcons';
 import AgeCalculation from 'utils/age';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { getTranslate } from 'react-localize-redux';
@@ -36,8 +35,11 @@ const Patient = () => {
     { name: 'age', title: translate('common.age') },
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
     { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
-    { name: 'next_appointment', title: translate('common.next_appointment') },
-    { name: 'action', title: translate('common.action') }
+    { name: 'next_appointment', title: translate('common.next_appointment') }
+  ];
+
+  const defaultHiddenColumnNames = [
+    'age', 'ongoing_treatment_plan', 'ongoing_treatment_status', 'next_appointment'
   ];
 
   const columnExtensions = [
@@ -56,11 +58,6 @@ const Patient = () => {
   const handleClose = () => {
     setEditId('');
     setShow(false);
-  };
-
-  const handleEdit = (id) => {
-    setEditId(id);
-    setShow(true);
   };
 
   const handleShow = () => setShow(true);
@@ -84,8 +81,8 @@ const Patient = () => {
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
-  const handleView = (id) => {
-    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', id));
+  const handleRowClick = (row) => {
+    history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
   };
 
   return (
@@ -110,15 +107,11 @@ const Patient = () => {
         filters={filters}
         columns={columns}
         columnExtensions={columnExtensions}
+        defaultHiddenColumnNames={defaultHiddenColumnNames}
+        onRowClick={handleRowClick}
         rows={users.map(user => {
-          const action = (
-            <>
-              <ViewAction className="ml-1" onClick={() => handleView(user.id)} />
-              <EditAction className="ml-1" onClick={() => handleEdit(user.id)} />
-              <DeleteAction className="ml-1" disabled />
-            </>
-          );
           return {
+            id: user.id,
             identity: user.identity,
             last_name: user.last_name,
             first_name: user.first_name,
@@ -127,8 +120,7 @@ const Patient = () => {
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
             ongoing_treatment_plan: user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
             ongoing_treatment_status: renderStatusBadge(user.upcomingTreatmentPlan),
-            next_appointment: '',
-            action
+            next_appointment: ''
           };
         })}
       />
