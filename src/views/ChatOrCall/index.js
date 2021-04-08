@@ -2,8 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Form, Badge, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { BsSearch, BsXCircle } from 'react-icons/bs';
-import Jitsi from '@webessentials/react-jitsi';
+import { BsSearch, BsXCircle, BsList } from 'react-icons/bs';
 import {
   setIsOnChatPage,
   getChatRooms,
@@ -14,6 +13,7 @@ import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
 import ChatPanel from 'views/ChatOrCall/Partials/ChatPanel';
 import RocketchatContext from 'context/RocketchatContext';
 import { USER_STATUS } from 'variables/rocketchat';
+import Call from 'views/ChatOrCall/Partials/CallPanel';
 
 const ChatOrCall = ({ translate }) => {
   const dispatch = useDispatch();
@@ -22,7 +22,11 @@ const ChatOrCall = ({ translate }) => {
   const { authToken, chatRooms, messages, selectedRoom, isChatConnected } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
   const [hideChatPanel, setHideChatPanel] = useState(true);
-  const showJitsi = false;
+  const [isNoSidebar, setIsNoSidebar] = useState(false);
+  const [isIncomingCall, setIsIncomingCall] = useState(false);
+  const [isAcceptCall, setIsAcceptCall] = useState(false);
+  const [isVideoCall, setIsVideoCall] = useState(false);
+  const [onLeave, setOnLeave] = useState(false);
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
@@ -49,6 +53,26 @@ const ChatOrCall = ({ translate }) => {
     }
   }, [dispatch, therapist, authToken, chatRooms]);
 
+  useEffect(() => {
+    if (isIncomingCall) {
+      setIsNoSidebar(true);
+      setOnLeave(false);
+    }
+  }, [isIncomingCall]);
+
+  useEffect(() => {
+    if (isAcceptCall) {
+      setIsNoSidebar(false);
+    }
+  }, [isAcceptCall]);
+
+  useEffect(() => {
+    if (onLeave) {
+      setIsIncomingCall(false);
+      setIsNoSidebar(false);
+    }
+  }, [onLeave]);
+
   const getTotalOnlineUsers = () => {
     const onlineStatus = chatRooms.filter(room => {
       return room.u.status === USER_STATUS.ONLINE;
@@ -68,7 +92,7 @@ const ChatOrCall = ({ translate }) => {
           <h3 className="mb-0">{translate('chat_message.server_down')}</h3>
         </Alert>
       ) : (
-        <Row className="row-bg">
+        <Row className={'row-bg ' + (isNoSidebar ? 'panel-no-sidebar' : '')}>
           <Col lg={3} md={4} sm={12} className={`d-md-flex flex-column chat-sidebar-panel ${hideChatPanel ? 'd-flex' : 'd-none'}`}>
             <div className="chat-sidebar-header pb-1">
               <h4 className="font-weight-bold mt-3 d-flex align-items-center">
@@ -108,21 +132,42 @@ const ChatOrCall = ({ translate }) => {
               />
             </div>
           </Col>
-          <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
-            <ChatPanel
-              translate={translate}
-              therapist={therapist}
-              socket={chatSocket}
-              selectedRoom={selectedRoom}
-              messages={messages}
-              userStatus={renderUserStatus}
-              hideChatPanel={setHideChatPanel}
-            />
+          {isIncomingCall && !onLeave ? (
+            <>
+              <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column px-0 chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
+                <div className="calling">
+                  <Button variant="" className="sidebar-toggle text-white d-none d-md-block" onClick={() => setIsNoSidebar(!isNoSidebar)}>
+                    <BsList size={22} />
+                  </Button>
 
-            {showJitsi && (
-              <Jitsi />
-            )}
-          </Col>
+                  <Call
+                    roomName={selectedRoom.rid}
+                    userFullName={selectedRoom.name}
+                    isVideoCall={isVideoCall}
+                    isIncomingCall={setIsIncomingCall}
+                    isAcceptCall={setIsAcceptCall}
+                    onLeave={setOnLeave}
+                  />
+                </div>
+              </Col>
+            </>
+          ) : (
+            <>
+              <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
+                <ChatPanel
+                  translate={translate}
+                  therapist={therapist}
+                  socket={chatSocket}
+                  selectedRoom={selectedRoom}
+                  messages={messages}
+                  isIncomingCall={setIsIncomingCall}
+                  isVideoCall={setIsVideoCall}
+                  userStatus={renderUserStatus}
+                  hideChatPanel={setHideChatPanel}
+                />
+              </Col>
+            </>
+          )}
         </Row>
       )}
     </>
