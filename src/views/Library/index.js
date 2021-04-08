@@ -67,7 +67,7 @@ const Library = ({ translate }) => {
 
   useEffect(() => {
     if (systemLimits.length) {
-      const limitLibrary = systemLimits.find(systemLimit => systemLimit.content_type === SYSTEM_TYPES.LIBRARIES);
+      const limitLibrary = systemLimits.find(systemLimit => systemLimit.content_type === SYSTEM_TYPES.THERAPIST_CONTENT_LIMIT);
       if (!_.isEmpty(limitLibrary)) {
         setMaxLibraries(limitLibrary.value);
       }

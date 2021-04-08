@@ -1,3 +1,3 @@
 export const SYSTEM_TYPES = {
-  LIBRARIES: 'libraries'
+  THERAPIST_CONTENT_LIMIT: 'therapist_content_limit'
 };
