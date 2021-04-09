@@ -83,7 +83,7 @@ const Library = ({ translate }) => {
   useEffect(() => {
     if (therapistId) {
       exerciseService.countTherapistLibraries(therapistId).then(res => {
-        if (res.data) {
+        if (res.success) {
           setAllowCreateContent(res.data < maxLibraries);
         }
       });
