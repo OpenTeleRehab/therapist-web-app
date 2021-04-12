@@ -16,3 +16,7 @@ export const TAB = {
   adherence: 'adherence',
   goal_tracking: 'goal_tracking'
 };
+
+export const TYPE = {
+  preset: 'preset'
+};

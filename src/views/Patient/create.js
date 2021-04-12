@@ -217,7 +217,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           <PhoneInput
             countryCodeEditable={false}
             disableDropdown={true}
-            country={getCountryIsoCode(profile.country_id, countries).toLowerCase()}
+            country={getCountryIsoCode().toLowerCase()}
             value={formFields.phone}
             onlyCountries={
               countries.map(country => { return country.iso_code.toLowerCase(); })
