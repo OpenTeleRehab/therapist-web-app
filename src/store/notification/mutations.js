@@ -1,7 +1,8 @@
-const setNotificationMessage = (title, message) => ({
+const setNotificationMessage = (title, message, messageParams) => ({
   type: 'SET_NOTIFICATION_MESSAGE',
   title,
-  message
+  message,
+  messageParams
 });
 
 const openNotification = () => ({
