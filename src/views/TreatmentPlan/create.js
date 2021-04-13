@@ -213,7 +213,8 @@ const CreateTreatmentPlan = () => {
           total_of_weeks: weeks,
           type: 'normal',
           goals,
-          activities
+          activities,
+          therapist_id: profile.id
         }))
           .then(result => {
             if (result) {
@@ -226,7 +227,8 @@ const CreateTreatmentPlan = () => {
           total_of_weeks: weeks,
           type: 'normal',
           goals,
-          activities
+          activities,
+          therapist_id: profile.id
         }))
           .then(result => {
             if (result && patientId) {

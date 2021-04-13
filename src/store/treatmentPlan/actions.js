@@ -16,7 +16,7 @@ export const createTreatmentPlan = payload => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.createTreatmentPlanFail());
-    dispatch(showErrorNotification('toast_title.new_treatment_plan', data.message));
+    dispatch(showErrorNotification('toast_title.new_treatment_plan', data.message, { number: data.limit }));
     return false;
   }
 };
@@ -30,7 +30,7 @@ export const updateTreatmentPlan = (id, payload) => async dispatch => {
     return true;
   } else {
     dispatch(mutation.updateTreatmentPlanFail());
-    dispatch(showErrorNotification('toast_title.update_treatment_plan', data.message));
+    dispatch(showErrorNotification('toast_title.update_treatment_plan', data.message, { number: data.limit }));
     return false;
   }
 };

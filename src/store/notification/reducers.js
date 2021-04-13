@@ -5,7 +5,8 @@ export const notification = (state = initialState, action) => {
     case 'SET_NOTIFICATION_MESSAGE': {
       return Object.assign({}, state, {
         title: action.title,
-        message: action.message
+        message: action.message,
+        messageParams: action.messageParams
       });
     }
     case 'OPEN_NOTIFICATION': {
