@@ -2,18 +2,11 @@
 
 - name: Create build file
   file:
-    path: '/var/tmp/{{ project_id }}/latest-{{ project_name }}-build'
+    path: '/var/tmp/{{ project_id }}/{{ item }}'
     state: touch
     mode: 0755
-
-- name: Create build file
-  file:
-    path: '/var/tmp/{{ project_id }}/demo-{{ project_name }}-build'
-    state: touch
-    mode: 0755
-
-- name: Create build file
-  file:
-    path: '/var/tmp/{{ project_id }}/test-{{ project_name }}-build'
-    state: touch
-    mode: 0755
+  loop:
+    - 'latest-{{ project_name }}-build'
+    - 'demo-{{ project_name }}-build'
+    - 'test-{{ project_name }}-build'
+    - 'live-{{ project_name }}-build'
