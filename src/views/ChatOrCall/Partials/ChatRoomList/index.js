@@ -6,7 +6,7 @@ import { selectRoom } from 'store/rocketchat/actions';
 import { formatDate } from 'utils/general';
 import _ from 'lodash';
 import { loadMessagesInRoom, markMessagesAsRead } from 'utils/rocketchat';
-import { CHAT_TYPES } from 'variables/rocketchat';
+import { CALL_STATUS, CHAT_TYPES } from 'variables/rocketchat';
 
 const ChatRoomList = (
   {
@@ -43,17 +43,32 @@ const ChatRoomList = (
     hideChatPanel(false);
   };
 
+  const getHighlightText = (msg, type) => {
+    let lastMsg = msg || '';
+    let className = 'text-muted';
+    if (type !== undefined && type !== CHAT_TYPES.TEXT) {
+      lastMsg = translate('chat_attachment.title');
+      className = 'text-primary';
+    } else if (msg === CALL_STATUS.MISSED) {
+      lastMsg = translate('video_call_missed');
+      className = 'text-danger';
+    } else if (msg === CALL_STATUS.STARTED) {
+      lastMsg = translate('video_call_started');
+      className = 'text-primary';
+    } else if (msg === CALL_STATUS.ENDED) {
+      lastMsg = translate('video_call_ended');
+      className = 'text-primary';
+    }
+    return { lastMsg, className };
+  };
+
   return (
     <>
       {roomList.length ? (
         roomList.map((room, index) => {
           const { unread, lastMessage } = room;
-          let lastMsg = lastMessage.msg || '';
-          let className = 'text-muted';
-          if (lastMessage.type !== undefined && lastMessage.type !== CHAT_TYPES.TEXT) {
-            lastMsg = translate('chat_attachment.title');
-            className = 'text-primary';
-          }
+          const { lastMsg, className } = getHighlightText(lastMessage.msg, lastMessage.type);
+
           return (
             <ListGroup as="ul" key={index}>
               <ListGroup.Item

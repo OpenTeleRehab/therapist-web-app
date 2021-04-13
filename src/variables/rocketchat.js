@@ -12,3 +12,10 @@ export const CHAT_TYPES = {
   IMAGE: 'image',
   VIDEO: 'video'
 };
+
+export const CALL_STATUS = {
+  STARTED: 'jitsi_call_started',
+  ACCEPTED: 'jitsi_call_accepted',
+  MISSED: 'jitsi_call_missed', // missed and declined
+  ENDED: 'jitsi_call_ended'
+};

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Button } from 'react-bootstrap';
-import { generateHash } from 'utils/general';
-import { sendNewMessage } from 'utils/rocketchat';
 import Message from './Message';
 import InputToolbar from './InputToolbar';
 import { BsChevronLeft } from 'react-icons/bs';
 import { IoCallOutline, IoVideocamOutline } from 'react-icons/io5';
+import { CALL_STATUS } from 'variables/rocketchat';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
 const ChatPanel = (
@@ -14,12 +13,11 @@ const ChatPanel = (
     translate,
     userStatus,
     therapist,
-    socket,
     selectedRoom,
     messages,
     hideChatPanel,
-    isIncomingCall,
-    isVideoCall
+    isVideoCall,
+    onSendMessage
   }) => {
   const [msgOuterHeight, setMsgOuterHeight] = useState(MIN_MSG_OUTER_HEIGHT);
 
@@ -31,23 +29,9 @@ const ChatPanel = (
     }
   };
 
-  const handleSendMessage = (msg) => {
-    const newMessage = {
-      _id: generateHash(),
-      rid: selectedRoom.rid,
-      msg
-    };
-    sendNewMessage(socket, newMessage, therapist.id);
-  };
-
-  const onAudioCall = () => {
-    isVideoCall(false);
-    isIncomingCall(true);
-  };
-
-  const onVideoCall = () => {
-    isVideoCall(true);
-    isIncomingCall(true);
+  const handleCall = (isVideo) => {
+    onSendMessage(CALL_STATUS.STARTED);
+    isVideoCall(isVideo);
   };
 
   return (
@@ -62,13 +46,12 @@ const ChatPanel = (
               {selectedRoom.name}
               {userStatus(selectedRoom, 'md')}
             </h4>
-
             <div className="d-flex justify-content-end">
-              <Button variant="light" className="btn-audio-call bg-white rounded-circle mr-2" disabled onClick={() => onAudioCall()}>
-                <IoCallOutline size={16} />
+              <Button variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => handleCall(false)}>
+                <IoCallOutline size={18} color="#333333" />
               </Button>
-              <Button variant="light" className="btn-video-call bg-white rounded-circle" disabled onClick={() => onVideoCall()}>
-                <IoVideocamOutline size={16} />
+              <Button variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => handleCall(true)}>
+                <IoVideocamOutline size={18} color="#333333" />
               </Button>
             </div>
           </div>
@@ -79,7 +62,7 @@ const ChatPanel = (
             msgOuterHeight={msgOuterHeight}
           />
           <InputToolbar
-            onSend={handleSendMessage}
+            onSend={onSendMessage}
             onInputSizeChanged={handleInputSizeChanged}
             translate={translate}
             roomId={selectedRoom.rid}
@@ -96,12 +79,11 @@ ChatPanel.propTypes = {
   translate: PropTypes.func,
   userStatus: PropTypes.func,
   therapist: PropTypes.object,
-  socket: PropTypes.object,
   selectedRoom: PropTypes.object,
   messages: PropTypes.array,
   hideChatPanel: PropTypes.func,
-  isIncomingCall: PropTypes.func,
-  isVideoCall: PropTypes.func
+  isVideoCall: PropTypes.func,
+  onSendMessage: PropTypes.func
 };
 
 export default ChatPanel;

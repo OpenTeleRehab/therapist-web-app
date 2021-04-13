@@ -83,6 +83,11 @@ const sendAttachmentMessagesFail = () => ({
   type: 'SEND_ATTACHMENT_MESSAGES_FAIL'
 });
 
+const updateVideoCallSuccess = (data) => ({
+  type: 'UPDATE_VIDEO_CALL_STATUS_SUCCESS',
+  data
+});
+
 export const mutation = {
   setWebsocketConnectionSuccess,
   chatUserLoginSuccess,
@@ -101,5 +106,6 @@ export const mutation = {
   setIsOnChatPageSuccess,
   updateChatUserStatusSuccess,
   sendAttachmentMessagesSuccess,
-  sendAttachmentMessagesFail
+  sendAttachmentMessagesFail,
+  updateVideoCallSuccess
 };

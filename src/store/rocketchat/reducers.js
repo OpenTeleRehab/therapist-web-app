@@ -10,6 +10,7 @@ export const rocketchat = (state = initialState, action) => {
     case 'CHAT_USER_LOGIN_SUCCESS': {
       return Object.assign({}, state, {
         authToken: action.data.authToken,
+        authUserId: action.data.authUserId,
         tokenExpiredAt: action.data.tokenExpiredAt
       });
     }
@@ -36,6 +37,11 @@ export const rocketchat = (state = initialState, action) => {
     case 'SET_IS_ON_CHAT_PAGE_SUCCESS': {
       return Object.assign({}, state, {
         isOnChatPage: action.data
+      });
+    }
+    case 'UPDATE_VIDEO_CALL_STATUS_SUCCESS': {
+      return Object.assign({}, state, {
+        videoCall: action.data
       });
     }
     default:

@@ -5,6 +5,8 @@ export const initialState = {
   isOnChatPage: false,
   subscribeIds: undefined,
   authToken: undefined,
+  authUserId: undefined,
   tokenExpiredAt: null,
-  selectedRoom: undefined
+  selectedRoom: undefined,
+  videoCall: undefined
 };
