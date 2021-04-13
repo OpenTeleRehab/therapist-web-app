@@ -5,7 +5,8 @@ const settings = {
   genders: {
     options: [
       { text: 'Male', value: 'male' },
-      { text: 'Female', value: 'female' }
+      { text: 'Female', value: 'female' },
+      { text: 'Other', value: 'other' }
     ]
   },
   noteMaxLength: 50,
