@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { BsPlus, BsX } from 'react-icons/bs';
+import { BsPlus, BsX, BsXCircle } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import moment from 'moment';
@@ -13,6 +13,8 @@ import AddActivity from 'views/TreatmentPlan/Activity/add';
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
 import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/listCard';
+import { BiCopyAlt } from 'react-icons/bi';
+import CopyActivity from './copyActivity';
 
 const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly }) => {
   const localize = useSelector((state) => state.localize);
@@ -27,6 +29,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const { profile } = useSelector((state) => state.auth);
   const [lang, setLang] = useState('');
   const [therapistId, setTherapistId] = useState('');
+  const [openCopyDialog, setOpenCopyDialog] = useState(false);
+  const [dayActivityToCopy, setDayActivityToCopy] = useState();
 
   useEffect(() => {
     if (profile) {
@@ -132,6 +136,20 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
     setOpenActivityDialog(false);
   };
 
+  const handleClearDayActivity = (dayActivity) => {
+    _.remove(activities, a => a.week === dayActivity.week && a.day === dayActivity.day);
+    setActivities([...activities]);
+  };
+
+  const handleCopyDayActivity = (dayActivity) => {
+    setOpenCopyDialog(true);
+    setDayActivityToCopy(dayActivity);
+  };
+
+  const handleCloseCopyDialog = () => {
+    setOpenCopyDialog(false);
+  };
+
   const dayElements = () => {
     const elements = [];
     for (let i = 0; i < 7; i++) {
@@ -150,6 +168,12 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         questionnaires = dayActivities.filter(dayActivity => dayActivity.type === 'questionnaire');
       }
       const isEven = i % 2 === 0;
+      let showCopyAndClear = false;
+      if (dayActivity && (dayActivity.exercises || dayActivity.materials || dayActivity.questionnaires)) {
+        if (dayActivity.exercises.length || dayActivity.materials.length || dayActivity.questionnaires.length) {
+          showCopyAndClear = true;
+        }
+      }
       elements.push(
         <div className={'flex-fill flex-basic-0 d-flex flex-column align-items-center ' + (isEven ? 'bg-white' : 'bg-light') } key={`day-column-${i}`}>
           <div
@@ -161,6 +185,26 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             {date.isValid() && <small>({date.format(settings.date_format)})</small>}
           </div>
           <div className="p-2 activity-card-wrapper h-100">
+            {(showCopyAndClear && !readOnly) &&
+              <div className="d-flex justify-content-between mb-2">
+                <Button
+                  variant="link"
+                  className="text-muted p-0"
+                  onClick={() => handleClearDayActivity(dayActivity)}
+                >
+                  <BsXCircle size={20} className="mr-1" />
+                  {translate('common.clear_all')}
+                </Button>
+                <Button
+                  variant="link"
+                  className="p-0"
+                  onClick={() => handleCopyDayActivity(dayActivity)}
+                >
+                  <BiCopyAlt size={20} className="mr-1" />
+                  {translate('common.copy_all')}
+                </Button>
+              </div>
+            }
             <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
             <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
             <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
@@ -232,6 +276,17 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           day={day}
           activities={activities}
           setActivities={setActivities}
+        />
+      }
+
+      {openCopyDialog &&
+        <CopyActivity
+          handleClose={handleCloseCopyDialog}
+          show={openCopyDialog}
+          activities={activities}
+          setActivities={setActivities}
+          dayActivityToCopy={dayActivityToCopy}
+          weeks={weeks}
         />
       }
     </>
