@@ -4,7 +4,8 @@ import {
   authenticateChatUser,
   connectWebsocket,
   getMessagesForSelectedRoom,
-  updateChatUserStatus
+  updateChatUserStatus,
+  updateVideoCallStatus
 } from 'store/rocketchat/actions';
 import { showErrorNotification } from 'store/notification/actions';
 import { USER_STATUS } from 'variables/rocketchat';
@@ -12,7 +13,7 @@ import { getUniqueId, getMessage } from './general';
 
 export const initialChatSocket = (dispatch, subscribeIds, username, password) => {
   let isConnected = false;
-  let userId = '';
+  let authUserId = '';
   let authToken = '';
   const { loginId, roomMessageId, notifyLoggedId } = subscribeIds;
 
@@ -71,14 +72,14 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
         // set auth token
         const { token, tokenExpires } = result;
         const tokenExpiredAt = new Date(tokenExpires.$date);
-        userId = result.id;
+        authUserId = result.id;
         authToken = token;
-        dispatch(authenticateChatUser({ authToken, tokenExpiredAt }));
+        dispatch(authenticateChatUser({ authToken, authUserId, tokenExpiredAt }));
 
         // subscribe chat room message
         subscribeChatRoomMessage(socket, roomMessageId);
 
-        // subscribe to user logged status (patient)
+        // subscribe to user logged status
         setTimeout(() => {
           subscribeUserLoggedStatus(socket, notifyLoggedId);
         }, 1000);
@@ -86,7 +87,7 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
         const allMessages = [];
         const reversedMessages = result.messages.reverse();
         reversedMessages.forEach((message) => {
-          const data = getMessage(message, userId, authToken);
+          const data = getMessage(message, authUserId, authToken);
           allMessages.push(data);
         });
         dispatch(getMessagesForSelectedRoom(allMessages));
@@ -94,7 +95,11 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
     } else if (resMessage === 'changed') {
       if (collection === 'stream-room-messages') {
         // trigger change in chat room
-        const newMessage = getMessage(fields.args[0], userId, authToken);
+        const { _id, msg } = fields.args[0];
+        if (msg !== '' && msg.includes('jitsi_call_')) {
+          dispatch(updateVideoCallStatus({ _id, status: msg }));
+        }
+        const newMessage = getMessage(fields.args[0], authUserId, authToken);
         dispatch(appendNewMessage(newMessage));
       } else if (collection === 'stream-notify-logged') {
         // trigger user logged status
@@ -131,6 +136,16 @@ export const sendNewMessage = (socket, newMessage, therapistId) => {
     method: 'sendMessage',
     id: getUniqueId(therapistId),
     params: [{ ...newMessage }]
+  };
+  socket.send(JSON.stringify(options));
+};
+
+export const updateMessage = (socket, message, therapistId) => {
+  const options = {
+    msg: 'method',
+    method: 'updateMessage',
+    id: getUniqueId(therapistId),
+    params: [{ ...message }]
   };
   socket.send(JSON.stringify(options));
 };

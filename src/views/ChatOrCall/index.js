@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Form, Badge, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,66 +12,62 @@ import {
 import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
 import ChatPanel from 'views/ChatOrCall/Partials/ChatPanel';
 import RocketchatContext from 'context/RocketchatContext';
-import { USER_STATUS } from 'variables/rocketchat';
-import Call from 'views/ChatOrCall/Partials/CallPanel';
+import { CALL_STATUS, USER_STATUS } from 'variables/rocketchat';
+import VideoCall from 'views/ChatOrCall/Partials/VideoCall';
+import { generateHash } from 'utils/general';
+import { sendNewMessage, updateMessage } from 'utils/rocketchat';
 
+const CALL_WAITING_TIMEOUT = 60000; // 1 minute
 const ChatOrCall = ({ translate }) => {
   const dispatch = useDispatch();
+  const callTimeout = useRef(null);
   const chatSocket = useContext(RocketchatContext);
   const therapist = useSelector(state => state.auth.profile);
-  const { authToken, chatRooms, messages, selectedRoom, isChatConnected } = useSelector(state => state.rocketchat);
+  const { authToken, chatRooms, messages, selectedRoom, isChatConnected, videoCall } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
   const [hideChatPanel, setHideChatPanel] = useState(true);
   const [isNoSidebar, setIsNoSidebar] = useState(false);
-  const [isIncomingCall, setIsIncomingCall] = useState(false);
-  const [isAcceptCall, setIsAcceptCall] = useState(false);
   const [isVideoCall, setIsVideoCall] = useState(false);
-  const [onLeave, setOnLeave] = useState(false);
 
   useEffect(() => {
-    if (therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
-      dispatch(getChatRooms());
+    if (therapist && therapist.chat_user_id && therapist.chat_rooms.length && authToken) {
+      dispatch(getChatRooms()).then(success => {
+        if (success) {
+          dispatch(getLastMessages());
+          setTimeout(() => {
+            dispatch(getCurrentChatUsersStatus());
+          }, 1000);
+          // TODO get unread messages in each room
+          // https://developer.rocket.chat/api/realtime-api/method-calls/get-subscriptions
+        }
+      });
     }
     dispatch(setIsOnChatPage(true));
     return () => {
       dispatch(setIsOnChatPage(false));
     };
-  }, [dispatch, therapist]);
+  }, [authToken, dispatch, therapist]);
 
   useEffect(() => {
-    if (therapist && therapist.chat_user_id && authToken && chatRooms.length) {
-      dispatch(getCurrentChatUsersStatus());
-      // TODO get unread messages in each room
-      // https://developer.rocket.chat/api/realtime-api/method-calls/get-subscriptions
-      setTimeout(() => {
-        const roomIds = [];
-        chatRooms.forEach((room) => {
-          roomIds.push(room.rid);
-        });
-        dispatch(getLastMessages(roomIds));
-      }, 1000);
+    if (videoCall !== undefined) {
+      if (videoCall.status === CALL_STATUS.STARTED) {
+        callTimeout.current = setTimeout(() => {
+          const message = {
+            _id: videoCall._id,
+            rid: selectedRoom.rid,
+            msg: CALL_STATUS.MISSED
+          };
+          updateMessage(chatSocket, message, therapist.id);
+        }, CALL_WAITING_TIMEOUT);
+        setIsNoSidebar(true);
+      } else {
+        if (callTimeout.current) {
+          clearTimeout(callTimeout.current);
+        }
+        setIsNoSidebar(false);
+      }
     }
-  }, [dispatch, therapist, authToken, chatRooms]);
-
-  useEffect(() => {
-    if (isIncomingCall) {
-      setIsNoSidebar(true);
-      setOnLeave(false);
-    }
-  }, [isIncomingCall]);
-
-  useEffect(() => {
-    if (isAcceptCall) {
-      setIsNoSidebar(false);
-    }
-  }, [isAcceptCall]);
-
-  useEffect(() => {
-    if (onLeave) {
-      setIsIncomingCall(false);
-      setIsNoSidebar(false);
-    }
-  }, [onLeave]);
+  }, [chatSocket, selectedRoom, therapist, videoCall]);
 
   const getTotalOnlineUsers = () => {
     const onlineStatus = chatRooms.filter(room => {
@@ -83,6 +79,24 @@ const ChatOrCall = ({ translate }) => {
   const renderUserStatus = (room, infix = '') => {
     const className = `chat-user-status ${infix} ${room.u.status}`;
     return <span className={className}>&nbsp;</span>;
+  };
+
+  const handleSendMessage = (msg) => {
+    const newMessage = {
+      _id: generateHash(),
+      rid: selectedRoom.rid,
+      msg
+    };
+    sendNewMessage(chatSocket, newMessage, therapist.id);
+  };
+
+  const handleUpdateMessage = (msg, _id) => {
+    const message = {
+      _id,
+      rid: selectedRoom.rid,
+      msg
+    };
+    updateMessage(chatSocket, message, therapist.id);
   };
 
   return (
@@ -132,21 +146,21 @@ const ChatOrCall = ({ translate }) => {
               />
             </div>
           </Col>
-          {isIncomingCall && !onLeave ? (
+          {videoCall && (videoCall.status === CALL_STATUS.STARTED || videoCall.status === CALL_STATUS.ACCEPTED) ? (
             <>
               <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column px-0 chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
                 <div className="calling">
                   <Button variant="" className="sidebar-toggle text-white d-none d-md-block" onClick={() => setIsNoSidebar(!isNoSidebar)}>
-                    <BsList size={22} />
+                    <BsList size={22} color="#FFFFFF" />
                   </Button>
-
-                  <Call
+                  <VideoCall
                     roomName={selectedRoom.rid}
-                    userFullName={selectedRoom.name}
+                    displayName={selectedRoom.name}
                     isVideoCall={isVideoCall}
-                    isIncomingCall={setIsIncomingCall}
-                    isAcceptCall={setIsAcceptCall}
-                    onLeave={setOnLeave}
+                    onSendMessage={handleSendMessage}
+                    onUpdateMessage={handleUpdateMessage}
+                    indicator={videoCall}
+                    callingText={translate('video_call_starting')}
                   />
                 </div>
               </Col>
@@ -157,13 +171,12 @@ const ChatOrCall = ({ translate }) => {
                 <ChatPanel
                   translate={translate}
                   therapist={therapist}
-                  socket={chatSocket}
                   selectedRoom={selectedRoom}
                   messages={messages}
-                  isIncomingCall={setIsIncomingCall}
                   isVideoCall={setIsVideoCall}
                   userStatus={renderUserStatus}
                   hideChatPanel={setHideChatPanel}
+                  onSendMessage={handleSendMessage}
                 />
               </Col>
             </>

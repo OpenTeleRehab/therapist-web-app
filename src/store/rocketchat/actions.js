@@ -16,6 +16,14 @@ export const setChatSubscribeIds = (payload) => (dispatch) => {
   dispatch(mutation.setChatSubscribeIdsSuccess(payload));
 };
 
+export const setIsOnChatPage = (payload) => (dispatch) => {
+  dispatch(mutation.setIsOnChatPageSuccess(payload));
+};
+
+export const updateVideoCallStatus = (payload) => (dispatch) => {
+  dispatch(mutation.updateVideoCallSuccess(payload));
+};
+
 export const getChatRooms = () => async (dispatch, getState) => {
   const { profile } = getState().auth;
   const payload = {
@@ -48,7 +56,7 @@ export const getChatRooms = () => async (dispatch, getState) => {
       }
     });
     dispatch(mutation.getChatRoomsSuccess(chatRooms));
-    return true;
+    return chatRooms.length > 0;
   } else {
     dispatch(mutation.getChatRoomsFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));
@@ -57,8 +65,7 @@ export const getChatRooms = () => async (dispatch, getState) => {
 };
 
 export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
-  const { authToken, chatRooms } = getState().rocketchat;
-  const authUserId = getState().auth.profile.chat_user_id;
+  const { authToken, authUserId, chatRooms } = getState().rocketchat;
   const userIds = [];
   const mapIndex = [];
   chatRooms.forEach((room, idx) => {
@@ -81,9 +88,12 @@ export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
   }
 };
 
-export const getLastMessages = (roomIds) => async (dispatch, getState) => {
-  const { authToken, chatRooms } = getState().rocketchat;
-  const authUserId = getState().auth.profile.chat_user_id;
+export const getLastMessages = () => async (dispatch, getState) => {
+  const { authToken, authUserId, chatRooms } = getState().rocketchat;
+  const roomIds = [];
+  chatRooms.forEach((room) => {
+    roomIds.push(room.rid);
+  });
   const data = await Rocketchat.getLastMessages(roomIds, authUserId, authToken);
   if (data.success) {
     data.ims.forEach((message) => {
@@ -119,30 +129,27 @@ export const selectRoom = (payload) => (dispatch, getState) => {
 };
 
 export const appendNewMessage = (payload) => (dispatch, getState) => {
-  const { messages, chatRooms, selectedRoom } = getState().rocketchat;
-  const { profile } = getState().auth;
+  const { messages, chatRooms, selectedRoom, authUserId } = getState().rocketchat;
   let currentRoom = false;
   if (selectedRoom !== undefined && selectedRoom.rid === payload.rid) {
     currentRoom = true;
     const fIndex = messages.findIndex(msg => msg._id === payload._id);
     if (fIndex === -1) {
       messages.push(payload);
-      dispatch(mutation.appendNewMessageSuccess(messages));
+    } else {
+      messages[fIndex] = payload;
     }
+    dispatch(mutation.appendNewMessageSuccess(messages));
   }
   const fIndex = chatRooms.findIndex(cr => cr.rid === payload.rid);
   if (fIndex > -1) {
-    if (!currentRoom && profile.chat_user_id !== payload.u._id) {
+    if (!currentRoom && authUserId !== payload.u._id) {
       chatRooms[fIndex].unread += 1;
     }
     chatRooms[fIndex].totalMessages += 1;
     chatRooms[fIndex].lastMessage = payload;
     dispatch(mutation.updateLastMessageSuccess(chatRooms));
   }
-};
-
-export const setIsOnChatPage = (payload) => (dispatch) => {
-  dispatch(mutation.setIsOnChatPageSuccess(payload));
 };
 
 export const updateChatUserStatus = (payload) => (dispatch, getState) => {
@@ -157,9 +164,8 @@ export const updateChatUserStatus = (payload) => (dispatch, getState) => {
 };
 
 export const postAttachmentMessage = (roomId, attachment) => async (dispatch, getState) => {
-  const { authToken } = getState().rocketchat;
-  const { profile } = getState().auth;
-  const data = await Rocketchat.sendAttachmentMessage(roomId, profile.chat_user_id, authToken, attachment);
+  const { authToken, authUserId } = getState().rocketchat;
+  const data = await Rocketchat.sendAttachmentMessage(roomId, authUserId, authToken, attachment);
   if (data.success) {
     dispatch(mutation.sendAttachmentMessagesSuccess());
     return true;

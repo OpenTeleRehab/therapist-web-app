@@ -11,12 +11,4 @@ const Loading = () => {
   );
 };
 
-Loading.propTypes = {
-
-};
-
-Loading.defaultProps = {
-
-};
-
 export default Loading;
