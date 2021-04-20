@@ -27,6 +27,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
   const [showActivateDeactivateDialog, setShowActivateDeactivateDialog] = useState(false);
+  const [disabledConfirmButton, setDisabledConfirmButton] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -79,9 +80,11 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
   };
 
   const handleActivateDeactivateDialogConfirm = (id, enabled) => {
+    setDisabledConfirmButton(true);
     dispatch(activateDeactivateAccount(id, { enabled: enabled })).then(result => {
       if (result) {
         handleActivateDeactivateDialogClose();
+        setDisabledConfirmButton(false);
       }
     });
   };
@@ -131,6 +134,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
         onCancel={handleActivateDeactivateDialogClose}
         confirmLabel={translate('common.yes')}
         onConfirm={() => handleActivateDeactivateDialogConfirm(formFields.id, formFields.enabled ? 0 : 1)}
+        disabledConfirmButton={disabledConfirmButton}
       >
         <p>{translate('patient.activate_deactivate_confirmation_message', { status: formFields.enabled ? translate('patient.deactivate') : translate('patient.activate') })}</p>
       </Dialog>
