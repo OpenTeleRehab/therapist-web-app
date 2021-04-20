@@ -52,7 +52,7 @@ const ChatRoomList = (
     } else if (msg === CALL_STATUS.MISSED) {
       lastMsg = translate('video_call_missed');
       className = 'text-danger';
-    } else if (msg === CALL_STATUS.STARTED) {
+    } else if ([CALL_STATUS.STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
       lastMsg = translate('video_call_started');
       className = 'text-primary';
     } else if (msg === CALL_STATUS.ENDED) {

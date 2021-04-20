@@ -6,7 +6,6 @@ import { ImAttachment } from 'react-icons/im';
 import { toMB, isValidFileSize } from 'utils/file';
 import AttachmentDialog from './AttachmentDialog';
 import { useDispatch } from 'react-redux';
-import { postAttachmentMessage } from 'store/rocketchat/actions';
 import { showErrorNotification } from 'store/notification/actions';
 import settings from 'settings';
 
@@ -101,7 +100,7 @@ const InputToolbar = (props) => {
   };
 
   const onConfirmSendAttachment = () => {
-    dispatch(postAttachmentMessage(props.roomId, attachment));
+    props.onSend('', attachment);
     setShowDialog(false);
     setAttachment(null);
   };
@@ -156,8 +155,7 @@ const InputToolbar = (props) => {
 InputToolbar.propTypes = {
   translate: PropTypes.func,
   onSend: PropTypes.func,
-  onInputSizeChanged: PropTypes.func,
-  roomId: PropTypes.string
+  onInputSizeChanged: PropTypes.func
 };
 
 export default InputToolbar;

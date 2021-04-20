@@ -129,6 +129,9 @@
       img,
       video {
         cursor: pointer;
+        &:focus {
+          outline: none;
+        }
       }
     }
     &-info {
@@ -136,6 +139,11 @@
     }
     &-time {
       font-size: 12px;
+    }
+    &-pending {
+      top: 0;
+      left: 0;
+      background: rgba($white, .5);
     }
   }
   &-input-toolbar {

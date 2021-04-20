@@ -9,7 +9,7 @@ import {
   VscUnmute
 } from 'react-icons/all';
 import PropTypes from 'prop-types';
-import Loading from './Loading';
+import SplashScreen from 'components/SplashScreen';
 import { CALL_STATUS } from 'variables/rocketchat';
 
 const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indicator, callingText }) => {
@@ -52,7 +52,7 @@ const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indica
           domain={process.env.REACT_APP_JITSI_DOMAIN}
           roomName={roomName}
           displayName={displayName}
-          loadingComponent={Loading}
+          loadingComponent={SplashScreen}
           containerStyle={{ width: '100%', height: '100%' }}
           interfaceConfig={interfaceConfig}
           config={config}
