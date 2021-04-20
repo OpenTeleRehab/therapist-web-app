@@ -16,8 +16,9 @@ import EllipsisText from 'react-ellipsis-text';
 
 import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
-import { getUsers } from 'store/user/actions';
+import { activateDeactivateAccount, getUsers } from 'store/user/actions';
 import CreatePatient from 'views/Patient/create';
+import Dialog from 'components/Dialog';
 
 const PatientInfo = ({ id, translate, breadcrumb }) => {
   const dispatch = useDispatch();
@@ -25,6 +26,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
   const countries = useSelector(state => state.country.countries);
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
+  const [showActivateDeactivateDialog, setShowActivateDeactivateDialog] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -32,7 +34,8 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
     phone: '',
     date_of_birth: '',
     country: '',
-    note: ''
+    note: '',
+    enabled: ''
   });
 
   useEffect(() => {
@@ -51,7 +54,8 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
         date_of_birth: moment(data.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) || '',
         country: getCountryName(data.country_id, countries),
         note: data.note || '',
-        age: AgeCalculation(data.date_of_birth, translate) || ''
+        age: AgeCalculation(data.date_of_birth, translate) || '',
+        enabled: data.enabled
       });
     }
   }, [id, users, countries, translate]);
@@ -64,6 +68,22 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
   const handleClose = () => {
     setEditId('');
     setShow(false);
+  };
+
+  const handleActivateDeactivateAccount = () => {
+    setShowActivateDeactivateDialog(true);
+  };
+
+  const handleActivateDeactivateDialogClose = () => {
+    setShowActivateDeactivateDialog(false);
+  };
+
+  const handleActivateDeactivateDialogConfirm = (id, enabled) => {
+    dispatch(activateDeactivateAccount(id, { enabled: enabled })).then(result => {
+      if (result) {
+        handleActivateDeactivateDialogClose();
+      }
+    });
   };
 
   return (
@@ -79,7 +99,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
           </Button>
           <DropdownButton alignRight variant="primary" title={translate('common.action')}>
             <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">{translate('patient.deactivate_account')}</Dropdown.Item>
+            <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
             <Dropdown.Item href="#/action-4">{translate('patient.delete_account')}</Dropdown.Item>
           </DropdownButton>
         </div>
@@ -104,6 +124,16 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
         </div>
       </div>
       {show && <CreatePatient handleClose={handleClose} show={show} editId={editId} />}
+      <Dialog
+        show={showActivateDeactivateDialog}
+        title={translate('patient.activate_deactivate_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleActivateDeactivateDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={() => handleActivateDeactivateDialogConfirm(formFields.id, formFields.enabled ? 0 : 1)}
+      >
+        <p>{translate('patient.activate_deactivate_confirmation_message', { status: formFields.enabled ? translate('patient.deactivate') : translate('patient.activate') })}</p>
+      </Dialog>
     </>
   );
 };

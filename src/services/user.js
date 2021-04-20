@@ -37,8 +37,21 @@ const getUsers = payload => {
     });
 };
 
+const activateDeactivateAccount = (id, enabled) => {
+  return axios.post(`/patient/activateDeactivateAccount/${id}`, enabled)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const User = {
   createUser,
   getUsers,
-  updateUser
+  updateUser,
+  activateDeactivateAccount
 };

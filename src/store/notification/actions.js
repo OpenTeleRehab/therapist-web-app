@@ -9,12 +9,12 @@ export const closeNotification = (title, message) => dispatch => {
   dispatch(mutation.closeNotification());
 };
 
-export const showSuccessNotification = (title, message) => dispatch => {
+export const showSuccessNotification = (title, message, messageParams) => dispatch => {
   // ensure it is closed the previous notification
   dispatch(closeNotification);
 
   dispatch(mutation.setColor('success'));
-  dispatch(mutation.setNotificationMessage(title, message));
+  dispatch(mutation.setNotificationMessage(title, message, messageParams));
   dispatch(openNotification());
 };
 
