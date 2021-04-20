@@ -22,12 +22,11 @@ const AttachmentDialog = (
       centered
     >
       <div className="chat-attachment-overview">
-        {attachment.type === 'video/mp4' && (
+        {attachment.type.includes('video/') ? (
           <video className="w-100 img-thumbnail mb-1 hide-full-screen" controls disablePictureInPicture controlsList="nodownload">
             <source src={attachment.url} type="video/mp4" />
           </video>
-        )}
-        {attachment.type !== 'video/mp4' && (
+        ) : (
           <img src={attachment.url} alt="" className="w-100 img-thumbnail mb-1" />
         )}
       </div>

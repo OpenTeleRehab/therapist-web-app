@@ -34,7 +34,7 @@ export const getMessage = (message, authUserId = '', authToken = '') => {
       type: file.type,
       caption: attachedFile.description || ''
     };
-    if (file.type === 'video/mp4') {
+    if (file.type.includes('video/')) {
       attachment.url = encodeURI(`${baseUrl}${attachedFile.video_url}${authParams}`);
       type = CHAT_TYPES.VIDEO;
     } else {
@@ -52,7 +52,6 @@ export const getMessage = (message, authUserId = '', authToken = '') => {
     _updatedAt: _updatedAt.$date ? new Date(_updatedAt.$date) : _updatedAt,
     u: { _id: u._id },
     received: true,
-    pending: false,
     unread: !!unread,
     type,
     attachment,

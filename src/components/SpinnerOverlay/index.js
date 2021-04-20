@@ -9,7 +9,7 @@ const SpinnerOverlay = () => {
     <>
       {showSpinner && (
         <div className="loading-shading">
-          <Spinner className="loading-icon" animation="border" variant="primary"/>
+          <Spinner animation="border" variant="primary"/>
         </div>
       )}
     </>

@@ -8,6 +8,7 @@ import MessageText from './Type/MessageText';
 import MessageImage from './Type/MessageImage';
 import MessageVideo from './Type/MessageVideo';
 import { GiCheckMark } from 'react-icons/gi';
+import Spinner from 'react-bootstrap/Spinner';
 
 const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
   const messageEndRef = useRef(null);
@@ -36,7 +37,7 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
     let text = msg || '';
     if (msg === CALL_STATUS.MISSED) {
       text = translate('video_call_missed');
-    } else if (msg === CALL_STATUS.STARTED) {
+    } else if ([CALL_STATUS.STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
       text = translate('video_call_started');
     } else if (msg === CALL_STATUS.ENDED) {
       text = translate('video_call_ended');
@@ -66,7 +67,7 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
       <div className="chat-message-list" style={{ height: `calc(100vh - ${msgOuterHeight}px)` }}>
         {messages.length > 0 && (
           messages.map((message, idx) => {
-            const { msg, type, isVideoCall, attachment, _updatedAt } = message;
+            const { msg, type, isVideoCall, attachment, _updatedAt, received } = message;
             let isSameDay = false;
             const isSameOwner = hasSameOwner(message);
             const direction = isSameOwner ? 'right' : 'left';
@@ -85,7 +86,7 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
                   </div>
                 )}
                 <div className={`my-1 d-flex flex-column ${isSameOwner ? 'align-items-end' : 'align-items-start'}`}>
-                  <div className={`d-flex flex-column flex-shrink-0 align-items-stretch chat-message-bubble ${direction}`}>
+                  <div className={`d-flex flex-column flex-shrink-0 align-items-stretch position-relative chat-message-bubble ${direction}`}>
                     {type === CHAT_TYPES.TEXT ? (
                       <MessageText text={getMessageText(msg)} isVideoCall={isVideoCall} />
                     ) : type === CHAT_TYPES.IMAGE ? (
@@ -95,10 +96,17 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
                     )}
                     <div className={`d-flex flex-row align-items-center ${isSameOwner ? 'justify-content-end' : 'justify-content-start'} chat-message-info`}>
                       <span className="chat-message-time">{moment(_updatedAt).format('LT')}</span>
-                      {direction === 'right' && (
-                        <span className="chat-message-tick ml-1 pb-1"><GiCheckMark size={10} color="#FFFFFF" /></span>
+                      {direction === 'right' && received && (
+                        <span className="chat-message-received ml-1 pb-1">
+                          <GiCheckMark size={10} color="#FFFFFF" />
+                        </span>
                       )}
                     </div>
+                    {direction === 'right' && !received && (
+                      <div className="position-absolute d-flex align-items-center justify-content-center w-100 h-100 chat-message-pending">
+                        <Spinner animation="border" variant="primary"/>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

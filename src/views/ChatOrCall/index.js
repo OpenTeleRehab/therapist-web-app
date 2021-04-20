@@ -170,7 +170,7 @@ const ChatOrCall = ({ translate }) => {
               <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
                 <ChatPanel
                   translate={translate}
-                  therapist={therapist}
+                  chatUserId={therapist.chat_user_id}
                   selectedRoom={selectedRoom}
                   messages={messages}
                   isVideoCall={setIsVideoCall}
