@@ -36,6 +36,18 @@ const updateUserFail = () => ({
   type: 'UPDATE_USER_FAIL'
 });
 
+const activateDeactivateRequest = () => ({
+  type: 'ACTIVATE_DEACTIVATE_REQUEST'
+});
+
+const activateDeactivateSuccess = () => ({
+  type: 'ACTIVATE_DEACTIVATE_SUCCESS'
+});
+
+const activateDeactivateFail = () => ({
+  type: 'ACTIVATE_DEACTIVATE_FAIL'
+});
+
 export const mutation = {
   createUserRequest,
   createUserSuccess,
@@ -45,5 +57,8 @@ export const mutation = {
   getUsersFail,
   updateUserRequest,
   updateUserSuccess,
-  updateUserFail
+  updateUserFail,
+  activateDeactivateRequest,
+  activateDeactivateSuccess,
+  activateDeactivateFail
 };

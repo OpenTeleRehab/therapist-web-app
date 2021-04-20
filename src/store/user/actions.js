@@ -1,5 +1,6 @@
 import { User } from 'services/user';
 import { mutation } from './mutations';
+import { getTranslate } from 'react-localize-redux';
 
 import {
   showErrorNotification,
@@ -47,6 +48,24 @@ export const updateUser = (id, payload) => async (dispatch, getState) => {
   } else {
     dispatch(mutation.updateUserFail());
     dispatch(showErrorNotification('toast_title.edit_patient_account', data.message));
+    return false;
+  }
+};
+
+export const activateDeactivateAccount = (id, enabled) => async (dispatch, getState) => {
+  dispatch(mutation.activateDeactivateRequest());
+  const data = await User.activateDeactivateAccount(id, enabled);
+  const translate = getTranslate(getState().localize);
+  if (data.success) {
+    dispatch(mutation.activateDeactivateSuccess());
+    const filters = getState().user.filters;
+    dispatch(getUsers(filters));
+    dispatch(showSuccessNotification('toast_title.activate_deactivate_patient_account', data.message, { status: data.enabled ? translate('patient.activate') : translate('patient.deactivate') }));
+    return true;
+  } else {
+    dispatch(mutation.activateDeactivateFail());
+    dispatch(
+      showErrorNotification('toast_title.activate_deactivate_patient_account', data.message));
     return false;
   }
 };
