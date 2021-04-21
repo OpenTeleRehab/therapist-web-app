@@ -24,9 +24,9 @@ const CreateTreatmentPlan = () => {
   const translate = getTranslate(localize);
   const { id, patientId } = useParams();
 
-  const { treatmentPlans } = useSelector((state) => state.treatmentPlan);
+  const { treatmentPlans } = useSelector(state => state.treatmentPlan);
   const { users } = useSelector(state => state.user);
-  const { profile } = useSelector((state) => state.auth);
+  const { profile } = useSelector(state => state.auth);
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
@@ -62,8 +62,7 @@ const CreateTreatmentPlan = () => {
     if (!patientId && profile) {
       dispatch(getUsers({ therapist_id: profile.id, page_size: 999 }));
     }
-    // eslint-disable-next-line
-  }, [patientId, profile]);
+  }, [patientId, profile, dispatch]);
 
   useEffect(() => {
     if (!isPast()) {

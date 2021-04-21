@@ -152,26 +152,28 @@ const ViewTreatmentPlan = () => {
             </>
           )}
         </div>
-        <div className="patient-info">
-          <span className="mr-4">
-            <strong>{translate('common.description')}:</strong>&nbsp;
-            <OverlayTrigger
-              overlay={<Tooltip id="button-tooltip-2">{ formFields.description }</Tooltip>}
-            >
-              <span className="card-title">
-                <EllipsisText text={formFields.description} length={settings.noteMaxLength} />
-              </span>
-            </OverlayTrigger>
-          </span>
-          <span className="mr-4"><strong>{translate('common.start_date')}:</strong> {formFields.start_date}</span>
-          <span className="mr-4"><strong>{translate('common.end_date')}:</strong> {formFields.end_date}</span>
-          <span className="mr-4"><strong>{translate('common.duration')}:</strong>&nbsp;
-            {weeks}&nbsp;
-            {
-              weeks === 1 ? translate('common.week') : translate('common.weeks')
-            }
-          </span>
-        </div>
+        {patientId && (
+          <div className="patient-info">
+            <span className="mr-4">
+              <strong>{translate('common.description')}:</strong>&nbsp;
+              <OverlayTrigger
+                overlay={<Tooltip id="button-tooltip-2">{ formFields.description }</Tooltip>}
+              >
+                <span className="card-title">
+                  <EllipsisText text={formFields.description} length={settings.noteMaxLength} />
+                </span>
+              </OverlayTrigger>
+            </span>
+            <span className="mr-4"><strong>{translate('common.start_date')}:</strong> {formFields.start_date}</span>
+            <span className="mr-4"><strong>{translate('common.end_date')}:</strong> {formFields.end_date}</span>
+            <span className="mr-4"><strong>{translate('common.duration')}:</strong>&nbsp;
+              {weeks}&nbsp;
+              {
+                weeks === 1 ? translate('common.week') : translate('common.weeks')
+              }
+            </span>
+          </div>
+        )}
       </div>
       <div className="mt-lg-5">
         <Tabs

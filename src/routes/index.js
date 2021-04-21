@@ -10,6 +10,7 @@ import Patient from 'views/Patient';
 import Library from 'views/Library';
 import Appointment from 'views/Appointment';
 import Profile from 'views/Profile';
+import CreatePresetTreatment from 'views/Library/PresetTreatment/create';
 import CreateTreatmentPlan from 'views/TreatmentPlan/create';
 import ViewPatient from 'views/Patient/viewPatient';
 import ViewTreatmentPlan from 'views/TreatmentPlan/detail';
@@ -133,20 +134,20 @@ const routes = [
   {
     title: 'treatment_plan.preset',
     path: ROUTES.LIBRARY_TREATMENT_PLAN_CREATE,
-    component: CreateTreatmentPlan,
-    exact: true,
-    type: PRIVATE
-  },
-  {
-    title: 'treatment_plan.create_for_patient',
-    path: ROUTES.TREATMENT_PLAN_CREATE_FOR_PATIENT,
-    component: CreateTreatmentPlan,
+    component: CreatePresetTreatment,
     exact: true,
     type: PRIVATE
   },
   {
     title: 'treatment_plan.preset',
     path: ROUTES.LIBRARY_TREATMENT_PLAN_EDIT,
+    component: CreatePresetTreatment,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'treatment_plan.create_for_patient',
+    path: ROUTES.TREATMENT_PLAN_CREATE_FOR_PATIENT,
     component: CreateTreatmentPlan,
     exact: true,
     type: PRIVATE

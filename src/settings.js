@@ -18,7 +18,7 @@ const settings = {
   ageGap: 10,
   male: 'male',
   female: 'female',
-  appIdleTimeout: 60 // in second
+  appIdleTimeout: 180 // in second
 };
 
 export default settings;
