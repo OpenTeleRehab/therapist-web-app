@@ -6,6 +6,7 @@ import { Link, useHistory } from 'react-router-dom';
 
 import { getCountryName } from 'utils/country';
 import { getClinicName } from 'utils/clinic';
+import { getProfessionName } from 'utils/profession';
 
 import * as ROUTES from 'variables/routes';
 
@@ -17,6 +18,7 @@ const Information = () => {
 
   const clinics = useSelector(state => state.clinic.clinics);
   const countries = useSelector(state => state.country.countries);
+  const professions = useSelector(state => state.profession.professions);
 
   const handleBack = () => {
     history.goBack();
@@ -30,8 +32,9 @@ const Information = () => {
     <div className="mt-4">
       <h1>{profile.last_name} {profile.first_name}</h1>
       <p>{profile.email}</p>
-      <p>Clinic: {getClinicName(profile.clinic_id, clinics)}</p>
-      <p>Country: {getCountryName(profile.country_id, countries)}</p>
+      <p>{translate('common.clinic')}: {getClinicName(profile.clinic_id, clinics)}</p>
+      <p>{translate('common.country')}: {getCountryName(profile.country_id, countries)}</p>
+      <p>{translate('common.profession')}: {getProfessionName(profile.profession_id, professions)}</p>
 
       <div>
         <Button as={Link} to={ROUTES.PROFILE_EDIT}>
