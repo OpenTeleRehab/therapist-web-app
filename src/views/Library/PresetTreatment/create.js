@@ -9,6 +9,7 @@ import {
 } from 'store/treatmentPlan/actions';
 
 import ActivitySection from 'views/TreatmentPlan/_Partials/activitySection';
+import AssignPatient from './assignPatient';
 
 const CreatePresetTreatment = () => {
   const history = useHistory();
@@ -22,6 +23,7 @@ const CreatePresetTreatment = () => {
   const [weeks, setWeeks] = useState(1);
   const [errorName, setErrorName] = useState(false);
   const [activities, setActivities] = useState([]);
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -85,12 +87,16 @@ const CreatePresetTreatment = () => {
     }
   };
 
-  const handleAssign = () => {
+  const handleCancel = () => {
     history.goBack();
   };
 
-  const handleCancel = () => {
-    history.goBack();
+  const handleAssign = () => {
+    setShowAssignDialog(true);
+  };
+
+  const handleCloseAssignDialog = () => {
+    setShowAssignDialog(false);
   };
 
   return (
@@ -150,6 +156,15 @@ const CreatePresetTreatment = () => {
         activities={activities}
         setActivities={setActivities}
       />
+
+      { showAssignDialog && (
+        <AssignPatient
+          handleClose={handleCloseAssignDialog}
+          show={showAssignDialog}
+          weeks={weeks}
+          activities={activities}
+        />
+      )}
     </>
   );
 };
