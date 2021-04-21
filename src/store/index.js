@@ -22,6 +22,7 @@ import { rocketchat } from 'store/rocketchat/reducers';
 import { appointment } from 'store/appointment/reducers';
 import { patient } from 'store/patient/reducers';
 import { setting } from 'store/setting/reducers';
+import { profession } from 'store/profession/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -40,7 +41,8 @@ export const rootReducer = {
   rocketchat,
   appointment,
   patient,
-  setting
+  setting,
+  profession
 };
 
 const devTool =

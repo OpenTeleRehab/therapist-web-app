@@ -9,6 +9,7 @@ import { getProfile } from 'store/auth/actions';
 import { setChatSubscribeIds } from 'store/rocketchat/actions';
 import { initialChatSocket } from 'utils/rocketchat';
 import { getUniqueId } from 'utils/general';
+import { getProfessions } from 'store/profession/actions';
 
 import SplashScreen from 'components/SplashScreen';
 import RocketchatContext from 'context/RocketchatContext';
@@ -33,6 +34,7 @@ const ConfigurationProvider = ({ children }) => {
             }
           });
           dispatch(getClinics(res.data.country_id));
+          dispatch(getProfessions(res.data.country_id));
         } else {
           setAppLoading(false);
         }
