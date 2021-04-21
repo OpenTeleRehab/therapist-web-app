@@ -42,23 +42,28 @@ const Password = () => {
     }
 
     // eslint-disable-next-line no-self-compare
-    if (formFields.current_password === formFields.new_password) {
+    if (formFields.new_password === '') {
       canSave = false;
-      setNewPasswordValidationError(false);
-      setNewPasswordValidationExit(true);
-    } else {
+      setNewPasswordError(true);
       setNewPasswordValidationExit(false);
-      if (formFields.new_password === '') {
+      setNewPasswordValidationError(false);
+    } else {
+      setNewPasswordError(false);
+      if (formFields.current_password === formFields.new_password) {
         canSave = false;
+        setNewPasswordValidationExit(true);
         setNewPasswordValidationError(false);
-        setNewPasswordError(true);
       } else {
+        setNewPasswordValidationExit(false);
         if (!validatePassword(formFields.new_password)) {
           canSave = false;
           setNewPasswordValidationError(true);
-        } else { setNewPasswordValidationError(false); }
+        } else {
+          setNewPasswordValidationError(false);
+        }
       }
     }
+
     if (formFields.confirm_password === '') {
       canSave = false;
       setConfirmPasswordNotMatchError(false);
