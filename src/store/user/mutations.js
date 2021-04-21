@@ -48,6 +48,18 @@ const activateDeactivateFail = () => ({
   type: 'ACTIVATE_DEACTIVATE_FAIL'
 });
 
+const deleteRequest = () => ({
+  type: 'DELETE_REQUEST'
+});
+
+const deleteSuccess = () => ({
+  type: 'DELETE_SUCCESS'
+});
+
+const deleteFail = () => ({
+  type: 'DELETE_FAIL'
+});
+
 export const mutation = {
   createUserRequest,
   createUserSuccess,
@@ -60,5 +72,8 @@ export const mutation = {
   updateUserFail,
   activateDeactivateRequest,
   activateDeactivateSuccess,
-  activateDeactivateFail
+  activateDeactivateFail,
+  deleteRequest,
+  deleteSuccess,
+  deleteFail
 };

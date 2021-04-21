@@ -69,3 +69,20 @@ export const activateDeactivateAccount = (id, enabled) => async (dispatch, getSt
     return false;
   }
 };
+
+export const deleteAccount = (id) => async (dispatch, getState) => {
+  dispatch(mutation.deleteRequest());
+  const data = await User.deleteAccount(id);
+  if (data.success) {
+    dispatch(mutation.deleteSuccess());
+    const filters = getState().user.filters;
+    dispatch(getUsers(filters));
+    dispatch(showSuccessNotification('toast_title.delete_patient_account', data.message));
+    return true;
+  } else {
+    dispatch(mutation.deleteFail());
+    dispatch(
+      showErrorNotification('toast_title.delete_patient_account', data.message));
+    return false;
+  }
+};
