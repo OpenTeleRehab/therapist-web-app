@@ -40,7 +40,7 @@ import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
 
 let timer = null;
-const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
+const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
@@ -258,16 +258,12 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                             <BsPerson size={20} />
                           </div>
                         )}
-                        {therapistId === questionnaire.therapist_id && (
-                          <div className="edit-btn">
-                            <EditAction onClick={() => handleEdit(questionnaire.id)}/>
-                          </div>
-                        )}
-                        {!questionnaire.therapist_id && allowCreateContent && (
-                          <div className="edit-btn">
-                            <CopyAction onClick={() => handleCopy(questionnaire.id)} />
-                          </div>
-                        )}
+                        <Form.Check
+                          type="checkbox"
+                          className="action"
+                          checked={selectedQuestionnaires.includes(questionnaire.id)}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
+                        />
                       </div>
                       <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
                         <div className="card-img bg-light">
@@ -295,6 +291,16 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                           </Card.Text>
                         </Card.Body>
                       </div>
+                      {therapistId === questionnaire.therapist_id && (
+                        <div className="edit-btn">
+                          <EditAction onClick={() => handleEdit(questionnaire.id)}/>
+                        </div>
+                      )}
+                      {!questionnaire.therapist_id && allowCreateContent && (
+                        <div className="edit-btn">
+                          <CopyAction onClick={() => handleCopy(questionnaire.id)} />
+                        </div>
+                      )}
                     </Card>
                   </Col>
                 ))}
@@ -322,7 +328,9 @@ Questionnaire.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
   therapistId: PropTypes.string,
-  allowCreateContent: PropTypes.bool
+  allowCreateContent: PropTypes.bool,
+  onSectionChange: PropTypes.func,
+  selectedQuestionnaires: PropTypes.array
 };
 
 export default withLocalize(Questionnaire);

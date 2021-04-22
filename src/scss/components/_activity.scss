@@ -18,3 +18,18 @@
 	z-index: 99;
 	padding: $spacer;
 }
+
+.library-preview-button {
+	right: 0;
+	top: -50px;
+}
+
+.library-preview-wrapper {
+	right: 0;
+	height: 100%;
+	top: -16px;
+	overflow-y:scroll;
+	background-color: $light;
+	z-index: 99;
+	padding: $spacer;
+}

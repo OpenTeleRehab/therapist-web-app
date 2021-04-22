@@ -17,9 +17,10 @@ export const QUESTIONNAIRE_COPY = LIBRARY + '/questionnaire/copy/:id';
 export const LIBRARY_EDUCATION = LIBRARY + '?tab=education';
 export const LIBRARY_QUESTIONNAIRE = LIBRARY + '?tab=questionnaire';
 export const LIBRARY_PRESET_TREATMENT = LIBRARY + '?tab=preset_treatment';
-export const LIBRARY_TREATMENT_PLAN_CREATE = LIBRARY + '/treatment-plan/create';
+export const LIBRARY_PRESET_TREATMENT_PLAN_CREATE = LIBRARY + '/preset-treatment-plan/create';
 export const LIBRARY_TREATMENT_PLAN_DETAIL = LIBRARY + '/treatment-plan/:id';
 export const LIBRARY_TREATMENT_PLAN_EDIT = LIBRARY + '/treatment-plan/edit/:id';
+export const LIBRARY_TREATMENT_PLAN_CREATE = LIBRARY + '/treatment-plan/create';
 
 export const VIEW_PATIENT_DETAIL = `${PATIENT}/:patientId`;
 export const TREATMENT_PLAN_CREATE_FOR_PATIENT = VIEW_PATIENT_DETAIL + '/treatment-plan/create';
