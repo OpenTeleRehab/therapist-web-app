@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import * as ROUTES from 'variables/routes';
 import settings from 'settings';
 import moment from 'moment';
 import PropTypes from 'prop-types';
@@ -16,7 +18,7 @@ import EllipsisText from 'react-ellipsis-text';
 
 import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
-import { activateDeactivateAccount, getUsers } from 'store/user/actions';
+import { activateDeactivateAccount, getUsers, deleteAccount } from 'store/user/actions';
 import CreatePatient from 'views/Patient/create';
 import Dialog from 'components/Dialog';
 
@@ -27,7 +29,9 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
   const [showActivateDeactivateDialog, setShowActivateDeactivateDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [disabledConfirmButton, setDisabledConfirmButton] = useState(false);
+  const history = useHistory();
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -89,6 +93,25 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
     });
   };
 
+  const handleDeleteAccount = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteDialogClose = () => {
+    setShowDeleteDialog(false);
+  };
+
+  const handleDeleteDialogConfirm = (id) => {
+    setDisabledConfirmButton(true);
+    dispatch(deleteAccount(id)).then(result => {
+      if (result) {
+        handleDeleteDialogClose();
+        setDisabledConfirmButton(false);
+        history.push(ROUTES.PATIENT);
+      }
+    });
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pr-3 pl-3 pt-3">
@@ -103,7 +126,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
           <DropdownButton alignRight variant="primary" title={translate('common.action')}>
             <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
             <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
-            <Dropdown.Item href="#/action-4">{translate('patient.delete_account')}</Dropdown.Item>
+            <Dropdown.Item onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
           </DropdownButton>
         </div>
       </div>
@@ -137,6 +160,17 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
         disabledConfirmButton={disabledConfirmButton}
       >
         <p>{translate('patient.activate_deactivate_confirmation_message', { status: formFields.enabled ? translate('patient.deactivate') : translate('patient.activate') })}</p>
+      </Dialog>
+      <Dialog
+        show={showDeleteDialog}
+        title={translate('patient.delete_account')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleDeleteDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={() => handleDeleteDialogConfirm(formFields.id, 1)}
+        disabledConfirmButton={disabledConfirmButton}
+      >
+        <p>{translate('patient.delete_confirmation_message')}</p>
       </Dialog>
     </>
   );

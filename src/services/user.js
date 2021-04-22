@@ -49,9 +49,22 @@ const activateDeactivateAccount = (id, enabled) => {
     });
 };
 
+const deleteAccount = (id) => {
+  return axios.post(`/patient/deleteAccount/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const User = {
   createUser,
   getUsers,
   updateUser,
-  activateDeactivateAccount
+  activateDeactivateAccount,
+  deleteAccount
 };
