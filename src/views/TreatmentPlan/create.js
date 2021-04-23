@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Accordion, Row, Col, Form, Button } from 'react-bootstrap';
 import Datetime from 'components/DateTime';
 import { useSelector, useDispatch } from 'react-redux';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams, useHistory, useLocation } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 import settings from 'settings';
 import {
@@ -23,6 +23,7 @@ const CreateTreatmentPlan = () => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { id, patientId } = useParams();
+  const { state } = useLocation();
 
   const { treatmentPlans } = useSelector(state => state.treatmentPlan);
   const { users } = useSelector(state => state.user);
@@ -31,7 +32,7 @@ const CreateTreatmentPlan = () => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
   };
-
+  const activity = state ? state.activity : '';
   const [formFields, setFormFields] = useState({
     name: '',
     description: '',
@@ -50,6 +51,12 @@ const CreateTreatmentPlan = () => {
   const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
   const [readOnly] = useState(false);
+
+  useEffect(() => {
+    if (activity) {
+      setActivities([activity]);
+    }
+  }, [activity]);
 
   useEffect(() => {
     if (id) {
@@ -230,7 +237,7 @@ const CreateTreatmentPlan = () => {
           therapist_id: profile.id
         }))
           .then(result => {
-            if (result && patientId) {
+            if (result && (patientId || activity)) {
               history.goBack();
             }
           });
@@ -254,7 +261,7 @@ const CreateTreatmentPlan = () => {
         </div>
       )}
       <div className="d-flex mb-4">
-        <h4>{translate(`${patientId ? 'treatment_plan.treatment_planning' : 'treatment_plan.preset'}`)}</h4>
+        <h4>{translate(`${patientId || activity ? 'treatment_plan.treatment_planning' : 'treatment_plan.preset'}`)}</h4>
         <Button
           className="ml-auto"
           variant="outline-primary"
@@ -268,7 +275,7 @@ const CreateTreatmentPlan = () => {
             variant="primary"
             onClick={handleSaveAsPreset}
           >
-            {translate(`${patientId ? 'treatment_plan.save_as_preset' : 'common.save'}`)}
+            {translate(`${patientId || activity ? 'treatment_plan.save_as_preset' : 'common.save'}`)}
           </Button>
         )}
         <Button

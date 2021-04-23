@@ -21,8 +21,7 @@ const PresetTreatment = ({ translate }) => {
   const [filters, setFilters] = useState([]);
 
   const columns = [
-    { name: 'name', title: translate('treatment_plan.name') },
-    { name: 'description', title: translate('common.description') },
+    { name: 'name', title: translate('treatment_plan.preset.name') },
     { name: 'total_of_weeks', title: translate('common.duration') }
   ];
 
@@ -61,7 +60,6 @@ const PresetTreatment = ({ translate }) => {
         return {
           id: treatmentPlan.id,
           name: treatmentPlan.name,
-          description: treatmentPlan.description,
           total_of_weeks: `${numberOfWeeks} ${translate(numberOfWeeks > 1 ? 'common.weeks' : 'common.week')}`
         };
       })}

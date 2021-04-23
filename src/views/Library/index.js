@@ -20,6 +20,7 @@ import { getSettings } from 'store/setting/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { Exercise as exerciseService } from 'services/exercise';
 import _ from 'lodash';
+import PreviewList from './previewList';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -44,6 +45,9 @@ const Library = ({ translate }) => {
   const [therapistId, setTherapistId] = useState('');
   const { profile } = useSelector((state) => state.auth);
   const { systemLimits } = useSelector((state) => state.setting);
+  const [selectedExercises, setSelectedExercises] = useState([]);
+  const [selectedMaterials, setSelectedMaterials] = useState([]);
+  const [selectedQuestionnaires, setSelectedQuestionnaires] = useState([]);
 
   useEffect(() => {
     if (queryString.parse(search).tab === VIEW_EDUCATION) {
@@ -54,7 +58,7 @@ const Library = ({ translate }) => {
       setNewContentLink(ROUTES.QUESTIONNAIRE_CREATE);
     } else if (queryString.parse(search).tab === VIEW_PRESET_TREATMENT) {
       setView(VIEW_PRESET_TREATMENT);
-      setNewContentLink(ROUTES.LIBRARY_TREATMENT_PLAN_CREATE);
+      setNewContentLink(ROUTES.LIBRARY_PRESET_TREATMENT_PLAN_CREATE);
     } else {
       setView(VIEW_EXERCISE);
       setNewContentLink(ROUTES.EXERCISE_CREATE);
@@ -128,6 +132,33 @@ const Library = ({ translate }) => {
     }
   };
 
+  const handleExercisesChange = (checked, id) => {
+    if (checked) {
+      selectedExercises.push(id);
+    } else {
+      _.remove(selectedExercises, n => n === id);
+    }
+    setSelectedExercises([...selectedExercises]);
+  };
+
+  const handleMaterialsChange = (checked, id) => {
+    if (checked) {
+      selectedMaterials.push(id);
+    } else {
+      _.remove(selectedMaterials, n => n === id);
+    }
+    setSelectedMaterials([...selectedMaterials]);
+  };
+
+  const handleQuestionnairesChange = (checked, id) => {
+    if (checked) {
+      selectedQuestionnaires.push(id);
+    } else {
+      _.remove(selectedQuestionnaires, n => n === id);
+    }
+    setSelectedQuestionnaires([...selectedQuestionnaires]);
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -167,11 +198,23 @@ const Library = ({ translate }) => {
           </Nav.Link>
         </Nav.Item>
       </Nav>
+      <div className="position-relative">
+        { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleExercisesChange} selectedExercises={selectedExercises}/> }
+        { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleMaterialsChange} selectedMaterials={selectedMaterials} /> }
+        { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleQuestionnairesChange} selectedQuestionnaires={selectedQuestionnaires} /> }
+        { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
 
-      { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} /> }
-      { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} /> }
-      { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} /> }
-      { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
+        { view !== VIEW_PRESET_TREATMENT &&
+          <PreviewList
+            selectedExercises={selectedExercises}
+            selectedMaterials={selectedMaterials}
+            selectedQuestionnaires={selectedQuestionnaires}
+            onExerciseRemove={id => handleExercisesChange(false, id)}
+            onMaterialRemove={id => handleMaterialsChange(false, id)}
+            onQuestionnaireRemove={id => handleQuestionnairesChange(false, id)}
+          />
+        }
+      </div>
       <Dialog
         show={showSwitchFavoriteDialog}
         title={translate('library.switchFavorite_confirmation_title')}

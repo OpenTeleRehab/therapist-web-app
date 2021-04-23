@@ -27,7 +27,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { FaRegCheckSquare } from 'react-icons/fa';
 
 let timer = null;
-const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
+const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises }) => {
   const dispatch = useDispatch();
 
   const { loading, exercises, filters } = useSelector(state => state.exercise);
@@ -235,16 +235,12 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                             <BsPerson size={20} />
                           </div>
                         )}
-                        {therapistId === exercise.therapist_id && (
-                          <div className="edit-btn">
-                            <EditAction as={Link} to={ROUTES.EXERCISE_EDIT.replace(':id', exercise.id)} />
-                          </div>
-                        )}
-                        {!exercise.therapist_id && allowCreateContent && (
-                          <div className="edit-btn">
-                            <CopyAction as={Link} to={ROUTES.EXERCISE_COPY.replace(':id', exercise.id)} />
-                          </div>
-                        )}
+                        <Form.Check
+                          type="checkbox"
+                          className="action"
+                          checked={selectedExercises.includes(exercise.id)}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
+                        />
                       </div>
                       <div className="card-container" onClick={() => handleView(exercise.id)}>
                         <div className="card-img bg-light">
@@ -289,6 +285,16 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                           )}
                         </Card.Body>
                       </div>
+                      {therapistId === exercise.therapist_id && (
+                        <div className="edit-btn">
+                          <EditAction as={Link} to={ROUTES.EXERCISE_EDIT.replace(':id', exercise.id)} />
+                        </div>
+                      )}
+                      {!exercise.therapist_id && allowCreateContent && (
+                        <div className="edit-btn">
+                          <CopyAction as={Link} to={ROUTES.EXERCISE_COPY.replace(':id', exercise.id)} />
+                        </div>
+                      )}
                     </Card>
                   </Col>
                 ))}
@@ -317,7 +323,9 @@ Exercise.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
   therapistId: PropTypes.string,
-  allowCreateContent: PropTypes.bool
+  allowCreateContent: PropTypes.bool,
+  onSectionChange: PropTypes.func,
+  selectedExercises: PropTypes.array
 };
 
 export default withLocalize(Exercise);

@@ -41,7 +41,7 @@ import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
 
 let timer = null;
-const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent }) => {
+const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
@@ -259,16 +259,12 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                             <BsPerson size={20} />
                           </div>
                         )}
-                        {therapistId === material.therapist_id && (
-                          <div className="edit-btn">
-                            <EditAction onClick={() => handleEdit(material.id)} />
-                          </div>
-                        )}
-                        {!material.therapist_id && allowCreateContent && (
-                          <div className="edit-btn">
-                            <CopyAction onClick={() => handleCopy(material.id)} />
-                          </div>
-                        )}
+                        <Form.Check
+                          type="checkbox"
+                          className="action"
+                          checked={selectedMaterials.includes(material.id)}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
+                        />
                       </div>
                       <div className="card-container" onClick={() => handleViewEducationMaterial(material)}>
                         <div className="card-img bg-light">
@@ -296,6 +292,16 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                           </Card.Text>
                         </Card.Body>
                       </div>
+                      {therapistId === material.therapist_id && (
+                        <div className="edit-btn">
+                          <EditAction onClick={() => handleEdit(material.id)} />
+                        </div>
+                      )}
+                      {!material.therapist_id && allowCreateContent && (
+                        <div className="edit-btn">
+                          <CopyAction onClick={() => handleCopy(material.id)} />
+                        </div>
+                      )}
                     </Card>
                   </Col>
                 ))}
@@ -323,7 +329,9 @@ EducationMaterial.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
   therapistId: PropTypes.string,
-  allowCreateContent: PropTypes.bool
+  allowCreateContent: PropTypes.bool,
+  onSectionChange: PropTypes.func,
+  selectedMaterials: PropTypes.array
 };
 
 export default withLocalize(EducationMaterial);

@@ -133,7 +133,7 @@ const routes = [
   },
   {
     title: 'treatment_plan.preset',
-    path: ROUTES.LIBRARY_TREATMENT_PLAN_CREATE,
+    path: ROUTES.LIBRARY_PRESET_TREATMENT_PLAN_CREATE,
     component: CreatePresetTreatment,
     exact: true,
     type: PRIVATE
@@ -142,6 +142,13 @@ const routes = [
     title: 'treatment_plan.preset',
     path: ROUTES.LIBRARY_TREATMENT_PLAN_EDIT,
     component: CreatePresetTreatment,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'treatment_plan.create',
+    path: ROUTES.LIBRARY_TREATMENT_PLAN_CREATE,
+    component: CreateTreatmentPlan,
     exact: true,
     type: PRIVATE
   },

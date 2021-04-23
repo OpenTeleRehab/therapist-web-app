@@ -30,8 +30,11 @@
 }
 
 .edit-btn {
-  top: 0;
+	display: flex;
+	justify-content: flex-end;
   z-index: 1;
+	margin-top: -20px;
+	padding-right: 5px;
 }
 
 .owner-btn {
