@@ -126,7 +126,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
           <DropdownButton alignRight variant="primary" title={translate('common.action')}>
             <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
             <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
-            <Dropdown.Item onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
+            <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
           </DropdownButton>
         </div>
       </div>
