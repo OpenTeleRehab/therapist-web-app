@@ -33,8 +33,10 @@ const Dashboard = ({ translate }) => {
       const ongoingTreatment = patients.filter(p => !_.isEmpty(p.ongoingTreatmentPlan));
       const malePatients = patients.filter(p => p.gender === settings.male);
       const femalePatients = patients.filter(p => p.gender === settings.female);
+      const otherPatients = patients.filter(p => p.gender === settings.other);
       const ongoingMale = patients.filter(p => p.gender === settings.male && !_.isEmpty(p.ongoingTreatmentPlan));
       const ongoingFemale = patients.filter(p => p.gender === settings.female && !_.isEmpty(p.ongoingTreatmentPlan));
+      const ongoingOther = patients.filter(p => p.gender === settings.other && !_.isEmpty(p.ongoingTreatmentPlan));
       const ageLabel = [];
       const patientByAge = [];
       const ongoingByAge = [];
@@ -59,8 +61,8 @@ const Dashboard = ({ translate }) => {
       }
       setTotalOngoingTreatment(ongoingTreatment.length);
       setTotalPatient(patients.length);
-      setTotalPatientByGender([malePatients.length, femalePatients.length]);
-      setTotalOngoingByGender([ongoingMale.length, ongoingFemale.length]);
+      setTotalPatientByGender([malePatients.length, femalePatients.length, otherPatients.length]);
+      setTotalOngoingByGender([ongoingMale.length, ongoingFemale.length, ongoingOther.length]);
       setAgeLabel(ageLabel);
       setTotalPatientByAge(patientByAge);
       setTotalOngoingByAge(ongoingByAge);
@@ -77,12 +79,12 @@ const Dashboard = ({ translate }) => {
   };
 
   const patientByGenderData = {
-    labels: [translate('common.male'), translate('common.female')],
+    labels: [translate('common.male'), translate('common.female'), translate('common.other')],
     datasets: [
       {
         data: totalPatientByGender,
-        backgroundColor: ['#64CCC9', '#E35205'],
-        borderColor: ['#64CCC9', '#E35205'],
+        backgroundColor: ['#64CCC9', '#E35205', '#827717'],
+        borderColor: ['#64CCC9', '#E35205', '#827717'],
         borderWidth: 1
       }
     ]
@@ -101,12 +103,12 @@ const Dashboard = ({ translate }) => {
   };
 
   const ongoingByGenderData = {
-    labels: [translate('common.male'), translate('common.female')],
+    labels: [translate('common.male'), translate('common.female'), translate('common.other')],
     datasets: [
       {
         data: totalOngoingByGender,
-        backgroundColor: ['#64CCC9', '#E35205'],
-        borderColor: ['#64CCC9', '#E35205'],
+        backgroundColor: ['#64CCC9', '#E35205', '#827717'],
+        borderColor: ['#64CCC9', '#E35205', '#827717'],
         borderWidth: 1
       }
     ]
