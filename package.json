@@ -23,6 +23,7 @@
     "axios": "^0.21.0",
     "bootstrap": "^4.5.3",
     "bootstrap-daterangepicker": "^3.1.0",
+    "bootstrap-v4-rtl": "^4.6.0-2",
     "chart.js": "^2.9.4",
     "history": "^4.10.1",
     "keycloak-js": "^11.0.2",

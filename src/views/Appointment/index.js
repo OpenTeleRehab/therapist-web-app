@@ -15,6 +15,7 @@ import allLocales from '@fullcalendar/core/locales-all';
 import settings from 'settings';
 import CreateAppointment from './Partials/create';
 import _ from 'lodash';
+import { getLayoutDirection } from '../../utils/layoutDirection';
 
 const Appointment = ({ translate }) => {
   const dispatch = useDispatch();
@@ -111,6 +112,7 @@ const Appointment = ({ translate }) => {
     <Row>
       <Col sm={12} xl={7}>
         <FullCalendar
+          isRTL={getLayoutDirection(profile.language_id, languages) === 'rtl'}
           ref={calendarRef}
           locales={allLocales}
           locale={locale}

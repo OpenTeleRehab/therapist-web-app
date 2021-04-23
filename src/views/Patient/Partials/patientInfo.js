@@ -114,7 +114,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
 
   return (
     <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pr-3 pl-3 pt-3">
+      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3">
         <span>{breadcrumb}</span>
         <div className="btn-toolbar mb-2 mb-md-0">
           <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
