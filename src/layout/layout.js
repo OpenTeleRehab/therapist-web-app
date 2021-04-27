@@ -7,14 +7,18 @@ import { getTranslate } from 'react-localize-redux';
 import Navigation from 'layout/navigation';
 import ToastNotification from 'components/ToastNotification';
 import SpinnerOverlay from 'components/SpinnerOverlay';
+import { getLayoutDirection } from '../utils/layoutDirection';
 
 const Layout = ({ component: Component, title }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { profile } = useSelector((state) => state.auth);
+  const languages = useSelector(state => state.language.languages);
 
-  // set page title
+  // set page title and body layout direction
   useEffect(() => {
     document.title = `${translate(title)} - ${process.env.REACT_APP_SITE_TITLE}`;
+    document.body.dir = getLayoutDirection(profile.language_id, languages);
   });
 
   return (

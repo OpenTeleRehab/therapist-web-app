@@ -1,0 +1,49 @@
+.rtl,
+[dir="rtl"] {
+	.float {
+		&-right {
+			float: left !important;
+		}
+		&-left {
+			float: right !important;
+		}
+	}
+	.react-tel-input {
+		.form-control {
+			padding: 0.375rem 48px 0.375rem 0.75rem;
+		}
+	}
+	.react-checkbox-tree {
+		ol {
+			padding: 0;
+		}
+	}
+	.dx-g-bs4-column-chooser-checkbox {
+		margin-right: 0;
+		margin-left: 10px;
+	}
+	.chat {
+		&-room-list {
+			.list-group {
+				padding-left: 0;
+				&-item {
+					border-right: 5px solid $white;
+					border-left: 0 none;
+					&:hover,
+					&.active {
+						border-right-color: $primary;
+					}
+				}
+			}
+		}
+		&-user-status {
+			margin-left: 0;
+			margin-right: 3px;
+		}
+	}
+	.library-preview-button,
+	.library-preview-wrapper {
+		right: auto;
+		left: 0;
+	}
+}
