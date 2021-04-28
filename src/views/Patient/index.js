@@ -35,7 +35,8 @@ const Patient = () => {
     { name: 'age', title: translate('common.age') },
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
     { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
-    { name: 'next_appointment', title: translate('common.next_appointment') }
+    { name: 'next_appointment', title: translate('common.next_appointment') },
+    { name: 'secondary_therapist', title: translate('common.secondary_therapist') }
   ];
 
   const defaultHiddenColumnNames = [
@@ -120,7 +121,8 @@ const Patient = () => {
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
             ongoing_treatment_plan: user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
             ongoing_treatment_status: renderStatusBadge(user.upcomingTreatmentPlan),
-            next_appointment: ''
+            next_appointment: '',
+            secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.yes') : translate('common.secondary_therapist.no')
           };
         })}
       />

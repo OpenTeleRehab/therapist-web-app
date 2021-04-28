@@ -23,6 +23,7 @@ import { appointment } from 'store/appointment/reducers';
 import { patient } from 'store/patient/reducers';
 import { setting } from 'store/setting/reducers';
 import { profession } from 'store/profession/reducers';
+import { therapist } from 'store/therapist/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -42,7 +43,8 @@ export const rootReducer = {
   appointment,
   patient,
   setting,
-  profession
+  profession,
+  therapist
 };
 
 const devTool =
