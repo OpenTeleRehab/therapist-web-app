@@ -36,7 +36,7 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
 
 let timer = null;
-const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise }) => {
+const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise, setShowPreview }) => {
   const dispatch = useDispatch();
   const { loading, exercises, filters } = useSelector(state => state.exercise);
   const { exerciseCategoryTreeData } = useSelector((state) => state.category);
@@ -264,7 +264,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                           type="checkbox"
                           className="action"
                           checked={selectedExercises.includes(exercise.id)}
-                          onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
+                          onChange={(e) => { onSectionChange(e.currentTarget.checked, exercise.id); setShowPreview(true); }}
                         />
                       </div>
                       <div className="card-container" onClick={() => handleView(exercise)}>
@@ -338,7 +338,8 @@ Exercise.propTypes = {
   selectedExercises: PropTypes.array,
   onSectionChange: PropTypes.func,
   viewExercise: PropTypes.bool,
-  setViewExercise: PropTypes.func
+  setViewExercise: PropTypes.func,
+  setShowPreview: PropTypes.func
 };
 
 export default withLocalize(Exercise);

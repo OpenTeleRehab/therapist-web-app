@@ -36,7 +36,7 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
 
 let timer = null;
-const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQuestionnaire, setViewQuestionnaire }) => {
+const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQuestionnaire, setViewQuestionnaire, setShowPreview }) => {
   const dispatch = useDispatch();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const { questionnaireCategoryTreeData } = useSelector((state) => state.category);
@@ -264,7 +264,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
                           type="checkbox"
                           className="float-right action"
                           checked={selectedMaterials.includes(questionnaire.id)}
-                          onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
+                          onChange={(e) => { onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true); }}
                         />
                       </div>
                       <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
@@ -321,7 +321,8 @@ Questionnaire.propTypes = {
   selectedMaterials: PropTypes.array,
   onSectionChange: PropTypes.func,
   viewQuestionnaire: PropTypes.bool,
-  setViewQuestionnaire: PropTypes.func
+  setViewQuestionnaire: PropTypes.func,
+  setShowPreview: PropTypes.func
 };
 
 export default withLocalize(Questionnaire);

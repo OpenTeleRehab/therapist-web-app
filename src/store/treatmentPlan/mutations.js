@@ -61,6 +61,19 @@ const deleteTreatmentPlansFail = () => ({
   type: 'DELETE_TREATMENT_PLANS_FAIL'
 });
 
+const getPresetTreatmentPlansRequest = () => ({
+  type: 'GET_PRESET_TREATMENT_PLANS_REQUEST'
+});
+
+const getPresetTreatmentPlansSuccess = (data) => ({
+  type: 'GET_PRESET_TREATMENT_PLANS_SUCCESS',
+  data
+});
+
+const getPresetTreatmentPlansFail = () => ({
+  type: 'GET_PRESET_TREATMENT_PLANS_FAIL'
+});
+
 export const mutation = {
   createTreatmentPlanRequest,
   createTreatmentPlanSuccess,
@@ -76,5 +89,8 @@ export const mutation = {
   getTreatmentPlansDetailFail,
   deleteTreatmentPlansRequest,
   deleteTreatmentPlansSuccess,
-  deleteTreatmentPlansFail
+  deleteTreatmentPlansFail,
+  getPresetTreatmentPlansRequest,
+  getPresetTreatmentPlansSuccess,
+  getPresetTreatmentPlansFail
 };

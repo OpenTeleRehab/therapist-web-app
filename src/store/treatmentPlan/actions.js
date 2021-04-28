@@ -75,3 +75,18 @@ export const deleteTreatmentPlans = id => async (dispatch, getState) => {
     return false;
   }
 };
+
+export const getPresetTreatmentPlans = payload => async dispatch => {
+  dispatch(mutation.getPresetTreatmentPlansRequest());
+  dispatch(showSpinner(true));
+  const data = await TreatmentPlan.getTreatmentPlans(payload);
+  if (data.success) {
+    dispatch(mutation.getPresetTreatmentPlansSuccess(data.data, payload));
+    dispatch(showSpinner(false));
+    return data.info;
+  } else {
+    dispatch(mutation.getPresetTreatmentPlansFail());
+    dispatch(showSpinner(false));
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};

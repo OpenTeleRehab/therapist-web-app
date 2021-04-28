@@ -24,6 +24,14 @@ const PreviewList = ({
 
   const [activity, setActivity] = useState();
 
+  useEffect(() => {
+    if (selectedExercises.length || selectedMaterials.length || selectedQuestionnaires.length) {
+      setIsShow(true);
+    } else {
+      setIsShow(false);
+    }
+  }, [selectedExercises, selectedMaterials, selectedQuestionnaires]);
+
   const handleShow = () => {
     setIsShow(!isShow);
   };
