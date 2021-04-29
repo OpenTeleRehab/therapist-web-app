@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 
@@ -11,21 +11,27 @@ import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/li
 
 const PreviewList = ({
   selectedExercises, selectedMaterials, selectedQuestionnaires,
-  onExerciseRemove, onMaterialRemove, onQuestionnaireRemove
+  onExerciseRemove, onMaterialRemove, onQuestionnaireRemove, setShowPreview, showPreview
 }) => {
-  const [isShow, setIsShow] = useState(false);
   const { profile } = useSelector((state) => state.auth);
 
   const handleShow = () => {
-    setIsShow(!isShow);
+    setShowPreview(!showPreview);
   };
+
+  useEffect(() => {
+    if (!selectedExercises.length && !selectedMaterials.length && !selectedQuestionnaires.length) {
+      setShowPreview(false);
+    }
+    // eslint-disable-next-line
+  }, [selectedExercises, selectedMaterials, selectedQuestionnaires]);
 
   return (
     <>
       <div className="position-absolute p-2 show-select-exercise-button">
         <BiChevronLeftCircle size={25} onClick={handleShow}/>
       </div>
-      { isShow &&
+      { showPreview &&
         <div className="position-absolute w-25 selected-exercise-wrapper">
           <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} therapistId={profile.id} />
           <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} therapistId={profile.id} />
@@ -43,7 +49,9 @@ PreviewList.propTypes = {
   selectedQuestionnaires: PropTypes.array,
   onExerciseRemove: PropTypes.func,
   onMaterialRemove: PropTypes.func,
-  onQuestionnaireRemove: PropTypes.func
+  onQuestionnaireRemove: PropTypes.func,
+  setShowPreview: PropTypes.func,
+  showPreview: PropTypes.bool
 };
 
 export default withLocalize(PreviewList);

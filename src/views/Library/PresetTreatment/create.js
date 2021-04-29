@@ -155,6 +155,7 @@ const CreatePresetTreatment = () => {
         setWeeks={setWeeks}
         activities={activities}
         setActivities={setActivities}
+        isPreset={true}
       />
 
       { showAssignDialog && (

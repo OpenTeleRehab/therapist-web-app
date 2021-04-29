@@ -16,7 +16,7 @@ import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/li
 import { BiCopyAlt } from 'react-icons/bi';
 import CopyActivity from './copyActivity';
 
-const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly }) => {
+const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly, isPreset }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -273,9 +273,11 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           handleClose={handleCloseActivityDialog}
           show={openActivityDialog}
           week={currentWeek}
+          setWeeks={setWeeks}
           day={day}
           activities={activities}
           setActivities={setActivities}
+          isPreset={isPreset}
         />
       }
 
@@ -300,7 +302,8 @@ ActivitySection.propTypes = {
   day: PropTypes.number,
   activities: PropTypes.array,
   setActivities: PropTypes.func,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  isPreset: PropTypes.bool
 };
 
 export default ActivitySection;

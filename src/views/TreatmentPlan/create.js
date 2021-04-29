@@ -16,6 +16,7 @@ import ActivitySection from './_Partials/activitySection';
 import PatientInfo from 'views/Patient/Partials/patientInfo';
 import TreatmentGoal from './_Partials/Goal';
 import { getUsers } from '../../store/user/actions';
+import Dialog from '../../components/Dialog';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -51,6 +52,9 @@ const CreateTreatmentPlan = () => {
   const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
   const [readOnly] = useState(false);
+  const [show, setShow] = useState(false);
+  const [presetName, setPresetName] = useState('');
+  const [errorPresetName, setErrorPresetName] = useState(false);
 
   useEffect(() => {
     if (activity) {
@@ -137,24 +141,17 @@ const CreateTreatmentPlan = () => {
     setErrorPatient(false);
     setErrorStartDate(false);
 
-    if (formFields.name === '') {
+    if (presetName === '') {
       canSave = false;
-      setErrorName(true);
+      setErrorPresetName(true);
     } else {
-      setErrorName(false);
-    }
-
-    if (formFields.description === '') {
-      canSave = false;
-      setErrorDescription(true);
-    } else {
-      setErrorDescription(false);
+      setErrorPresetName(false);
     }
 
     if (canSave) {
       if (id) {
         dispatch(updateTreatmentPlan(id, {
-          ...formFields,
+          name: presetName,
           goals,
           activities,
           total_of_weeks: weeks,
@@ -167,7 +164,7 @@ const CreateTreatmentPlan = () => {
           });
       } else {
         dispatch(createTreatmentPlan({
-          ...formFields,
+          name: presetName,
           goals,
           activities,
           total_of_weeks: weeks,
@@ -178,6 +175,7 @@ const CreateTreatmentPlan = () => {
           }
         });
       }
+      setShow(false);
     }
   };
 
@@ -253,6 +251,14 @@ const CreateTreatmentPlan = () => {
     return moment().diff(moment(editingTreatmentPlan.start_date, settings.date_format), 'days', true) >= 0;
   };
 
+  const handleShowPresetDialog = () => {
+    setShow(true);
+  };
+
+  const handleClosePresetDialog = () => {
+    setShow(false);
+  };
+
   return (
     <>
       {patientId && (
@@ -273,7 +279,7 @@ const CreateTreatmentPlan = () => {
           <Button
             className="ml-2"
             variant="primary"
-            onClick={handleSaveAsPreset}
+            onClick={handleShowPresetDialog}
           >
             {translate(`${patientId || activity ? 'treatment_plan.save_as_preset' : 'common.save'}`)}
           </Button>
@@ -384,6 +390,38 @@ const CreateTreatmentPlan = () => {
         <CollapseToggle title={translate('treatment_plan.treatment_information')} eventKey="0" />
       </Accordion>
       <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} readOnly={readOnly} />
+      {show &&
+        <Dialog
+          show={show}
+          title={translate('treatment_plan.save_as_preset_title')}
+          onCancel={handleClosePresetDialog}
+          onConfirm={handleSaveAsPreset}
+          confirmLabel={translate('common.save')}
+        >
+          <Form>
+            <Form.Row>
+              <Col>
+                <Form.Group>
+                  <Form.Label>{translate('treatment_plan.preset.name')}</Form.Label>
+                  <span className="text-dark ml-1">*</span>
+                  <Form.Control
+                    type="text"
+                    name="preset_name"
+                    maxLength={255}
+                    value={presetName}
+                    placeholder={translate('placeholder.treatment_plan.name')}
+                    onChange={(e) => setPresetName(e.target.value)}
+                    isInvalid={errorPresetName}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {translate('error.treatment_plan.name')}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            </Form.Row>
+          </Form>
+        </Dialog>
+      }
     </>
   );
 };
