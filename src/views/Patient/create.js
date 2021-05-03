@@ -10,9 +10,11 @@ import moment from 'moment';
 
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import Select from 'react-select';
 
 import { createUser, updateUser } from 'store/user/actions';
 import { getProfile } from 'store/auth/actions';
+import { getTherapistsByClinic } from 'store/therapist/actions';
 
 import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
@@ -25,6 +27,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const users = useSelector(state => state.user.users);
 
   const countries = useSelector(state => state.country.countries);
+  const therapistsByClinic = useSelector(state => state.therapist.therapistsByClinic);
   const clinics = useSelector(state => state.clinic.clinics);
   const { profile } = useSelector((state) => state.auth);
 
@@ -36,6 +39,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [dialCode, setDialCode] = useState('');
   const [errorGender, setErrorGender] = useState(false);
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
+  const [selectedTherapists, setSelectedTherapists] = useState([]);
 
   const [formFields, setFormFields] = useState({
     first_name: '',
@@ -61,6 +65,23 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   }, [show]);
 
   useEffect(() => {
+    if (profile !== undefined) {
+      dispatch(getTherapistsByClinic(profile.clinic_id));
+    }
+  }, [dispatch, profile]);
+
+  const options = [];
+  if (therapistsByClinic.length && profile !== undefined) {
+    therapistsByClinic.forEach(function (therapist, index, object) {
+      if (therapist.id === profile.id) {
+        object.splice(index, 1);
+      }
+
+      options.push({ value: therapist.id, label: therapist.first_name + ' ' + therapist.last_name });
+    });
+  }
+
+  useEffect(() => {
     if (editId && users.length) {
       const editingData = users.find(user => user.id === parseInt(editId));
       setFormFields({
@@ -74,6 +95,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         date_of_birth: editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
         age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : ''
       });
+      setSelectedTherapists(editingData.secondary_therapists);
+
       setDob(editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD') : '');
     } else {
       resetData();
@@ -140,6 +163,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     return current.isBefore(moment());
   };
 
+  const handleMultipleSelectChange = e => {
+    setSelectedTherapists(Array.isArray(e) ? e.map(x => x.value) : []);
+  };
+
   const handleConfirm = () => {
     let canSave = true;
 
@@ -183,15 +210,20 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     }
 
     if (canSave) {
+      const payload = {
+        ...formValues,
+        secondary_therapists: selectedTherapists
+      };
+
       if (editId) {
-        dispatch(updateUser(editId, formValues))
+        dispatch(updateUser(editId, payload))
           .then(result => {
             if (result) {
               handleClose();
             }
           });
       } else {
-        dispatch(createUser(formValues))
+        dispatch(createUser(payload))
           .then(result => {
             if (result) {
               dispatch(getProfile());
@@ -211,6 +243,18 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
       <Form>
+        <Form.Group controlId="secondary-therapist">
+          <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
+          <Select
+            value={options.filter(obj => selectedTherapists.includes(obj.value))}
+            isMulti
+            options={options}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={handleMultipleSelectChange}
+            isClearable
+          />
+        </Form.Group>
         <Form.Group controlId="formPhone">
           <Form.Label>{translate('common.phone')}</Form.Label>
           <span className="text-dark ml-1">*</span>
