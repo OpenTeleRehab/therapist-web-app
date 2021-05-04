@@ -50,12 +50,12 @@ const ChatOrCall = ({ translate }) => {
 
   useEffect(() => {
     if (videoCall !== undefined) {
-      if (videoCall.status === CALL_STATUS.STARTED) {
+      if (videoCall.status === CALL_STATUS.AUDIO_STARTED || videoCall.status === CALL_STATUS.VIDEO_STARTED) {
         callTimeout.current = setTimeout(() => {
           const message = {
             _id: videoCall._id,
             rid: selectedRoom.rid,
-            msg: CALL_STATUS.MISSED
+            msg: isVideoCall ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED
           };
           updateMessage(chatSocket, message, therapist.id);
         }, CALL_WAITING_TIMEOUT);
@@ -67,7 +67,7 @@ const ChatOrCall = ({ translate }) => {
         setIsNoSidebar(false);
       }
     }
-  }, [chatSocket, selectedRoom, therapist, videoCall]);
+  }, [chatSocket, selectedRoom, therapist, videoCall, isVideoCall]);
 
   const getTotalOnlineUsers = () => {
     const onlineStatus = chatRooms.filter(room => {
@@ -146,7 +146,7 @@ const ChatOrCall = ({ translate }) => {
               />
             </div>
           </Col>
-          {videoCall && (videoCall.status === CALL_STATUS.STARTED || videoCall.status === CALL_STATUS.ACCEPTED) ? (
+          {videoCall && (videoCall.status === CALL_STATUS.AUDIO_STARTED || videoCall.status === CALL_STATUS.VIDEO_STARTED || videoCall.status === CALL_STATUS.ACCEPTED) ? (
             <>
               <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column px-0 chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
                 <div className="calling">

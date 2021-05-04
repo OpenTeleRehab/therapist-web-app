@@ -35,12 +35,12 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
 
   const getMessageText = (msg) => {
     let text = msg || '';
-    if (msg === CALL_STATUS.MISSED) {
-      text = translate('video_call_missed');
-    } else if ([CALL_STATUS.STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
-      text = translate('video_call_started');
-    } else if (msg === CALL_STATUS.ENDED) {
-      text = translate('video_call_ended');
+    if (msg === CALL_STATUS.AUDIO_MISSED || msg === CALL_STATUS.VIDEO_MISSED) {
+      text = translate(msg);
+    } else if ([CALL_STATUS.AUDIO_STARTED, CALL_STATUS.VIDEO_STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
+      text = translate(msg);
+    } else if (msg === CALL_STATUS.AUDIO_ENDED || msg === CALL_STATUS.VIDEO_ENDED) {
+      text = translate(msg);
     }
     return text;
   };

@@ -49,14 +49,14 @@ const ChatRoomList = (
     if (type !== undefined && type !== CHAT_TYPES.TEXT) {
       lastMsg = translate('chat_attachment.title');
       className = 'text-primary';
-    } else if (msg === CALL_STATUS.MISSED) {
-      lastMsg = translate('video_call_missed');
+    } else if (msg === CALL_STATUS.AUDIO_MISSED || msg === CALL_STATUS.VIDEO_MISSED) {
+      lastMsg = translate(msg);
       className = 'text-danger';
-    } else if ([CALL_STATUS.STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
-      lastMsg = translate('video_call_started');
+    } else if ([CALL_STATUS.AUDIO_STARTED, CALL_STATUS.VIDEO_STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
+      lastMsg = translate(msg);
       className = 'text-primary';
-    } else if (msg === CALL_STATUS.ENDED) {
-      lastMsg = translate('video_call_ended');
+    } else if (msg === CALL_STATUS.AUDIO_ENDED || msg === CALL_STATUS.VIDEO_ENDED) {
+      lastMsg = translate(msg);
       className = 'text-primary';
     }
     return { lastMsg, className };

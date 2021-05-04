@@ -38,11 +38,11 @@ const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indica
   };
 
   const onEndCall = () => {
-    onUpdateMessage(CALL_STATUS.ENDED, indicator._id);
+    onUpdateMessage(isVideoCall ? CALL_STATUS.VIDEO_ENDED : CALL_STATUS.AUDIO_ENDED, indicator._id);
   };
 
   const onMissCall = () => {
-    onUpdateMessage(CALL_STATUS.MISSED, indicator._id);
+    onUpdateMessage(isVideoCall ? CALL_STATUS.VIDEO_MISSED : CALL_STATUS.AUDIO_MISSED, indicator._id);
   };
 
   return (
