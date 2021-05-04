@@ -72,11 +72,14 @@ const CreatePatient = ({ show, handleClose, editId }) => {
 
   const options = [];
   if (therapistsByClinic.length && profile !== undefined) {
+    console.log(therapistsByClinic);
     therapistsByClinic.forEach(function (therapist, index, object) {
-      if (therapist.id === profile.id) {
+      if (parseInt(therapist.id) === parseInt(profile.id)) {
+        console.log('test-in');
         object.splice(index, 1);
       }
 
+      console.log('test-out');
       options.push({ value: therapist.id, label: therapist.first_name + ' ' + therapist.last_name });
     });
   }
