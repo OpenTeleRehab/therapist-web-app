@@ -36,7 +36,7 @@ const Patient = () => {
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
     { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
-    { name: 'secondary_therapist', title: translate('common.secondary_therapist') }
+    { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') }
   ];
 
   const defaultHiddenColumnNames = [
@@ -122,7 +122,7 @@ const Patient = () => {
             ongoing_treatment_plan: user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
             ongoing_treatment_status: renderStatusBadge(user.upcomingTreatmentPlan),
             next_appointment: '',
-            secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.yes') : translate('common.secondary_therapist.no')
+            secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.label') : translate('common.primary_therapist.label')
           };
         })}
       />
