@@ -19,7 +19,7 @@ const settings = {
   male: 'male',
   female: 'female',
   other: 'other',
-  appIdleTimeout: 600 // in second
+  appIdleTimeout: 180 // in second
 };
 
 export default settings;

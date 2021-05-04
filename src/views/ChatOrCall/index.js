@@ -11,6 +11,7 @@ import {
 } from 'store/rocketchat/actions';
 import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
 import ChatPanel from 'views/ChatOrCall/Partials/ChatPanel';
+import AppContext from 'context/AppContext';
 import RocketchatContext from 'context/RocketchatContext';
 import { CALL_STATUS, USER_STATUS } from 'variables/rocketchat';
 import VideoCall from 'views/ChatOrCall/Partials/VideoCall';
@@ -21,6 +22,7 @@ const CALL_WAITING_TIMEOUT = 60000; // 1 minute
 const ChatOrCall = ({ translate }) => {
   const dispatch = useDispatch();
   const callTimeout = useRef(null);
+  const { idleTimer } = useContext(AppContext);
   const chatSocket = useContext(RocketchatContext);
   const therapist = useSelector(state => state.auth.profile);
   const { authToken, chatRooms, messages, selectedRoom, isChatConnected, videoCall } = useSelector(state => state.rocketchat);
@@ -50,7 +52,7 @@ const ChatOrCall = ({ translate }) => {
 
   useEffect(() => {
     if (videoCall !== undefined) {
-      if (videoCall.status === CALL_STATUS.AUDIO_STARTED || videoCall.status === CALL_STATUS.VIDEO_STARTED) {
+      if ([CALL_STATUS.AUDIO_STARTED, CALL_STATUS.VIDEO_STARTED].includes(videoCall.status)) {
         callTimeout.current = setTimeout(() => {
           const message = {
             _id: videoCall._id,
@@ -68,6 +70,23 @@ const ChatOrCall = ({ translate }) => {
       }
     }
   }, [chatSocket, selectedRoom, therapist, videoCall, isVideoCall]);
+
+  useEffect(() => {
+    if (videoCall !== undefined) {
+      if ([
+        CALL_STATUS.VIDEO_STARTED,
+        CALL_STATUS.AUDIO_STARTED,
+        CALL_STATUS.ACCEPTED
+      ].includes(videoCall.status)) {
+        idleTimer.pause();
+      } else if ([
+        CALL_STATUS.AUDIO_ENDED, CALL_STATUS.VIDEO_ENDED,
+        CALL_STATUS.AUDIO_MISSED, CALL_STATUS.VIDEO_MISSED
+      ].includes(videoCall.status)) {
+        idleTimer.reset();
+      }
+    }
+  }, [videoCall, idleTimer]);
 
   const getTotalOnlineUsers = () => {
     const onlineStatus = chatRooms.filter(room => {
