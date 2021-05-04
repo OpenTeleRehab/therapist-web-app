@@ -14,7 +14,7 @@ import CreateTreatmentGoal from './create';
 import { DeleteAction, EditAction } from 'components/ActionIcons';
 import Dialog from 'components/Dialog';
 
-const TreatmentGoal = ({ goals, setGoals, readOnly }) => {
+const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -72,12 +72,24 @@ const TreatmentGoal = ({ goals, setGoals, readOnly }) => {
                     {translate(`treatment_plan.goal.frequency.option.${goal.frequency}`)}
                   </Badge>
                   {goal.title}
-                  {!readOnly &&
-                    <div className="float-right">
-                      <EditAction className="ml-1" onClick={() => handleEditGoal(i)} />
-                      <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} />
-                    </div>
-                  }
+                  <>
+                    {!readOnly && isOwnCreated ? (
+                      <div className="float-right">
+                        <EditAction className="ml-1" onClick={() => handleEditGoal(i)} />
+                        <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} />
+                      </div>
+                    ) : (
+                      <>
+                        {!originGoals.find(g => g.id === goal.id) && !readOnly &&
+                          <div className="float-right">
+                            <EditAction className="ml-1" onClick={() => handleEditGoal(i)} />
+                            <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} />
+                          </div>
+                        }
+                      </>
+                    )
+                    }
+                  </>
                 </ListGroup.Item>
               );
             })}
@@ -124,7 +136,9 @@ const TreatmentGoal = ({ goals, setGoals, readOnly }) => {
 TreatmentGoal.propTypes = {
   goals: PropTypes.array,
   setGoals: PropTypes.func,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  isOwnCreated: PropTypes.bool,
+  originGoals: PropTypes.array
 };
 
 export default TreatmentGoal;

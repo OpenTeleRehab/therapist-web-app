@@ -25,12 +25,14 @@ import Dialog from 'components/Dialog';
 const PatientInfo = ({ id, translate, breadcrumb }) => {
   const dispatch = useDispatch();
   const users = useSelector(state => state.user.users);
+  const { profile } = useSelector((state) => state.auth);
   const countries = useSelector(state => state.country.countries);
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
   const [showActivateDeactivateDialog, setShowActivateDeactivateDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [disabledConfirmButton, setDisabledConfirmButton] = useState(false);
+  const [isSecondaryTherapist, setIsSecondaryTherapist] = useState(false);
   const history = useHistory();
 
   const [formFields, setFormFields] = useState({
@@ -62,8 +64,9 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
         age: AgeCalculation(data.date_of_birth, translate) || '',
         enabled: data.enabled
       });
+      setIsSecondaryTherapist(data.secondary_therapists.includes(profile.id));
     }
-  }, [id, users, countries, translate]);
+  }, [id, users, countries, translate, profile]);
 
   const handleEdit = (id) => {
     setEditId(id);
@@ -123,11 +126,13 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
           <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
             <BsFillChatSquareFill size={20} />
           </Button>
-          <DropdownButton alignRight variant="primary" title={translate('common.action')}>
-            <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
-            <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
-            <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
-          </DropdownButton>
+          {!isSecondaryTherapist &&
+            <DropdownButton alignRight variant="primary" title={translate('common.action')}>
+              <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
+              <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
+              <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
+            </DropdownButton>
+          }
         </div>
       </div>
       <div className="p-3">

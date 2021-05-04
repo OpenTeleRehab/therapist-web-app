@@ -17,6 +17,7 @@ import PatientInfo from 'views/Patient/Partials/patientInfo';
 import TreatmentGoal from './_Partials/Goal';
 import { getUsers } from '../../store/user/actions';
 import Dialog from '../../components/Dialog';
+import _ from 'lodash';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -55,6 +56,9 @@ const CreateTreatmentPlan = () => {
   const [show, setShow] = useState(false);
   const [presetName, setPresetName] = useState('');
   const [errorPresetName, setErrorPresetName] = useState(false);
+  const [isOwnCreated, setIsOwnCreated] = useState(false);
+  const [originData, setOriginData] = useState([]);
+  const [originGoals, setOriginGoals] = useState([]);
 
   useEffect(() => {
     if (activity) {
@@ -112,11 +116,15 @@ const CreateTreatmentPlan = () => {
       setGoals(editingData.goals || []);
       setActivities(editingData.activities || []);
       setWeeks(editingData.total_of_weeks);
+      setIsOwnCreated(editingData.created_by === profile.id);
+      setOriginData(_.cloneDeep(editingData.activities) || []);
+      setOriginGoals(_.cloneDeep(editingData.goals || []));
     } else {
       resetData();
+      setIsOwnCreated(true);
     }
     // eslint-disable-next-line
-  }, [id, treatmentPlans]);
+  }, [id, treatmentPlans, profile]);
 
   const resetData = () => {
     setErrorName(false);
@@ -308,6 +316,7 @@ const CreateTreatmentPlan = () => {
                   placeholder={translate('placeholder.treatment_plan.name')}
                   onChange={handleChange}
                   isInvalid={errorName}
+                  disabled={!isOwnCreated}
                 />
                 <Form.Control.Feedback type="invalid">
                   {translate('error.treatment_plan.name')}
@@ -325,6 +334,7 @@ const CreateTreatmentPlan = () => {
                   placeholder={translate('placeholder.description')}
                   onChange={handleChange}
                   isInvalid={errorDescription}
+                  disabled={!isOwnCreated}
                 />
                 <Form.Control.Feedback type="invalid">
                   {translate('error.description')}
@@ -363,7 +373,7 @@ const CreateTreatmentPlan = () => {
                     autoComplete: 'off',
                     className: errorStartDate ? 'form-control is-invalid' : 'form-control',
                     placeholder: translate('placeholder.start_date'),
-                    disabled: id && isPast()
+                    disabled: (id && isPast()) || !isOwnCreated
                   }}
                   dateFormat={settings.date_format}
                   timeFormat={false}
@@ -383,13 +393,13 @@ const CreateTreatmentPlan = () => {
               </Form.Group>
             </Col>
             <Col md={6}>
-              <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} />
+              <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} isOwnCreated={isOwnCreated} originGoals={originGoals} />
             </Col>
           </Row>
         </Accordion.Collapse>
         <CollapseToggle title={translate('treatment_plan.treatment_information')} eventKey="0" />
       </Accordion>
-      <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} readOnly={readOnly} />
+      <ActivitySection isOwnCreated={isOwnCreated} weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} readOnly={readOnly} originData={originData}/>
       {show &&
         <Dialog
           show={show}

@@ -11,7 +11,8 @@ import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/li
 
 const PreviewList = ({
   selectedExercises, selectedMaterials, selectedQuestionnaires,
-  onExerciseRemove, onMaterialRemove, onQuestionnaireRemove, setShowPreview, showPreview
+  onExerciseRemove, onMaterialRemove, onQuestionnaireRemove, setShowPreview, showPreview, isOwnCreated,
+  originData, day, week
 }) => {
   const { profile } = useSelector((state) => state.auth);
 
@@ -33,9 +34,9 @@ const PreviewList = ({
       </div>
       { showPreview &&
         <div className="position-absolute w-25 selected-exercise-wrapper">
-          <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} therapistId={profile.id} />
-          <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} therapistId={profile.id} />
-          <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} therapistId={profile.id} />
+          <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
+          <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
+          <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week} />
         </div>
       }
     </>
@@ -51,7 +52,11 @@ PreviewList.propTypes = {
   onMaterialRemove: PropTypes.func,
   onQuestionnaireRemove: PropTypes.func,
   setShowPreview: PropTypes.func,
-  showPreview: PropTypes.bool
+  showPreview: PropTypes.bool,
+  isOwnCreated: PropTypes.bool,
+  originData: PropTypes.array,
+  day: PropTypes.number,
+  week: PropTypes.number
 };
 
 export default withLocalize(PreviewList);
