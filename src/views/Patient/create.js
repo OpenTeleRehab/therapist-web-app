@@ -70,16 +70,17 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     }
   }, [dispatch, profile]);
 
-  const options = [];
   if (therapistsByClinic.length && profile !== undefined) {
-    console.log(therapistsByClinic);
-    therapistsByClinic.forEach(function (therapist, index, object) {
+    therapistsByClinic.forEach(function (therapist, index) {
       if (parseInt(therapist.id) === parseInt(profile.id)) {
-        console.log('test-in');
-        object.splice(index, 1);
+        therapistsByClinic.splice(index, 1);
       }
+    });
+  }
 
-      console.log('test-out');
+  const options = [];
+  if (therapistsByClinic.length) {
+    therapistsByClinic.forEach(function (therapist, index) {
       options.push({ value: therapist.id, label: therapist.first_name + ' ' + therapist.last_name });
     });
   }
