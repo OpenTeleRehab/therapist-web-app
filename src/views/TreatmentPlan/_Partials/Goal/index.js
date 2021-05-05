@@ -99,7 +99,7 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
         <span>{translate('treatment_plan.goal.no_goals')}</span>
       )}
 
-      {!readOnly && goals.length < 4 && (
+      {!readOnly && goals.length < 4 && isOwnCreated && (
         <Form.Group className="my-4">
           <Button
             variant="link"
