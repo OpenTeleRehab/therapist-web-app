@@ -38,7 +38,7 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
 
 let timer = null;
-const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial, setShowPreview }) => {
+const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial, setShowPreview, isOwnCreated, oldSelectedMaterials }) => {
   const dispatch = useDispatch();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
   const { educationMaterialCategoryTreeData } = useSelector((state) => state.category);
@@ -267,6 +267,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                           className="float-right action"
                           checked={selectedMaterials.includes(material.id)}
                           onChange={(e) => { onSectionChange(e.currentTarget.checked, material.id); setShowPreview(true); }}
+                          disabled={oldSelectedMaterials.includes(material.id) && !isOwnCreated}
                         />
                       </div>
                       <div className="card-container" onClick={() => handleViewEducationMaterial(material)}>
@@ -324,7 +325,9 @@ EducationMaterial.propTypes = {
   onSectionChange: PropTypes.func,
   viewEducationMaterial: PropTypes.bool,
   setViewEducationMaterial: PropTypes.func,
-  setShowPreview: PropTypes.func
+  setShowPreview: PropTypes.func,
+  oldSelectedMaterials: PropTypes.array,
+  isOwnCreated: PropTypes.bool
 };
 
 export default withLocalize(EducationMaterial);

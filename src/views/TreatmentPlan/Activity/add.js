@@ -12,7 +12,7 @@ import PreviewList from './previewList';
 import PresetTreatment from './PresetTreatment';
 import _ from 'lodash';
 
-const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setActivities, isPreset }) => {
+const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setActivities, isPreset, isOwnCreated, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
@@ -27,6 +27,9 @@ const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setAc
   const [openDialog, setOpenDialog] = useState(false);
   const [viewPreset, setViewPreset] = useState(false);
   const [totalSelectedActivity, setTotalSelectedActivity] = useState(0);
+  const [oldSelectedExercises, setOldSelectedExercises] = useState([]);
+  const [oldSelectedMaterials, setOldSelectedMaterials] = useState([]);
+  const [oldSelectedQuestionnaires, setOldSelectedQuestionnaires] = useState([]);
 
   useEffect(() => {
     const dayActivity = _.findLast(activities, { week, day });
@@ -37,6 +40,13 @@ const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setAc
     setSelectedMaterials(materialIds);
     setSelectedQuestionnaires(questionnaireIds);
   }, [week, day, activities]);
+
+  useEffect(() => {
+    const originDayActivity = _.findLast(originData, { week, day });
+    setOldSelectedExercises(originDayActivity ? originDayActivity.exercises : []);
+    setOldSelectedMaterials(originDayActivity ? originDayActivity.materials : []);
+    setOldSelectedQuestionnaires(originDayActivity ? originDayActivity.questionnaires : []);
+  }, [week, day, originData]);
 
   const handleExercisesChange = (checked, id) => {
     setViewExercise(false);
@@ -150,15 +160,15 @@ const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setAc
     >
       <Tabs transition={false} className="mb-3">
         <Tab eventKey="exercise" title={translate('activity.exercises')}>
-          <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} viewExercise={viewExercise} setViewExercise={setViewExercise} setShowPreview={setShowPreview} />
+          <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} viewExercise={viewExercise} setViewExercise={setViewExercise} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedExercises={oldSelectedExercises} />
         </Tab>
         <Tab eventKey="education" title={translate('activity.education_materials')}>
-          <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} viewEducationMaterial={viewEducationMaterial} setViewEducationMaterial={setViewEducationMaterial} setShowPreview={setShowPreview} />
+          <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} viewEducationMaterial={viewEducationMaterial} setViewEducationMaterial={setViewEducationMaterial} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedMaterials={oldSelectedMaterials} />
         </Tab>
         <Tab eventKey="questionnaire" title={translate('activity.questionnaires')}>
-          <Questionnaire selectedMaterials={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} viewQuestionnaire={viewQuestionnaire} setViewQuestionnaire={setViewQuestionnaire} setShowPreview={setShowPreview} />
+          <Questionnaire selectedMaterials={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} viewQuestionnaire={viewQuestionnaire} setViewQuestionnaire={setViewQuestionnaire} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedQuestionnaires={oldSelectedQuestionnaires} />
         </Tab>
-        {!isPreset &&
+        {!isPreset && isOwnCreated &&
           <Tab eventKey="preset_treatment" title={translate('activity.preset_treatment')}>
             <PresetTreatment presetId={presetId} onSectionChange={handlePresetChange} setViewPreset={setViewPreset} viewPreset={viewPreset}/>
           </Tab>
@@ -173,6 +183,10 @@ const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setAc
         onExerciseRemove={id => handleExercisesChange(false, id)}
         onMaterialRemove={id => handleMaterialsChange(false, id)}
         onQuestionnaireRemove={id => handleQuestionnairesChange(false, id)}
+        isOwnCreated={isOwnCreated}
+        originData={originData}
+        day={day}
+        week={week}
       />
       <Dialog
         show={openDialog}
@@ -196,7 +210,9 @@ AddActivity.propTypes = {
   activities: PropTypes.array,
   setActivities: PropTypes.func,
   setWeeks: PropTypes.func,
-  isPreset: PropTypes.bool
+  isPreset: PropTypes.bool,
+  isOwnCreated: PropTypes.bool,
+  originData: PropTypes.array
 };
 
 export default AddActivity;

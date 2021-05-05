@@ -14,14 +14,16 @@ import { BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
 import { EducationMaterial } from 'services/educationMaterial';
 import { useSelector } from 'react-redux';
 import ViewEducationMaterial from './viewEducationMaterial';
+import _ from 'lodash';
 
-const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
+const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedMaterials, originData, day, week }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
   const [ids] = materialIds;
   const [viewMaterial, setViewMaterial] = useState(false);
   const [material, setMaterial] = useState([]);
+  const [treatmentPlanMaterials, setTreatmentPlanMaterials] = useState([]);
 
   useEffect(() => {
     if (materialObjs && materialObjs.length > 0) {
@@ -36,6 +38,17 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
       setMaterials([]);
     }
   }, [ids, materialIds, lang, materialObjs, therapistId]);
+
+  useEffect(() => {
+    if (treatmentPlanSelectedMaterials && treatmentPlanSelectedMaterials.length > 0) {
+      setTreatmentPlanMaterials(treatmentPlanSelectedMaterials);
+    } else if (originData && originData.length > 0) {
+      const originDayActivity = _.findLast(originData, { week, day });
+      setTreatmentPlanMaterials(originDayActivity ? originDayActivity.materials : []);
+    } else {
+      setTreatmentPlanMaterials([]);
+    }
+  }, [treatmentPlanSelectedMaterials, originData, week, day]);
 
   const handleViewMaterial = (material) => {
     setMaterial(material);
@@ -64,15 +77,29 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                 </div>
               )}
               {
-                onSelectionRemove && (
+                (onSelectionRemove) && (
                   <div className="card-remove-btn-wrapper">
-                    {!readOnly && <Button
-                      className="btn-circle-sm m-1"
-                      variant="light"
-                      onClick={() => onSelectionRemove(material.id)}
-                    >
-                      <BsX size={15} />
-                    </Button>
+                    {isOwnCreated && !readOnly ? (
+                      <Button
+                        className="btn-circle-sm m-1"
+                        variant="light"
+                        onClick={() => onSelectionRemove(material.id)}
+                      >
+                        <BsX size={15} />
+                      </Button>
+                    ) : (
+                      <>
+                        {!treatmentPlanMaterials.includes(material.id) && !readOnly &&
+                        <Button
+                          className="btn-circle-sm m-1"
+                          variant="light"
+                          onClick={() => onSelectionRemove(material.id)}
+                        >
+                          <BsX size={15} />
+                        </Button>
+                        }
+                      </>
+                    )
                     }
                   </div>
                 )
@@ -118,7 +145,12 @@ ListEducationMaterialCard.propTypes = {
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
   lang: PropTypes.any,
-  therapistId: PropTypes.string
+  therapistId: PropTypes.string,
+  isOwnCreated: PropTypes.bool,
+  treatmentPlanSelectedMaterials: PropTypes.array,
+  originData: PropTypes.array,
+  day: PropTypes.number,
+  week: PropTypes.number
 };
 
 export default withLocalize(ListEducationMaterialCard);

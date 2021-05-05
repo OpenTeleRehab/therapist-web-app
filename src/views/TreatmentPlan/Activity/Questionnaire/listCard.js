@@ -12,14 +12,16 @@ import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
 import { BsX, BsHeartFill, BsHeart, BsPerson } from 'react-icons/bs';
 import ViewQuestionnaire from './viewQuestionnaire';
+import _ from 'lodash';
 
-const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectionRemove, readOnly, lang, therapistId }) => {
+const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedQuestionnaires, day, week, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
   const [ids] = questionnaireIds;
   const [questionnaire, setQuestionnaire] = useState([]);
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
+  const [treatmentPlanQuestionnaires, setTreatmentPlanQuestionnaires] = useState([]);
 
   useEffect(() => {
     if (questionnaireObjs && questionnaireObjs.length > 0) {
@@ -34,6 +36,17 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
       setQuestionnaires([]);
     }
   }, [ids, questionnaireIds, lang, questionnaireObjs, therapistId]);
+
+  useEffect(() => {
+    if (treatmentPlanSelectedQuestionnaires && treatmentPlanSelectedQuestionnaires.length > 0) {
+      setTreatmentPlanQuestionnaires(treatmentPlanSelectedQuestionnaires);
+    } else if (originData && originData.length > 0) {
+      const originDayActivity = _.findLast(originData, { week, day });
+      setTreatmentPlanQuestionnaires(originDayActivity ? originDayActivity.questionnaires : []);
+    } else {
+      setTreatmentPlanQuestionnaires([]);
+    }
+  }, [treatmentPlanSelectedQuestionnaires, originData, week, day]);
 
   const handleViewQuestionnaire = (questionnaire) => {
     setViewQuestionnaire(true);
@@ -62,15 +75,29 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
                 </div>
               )}
               {
-                onSelectionRemove && (
+                (onSelectionRemove) && (
                   <div className="card-remove-btn-wrapper">
-                    {!readOnly && <Button
-                      className="btn-circle-sm m-1"
-                      variant="light"
-                      onClick={() => onSelectionRemove(questionnaire.id)}
-                    >
-                      <BsX size={15} />
-                    </Button>
+                    {isOwnCreated && !readOnly ? (
+                      <Button
+                        className="btn-circle-sm m-1"
+                        variant="light"
+                        onClick={() => onSelectionRemove(questionnaire.id)}
+                      >
+                        <BsX size={15} />
+                      </Button>
+                    ) : (
+                      <>
+                        {!treatmentPlanQuestionnaires.includes(questionnaire.id) && !readOnly &&
+                        <Button
+                          className="btn-circle-sm m-1"
+                          variant="light"
+                          onClick={() => onSelectionRemove(questionnaire.id)}
+                        >
+                          <BsX size={15} />
+                        </Button>
+                        }
+                      </>
+                    )
                     }
                   </div>
                 )
@@ -116,7 +143,12 @@ ListQuestionnaireCard.propTypes = {
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
   lang: PropTypes.any,
-  therapistId: PropTypes.string
+  therapistId: PropTypes.string,
+  isOwnCreated: PropTypes.bool,
+  treatmentPlanSelectedQuestionnaires: PropTypes.array,
+  originData: PropTypes.array,
+  day: PropTypes.number,
+  week: PropTypes.number
 };
 
 export default withLocalize(ListQuestionnaireCard);

@@ -16,7 +16,7 @@ import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/li
 import { BiCopyAlt } from 'react-icons/bi';
 import CopyActivity from './copyActivity';
 
-const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly, isPreset }) => {
+const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly, isPreset, isOwnCreated, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -31,6 +31,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [therapistId, setTherapistId] = useState('');
   const [openCopyDialog, setOpenCopyDialog] = useState(false);
   const [dayActivityToCopy, setDayActivityToCopy] = useState();
+  const [newWeeks, setNewWeeks] = useState([]);
 
   useEffect(() => {
     if (profile) {
@@ -50,6 +51,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
 
   const handleAddWeek = () => {
     setWeeks(weeks + 1);
+    newWeeks.push(weeks + 1);
+    setNewWeeks([...newWeeks]);
   };
 
   const handleRemoveWeek = (week) => {
@@ -89,13 +92,27 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           >
             {translate('common.week')} {i}
           </Button>
-          {i !== 1 && !readOnly && <Button
-            className="btn-circle-sm btn-in-btn"
-            variant="light"
-            onClick={() => handleRemoveWeek(i)}
-          >
-            <BsX size={15} />
-          </Button>
+          {i !== 1 && !readOnly && isOwnCreated ? (
+            <Button
+              className="btn-circle-sm btn-in-btn"
+              variant="light"
+              onClick={() => handleRemoveWeek(i)}
+            >
+              <BsX size={15} />
+            </Button>
+          ) : (
+            <>
+              {!readOnly && newWeeks.includes(i) &&
+                <Button
+                  className="btn-circle-sm btn-in-btn"
+                  variant="light"
+                  onClick={() => handleRemoveWeek(i)}
+                >
+                  <BsX size={15} />
+                </Button>
+              }
+            </>
+          )
           }
         </div>
       );
@@ -174,6 +191,11 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           showCopyAndClear = true;
         }
       }
+      const originDayActivity = _.findLast(originData, { week: currentWeek, day: i + 1 });
+      const treatmentPlanSelectedMaterials = originDayActivity ? originDayActivity.materials : [];
+      const treatmentPlanSelectedExercises = originDayActivity ? originDayActivity.exercises : [];
+      const treatmentPlanSelectedQuestionnaires = originDayActivity ? originDayActivity.questionnaires : [];
+
       elements.push(
         <div className={'flex-fill flex-basic-0 d-flex flex-column align-items-center ' + (isEven ? 'bg-white' : 'bg-light') } key={`day-column-${i}`}>
           <div
@@ -187,14 +209,16 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           <div className="p-2 activity-card-wrapper h-100">
             {(showCopyAndClear && !readOnly) &&
               <div className="d-flex justify-content-between mb-2">
-                <Button
-                  variant="link"
-                  className="text-muted p-0"
-                  onClick={() => handleClearDayActivity(dayActivity)}
-                >
-                  <BsXCircle size={20} className="mr-1" />
-                  {translate('common.clear_all')}
-                </Button>
+                {(isOwnCreated || isPreset) &&
+                  <Button
+                    variant="link"
+                    className="text-muted p-0"
+                    onClick={() => handleClearDayActivity(dayActivity)}
+                  >
+                    <BsXCircle size={20} className="mr-1" />
+                    {translate('common.clear_all')}
+                  </Button>
+                }
                 <Button
                   variant="link"
                   className="p-0"
@@ -205,9 +229,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
                 </Button>
               </div>
             }
-            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
-            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
-            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} />
+            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises}/>
+            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials}/>
+            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} />
 
             <div className="text-center">
               {!readOnly && <Button
@@ -278,6 +302,8 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           activities={activities}
           setActivities={setActivities}
           isPreset={isPreset}
+          isOwnCreated={isOwnCreated}
+          originData={originData}
         />
       }
 
@@ -303,7 +329,9 @@ ActivitySection.propTypes = {
   activities: PropTypes.array,
   setActivities: PropTypes.func,
   readOnly: PropTypes.bool,
-  isPreset: PropTypes.bool
+  isPreset: PropTypes.bool,
+  isOwnCreated: PropTypes.bool,
+  originData: PropTypes.array
 };
 
 export default ActivitySection;
