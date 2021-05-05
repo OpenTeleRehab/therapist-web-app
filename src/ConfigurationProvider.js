@@ -12,9 +12,10 @@ import { getUniqueId } from 'utils/general';
 import { getProfessions } from 'store/profession/actions';
 
 import SplashScreen from 'components/SplashScreen';
+import AppContext from 'context/AppContext';
 import RocketchatContext from 'context/RocketchatContext';
 import settings from './settings';
-import IdleTimer from 'react-idle-timer';
+import { useIdleTimer } from 'react-idle-timer';
 import keycloak from './utils/keycloak';
 
 let chatSocket = null;
@@ -57,26 +58,25 @@ const ConfigurationProvider = ({ children }) => {
     }
   }, [profile, dispatch]);
 
-  const _onIdle = () => {
-    if (keycloak.authenticated) {
+  const { pause, reset } = useIdleTimer({
+    timeout: 1000 * settings.appIdleTimeout,
+    crossTab: true,
+    onIdle: () => {
       keycloak.logout({ redirectUri: window.location.origin });
     }
-  };
+  });
+  const appContext = { idleTimer: { pause, reset } };
 
   if (appLoading) {
     return <SplashScreen />;
   }
 
   return (
-    <>
-      <IdleTimer
-        onIdle={_onIdle}
-        timeout={1000 * settings.appIdleTimeout}
-      />
+    <AppContext.Provider value={appContext}>
       <RocketchatContext.Provider value={chatSocket}>
         {children}
       </RocketchatContext.Provider>
-    </>
+    </AppContext.Provider>
   );
 };
 
