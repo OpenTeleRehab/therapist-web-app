@@ -55,6 +55,6 @@ export const getMessage = (message, authUserId = '', authToken = '') => {
     unread: !!unread,
     type,
     attachment,
-    isVideoCall: msg !== '' && msg.includes('jitsi_call_')
+    isVideoCall: msg !== '' && msg.includes('jitsi_call')
   };
 };

@@ -67,7 +67,7 @@ const ChatPanel = (
   };
 
   const handleCall = (isVideo) => {
-    onSendMessage(CALL_STATUS.STARTED);
+    onSendMessage(isVideo ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
     isVideoCall(isVideo);
   };
 
