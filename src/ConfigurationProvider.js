@@ -18,10 +18,17 @@ import settings from './settings';
 import { useIdleTimer } from 'react-idle-timer';
 import keycloak from './utils/keycloak';
 
+import Echo from 'laravel-echo';
+// eslint-disable-next-line
+import Pusher from 'pusher-js';
+import { getTranslate } from 'react-localize-redux';
+
 let chatSocket = null;
 
 const ConfigurationProvider = ({ children }) => {
   const dispatch = useDispatch();
+  const localize = useSelector((state) => state.localize);
+  const translate = getTranslate(localize);
   const profile = useSelector((state) => state.auth.profile);
   const [appLoading, setAppLoading] = useState(true);
 
@@ -57,6 +64,44 @@ const ConfigurationProvider = ({ children }) => {
       chatSocket = initialChatSocket(dispatch, subscribeIds, profile.identity, profile.chat_password);
     }
   }, [profile, dispatch]);
+
+  useEffect(() => {
+    if (profile && !appLoading) {
+      const options = {
+        broadcaster: 'pusher',
+        key: process.env.REACT_APP_PUSHER_APP_KEY,
+        cluster: 'ap1',
+        encrypted: true,
+        authEndpoint: process.env.REACT_APP_API_BASE_URL + '/broadcasting/auth',
+        auth: {
+          headers: {
+            Authorization: 'Bearer ' + keycloak.token,
+            Accept: 'application/json'
+          }
+        }
+      };
+
+      // eslint-disable-next-line
+      const echo = new Echo(options);
+      echo.private('new-patient.' + profile.id).listen('.new-patient-notification', data => {
+        if (!('Notification' in window)) {
+          console.log('This browser does not support desktop notification');
+        } else {
+          Notification.requestPermission().then(permission => {
+            if (permission) {
+              const options = {
+                body: translate('patient.new_patient_assigned_notification', { name: [data.patientLastName, data.patientFirstName].join(' ') }),
+                icon: process.env.PUBLIC_URL + '/logo192.png',
+                dir: 'ltr'
+              };
+              // eslint-disable-next-line
+              new Notification(translate('common.notification'), options);
+            }
+          });
+        }
+      });
+    }
+  }, [profile, appLoading, translate]);
 
   const { pause, reset } = useIdleTimer({
     timeout: 1000 * settings.appIdleTimeout,
