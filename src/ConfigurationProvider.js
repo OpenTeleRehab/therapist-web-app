@@ -24,6 +24,7 @@ import Pusher from 'pusher-js';
 import { getTranslate } from 'react-localize-redux';
 
 let chatSocket = null;
+let echo = null;
 
 const ConfigurationProvider = ({ children }) => {
   const dispatch = useDispatch();
@@ -66,7 +67,7 @@ const ConfigurationProvider = ({ children }) => {
   }, [profile, dispatch]);
 
   useEffect(() => {
-    if (profile && !appLoading) {
+    if (profile && !appLoading && translate && !echo) {
       const options = {
         broadcaster: 'pusher',
         key: process.env.REACT_APP_PUSHER_APP_KEY,
@@ -82,7 +83,7 @@ const ConfigurationProvider = ({ children }) => {
       };
 
       // eslint-disable-next-line
-      const echo = new Echo(options);
+      echo = new Echo(options);
       echo.private('new-patient.' + profile.id).listen('.new-patient-notification', data => {
         if (!('Notification' in window)) {
           console.log('This browser does not support desktop notification');
