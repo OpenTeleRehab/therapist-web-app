@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Col, Form } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
@@ -7,6 +7,7 @@ import Datetime from 'components/DateTime';
 import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment';
+import RocketchatContext from 'context/RocketchatContext';
 
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -15,10 +16,15 @@ import Select from 'react-select';
 import { createUser, updateUser } from 'store/user/actions';
 import { getProfile } from 'store/auth/actions';
 import { getTherapistsByClinic } from 'store/therapist/actions';
+import { Therapist as therapistService } from 'services/therapist';
+import { User as patientService } from 'services/user';
 
 import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
+import { getChatRooms } from 'utils/therapist';
 import AgeCalculation from 'utils/age';
+import { deleteChatRoom } from 'utils/rocketchat';
+import _ from 'lodash';
 
 const CreatePatient = ({ show, handleClose, editId }) => {
   const dispatch = useDispatch();
@@ -40,6 +46,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [errorGender, setErrorGender] = useState(false);
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
   const [selectedTherapists, setSelectedTherapists] = useState([]);
+  const [originalSecondaryTherapists, setOriginalSecondaryTherapists] = useState([]);
+  const [patientChatUserId, setPatientChatUserId] = useState('');
+  const chatSocket = useContext(RocketchatContext);
 
   const [formFields, setFormFields] = useState({
     first_name: '',
@@ -100,6 +109,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : ''
       });
       setSelectedTherapists(editingData.secondary_therapists);
+      setOriginalSecondaryTherapists(editingData.secondary_therapists);
+      setPatientChatUserId(editingData.chat_user_id);
 
       setDob(editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD') : '');
     } else {
@@ -223,6 +234,21 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         dispatch(updateUser(editId, payload))
           .then(result => {
             if (result) {
+              if (originalSecondaryTherapists) {
+                originalSecondaryTherapists.forEach(function (therapist, index) {
+                  if (!_.includes(selectedTherapists, therapist) || selectedTherapists.length === 0) {
+                    const roomIds = getChatRooms(therapist, therapistsByClinic);
+                    const fIndex = roomIds.findIndex(r => r.includes(patientChatUserId));
+                    if (fIndex > -1) {
+                      const chatRoomId = roomIds[fIndex];
+                      deleteChatRoom(chatSocket, chatRoomId, profile.id);
+
+                      therapistService.deleteTherapistChatRoomById(therapist, chatRoomId);
+                      patientService.deletePatientChatRoomById(editId, chatRoomId);
+                    }
+                  }
+                });
+              }
               handleClose();
             }
           });
