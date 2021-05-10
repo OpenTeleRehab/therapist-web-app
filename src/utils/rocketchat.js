@@ -197,3 +197,14 @@ const subscribeUserLoggedStatus = (socket, id) => {
   };
   socket.send(JSON.stringify(options));
 };
+
+export const deleteChatRoom = (socket, roomId, therapistId) => {
+  const options = {
+    msg: 'method',
+    method: 'eraseRoom',
+    id: getUniqueId(therapistId),
+    params: [roomId]
+  };
+
+  socket.send(JSON.stringify(options));
+};
