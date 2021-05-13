@@ -176,7 +176,6 @@ const ChatOrCall = ({ translate }) => {
                     roomName={selectedRoom.rid}
                     displayName={selectedRoom.name}
                     isVideoCall={isVideoCall}
-                    onSendMessage={handleSendMessage}
                     onUpdateMessage={handleUpdateMessage}
                     indicator={videoCall}
                     callingText={translate('video_call_starting')}

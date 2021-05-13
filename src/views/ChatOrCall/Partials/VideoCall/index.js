@@ -56,7 +56,12 @@ const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indica
           containerStyle={{ width: '100%', height: '100%' }}
           interfaceConfig={interfaceConfig}
           config={config}
-          onLeave={onEndCall}
+          onAPILoad={JitsiMeetAPI => {
+            JitsiMeetAPI.addListener('readyToClose', () => {
+              onEndCall();
+              JitsiMeetAPI.removeListener('readyToClose');
+            });
+          }}
         />
       ) : (
         <div className="incoming d-flex flex-column">
