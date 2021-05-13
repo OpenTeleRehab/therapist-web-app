@@ -16,7 +16,7 @@ import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/li
 import { BiCopyAlt } from 'react-icons/bi';
 import CopyActivity from './copyActivity';
 
-const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly, isPreset, isOwnCreated, originData }) => {
+const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly, isPreset, isOwnCreated, originData, treatmentPlanId }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -229,9 +229,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
                 </Button>
               </div>
             }
-            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises}/>
-            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials}/>
-            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} />
+            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={dayActivity} showList={true} treatmentPlanId={treatmentPlanId} />
+            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={dayActivity} showList={true} treatmentPlanId={treatmentPlanId} />
+            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={dayActivity} showList={true} treatmentPlanId={treatmentPlanId} />
 
             <div className="text-center">
               {!readOnly && <Button
@@ -331,7 +331,8 @@ ActivitySection.propTypes = {
   readOnly: PropTypes.bool,
   isPreset: PropTypes.bool,
   isOwnCreated: PropTypes.bool,
-  originData: PropTypes.array
+  originData: PropTypes.array,
+  treatmentPlanId: PropTypes.string
 };
 
 export default ActivitySection;
