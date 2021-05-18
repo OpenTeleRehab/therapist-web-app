@@ -76,11 +76,25 @@ const deletePatientChatRoomById = (id, chatRoomId) => {
     });
 };
 
+const getActivitiesByIds = (activityIds, treatmentPlanId, type, day, week, lang, therapistId) => {
+  const params = { activity_ids: activityIds, treatment_plan_id: treatmentPlanId, type: type, day: day, week: week, lang: lang, therapist_id: therapistId };
+  return axios.get('activities/list/by-ids', { params })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const User = {
   createUser,
   getUsers,
   updateUser,
   activateDeactivateAccount,
   deleteAccount,
-  deletePatientChatRoomById
+  deletePatientChatRoomById,
+  getActivitiesByIds
 };

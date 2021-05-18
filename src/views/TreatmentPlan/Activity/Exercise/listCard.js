@@ -9,11 +9,13 @@ import {
 } from 'react-bootstrap';
 
 import { Exercise } from 'services/exercise';
+import { User } from 'services/user';
 import { BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
 import ViewExercise from 'views/Library/Exercise/view';
 import _ from 'lodash';
+import { TYPE } from 'variables/activity';
 
-const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData }) => {
+const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData, showList, treatmentPlanId }) => {
   const [exercises, setExercises] = useState([]);
   const [ids] = exerciseIds;
   const [exercise, setExercise] = useState([]);
@@ -24,15 +26,23 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
     if (exerciseObjs && exerciseObjs.length > 0) {
       setExercises(exerciseObjs);
     } else if (exerciseIds && exerciseIds.length > 0) {
-      Exercise.getExercisesByIds(exerciseIds, lang, therapistId).then(res => {
-        if (res.data) {
-          setExercises(res.data);
-        }
-      });
+      if (showList) {
+        User.getActivitiesByIds(exerciseIds, treatmentPlanId, TYPE.exercise, day.day, day.week, lang, therapistId).then(res => {
+          if (res.data) {
+            setExercises(res.data);
+          }
+        });
+      } else {
+        Exercise.getExercisesByIds(exerciseIds, lang, therapistId).then(res => {
+          if (res.data) {
+            setExercises(res.data);
+          }
+        });
+      }
     } else {
       setExercises([]);
     }
-  }, [ids, exerciseIds, lang, exerciseObjs, therapistId]);
+  }, [ids, exerciseIds, lang, exerciseObjs, therapistId, day, treatmentPlanId, showList]);
 
   useEffect(() => {
     if (treatmentPlanSelectedExercises && treatmentPlanSelectedExercises.length > 0) {
@@ -84,7 +94,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
                       </Button>
                     ) : (
                       <>
-                        {!treatmentPlanExercises.includes(exercise.id) && !readOnly &&
+                        {(!treatmentPlanExercises.includes(exercise.id) || exercise.created_by === therapistId) && !readOnly &&
                         <Button
                           className="btn-circle-sm m-1"
                           variant="light"
@@ -163,7 +173,9 @@ ListExerciseCard.propTypes = {
   treatmentPlanSelectedExercises: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
-  week: PropTypes.number
+  week: PropTypes.number,
+  showList: PropTypes.bool,
+  treatmentPlanId: PropTypes.string
 };
 
 export default withLocalize(ListExerciseCard);

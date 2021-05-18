@@ -15,8 +15,10 @@ import { EducationMaterial } from 'services/educationMaterial';
 import { useSelector } from 'react-redux';
 import ViewEducationMaterial from './viewEducationMaterial';
 import _ from 'lodash';
+import { User } from 'services/user';
+import { TYPE } from 'variables/activity';
 
-const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedMaterials, originData, day, week }) => {
+const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedMaterials, originData, day, week, showList, treatmentPlanId }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
@@ -29,15 +31,23 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
     if (materialObjs && materialObjs.length > 0) {
       setMaterials(materialObjs);
     } else if (materialIds && materialIds.length > 0) {
-      EducationMaterial.getEducationMaterialsByIds(materialIds, lang, therapistId).then(res => {
-        if (res.data) {
-          setMaterials(res.data);
-        }
-      });
+      if (showList) {
+        User.getActivitiesByIds(materialIds, treatmentPlanId, TYPE.material, day.day, day.week, lang, therapistId).then(res => {
+          if (res.data) {
+            setMaterials(res.data);
+          }
+        });
+      } else {
+        EducationMaterial.getEducationMaterialsByIds(materialIds, lang, therapistId).then(res => {
+          if (res.data) {
+            setMaterials(res.data);
+          }
+        });
+      }
     } else {
       setMaterials([]);
     }
-  }, [ids, materialIds, lang, materialObjs, therapistId]);
+  }, [ids, materialIds, lang, materialObjs, therapistId, day, showList, treatmentPlanId]);
 
   useEffect(() => {
     if (treatmentPlanSelectedMaterials && treatmentPlanSelectedMaterials.length > 0) {
@@ -89,7 +99,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                       </Button>
                     ) : (
                       <>
-                        {!treatmentPlanMaterials.includes(material.id) && !readOnly &&
+                        {(!treatmentPlanMaterials.includes(material.id) || material.created_by === therapistId) && !readOnly &&
                         <Button
                           className="btn-circle-sm m-1"
                           variant="light"
@@ -150,7 +160,9 @@ ListEducationMaterialCard.propTypes = {
   treatmentPlanSelectedMaterials: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
-  week: PropTypes.number
+  week: PropTypes.number,
+  showList: PropTypes.bool,
+  treatmentPlanId: PropTypes.string
 };
 
 export default withLocalize(ListEducationMaterialCard);

@@ -59,6 +59,7 @@ const CreateTreatmentPlan = () => {
   const [isOwnCreated, setIsOwnCreated] = useState(false);
   const [originData, setOriginData] = useState([]);
   const [originGoals, setOriginGoals] = useState([]);
+  const [treatmentPlanId, setTreatmentPlanId] = useState('');
 
   useEffect(() => {
     if (activity) {
@@ -119,6 +120,7 @@ const CreateTreatmentPlan = () => {
       setIsOwnCreated(editingData.created_by === profile.id);
       setOriginData(_.cloneDeep(editingData.activities) || []);
       setOriginGoals(_.cloneDeep(editingData.goals || []));
+      setTreatmentPlanId(editingData.id);
     } else {
       resetData();
       setIsOwnCreated(true);
@@ -399,7 +401,7 @@ const CreateTreatmentPlan = () => {
         </Accordion.Collapse>
         <CollapseToggle title={translate('treatment_plan.treatment_information')} eventKey="0" />
       </Accordion>
-      <ActivitySection isOwnCreated={isOwnCreated} weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} readOnly={readOnly} originData={originData}/>
+      <ActivitySection isOwnCreated={isOwnCreated} weeks={weeks} setWeeks={setWeeks} startDate={formFields.start_date} activities={activities} setActivities={setActivities} readOnly={readOnly} originData={originData} treatmentPlanId={treatmentPlanId} />
       {show &&
         <Dialog
           show={show}
