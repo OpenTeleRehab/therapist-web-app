@@ -1,5 +1,4 @@
 .activity-card-wrapper {
-	border: 1px dotted;
 	width: 100%;
 	min-height: 250px;
 }
@@ -32,4 +31,7 @@
 	background-color: $light;
 	z-index: 99;
 	padding: $spacer;
+}
+.activity-weekend-header-column-background {
+	background-color: $orange;
 }
