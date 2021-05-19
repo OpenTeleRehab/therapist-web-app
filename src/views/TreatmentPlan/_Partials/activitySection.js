@@ -200,7 +200,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         <div className={'flex-fill flex-basic-0 d-flex flex-column align-items-center ' + (isEven ? 'bg-white' : 'bg-light') } key={`day-column-${i}`}>
           <div
             className={date.weekday() === 0 || date.weekday() === 6
-              ? 'font-weight-bold w-100 text-center text-uppercase py-2 bg-danger'
+              ? 'font-weight-bold w-100 text-center text-uppercase py-2 activity-weekend-header-column-background'
               : 'font-weight-bold w-100 text-center text-uppercase py-2 bg-light'}
           >
             {translate('common.day')} {i + 1}
