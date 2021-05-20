@@ -12,7 +12,6 @@ import Exercise from './Exercise';
 import EducationMaterial from './EducationMaterial';
 import Questionnaire from './Questionnaire';
 import PresetTreatment from './PresetTreatment';
-import Dialog from 'components/Dialog';
 import { updateFavorite as updateFavoriteEducationMaterial } from 'store/educationMaterial/actions';
 import { updateFavorite as updateFavoriteExercise } from 'store/exercise/actions';
 import { updateFavorite as updateFavoriteQuestionnaire } from 'store/questionnaire/actions';
@@ -33,14 +32,7 @@ const Library = ({ translate }) => {
   const { treatmentPlans } = useSelector(state => state.treatmentPlan);
   const [view, setView] = useState(undefined);
   const [newContentLink, setNewContentLink] = useState(undefined);
-  const [showSwitchFavoriteDialog, setShowSwitchFavoriteDialog] = useState(false);
-  const [id, setId] = useState(null);
-  const [type, setType] = useState(null);
   const [maxLibraries, setMaxLibraries] = useState(20);
-  const [formFields, setFormFields] = useState({
-    is_favorite: 0,
-    therapist_id: null
-  });
   const [allowCreateContent, setAllowCreateContent] = useState(false);
   const [therapistId, setTherapistId] = useState('');
   const { profile } = useSelector((state) => state.auth);
@@ -95,39 +87,15 @@ const Library = ({ translate }) => {
   }, [therapistId, view, treatmentPlans, maxLibraries]);
 
   const handleSwitchFavorite = (id, isFavorite, type) => {
-    setId(id);
-    setType(type);
-    setFormFields({ ...formFields, is_favorite: isFavorite, therapist_id: therapistId });
-    setShowSwitchFavoriteDialog(true);
-  };
-
-  const handleSwitchFavoriteDialogClose = () => {
-    setId(null);
-    setShowSwitchFavoriteDialog(false);
-  };
-
-  const handleSwitchFavoriteDialogConfirm = () => {
     switch (type) {
       case CATEGORY_TYPES.QUESTIONNAIRE:
-        dispatch(updateFavoriteQuestionnaire(id, formFields)).then(result => {
-          if (result) {
-            handleSwitchFavoriteDialogClose(true);
-          }
-        });
+        dispatch(updateFavoriteQuestionnaire(id, { is_favorite: isFavorite, therapist_id: 63 }));
         break;
       case CATEGORY_TYPES.MATERIAL:
-        dispatch(updateFavoriteEducationMaterial(id, formFields)).then(result => {
-          if (result) {
-            handleSwitchFavoriteDialogClose(true);
-          }
-        });
+        dispatch(updateFavoriteEducationMaterial(id, { is_favorite: isFavorite, therapist_id: 63 }));
         break;
       default:
-        dispatch(updateFavoriteExercise(id, formFields)).then(result => {
-          if (result) {
-            handleSwitchFavoriteDialogClose(true);
-          }
-        });
+        dispatch(updateFavoriteExercise(id, { is_favorite: isFavorite, therapist_id: 63 }));
         break;
     }
   };
@@ -215,16 +183,6 @@ const Library = ({ translate }) => {
           />
         }
       </div>
-      <Dialog
-        show={showSwitchFavoriteDialog}
-        title={translate('library.switchFavorite_confirmation_title')}
-        cancelLabel={translate('common.no')}
-        onCancel={handleSwitchFavoriteDialogClose}
-        confirmLabel={translate('common.yes')}
-        onConfirm={handleSwitchFavoriteDialogConfirm}
-      >
-        <p>{translate('common.switchFavorite_confirmation_message')}</p>
-      </Dialog>
     </>
   );
 };
