@@ -22,11 +22,9 @@ export const updateFavorite = (id, payload) => async (dispatch, getState) => {
     dispatch(mutation.updateFavoriteSuccess());
     const filters = getState().questionnaire.filters;
     dispatch(getQuestionnaires({ ...filters, therapist_id: payload.therapist_id }));
-    dispatch(showSuccessNotification('toast_title.update_questionnaire', data.message));
     return true;
   } else {
     dispatch(mutation.updateFavoriteFail());
-    dispatch(showErrorNotification('toast_title.update_questionnaire', data.message));
     return false;
   }
 };
