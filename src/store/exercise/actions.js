@@ -64,9 +64,11 @@ export const updateFavorite = (id, payload) => async (dispatch, getState) => {
     dispatch(mutation.updateFavoriteSuccess());
     const filters = getState().exercise.filters;
     dispatch(getExercises({ ...filters, therapist_id: payload.therapist_id }));
+    dispatch(showSuccessNotification('toast_title.update_exercise', data.message));
     return true;
   } else {
     dispatch(mutation.updateFavoriteFail());
+    dispatch(showErrorNotification('toast_title.update_exercise', data.message));
     return false;
   }
 };
