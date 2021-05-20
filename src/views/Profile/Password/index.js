@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, InputGroup } from 'react-bootstrap';
 import { getTranslate } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { updatePassword } from 'store/auth/actions';
 import validatePassword from '../../../utils/validatePassword';
+import { FaEye, FaEyeSlash } from 'react-icons/all';
 
 const passwordLength = 8;
 const Password = () => {
@@ -25,6 +26,9 @@ const Password = () => {
   const [newPasswordValidationExist, setNewPasswordValidationExit] = useState(false);
   const [confirmPasswordError, setConfirmPasswordError] = useState(false);
   const [confirmPasswordNotMatchError, setConfirmPasswordNotMatchError] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -92,52 +96,79 @@ const Password = () => {
     history.goBack();
   };
 
+  const handleShowNewPassword = () => {
+    setShowNewPassword(!showNewPassword);
+  };
+
+  const handleShowConfirmPassword = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
+  const handleShowCurrentPassword = () => {
+    setShowCurrentPassword(!showCurrentPassword);
+  };
+
   return (
     <>
       <Form className="mt-4">
         <Form.Row >
           <Form.Group className="col-sm-4 md-4" controlId="formCurrentPassword">
             <Form.Label>{translate('profile.current_password')}</Form.Label>
-            <Form.Control
-              type="password"
-              name="current_password"
-              onChange={handleChange}
-              isInvalid={passwordError}
-            />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.current_password')}
-            </Form.Control.Feedback>
+            <InputGroup className="mb-3" hasValidation>
+              <Form.Control
+                type={showCurrentPassword ? 'text' : 'password'}
+                name="current_password"
+                onChange={handleChange}
+                isInvalid={passwordError}
+              />
+              <InputGroup.Append onClick={handleShowCurrentPassword} className="show-hide-password-btn">
+                <InputGroup.Text>{showCurrentPassword ? <FaEye size={20} /> : <FaEyeSlash size={20}/>}</InputGroup.Text>
+              </InputGroup.Append>
+              <Form.Control.Feedback type="invalid">
+                {translate('error.current_password')}
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Form.Row>
         <Form.Row>
           <Form.Group className="col-sm-4 md-4" controlId="formNewPassword">
             <Form.Label>{translate('profile.new_password')}</Form.Label>
-            <Form.Control
-              type="password"
-              name="new_password"
-              onChange={handleChange}
-              isInvalid={newPasswordError || newPasswordValidationError || newPasswordValidationExist}
-            />
-            <Form.Control.Feedback type="invalid">
-              {newPasswordError && translate('error.new_password')}
-              {newPasswordValidationError && translate('error.new_password_validation', { passwordLength })}
-              {newPasswordValidationExist && translate('error.new_password_validation_exist')}
-            </Form.Control.Feedback>
+            <InputGroup className="mb-3" hasValidation>
+              <Form.Control
+                type={showNewPassword ? 'text' : 'password'}
+                name="new_password"
+                onChange={handleChange}
+                isInvalid={newPasswordError || newPasswordValidationError || newPasswordValidationExist}
+              />
+              <InputGroup.Append onClick={handleShowNewPassword} className="show-hide-password-btn">
+                <InputGroup.Text>{showNewPassword ? <FaEye size={20} /> : <FaEyeSlash size={20}/>}</InputGroup.Text>
+              </InputGroup.Append>
+              <Form.Control.Feedback type="invalid">
+                {newPasswordError && translate('error.new_password')}
+                {newPasswordValidationError && translate('error.new_password_validation', { passwordLength })}
+                {newPasswordValidationExist && translate('error.new_password_validation_exist')}
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Form.Row>
         <Form.Row>
           <Form.Group className="col-sm-4 md-4" controlId="formConfirmNewPassword">
             <Form.Label>{translate('profile.confirm_new_password')}</Form.Label>
-            <Form.Control
-              type="password"
-              name="confirm_password"
-              onChange={handleChange}
-              isInvalid={confirmPasswordError || confirmPasswordNotMatchError }
-            />
-            <Form.Control.Feedback type="invalid">
-              {confirmPasswordError && translate('error.confirm_password')}
-              {confirmPasswordNotMatchError && translate('error.confirm_password_not_match')}
-            </Form.Control.Feedback>
+            <InputGroup className="mb-3" hasValidation>
+              <Form.Control
+                type={showConfirmPassword ? 'text' : 'password'}
+                name="confirm_password"
+                onChange={handleChange}
+                isInvalid={confirmPasswordError || confirmPasswordNotMatchError }
+              />
+              <InputGroup.Append onClick={handleShowConfirmPassword} className="show-hide-password-btn">
+                <InputGroup.Text>{showConfirmPassword ? <FaEye size={20} /> : <FaEyeSlash size={20}/>}</InputGroup.Text>
+              </InputGroup.Append>
+              <Form.Control.Feedback type="invalid">
+                {confirmPasswordError && translate('error.confirm_password')}
+                {confirmPasswordNotMatchError && translate('error.confirm_password_not_match')}
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
         </Form.Row>
 
