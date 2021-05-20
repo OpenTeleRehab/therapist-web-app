@@ -18,6 +18,7 @@ import TreatmentGoal from './_Partials/Goal';
 import { getUsers } from '../../store/user/actions';
 import Dialog from '../../components/Dialog';
 import _ from 'lodash';
+import * as ROUTES from '../../variables/routes';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -232,7 +233,7 @@ const CreateTreatmentPlan = () => {
         }))
           .then(result => {
             if (result) {
-              history.goBack();
+              history.push(ROUTES.VIEW_TREATMENT_PLAN_DETAIL.replace(':patientId', patientId).replace(':id', id));
             }
           });
       } else {
@@ -246,7 +247,7 @@ const CreateTreatmentPlan = () => {
         }))
           .then(result => {
             if (result && (patientId || activity)) {
-              history.goBack();
+              history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId));
             }
           });
       }
