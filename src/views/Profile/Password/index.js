@@ -122,7 +122,7 @@ const Password = () => {
                 isInvalid={passwordError}
               />
               <InputGroup.Append onClick={handleShowCurrentPassword} className="show-hide-password-btn">
-                <InputGroup.Text>{showCurrentPassword ? <FaEye size={20} /> : <FaEyeSlash size={20}/>}</InputGroup.Text>
+                <InputGroup.Text>{showCurrentPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}</InputGroup.Text>
               </InputGroup.Append>
               <Form.Control.Feedback type="invalid">
                 {translate('error.current_password')}
@@ -141,7 +141,7 @@ const Password = () => {
                 isInvalid={newPasswordError || newPasswordValidationError || newPasswordValidationExist}
               />
               <InputGroup.Append onClick={handleShowNewPassword} className="show-hide-password-btn">
-                <InputGroup.Text>{showNewPassword ? <FaEye size={20} /> : <FaEyeSlash size={20}/>}</InputGroup.Text>
+                <InputGroup.Text>{showNewPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}</InputGroup.Text>
               </InputGroup.Append>
               <Form.Control.Feedback type="invalid">
                 {newPasswordError && translate('error.new_password')}
@@ -162,7 +162,7 @@ const Password = () => {
                 isInvalid={confirmPasswordError || confirmPasswordNotMatchError }
               />
               <InputGroup.Append onClick={handleShowConfirmPassword} className="show-hide-password-btn">
-                <InputGroup.Text>{showConfirmPassword ? <FaEye size={20} /> : <FaEyeSlash size={20}/>}</InputGroup.Text>
+                <InputGroup.Text>{showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}</InputGroup.Text>
               </InputGroup.Append>
               <Form.Control.Feedback type="invalid">
                 {confirmPasswordError && translate('error.confirm_password')}
