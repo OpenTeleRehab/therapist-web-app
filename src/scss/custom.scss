@@ -37,6 +37,16 @@ $theme-colors: (
 	"orange": $orange,
 );
 
+// Share SCSS Variables to Javascript
+:export {
+	primary: $primary;
+	secondary: $secondary;
+	success: $green;
+	info: $info;
+	danger: $danger;
+	orange: $orange;
+};
+
 // Toasts
 $toast-background-color: $teal;
 $toast-header-background-color: $teal;
