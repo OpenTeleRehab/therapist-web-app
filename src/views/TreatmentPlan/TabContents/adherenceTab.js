@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { Accordion, Card, AccordionContext } from 'react-bootstrap';
 import { BsChevronRight, BsChevronDown } from 'react-icons/bs';
 import PropTypes from 'prop-types';
+import scssColors from 'scss/custom.scss';
 
 const AdherenceTab = () => {
   const localize = useSelector((state) => state.localize);
@@ -73,7 +74,7 @@ const AdherenceTab = () => {
           {
             type: 'line',
             label: translate('common.pain_level') + ' (%)',
-            borderColor: 'red',
+            borderColor: scssColors.orange,
             borderWidth: 4,
             fill: false,
             data: lineData
@@ -81,7 +82,7 @@ const AdherenceTab = () => {
           {
             type: 'bar',
             label: translate('common.completed') + ' (%)',
-            backgroundColor: 'blue',
+            backgroundColor: scssColors.primary,
             data: barData,
             borderColor: 'white',
             borderWidth: 2
