@@ -89,13 +89,13 @@ const Library = ({ translate }) => {
   const handleSwitchFavorite = (id, isFavorite, type) => {
     switch (type) {
       case CATEGORY_TYPES.QUESTIONNAIRE:
-        dispatch(updateFavoriteQuestionnaire(id, { is_favorite: isFavorite, therapist_id: 63 }));
+        dispatch(updateFavoriteQuestionnaire(id, { is_favorite: isFavorite, therapist_id: therapistId }));
         break;
       case CATEGORY_TYPES.MATERIAL:
-        dispatch(updateFavoriteEducationMaterial(id, { is_favorite: isFavorite, therapist_id: 63 }));
+        dispatch(updateFavoriteEducationMaterial(id, { is_favorite: isFavorite, therapist_id: therapistId }));
         break;
       default:
-        dispatch(updateFavoriteExercise(id, { is_favorite: isFavorite, therapist_id: 63 }));
+        dispatch(updateFavoriteExercise(id, { is_favorite: isFavorite, therapist_id: therapistId }));
         break;
     }
   };
