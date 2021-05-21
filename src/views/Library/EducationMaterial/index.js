@@ -16,7 +16,7 @@ import {
   BsCaretRightFill,
   BsDashSquare,
   BsSquare,
-  BsPerson
+  BsPersonFill
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
@@ -254,11 +254,6 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                             : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, CATEGORY_TYPES.MATERIAL)} />
                           }
                         </div>
-                        {therapistId === material.therapist_id && (
-                          <div className="owner-btn">
-                            <BsPerson size={20} />
-                          </div>
-                        )}
                         <Form.Check
                           type="checkbox"
                           className="action"
@@ -276,15 +271,22 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
-                              material.title.length <= 50
-                                ? <h5 className="card-title">{ material.title }</h5>
-                                : (
-                                  <OverlayTrigger
-                                    overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
-                                  >
-                                    <h5 className="card-title">{ material.title }</h5>
-                                  </OverlayTrigger>
-                                )
+                              <div className="d-flex">
+                                {therapistId === material.therapist_id && (
+                                  <span className="owner-btn mr-1">
+                                    <BsPersonFill size={20} className="mb-1"/>
+                                  </span>
+                                )}
+                                {material.title.length <= 50
+                                  ? <h5 className="card-title">{ material.title }</h5>
+                                  : (
+                                    <OverlayTrigger
+                                      overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
+                                    >
+                                      <h5 className="card-title">{ material.title }</h5>
+                                    </OverlayTrigger>
+                                  )}
+                              </div>
                             }
                           </Card.Title>
                           <Card.Text>

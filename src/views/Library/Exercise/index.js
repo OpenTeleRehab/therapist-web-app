@@ -10,7 +10,7 @@ import {
   BsCaretRightFill,
   BsDashSquare,
   BsSquare,
-  BsPerson
+  BsPersonFill
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
@@ -230,11 +230,6 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                             : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, CATEGORY_TYPES.EXERCISE)} />
                           }
                         </div>
-                        {therapistId === exercise.therapist_id && (
-                          <div className="owner-btn">
-                            <BsPerson size={20} />
-                          </div>
-                        )}
                         <Form.Check
                           type="checkbox"
                           className="action"
@@ -267,15 +262,20 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
-                              exercise.title.length <= 50
-                                ? <h5 className="card-title">{ exercise.title }</h5>
-                                : (
-                                  <OverlayTrigger
-                                    overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                                  >
-                                    <h5 className="card-title">{ exercise.title }</h5>
-                                  </OverlayTrigger>
-                                )
+                              <div className="d-flex">
+                                {therapistId === exercise.therapist_id && (
+                                  <span className="owner-btn mr-1"><BsPersonFill size={20} className="mb-1" /></span>
+                                )}
+                                {exercise.title.length <= 50
+                                  ? <h5 className="card-title">{ exercise.title }</h5>
+                                  : (
+                                    <OverlayTrigger
+                                      overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                                    >
+                                      <h5 className="card-title">{ exercise.title }</h5>
+                                    </OverlayTrigger>
+                                  )}
+                              </div>
                             }
                           </Card.Title>
                           {exercise.sets > 0 && (
