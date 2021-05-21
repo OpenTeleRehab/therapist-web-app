@@ -238,7 +238,6 @@ const CreateQuestionnaire = ({ translate }) => {
                 placeholder={translate('questionnaire.description.placeholder')}
                 value={formFields.description}
                 onChange={handleChange}
-                maxLength={255}
               />
             </Form.Group>
           </Col>
