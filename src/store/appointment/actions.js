@@ -4,6 +4,7 @@ import {
   showErrorNotification,
   showSuccessNotification
 } from 'store/notification/actions';
+import { showSpinner } from '../spinnerOverlay/actions';
 
 export const getAppointments = payload => async dispatch => {
   dispatch(mutation.getAppointmentsRequest());
@@ -18,15 +19,18 @@ export const getAppointments = payload => async dispatch => {
 
 export const createAppointment = (payload, filter) => async (dispatch) => {
   dispatch(mutation.createAppointmentRequest());
+  dispatch(showSpinner(true));
   const data = await Appointment.createAppointment(payload);
   if (data.success) {
     dispatch(mutation.createAppointmentSuccess());
     dispatch(getAppointments(filter));
     dispatch(showSuccessNotification('toast_title.new_appointment', data.message));
+    dispatch(showSpinner(false));
     return true;
   } else {
     dispatch(mutation.createAppointmentFail());
     dispatch(showErrorNotification('toast_title.new_appointment', data.message));
+    dispatch(showSpinner(false));
     return false;
   }
 };
