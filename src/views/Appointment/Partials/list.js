@@ -102,9 +102,9 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
 };
 
 AppointmentList.propTypes = {
-  handleEdit: PropType.number,
-  selectedDate: PropType.string,
-  date: PropType.string
+  handleEdit: PropType.func,
+  selectedDate: PropType.object,
+  date: PropType.object
 };
 
 export default AppointmentList;

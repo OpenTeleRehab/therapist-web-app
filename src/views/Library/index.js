@@ -34,7 +34,7 @@ const Library = ({ translate }) => {
   const [newContentLink, setNewContentLink] = useState(undefined);
   const [maxLibraries, setMaxLibraries] = useState(20);
   const [allowCreateContent, setAllowCreateContent] = useState(false);
-  const [therapistId, setTherapistId] = useState('');
+  const [therapistId, setTherapistId] = useState();
   const { profile } = useSelector((state) => state.auth);
   const { systemLimits } = useSelector((state) => state.setting);
   const [selectedExercises, setSelectedExercises] = useState([]);

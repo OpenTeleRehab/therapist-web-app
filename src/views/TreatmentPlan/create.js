@@ -60,7 +60,7 @@ const CreateTreatmentPlan = () => {
   const [isOwnCreated, setIsOwnCreated] = useState(false);
   const [originData, setOriginData] = useState([]);
   const [originGoals, setOriginGoals] = useState([]);
-  const [treatmentPlanId, setTreatmentPlanId] = useState('');
+  const [treatmentPlanId, setTreatmentPlanId] = useState();
 
   useEffect(() => {
     if (activity) {

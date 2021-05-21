@@ -24,7 +24,7 @@ const Appointment = ({ translate }) => {
   const { profile } = useSelector((state) => state.auth);
   const calendarRef = useRef();
   const [events, setEvents] = useState([]);
-  const [date, setDate] = useState('');
+  const [date, setDate] = useState();
   const [selectedDate, setSelectedDate] = useState();
   const [locale, setLocale] = useState('');
   const [show, setShow] = useState(false);
@@ -77,7 +77,7 @@ const Appointment = ({ translate }) => {
   }, [appointments, translate]);
 
   const handleViewChange = (info) => {
-    setSelectedDate('');
+    setSelectedDate(undefined);
     setDate(moment(info.view.currentStart));
   };
 
@@ -136,7 +136,7 @@ const Appointment = ({ translate }) => {
               text: translate('appointment.clear'),
               click: function () {
                 calendarRef.current.getApi().unselect();
-                setSelectedDate('');
+                setSelectedDate(undefined);
               }
             }
           }}

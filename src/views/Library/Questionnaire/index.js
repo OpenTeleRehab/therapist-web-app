@@ -329,7 +329,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
 Questionnaire.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
-  therapistId: PropTypes.string,
+  therapistId: PropTypes.number,
   allowCreateContent: PropTypes.bool,
   onSectionChange: PropTypes.func,
   selectedQuestionnaires: PropTypes.array

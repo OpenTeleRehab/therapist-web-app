@@ -14,5 +14,5 @@ export const ContextAwareToggle = ({ eventKey }) => {
 };
 
 ContextAwareToggle.propTypes = {
-  eventKey: PropTypes.string
+  eventKey: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 };

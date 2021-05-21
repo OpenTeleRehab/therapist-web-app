@@ -168,14 +168,14 @@ ListExerciseCard.propTypes = {
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
   lang: PropTypes.any,
-  therapistId: PropTypes.string,
+  therapistId: PropTypes.number,
   isOwnCreated: PropTypes.bool,
   treatmentPlanSelectedExercises: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
   week: PropTypes.number,
   showList: PropTypes.bool,
-  treatmentPlanId: PropTypes.string
+  treatmentPlanId: PropTypes.number
 };
 
 export default withLocalize(ListExerciseCard);

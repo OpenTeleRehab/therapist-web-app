@@ -12,7 +12,7 @@ import PreviewList from './previewList';
 import PresetTreatment from './PresetTreatment';
 import _ from 'lodash';
 
-const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setActivities, isPreset, isOwnCreated, originData }) => {
+const AddActivity = ({ show, handleClose, week, day, activities, setActivities, isPreset, isOwnCreated, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
@@ -87,7 +87,6 @@ const AddActivity = ({ show, handleClose, week, setWeeks, day, activities, setAc
   const handleConfirm = () => {
     if (presetId) {
       const presetTreatment = presetTreatmentPlans.find(p => p.id === presetId);
-      setWeeks(presetTreatment.total_of_weeks);
       const newActivities = [];
       for (let i = 1; i <= presetTreatment.total_of_weeks; i++) {
         for (let j = 1; j <= 7; j++) {
@@ -209,7 +208,6 @@ AddActivity.propTypes = {
   day: PropTypes.number,
   activities: PropTypes.array,
   setActivities: PropTypes.func,
-  setWeeks: PropTypes.func,
   isPreset: PropTypes.bool,
   isOwnCreated: PropTypes.bool,
   originData: PropTypes.array

@@ -330,7 +330,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
 EducationMaterial.propTypes = {
   translate: PropTypes.func,
   handleSwitchFavorite: PropTypes.func,
-  therapistId: PropTypes.string,
+  therapistId: PropTypes.number,
   allowCreateContent: PropTypes.bool,
   onSectionChange: PropTypes.func,
   selectedMaterials: PropTypes.array
