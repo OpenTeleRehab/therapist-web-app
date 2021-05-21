@@ -17,7 +17,6 @@ import { TYPE } from 'variables/activity';
 
 const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData, showList, treatmentPlanId }) => {
   const [exercises, setExercises] = useState([]);
-  const [ids] = exerciseIds;
   const [exercise, setExercise] = useState([]);
   const [viewExercise, setViewExercise] = useState(false);
   const [treatmentPlanExercises, setTreatmentPlanExercises] = useState([]);
@@ -42,7 +41,8 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
     } else {
       setExercises([]);
     }
-  }, [ids, exerciseIds, lang, exerciseObjs, therapistId, day, treatmentPlanId, showList]);
+    // eslint-disable-next-line
+  }, [JSON.stringify(exerciseIds), lang, exerciseObjs, therapistId, day, treatmentPlanId, showList]);
 
   useEffect(() => {
     if (treatmentPlanSelectedExercises && treatmentPlanSelectedExercises.length > 0) {
