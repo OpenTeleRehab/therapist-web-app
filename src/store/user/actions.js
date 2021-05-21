@@ -6,20 +6,24 @@ import {
   showErrorNotification,
   showSuccessNotification
 } from 'store/notification/actions';
+import { showSpinner } from 'store/spinnerOverlay/actions';
 
 // Actions
 export const createUser = payload => async (dispatch, getState) => {
   dispatch(mutation.createUserRequest());
+  dispatch(showSpinner(true));
   const data = await User.createUser(payload);
   if (data.success) {
     dispatch(mutation.createUserSuccess());
     const filters = getState().user.filters;
     dispatch(getUsers(filters));
     dispatch(showSuccessNotification('toast_title.new_patient_account', data.message));
+    dispatch(showSpinner(false));
     return true;
   } else {
     dispatch(mutation.createUserFail());
     dispatch(showErrorNotification('toast_title.new_patient_account', data.message));
+    dispatch(showSpinner(false));
     return false;
   }
 };
