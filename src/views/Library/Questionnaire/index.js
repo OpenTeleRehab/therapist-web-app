@@ -16,7 +16,7 @@ import {
   BsCaretRightFill,
   BsDashSquare,
   BsSquare,
-  BsPerson
+  BsPersonFill
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
@@ -253,11 +253,6 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                             : <FavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 1, CATEGORY_TYPES.QUESTIONNAIRE)} />
                           }
                         </div>
-                        {therapistId === questionnaire.therapist_id && (
-                          <div className="owner-btn">
-                            <BsPerson size={20} />
-                          </div>
-                        )}
                         <Form.Check
                           type="checkbox"
                           className="action"
@@ -275,15 +270,22 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
-                              questionnaire.title.length <= 50
-                                ? <h5 className="card-title">{ questionnaire.title }</h5>
-                                : (
-                                  <OverlayTrigger
-                                    overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
-                                  >
-                                    <h5 className="card-title">{ questionnaire.title }</h5>
-                                  </OverlayTrigger>
-                                )
+                              <div className="d-flex">
+                                {therapistId === questionnaire.therapist_id && (
+                                  <span className="owner-btn mr-1">
+                                    <BsPersonFill size={20} className="mb-1" />
+                                  </span>
+                                )}
+                                {questionnaire.title.length <= 50
+                                  ? <h5 className="card-title">{ questionnaire.title }</h5>
+                                  : (
+                                    <OverlayTrigger
+                                      overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
+                                    >
+                                      <h5 className="card-title">{ questionnaire.title }</h5>
+                                    </OverlayTrigger>
+                                  )}
+                              </div>
                             }
                           </Card.Title>
                           <Card.Text>
