@@ -1,5 +1,6 @@
 import { TreatmentPlan } from 'services/treatmentPlan';
 import { mutation } from './mutations';
+import { saveAs } from 'file-saver';
 import {
   showErrorNotification,
   showSuccessNotification
@@ -88,5 +89,19 @@ export const getPresetTreatmentPlans = payload => async dispatch => {
     dispatch(mutation.getPresetTreatmentPlansFail());
     dispatch(showSpinner(false));
     dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};
+
+export const downloadTreatmentPlan = id => async (dispatch) => {
+  dispatch(mutation.downloadTreatmentPlanRequest());
+  const res = await TreatmentPlan.downloadTreatmentPlan(id);
+  if (res) {
+    dispatch(mutation.downloadTreatmentPlanSuccess());
+    saveAs(res, 'treatment_plan.pdf');
+    return true;
+  } else {
+    dispatch(mutation.downloadTreatmentPlanFail());
+    dispatch(showErrorNotification('toast_title.error_message', res.message));
+    return false;
   }
 };
