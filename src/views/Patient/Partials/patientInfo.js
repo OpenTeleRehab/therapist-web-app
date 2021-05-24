@@ -13,6 +13,7 @@ import {
 
 import { BsFillChatSquareFill } from 'react-icons/bs';
 import { FaPhoneAlt } from 'react-icons/fa';
+import CustomPhoneNumber from 'utils/phoneNumber';
 
 import EllipsisText from 'react-ellipsis-text';
 
@@ -57,7 +58,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
       setFormFields({
         name: data.last_name + ' ' + data.first_name || '',
         id: data.id || '',
-        phone: data.phone || '',
+        phone: CustomPhoneNumber(data.dial_code, data.phone) || '',
         date_of_birth: moment(data.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) || '',
         country: getCountryName(data.country_id, countries),
         note: data.note || '',

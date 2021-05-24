@@ -42,7 +42,6 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [errorFirstName, setErrorFirstName] = useState(false);
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorClass, setErrorClass] = useState('');
-  const [dialCode, setDialCode] = useState('');
   const [errorGender, setErrorGender] = useState(false);
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
   const [selectedTherapists, setSelectedTherapists] = useState([]);
@@ -103,6 +102,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         country_id: editingData.country_id || '',
         clinic_id: editingData.clinic_id || '',
         phone: editingData.phone || '',
+        dial_code: editingData.dial_code || '',
         gender: editingData.gender || '',
         note: editingData.note || '',
         date_of_birth: editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
@@ -165,7 +165,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       gender: '',
       date_of_birth: '',
       note: '',
-      age: ''
+      age: '',
+      dial_code: ''
     });
   };
 
@@ -211,16 +212,16 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     }
 
     let formValues = formFields;
-    if (formFields.phone === '' || formFields.phone === undefined || dialCode === formFields.phone) {
+    if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
       canSave = false;
       setErrorClass('d-block text-danger invalid-feedback');
     } else {
       setErrorClass('invalid-feedback');
 
       const phoneValue = formFields.phone;
-      const numOnly = phoneValue.split(dialCode);
+      const numOnly = phoneValue.split(formFields.dial_code);
       if (numOnly[1].match('^0')) {
-        formValues = { ...formFields, phone: dialCode + numOnly[1].slice(1) };
+        formValues = { ...formFields, phone: formFields.dial_code + numOnly[1].slice(1) };
       }
     }
 
@@ -290,15 +291,13 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           <span className="text-dark ml-1">*</span>
           <PhoneInput
             countryCodeEditable={false}
-            disableDropdown={true}
             country={getCountryIsoCode().toLowerCase()}
             value={formFields.phone}
             onlyCountries={
               countries.map(country => { return country.iso_code.toLowerCase(); })
             }
             onChange={(value, country) => {
-              setFormFields({ ...formFields, phone: value });
-              setDialCode(country.dialCode);
+              setFormFields({ ...formFields, phone: value, dial_code: country.dialCode });
             }}
           />
           <Form.Control.Feedback type="invalid" class={errorClass}>
