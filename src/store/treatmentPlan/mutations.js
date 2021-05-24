@@ -74,6 +74,18 @@ const getPresetTreatmentPlansFail = () => ({
   type: 'GET_PRESET_TREATMENT_PLANS_FAIL'
 });
 
+const downloadTreatmentPlanRequest = () => ({
+  type: 'DOWNLOAD_TREATMENT_PLAN_REQUEST'
+});
+
+const downloadTreatmentPlanSuccess = () => ({
+  type: 'DOWNLOAD_TREATMENT_PLAN_SUCCESS'
+});
+
+const downloadTreatmentPlanFail = () => ({
+  type: 'DOWNLOAD_TREATMENT_PLAN_FAIL'
+});
+
 export const mutation = {
   createTreatmentPlanRequest,
   createTreatmentPlanSuccess,
@@ -92,5 +104,8 @@ export const mutation = {
   deleteTreatmentPlansFail,
   getPresetTreatmentPlansRequest,
   getPresetTreatmentPlansSuccess,
-  getPresetTreatmentPlansFail
+  getPresetTreatmentPlansFail,
+  downloadTreatmentPlanRequest,
+  downloadTreatmentPlanSuccess,
+  downloadTreatmentPlanFail
 };

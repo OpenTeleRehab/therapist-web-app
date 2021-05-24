@@ -87,10 +87,23 @@ const deleteTreatmentPlan = id => {
     });
 };
 
+const downloadTreatmentPlan = id => {
+  return axiosPatient.get(`/treatment-plan/export/${id}`, { responseType: 'blob' })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const TreatmentPlan = {
   createTreatmentPlan,
   updateTreatmentPlan,
   getTreatmentPlans,
   getTreatmentPlansDetail,
-  deleteTreatmentPlan
+  deleteTreatmentPlan,
+  downloadTreatmentPlan
 };

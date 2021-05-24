@@ -3,6 +3,7 @@ import { getTranslate } from 'react-localize-redux';
 import { useSelector, useDispatch } from 'react-redux';
 import { useParams, Link, useHistory } from 'react-router-dom';
 import { BiEdit } from 'react-icons/bi';
+import { FaDownload } from 'react-icons/fa';
 import {
   Button,
   Dropdown, DropdownButton,
@@ -16,7 +17,7 @@ import * as ROUTES from 'variables/routes';
 
 import PatientInfo from 'views/Patient/Partials/patientInfo';
 import {
-  deleteTreatmentPlans,
+  deleteTreatmentPlans, downloadTreatmentPlan,
   getTreatmentPlansDetail
 } from '../../store/treatmentPlan/actions';
 import settings from 'settings';
@@ -54,6 +55,7 @@ const ViewTreatmentPlan = () => {
   const [startDate, setStartDate] = useState('');
   const [readOnly] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -99,6 +101,11 @@ const ViewTreatmentPlan = () => {
     history.push(ROUTES.TREATMENT_PLAN_EDIT.replace(':patientId', patientId).replace(':id', id));
   };
 
+  const handleDownload = () => {
+    setDownloading(true);
+    dispatch(downloadTreatmentPlan(id)).then(() => setDownloading(false));
+  };
+
   return (
     <>
       {patientId && (
@@ -122,9 +129,17 @@ const ViewTreatmentPlan = () => {
               >
                 &lt; {translate('treatment_plan.back_to_list')}
               </Button>
-
               <Button
-                className={'ml-3'}
+                className="ml-2"
+                variant="outline-primary"
+                onClick={handleDownload}
+                disabled={downloading}
+              >
+                <FaDownload size={14} className="mr-1" />
+                {translate('common.download')}
+              </Button>
+              <Button
+                className="ml-2"
                 variant="primary"
                 as={Button}
                 onClick={handleOnClick}
