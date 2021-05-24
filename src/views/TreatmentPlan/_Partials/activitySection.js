@@ -28,7 +28,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [weekToRemove, setWeekToRemove] = useState(0);
   const { profile } = useSelector((state) => state.auth);
   const [lang, setLang] = useState('');
-  const [therapistId, setTherapistId] = useState('');
+  const [therapistId, setTherapistId] = useState();
   const [openCopyDialog, setOpenCopyDialog] = useState(false);
   const [dayActivityToCopy, setDayActivityToCopy] = useState();
   const [newWeeks, setNewWeeks] = useState([]);
@@ -229,9 +229,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
                 </Button>
               </div>
             }
-            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={dayActivity} showList={true} treatmentPlanId={treatmentPlanId} />
-            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={dayActivity} showList={true} treatmentPlanId={treatmentPlanId} />
-            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={dayActivity} showList={true} treatmentPlanId={treatmentPlanId} />
+            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
+            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
+            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
 
             <div className="text-center">
               {!readOnly && <Button
@@ -297,7 +297,6 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           handleClose={handleCloseActivityDialog}
           show={openActivityDialog}
           week={currentWeek}
-          setWeeks={setWeeks}
           day={day}
           activities={activities}
           setActivities={setActivities}
@@ -332,7 +331,7 @@ ActivitySection.propTypes = {
   isPreset: PropTypes.bool,
   isOwnCreated: PropTypes.bool,
   originData: PropTypes.array,
-  treatmentPlanId: PropTypes.string
+  treatmentPlanId: PropTypes.number
 };
 
 export default ActivitySection;

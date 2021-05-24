@@ -22,7 +22,6 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
-  const [ids] = materialIds;
   const [viewMaterial, setViewMaterial] = useState(false);
   const [material, setMaterial] = useState([]);
   const [treatmentPlanMaterials, setTreatmentPlanMaterials] = useState([]);
@@ -47,7 +46,8 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
     } else {
       setMaterials([]);
     }
-  }, [ids, materialIds, lang, materialObjs, therapistId, day, showList, treatmentPlanId]);
+    // eslint-disable-next-line
+  }, [JSON.stringify(materialIds), lang, materialObjs, therapistId, day, showList, treatmentPlanId]);
 
   useEffect(() => {
     if (treatmentPlanSelectedMaterials && treatmentPlanSelectedMaterials.length > 0) {
@@ -155,14 +155,14 @@ ListEducationMaterialCard.propTypes = {
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
   lang: PropTypes.any,
-  therapistId: PropTypes.string,
+  therapistId: PropTypes.number,
   isOwnCreated: PropTypes.bool,
   treatmentPlanSelectedMaterials: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
   week: PropTypes.number,
   showList: PropTypes.bool,
-  treatmentPlanId: PropTypes.string
+  treatmentPlanId: PropTypes.number
 };
 
 export default withLocalize(ListEducationMaterialCard);

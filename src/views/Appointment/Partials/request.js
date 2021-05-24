@@ -95,8 +95,8 @@ const Request = ({ handleApprove, selectedDate, date }) => {
 
 Request.propTypes = {
   handleApprove: PropType.func,
-  selectedDate: PropType.string,
-  date: PropType.string
+  selectedDate: PropType.object,
+  date: PropType.object
 };
 
 export default Request;

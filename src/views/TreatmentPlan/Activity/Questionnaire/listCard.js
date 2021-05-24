@@ -20,7 +20,6 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
-  const [ids] = questionnaireIds;
   const [questionnaire, setQuestionnaire] = useState([]);
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [treatmentPlanQuestionnaires, setTreatmentPlanQuestionnaires] = useState([]);
@@ -45,7 +44,8 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
     } else {
       setQuestionnaires([]);
     }
-  }, [ids, questionnaireIds, lang, questionnaireObjs, therapistId, day, showList, treatmentPlanId]);
+    // eslint-disable-next-line
+  }, [JSON.stringify(questionnaireIds), lang, questionnaireObjs, therapistId, day, showList, treatmentPlanId]);
 
   useEffect(() => {
     if (treatmentPlanSelectedQuestionnaires && treatmentPlanSelectedQuestionnaires.length > 0) {
@@ -153,14 +153,14 @@ ListQuestionnaireCard.propTypes = {
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
   lang: PropTypes.any,
-  therapistId: PropTypes.string,
+  therapistId: PropTypes.number,
   isOwnCreated: PropTypes.bool,
   treatmentPlanSelectedQuestionnaires: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
   week: PropTypes.number,
   showList: PropTypes.bool,
-  treatmentPlanId: PropTypes.string
+  treatmentPlanId: PropTypes.number
 };
 
 export default withLocalize(ListQuestionnaireCard);

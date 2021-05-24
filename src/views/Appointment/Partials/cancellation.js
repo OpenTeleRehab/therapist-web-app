@@ -141,8 +141,8 @@ const Cancellation = ({ selectedDate, date }) => {
 };
 
 Cancellation.propTypes = {
-  selectedDate: PropTypes.string,
-  date: PropTypes.string,
+  selectedDate: PropTypes.object,
+  date: PropTypes.object,
   handleSwitchStatus: PropTypes.func
 };
 

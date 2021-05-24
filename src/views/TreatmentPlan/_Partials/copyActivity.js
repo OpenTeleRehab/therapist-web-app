@@ -80,7 +80,7 @@ const CopyActivity = ({ show, handleClose, activities, setActivities, dayActivit
     const elements = [];
     for (let i = 0; i < 7; i++) {
       elements.push(
-        <Row>
+        <Row key={i}>
           <Col>
             <Form.Group controlId={`formDay-${i + 1}`}>
               <Form.Check
@@ -101,7 +101,7 @@ const CopyActivity = ({ show, handleClose, activities, setActivities, dayActivit
     const elements = [];
     for (let i = 1; i <= weeks; i++) {
       elements.push(
-        <Row>
+        <Row key={i}>
           <Col>
             <Form.Group controlId={`formWeek-${i}`}>
               <Form.Check
