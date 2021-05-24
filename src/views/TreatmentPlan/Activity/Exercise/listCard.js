@@ -26,7 +26,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
       setExercises(exerciseObjs);
     } else if (exerciseIds && exerciseIds.length > 0) {
       if (showList) {
-        User.getActivitiesByIds(exerciseIds, treatmentPlanId, TYPE.exercise, day.day, day.week, lang, therapistId).then(res => {
+        User.getActivitiesByIds(exerciseIds, treatmentPlanId, TYPE.exercise, day, week, lang, therapistId).then(res => {
           if (res.data) {
             setExercises(res.data);
           }
@@ -42,7 +42,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
       setExercises([]);
     }
     // eslint-disable-next-line
-  }, [JSON.stringify(exerciseIds), lang, exerciseObjs, therapistId, day, treatmentPlanId, showList]);
+  }, [JSON.stringify(exerciseIds), lang, exerciseObjs, therapistId, day, week, treatmentPlanId, showList]);
 
   useEffect(() => {
     if (treatmentPlanSelectedExercises && treatmentPlanSelectedExercises.length > 0) {

@@ -31,7 +31,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
       setMaterials(materialObjs);
     } else if (materialIds && materialIds.length > 0) {
       if (showList) {
-        User.getActivitiesByIds(materialIds, treatmentPlanId, TYPE.material, day.day, day.week, lang, therapistId).then(res => {
+        User.getActivitiesByIds(materialIds, treatmentPlanId, TYPE.material, day, week, lang, therapistId).then(res => {
           if (res.data) {
             setMaterials(res.data);
           }
@@ -47,7 +47,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
       setMaterials([]);
     }
     // eslint-disable-next-line
-  }, [JSON.stringify(materialIds), lang, materialObjs, therapistId, day, showList, treatmentPlanId]);
+  }, [JSON.stringify(materialIds), lang, materialObjs, therapistId, day, week, showList, treatmentPlanId]);
 
   useEffect(() => {
     if (treatmentPlanSelectedMaterials && treatmentPlanSelectedMaterials.length > 0) {
