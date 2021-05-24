@@ -197,15 +197,15 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                   ))}
                 </Form.Control>
               </Form.Group>
-              {
-                exerciseCategoryTreeData.map(category => (
-                  <Accordion key={category.value} className="mb-3" defaultActiveKey={category.value}>
-                    <Card>
+              <Accordion>
+                {
+                  exerciseCategoryTreeData.map(category => (
+                    <Card key={category.value} className="mb-3 rounded">
                       <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
                         {category.label}
                         <div className="ml-auto text-nowrap">
                           <span className="mr-3">
-                            {selectedCategories[category.value] ? selectedCategories[category.value].length : 0} {translate('category.selected')}
+                            {selectedCategories[category.value] ? selectedCategories[category.value].length : 0}
                           </span>
                           <ContextAwareToggle eventKey={category.value} />
                         </div>
@@ -230,9 +230,9 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                         </Card.Body>
                       </Accordion.Collapse>
                     </Card>
-                  </Accordion>
-                ))
-              }
+                  ))
+                }
+              </Accordion>
             </Card.Body>
           </Card>
         </Col>
