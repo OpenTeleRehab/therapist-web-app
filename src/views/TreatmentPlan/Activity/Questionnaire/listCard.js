@@ -29,7 +29,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
       setQuestionnaires(questionnaireObjs);
     } else if (questionnaireIds && questionnaireIds.length > 0) {
       if (showList) {
-        User.getActivitiesByIds(questionnaireIds, treatmentPlanId, TYPE.questionnaire, day.day, day.week, lang, therapistId).then(res => {
+        User.getActivitiesByIds(questionnaireIds, treatmentPlanId, TYPE.questionnaire, day, week, lang, therapistId).then(res => {
           if (res.data) {
             setQuestionnaires(res.data);
           }
@@ -45,7 +45,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
       setQuestionnaires([]);
     }
     // eslint-disable-next-line
-  }, [JSON.stringify(questionnaireIds), lang, questionnaireObjs, therapistId, day, showList, treatmentPlanId]);
+  }, [JSON.stringify(questionnaireIds), lang, questionnaireObjs, therapistId, day, week, showList, treatmentPlanId]);
 
   useEffect(() => {
     if (treatmentPlanSelectedQuestionnaires && treatmentPlanSelectedQuestionnaires.length > 0) {
