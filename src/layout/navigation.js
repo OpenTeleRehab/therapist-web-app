@@ -65,28 +65,28 @@ const Navigation = ({ translate }) => {
             exact
             to={ROUTES.DASHBOARD}
             key="nav-dashboard"
-            className="nav-link"
+            className="d-flex align-items-center nav-link"
           >
             {translate('dashboard')}
           </NavLink>
           <NavLink
             to={ROUTES.PATIENT}
             key="nav-patient"
-            className="nav-link"
+            className="d-flex align-items-center nav-link"
           >
             {translate('patient')}
           </NavLink>
           <NavLink
             to={ROUTES.LIBRARY}
             key="nav-library"
-            className="nav-link"
+            className="d-flex align-items-center nav-link"
           >
             {translate('library')}
           </NavLink>
           <NavLink
             to={ROUTES.APPOINTMENT}
             key='nav-appointment'
-            className="nav-link"
+            className="d-flex align-items-center nav-link"
           >
             {translate('appointment')}
           </NavLink>
@@ -94,7 +94,7 @@ const Navigation = ({ translate }) => {
             <NavLink
               to={ROUTES.CHAT_OR_CALL}
               key="nav-chat-or-call"
-              className={`nav-link${navClasses}`}
+              className={`d-flex align-items-center nav-link${navClasses}`}
             >
               {translate('chat_or_call')}
               {unreadMessage > 0 && (
