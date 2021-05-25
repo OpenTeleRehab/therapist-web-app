@@ -262,20 +262,25 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
-                              <div className="d-flex">
-                                {therapistId === exercise.therapist_id && (
-                                  <span className="owner-btn mr-1"><BsPersonFill size={20} className="mb-1" /></span>
-                                )}
-                                {exercise.title.length <= 50
-                                  ? <h5 className="card-title">{ exercise.title }</h5>
-                                  : (
-                                    <OverlayTrigger
-                                      overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
-                                    >
-                                      <h5 className="card-title">{ exercise.title }</h5>
-                                    </OverlayTrigger>
+                              exercise.title.length <= 50
+                                ? <h5 className="card-title">
+                                  {therapistId === exercise.therapist_id && (
+                                    <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
                                   )}
-                              </div>
+                                  { exercise.title }
+                                </h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">
+                                      {therapistId === exercise.therapist_id && (
+                                        <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                                      )}
+                                      { exercise.title }
+                                    </h5>
+                                  </OverlayTrigger>
+                                )
                             }
                           </Card.Title>
                           {exercise.sets > 0 && (

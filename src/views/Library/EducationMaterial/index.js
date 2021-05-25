@@ -271,22 +271,25 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
-                              <div className="d-flex">
-                                {therapistId === material.therapist_id && (
-                                  <span className="owner-btn mr-1">
-                                    <BsPersonFill size={20} className="mb-1"/>
-                                  </span>
-                                )}
-                                {material.title.length <= 50
-                                  ? <h5 className="card-title">{ material.title }</h5>
-                                  : (
-                                    <OverlayTrigger
-                                      overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
-                                    >
-                                      <h5 className="card-title">{ material.title }</h5>
-                                    </OverlayTrigger>
+                              material.title.length <= 50
+                                ? <h5 className="card-title">
+                                  {therapistId === material.therapist_id && (
+                                    <BsPersonFill size={20} className="owner-btn mr-1 mb-1"/>
                                   )}
-                              </div>
+                                  { material.title }
+                                </h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">
+                                      {therapistId === material.therapist_id && (
+                                        <BsPersonFill size={20} className="owner-btn mr-1 mb-1"/>
+                                      )}
+                                      { material.title }
+                                    </h5>
+                                  </OverlayTrigger>
+                                )
                             }
                           </Card.Title>
                           <Card.Text>

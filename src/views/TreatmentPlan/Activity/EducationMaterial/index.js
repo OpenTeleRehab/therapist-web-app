@@ -17,11 +17,10 @@ import {
   BsX,
   BsHeart,
   BsHeartFill,
-  BsPerson,
   BsCaretDownFill,
   BsCaretRightFill,
   BsDashSquare,
-  BsSquare
+  BsSquare, BsPersonFill
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
@@ -257,11 +256,6 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                             : <BsHeart size={20} />
                           }
                         </div>
-                        {therapistId === material.therapist_id && (
-                          <div className="owner-btn">
-                            <BsPerson size={20} />
-                          </div>
-                        )}
                         <Form.Check
                           type="checkbox"
                           className="float-right action"
@@ -281,12 +275,22 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                           <Card.Title>
                             {
                               material.title.length <= 50
-                                ? <h5 className="card-title">{ material.title }</h5>
+                                ? <h5 className="card-title">
+                                  {therapistId === material.therapist_id && (
+                                    <BsPersonFill size={20} className=" owner-btn mr-1 mb-1"/>
+                                  )}
+                                  { material.title }
+                                </h5>
                                 : (
                                   <OverlayTrigger
                                     overlay={<Tooltip id="button-tooltip-2">{ material.title }</Tooltip>}
                                   >
-                                    <h5 className="card-title">{ material.title }</h5>
+                                    <h5 className="card-title">
+                                      {therapistId === material.therapist_id && (
+                                        <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                                      )}
+                                      { material.title }
+                                    </h5>
                                   </OverlayTrigger>
                                 )
                             }

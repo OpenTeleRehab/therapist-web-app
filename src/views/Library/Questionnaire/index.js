@@ -270,22 +270,25 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
                             {
-                              <div className="d-flex">
-                                {therapistId === questionnaire.therapist_id && (
-                                  <span className="owner-btn mr-1">
-                                    <BsPersonFill size={20} className="mb-1" />
-                                  </span>
-                                )}
-                                {questionnaire.title.length <= 50
-                                  ? <h5 className="card-title">{ questionnaire.title }</h5>
-                                  : (
-                                    <OverlayTrigger
-                                      overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
-                                    >
-                                      <h5 className="card-title">{ questionnaire.title }</h5>
-                                    </OverlayTrigger>
+                              questionnaire.title.length <= 50
+                                ? <h5 className="card-title">
+                                  {therapistId === questionnaire.therapist_id && (
+                                    <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
                                   )}
-                              </div>
+                                  { questionnaire.title }
+                                </h5>
+                                : (
+                                  <OverlayTrigger
+                                    overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
+                                  >
+                                    <h5 className="card-title">
+                                      {therapistId === questionnaire.therapist_id && (
+                                        <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                                      )}
+                                      { questionnaire.title }
+                                    </h5>
+                                  </OverlayTrigger>
+                                )
                             }
                           </Card.Title>
                           <Card.Text>
