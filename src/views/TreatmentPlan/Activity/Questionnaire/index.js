@@ -17,7 +17,7 @@ import {
   BsX,
   BsHeart,
   BsHeartFill,
-  BsPerson,
+  BsPersonFill,
   BsCaretDownFill,
   BsCaretRightFill,
   BsDashSquare,
@@ -255,11 +255,6 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
                             : <BsHeart size={20} />
                           }
                         </div>
-                        {therapistId === questionnaire.therapist_id && (
-                          <div className="owner-btn">
-                            <BsPerson size={20} />
-                          </div>
-                        )}
                         <Form.Check
                           type="checkbox"
                           className="float-right action"
@@ -279,12 +274,22 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
                           <Card.Title>
                             {
                               questionnaire.title.length <= 50
-                                ? <h5 className="card-title">{ questionnaire.title }</h5>
+                                ? <h5 className="card-title">
+                                  {therapistId === questionnaire.therapist_id && (
+                                    <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                                  )}
+                                  { questionnaire.title }
+                                </h5>
                                 : (
                                   <OverlayTrigger
                                     overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
                                   >
-                                    <h5 className="card-title">{ questionnaire.title }</h5>
+                                    <h5 className="card-title">
+                                      {therapistId === questionnaire.therapist_id && (
+                                        <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                                      )}
+                                      { questionnaire.title }
+                                    </h5>
                                   </OverlayTrigger>
                                 )
                             }

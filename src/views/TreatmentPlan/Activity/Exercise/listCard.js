@@ -10,7 +10,7 @@ import {
 
 import { Exercise } from 'services/exercise';
 import { User } from 'services/user';
-import { BsX, BsHeart, BsHeartFill, BsPerson } from 'react-icons/bs';
+import { BsX, BsHeart, BsHeartFill, BsPersonFill } from 'react-icons/bs';
 import ViewExercise from 'views/Library/Exercise/view';
 import _ from 'lodash';
 import { TYPE } from 'variables/activity';
@@ -76,11 +76,6 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
                   : <BsHeart size={20} />
                 }
               </div>
-              {therapistId === exercise.therapist_id && (
-                <div className="owner-btn">
-                  <BsPerson size={20} />
-                </div>
-              )}
               {
                 (onSelectionRemove) && (
                   <div className="card-remove-btn-wrapper">
@@ -136,12 +131,22 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
                 <Card.Title>
                   {
                     exercise.title.length <= 50
-                      ? <h5 className="card-title">{ exercise.title }</h5>
+                      ? <h5 className="card-title">
+                        {therapistId === exercise.therapist_id && (
+                          <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                        )}
+                        { exercise.title }
+                      </h5>
                       : (
                         <OverlayTrigger
                           overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
                         >
-                          <h5 className="card-title">{ exercise.title }</h5>
+                          <h5 className="card-title">
+                            {therapistId === exercise.therapist_id && (
+                              <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                            )}
+                            { exercise.title }
+                          </h5>
                         </OverlayTrigger>
                       )
                   }
