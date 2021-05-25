@@ -125,6 +125,17 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
     setDay(day);
   };
 
+  const handleExerciseModify = (custom, dayActivity) => {
+    const customExercises = dayActivity.customExercises || [];
+    dayActivity.customExercises = _.unionWith([custom], customExercises, (a, n) => {
+      return a.id === n.id;
+    });
+    const updatedActivities = _.unionWith([dayActivity], activities, (a, n) => {
+      return a.week === n.week && a.day === n.day;
+    });
+    setActivities(updatedActivities);
+  };
+
   const handleExerciseRemove = (id, dayActivity) => {
     _.remove(dayActivity.exercises, n => n === id);
     const updatedActivities = _.unionWith([dayActivity], activities, (a, n) => {
@@ -178,6 +189,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
       const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
       const materialIds = dayActivity ? dayActivity.materials || [] : [];
       const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
+      const customExercises = dayActivity ? dayActivity.customExercises || [] : [];
       if (readOnly) {
         const dayActivities = activities.filter(activity => activity.week === currentWeek && activity.day === i + 1);
         exercises = dayActivities.filter(dayActivity => dayActivity.type === 'exercise');
@@ -229,7 +241,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
                 </Button>
               </div>
             }
-            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
+            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} customExercises={customExercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} onSelectionModify={custom => handleExerciseModify(custom, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
             <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
             <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
 
