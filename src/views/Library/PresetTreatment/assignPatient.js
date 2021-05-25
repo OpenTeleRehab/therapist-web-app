@@ -207,9 +207,6 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
               </Form.Control.Feedback>
             )}
           </Form.Group>
-          <Form.Group>
-            <Form.Label>{translate('common.end_date')} {formFields.end_date}</Form.Label>
-          </Form.Group>
         </Col>
         <Col md={6}>
           <TreatmentGoal goals={goals} setGoals={setGoals} />
