@@ -14,17 +14,18 @@ import {
 } from 'react-icons/bs';
 
 import Pagination from 'components/Pagination';
-import { getExercises } from 'store/exercise/actions';
+import { getExercises, deleteExercise } from 'store/exercise/actions';
 import SearchInput from 'components/Form/SearchInput';
 import * as ROUTES from 'variables/routes';
 import ViewExercise from './view';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
-import { CopyAction, EditAction, FavoriteAction, NonFavoriteAction } from 'components/ActionIcons';
+import { CopyAction, EditAction, FavoriteAction, NonFavoriteAction, DeleteAction } from 'components/ActionIcons';
 import _ from 'lodash';
 import CheckboxTree from 'react-checkbox-tree';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { FaRegCheckSquare } from 'react-icons/fa';
+import Dialog from 'components/Dialog';
 
 let timer = null;
 const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises }) => {
@@ -35,6 +36,9 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
   const { languages } = useSelector(state => state.language);
   const [previewExercise, setPreviewExercise] = useState(null);
   const { categoryTreeData } = useSelector((state) => state.category);
+
+  const [id, setId] = useState();
+  const [show, setShow] = useState(false);
 
   const [pageSize, setPageSize] = useState(8);
   const [currentPage, setCurrentPage] = useState(1);
@@ -126,6 +130,24 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
 
   const handleViewClose = () => {
     setPreviewExercise(null);
+  };
+
+  const handleDelete = (id, type) => {
+    setId(id);
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setId(null);
+    setShow(false);
+  };
+
+  const handleConfirm = () => {
+    dispatch(deleteExercise(id)).then(result => {
+      if (result) {
+        handleClose();
+      }
+    });
   };
 
   return (
@@ -290,16 +312,23 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                           )}
                         </Card.Body>
                       </div>
-                      {therapistId === exercise.therapist_id && (
-                        <div className="edit-btn">
-                          <EditAction as={Link} to={ROUTES.EXERCISE_EDIT.replace(':id', exercise.id)} />
-                        </div>
-                      )}
-                      {!exercise.therapist_id && allowCreateContent && (
-                        <div className="edit-btn">
-                          <CopyAction as={Link} to={ROUTES.EXERCISE_COPY.replace(':id', exercise.id)} />
-                        </div>
-                      )}
+                      <div className="top-bar">
+                        {therapistId === exercise.therapist_id && (
+                          <div className="edit-btn">
+                            <EditAction as={Link} to={ROUTES.EXERCISE_EDIT.replace(':id', exercise.id)} />
+                          </div>
+                        )}
+                        {therapistId === exercise.therapist_id && (
+                          <div className="edit-btn">
+                            <DeleteAction className="ml-1" onClick={() => handleDelete(exercise.id)} disabled={exercise.is_used} />
+                          </div>
+                        )}
+                        {!exercise.therapist_id && allowCreateContent && (
+                          <div className="edit-btn">
+                            <CopyAction as={Link} to={ROUTES.EXERCISE_COPY.replace(':id', exercise.id)} />
+                          </div>
+                        )}
+                      </div>
                     </Card>
                   </Col>
                 ))}
@@ -320,6 +349,17 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
         </Col>
       </Row>
       {previewExercise && <ViewExercise showView handleViewClose={handleViewClose} exercise={previewExercise} />}
+
+      <Dialog
+        show={show}
+        title={translate('exercise.delete_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleConfirm}
+      >
+        <p>{translate('common.delete_confirmation_message')}</p>
+      </Dialog>
     </>
   );
 };

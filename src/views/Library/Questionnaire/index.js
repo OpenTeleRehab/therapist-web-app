@@ -21,7 +21,7 @@ import {
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
-import { getQuestionnaires } from 'store/questionnaire/actions';
+import { getQuestionnaires, deleteQuestionnaire } from 'store/questionnaire/actions';
 import ViewQuestionnaire from './viewQuestionnaire';
 import CheckboxTree from 'react-checkbox-tree';
 import SearchInput from 'components/Form/SearchInput';
@@ -33,11 +33,13 @@ import {
   CopyAction,
   EditAction,
   FavoriteAction,
-  NonFavoriteAction
+  NonFavoriteAction,
+  DeleteAction
 } from 'components/ActionIcons';
 import _ from 'lodash';
 import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
+import Dialog from 'components/Dialog';
 
 let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires }) => {
@@ -61,6 +63,9 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+
+  const [id, setId] = useState();
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -149,6 +154,24 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
 
   const handleCopy = (id) => {
     history.push(ROUTES.QUESTIONNAIRE_COPY.replace(':id', id));
+  };
+
+  const handleDelete = (id) => {
+    setId(id);
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setId(null);
+    setShow(false);
+  };
+
+  const handleConfirm = () => {
+    dispatch(deleteQuestionnaire(id)).then(result => {
+      if (result) {
+        handleClose();
+      }
+    });
   };
 
   return (
@@ -296,16 +319,23 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                           </Card.Text>
                         </Card.Body>
                       </div>
-                      {therapistId === questionnaire.therapist_id && (
-                        <div className="edit-btn">
-                          <EditAction onClick={() => handleEdit(questionnaire.id)}/>
-                        </div>
-                      )}
-                      {!questionnaire.therapist_id && allowCreateContent && (
-                        <div className="edit-btn">
-                          <CopyAction onClick={() => handleCopy(questionnaire.id)} />
-                        </div>
-                      )}
+                      <div className="top-bar">
+                        {therapistId === questionnaire.therapist_id && (
+                          <div className="edit-btn">
+                            <EditAction onClick={() => handleEdit(questionnaire.id)}/>
+                          </div>
+                        )}
+                        {therapistId === questionnaire.therapist_id && (
+                          <div className="edit-btn">
+                            <DeleteAction onClick={() => handleDelete(questionnaire.id)} disabled={questionnaire.is_used}/>
+                          </div>
+                        )}
+                        {!questionnaire.therapist_id && allowCreateContent && (
+                          <div className="edit-btn">
+                            <CopyAction onClick={() => handleCopy(questionnaire.id)} />
+                          </div>
+                        )}
+                      </div>
                     </Card>
                   </Col>
                 ))}
@@ -325,6 +355,16 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
           { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire}/> }
         </Col>
       </Row>
+      <Dialog
+        show={show}
+        title={translate('questionnaire.delete_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleConfirm}
+      >
+        <p>{translate('common.delete_confirmation_message')}</p>
+      </Dialog>
     </>
   );
 };

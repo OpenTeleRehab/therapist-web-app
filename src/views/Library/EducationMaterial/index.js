@@ -22,7 +22,7 @@ import {
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { MdDescription } from 'react-icons/md';
-import { getEducationMaterials } from 'store/educationMaterial/actions';
+import { getEducationMaterials, deleteEducationMaterial } from 'store/educationMaterial/actions';
 import ViewEducationMaterial from './viewEducationMaterial';
 import CheckboxTree from 'react-checkbox-tree';
 import SearchInput from 'components/Form/SearchInput';
@@ -35,10 +35,12 @@ import {
   CopyAction,
   EditAction,
   FavoriteAction,
-  NonFavoriteAction
+  NonFavoriteAction,
+  DeleteAction
 } from 'components/ActionIcons';
 import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
+import Dialog from 'components/Dialog';
 
 let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials }) => {
@@ -62,6 +64,9 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
   const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+
+  const [id, setId] = useState();
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -150,6 +155,24 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
 
   const handleCopy = (id) => {
     history.push(ROUTES.EDUCATION_MATERIAL_COPY.replace(':id', id));
+  };
+
+  const handleDelete = (id) => {
+    setId(id);
+    setShow(true);
+  };
+
+  const handleClose = () => {
+    setId(null);
+    setShow(false);
+  };
+
+  const handleConfirm = () => {
+    dispatch(deleteEducationMaterial(id)).then(result => {
+      if (result) {
+        handleClose();
+      }
+    });
   };
 
   return (
@@ -297,16 +320,23 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                           </Card.Text>
                         </Card.Body>
                       </div>
-                      {therapistId === material.therapist_id && (
-                        <div className="edit-btn">
-                          <EditAction onClick={() => handleEdit(material.id)} />
-                        </div>
-                      )}
-                      {!material.therapist_id && allowCreateContent && (
-                        <div className="edit-btn">
-                          <CopyAction onClick={() => handleCopy(material.id)} />
-                        </div>
-                      )}
+                      <div className="top-bar">
+                        {therapistId === material.therapist_id && (
+                          <div className="edit-btn">
+                            <EditAction onClick={() => handleEdit(material.id)} />
+                          </div>
+                        )}
+                        {therapistId === material.therapist_id && (
+                          <div className="edit-btn">
+                            <DeleteAction className="ml-1" onClick={() => handleDelete(material.id)} disabled={material.is_used} />
+                          </div>
+                        )}
+                        {!material.therapist_id && allowCreateContent && (
+                          <div className="edit-btn">
+                            <CopyAction onClick={() => handleCopy(material.id)} />
+                          </div>
+                        )}
+                      </div>
                     </Card>
                   </Col>
                 ))}
@@ -326,6 +356,16 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
           { viewEducationMaterial && <ViewEducationMaterial showView={viewEducationMaterial} handleViewClose={handleViewEducationMaterialClose} educationMaterial={educationMaterial} />}
         </Col>
       </Row>
+      <Dialog
+        show={show}
+        title={translate('education.delete_confirmation_title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleConfirm}
+      >
+        <p>{translate('common.delete_confirmation_message')}</p>
+      </Dialog>
     </>
   );
 };
