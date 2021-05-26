@@ -80,7 +80,7 @@ const Edition = () => {
   }
 
   return (
-    <Form className="mt-4">
+    <Form className="my-4">
       <Form.Row>
         <Form.Group className="col-sm-2 md-4" controlId="formLastName">
           <Form.Label>{translate('common.last_name')}</Form.Label>
