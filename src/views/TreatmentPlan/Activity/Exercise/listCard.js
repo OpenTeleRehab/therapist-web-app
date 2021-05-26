@@ -15,7 +15,7 @@ import ViewExercise from 'views/Library/Exercise/view';
 import _ from 'lodash';
 import { TYPE } from 'variables/activity';
 
-const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData, showList, treatmentPlanId }) => {
+const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercises, onSelectionRemove, onSelectionModify, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData, showList, treatmentPlanId }) => {
   const [exercises, setExercises] = useState([]);
   const [exercise, setExercise] = useState([]);
   const [viewExercise, setViewExercise] = useState(false);
@@ -62,6 +62,25 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
 
   const handleViewClose = () => {
     setViewExercise(false);
+  };
+
+  const renderSetsAndRepsvalue = (exercise, translate) => {
+    let { sets, reps } = exercise;
+    const customExercise = _.find(customExercises, { id: exercise.id });
+    if (customExercise) {
+      sets = customExercise.sets;
+      reps = customExercise.reps;
+    }
+
+    return (
+      <>
+        {sets > 0 && (
+          <Card.Text>
+            {translate('exercise.number_of_sets_and_reps', { sets, reps })}
+          </Card.Text>
+        )}
+      </>
+    );
   };
 
   return (
@@ -151,17 +170,13 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, onSelectionRem
                       )
                   }
                 </Card.Title>
-                {exercise.sets > 0 && (
-                  <Card.Text>
-                    {translate('exercise.number_of_sets_and_reps', { sets: exercise.sets, reps: exercise.reps })}
-                  </Card.Text>
-                )}
+                {renderSetsAndRepsvalue(exercise, translate)}
               </Card.Body>
             </div>
           </Card>
         </div>
       ))}
-      { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} exercise={exercise} /> }
+      { viewExercise && <ViewExercise showView={viewExercise} customExercises={customExercises} handleViewClose={handleViewClose} handleViewSave={onSelectionModify} exercise={exercise} readOnly={readOnly && !isOwnCreated} /> }
     </>
   );
 };
@@ -170,7 +185,9 @@ ListExerciseCard.propTypes = {
   translate: PropTypes.func,
   exerciseIds: PropTypes.array,
   exerciseObjs: PropTypes.array,
+  customExercises: PropTypes.array,
   onSelectionRemove: PropTypes.func,
+  onSelectionModify: PropTypes.func,
   readOnly: PropTypes.bool,
   lang: PropTypes.any,
   therapistId: PropTypes.number,
