@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Card } from 'react-bootstrap';
+import { Row, Col, Card, Accordion } from 'react-bootstrap';
 import { IoPerson } from 'react-icons/all';
 import PropTypes from 'prop-types';
 import { Pie } from 'react-chartjs-2';
@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { AgeInYear } from '../../utils/age';
 import settings from 'settings';
 import { FaNotesMedical } from 'react-icons/fa';
+import { ContextAwareToggle } from '../../components/Accordion/ContextAwareToggle';
 
 const Dashboard = ({ translate }) => {
   const dispatch = useDispatch();
@@ -160,66 +161,94 @@ const Dashboard = ({ translate }) => {
           </Card>
         </Col>
       </Row>
-      <Row className="top-card-container">
-        <Col className="container-fluid content-row">
-          <Card className="h-100">
-            <Card.Header as="h5" className="chart-header">{translate('dashboard.total_patient_by_gender')}</Card.Header>
+      <Accordion defaultActiveKey="0" className="mb-3">
+        <Card>
+          <Accordion.Toggle as={Card.Header} variant="link" eventKey="0" className="d-flex align-items-center">
+            {translate('patient')}
+            <div className="ml-auto text-nowrap">
+              <ContextAwareToggle eventKey="0" />
+            </div>
+          </Accordion.Toggle>
+          <Accordion.Collapse eventKey="0">
             <Card.Body>
-              {
-                totalPatient > 0 ? (
-                  <Pie data={patientByGenderData} options={chartOptions} />
-                ) : (
-                  <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
-                )
-              }
+              <Row className="top-card-container">
+                <Col className="container-fluid content-row" sm={6} md={6} lg={6}>
+                  <Card className="h-100">
+                    <Card.Header as="h5" className="chart-header">{translate('dashboard.total_patient_by_gender')}</Card.Header>
+                    <Card.Body>
+                      {
+                        totalPatient > 0 ? (
+                          <Pie data={patientByGenderData} options={chartOptions} />
+                        ) : (
+                          <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
+                        )
+                      }
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col className="container-fluid content-row" sm={6} md={6} lg={6}>
+                  <Card className="h-100">
+                    <Card.Header as="h5" className="chart-header">{translate('dashboard.total_patient_by_age')}</Card.Header>
+                    <Card.Body>
+                      {
+                        totalPatient > 0 ? (
+                          <Pie data={patientByAgeData} options={chartOptions} />
+                        ) : (
+                          <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
+                        )
+                      }
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
             </Card.Body>
-          </Card>
-        </Col>
-        <Col className="container-fluid content-row">
-          <Card className="h-100">
-            <Card.Header as="h5" className="chart-header">{translate('dashboard.total_patient_by_age')}</Card.Header>
+          </Accordion.Collapse>
+        </Card>
+      </Accordion>
+      <Accordion defaultActiveKey="1" className="mb-3">
+        <Card>
+          <Accordion.Toggle as={Card.Header} variant="link" eventKey="1" className="d-flex align-items-center">
+            {translate('common.ongoing_treatment')}
+            <div className="ml-auto text-nowrap">
+              <ContextAwareToggle eventKey="1" />
+            </div>
+          </Accordion.Toggle>
+          <Accordion.Collapse eventKey="1">
             <Card.Body>
-              {
-                totalPatient > 0 ? (
-                  <Pie data={patientByAgeData} options={chartOptions} />
-                ) : (
-                  <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
-                )
-              }
+              <Row className="top-card-container">
+                <Col className="container-fluid content-row">
+                  <Card className="h-100">
+                    <Card.Header as="h5" className="chart-header">{translate('dashboard.total_ongoing_treatment_by_gender')}</Card.Header>
+                    <Card.Body>
+                      {
+                        totalOngoingTreatment > 0 ? (
+                          <Pie data={ongoingByGenderData} options={chartOptions} />
+                        ) : (
+                          <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
+                        )
+                      }
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col className="container-fluid content-row">
+                  <Card className="h-100">
+                    <Card.Header as="h5" className="chart-header">{translate('dashboard.total_ongoing_treatment_by_age')}</Card.Header>
+                    <Card.Body>
+                      {
+                        totalOngoingTreatment > 0 ? (
+                          <Pie data={ongoingByAgeData} options={chartOptions} />
+                        ) : (
+                          <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
+                        )
+                      }
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
             </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-      <Row className="top-card-container">
-        <Col className="container-fluid content-row">
-          <Card className="h-100">
-            <Card.Header as="h5" className="chart-header">{translate('dashboard.total_ongoing_treatment_by_gender')}</Card.Header>
-            <Card.Body>
-              {
-                totalOngoingTreatment > 0 ? (
-                  <Pie data={ongoingByGenderData} options={chartOptions} />
-                ) : (
-                  <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
-                )
-              }
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col className="container-fluid content-row">
-          <Card className="h-100">
-            <Card.Header as="h5" className="chart-header">{translate('dashboard.total_ongoing_treatment_by_age')}</Card.Header>
-            <Card.Body>
-              {
-                totalOngoingTreatment > 0 ? (
-                  <Pie data={ongoingByAgeData} options={chartOptions} />
-                ) : (
-                  <Card.Text className="card-text-center">{translate('common.no_data')}</Card.Text>
-                )
-              }
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+          </Accordion.Collapse>
+        </Card>
+      </Accordion>
     </>
   );
 };
