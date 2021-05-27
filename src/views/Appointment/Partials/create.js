@@ -227,9 +227,15 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
                   className: errorFrom ? 'form-control is-invalid' : 'form-control',
                   placeholder: translate('placeholder.time')
                 }}
+                timeConstraints={{ minutes: { step: 15 } }}
                 initialViewMode="time"
                 value={formattedFrom}
-                onChange={(value) => setFrom(value)}
+                onChange={(value) => {
+                  setFrom(value);
+                  if (typeof value === 'object') {
+                    setTo(value.add(15, 'minutes'));
+                  }
+                }}
                 dateFormat={false}
                 timeFormat={'h:mm A'}
               />
@@ -247,8 +253,10 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
                   name: 'to',
                   autoComplete: 'off',
                   className: errorTo ? 'form-control is-invalid' : 'form-control',
-                  placeholder: translate('placeholder.time')
+                  placeholder: translate('placeholder.time'),
+                  disabled: typeof from !== 'object'
                 }}
+                timeConstraints={{ minutes: { step: 15 } }}
                 initialViewMode="time"
                 value={formattedTo}
                 onChange={(value) => setTo(value)}
