@@ -101,7 +101,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                     {isOwnCreated && !readOnly ? (
                       <Button
                         className="btn-circle-sm m-1"
-                        variant="light"
+                        variant="primary"
                         onClick={() => onSelectionRemove(exercise.id)}
                       >
                         <BsX size={15} />
@@ -111,7 +111,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                         {(!treatmentPlanExercises.includes(exercise.id) || exercise.created_by === therapistId) && !readOnly &&
                         <Button
                           className="btn-circle-sm m-1"
-                          variant="light"
+                          variant="primary"
                           onClick={() => onSelectionRemove(exercise.id)}
                         >
                           <BsX size={15} />

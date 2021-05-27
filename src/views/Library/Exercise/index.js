@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { Row, Col, Card, Form, Tooltip, OverlayTrigger, Accordion } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
 import Spinner from 'react-bootstrap/Spinner';
 import {
   BsCaretDownFill,
@@ -13,6 +12,9 @@ import {
   BsPersonFill
 } from 'react-icons/bs';
 
+import * as Icon from 'react-icons/fi';
+import Checkbox from 'react-custom-checkbox';
+
 import Pagination from 'components/Pagination';
 import { getExercises, deleteExercise } from 'store/exercise/actions';
 import SearchInput from 'components/Form/SearchInput';
@@ -20,22 +22,27 @@ import * as ROUTES from 'variables/routes';
 import ViewExercise from './view';
 import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
-import { CopyAction, EditAction, FavoriteAction, NonFavoriteAction, DeleteAction } from 'components/ActionIcons';
+import { FavoriteAction, NonFavoriteAction, DeleteAction } from 'components/ActionIcons';
 import _ from 'lodash';
 import CheckboxTree from 'react-checkbox-tree';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import Dialog from 'components/Dialog';
+import { useHistory } from 'react-router-dom';
 
 let timer = null;
 const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const { loading, exercises, filters } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
   const [previewExercise, setPreviewExercise] = useState(null);
   const { categoryTreeData } = useSelector((state) => state.category);
+
+  const [showCopy, setShowCopy] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const [id, setId] = useState();
   const [show, setShow] = useState(false);
@@ -123,13 +130,23 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
     setCurrentPage(1);
   };
 
-  const handleView = (id) => {
-    const exercise = exercises.find(exercise => exercise.id === id);
+  const handleView = (exercise) => {
     setPreviewExercise(exercise);
+    setId(exercise.id);
+
+    if (!exercise.therapist_id && allowCreateContent) {
+      setShowCopy(true);
+    }
+
+    if (exercise.therapist_id === therapistId) {
+      setShowEdit(true);
+    }
   };
 
   const handleViewClose = () => {
     setPreviewExercise(null);
+    setShowEdit(false);
+    setShowCopy(false);
   };
 
   const handleDelete = (id, type) => {
@@ -148,6 +165,14 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
         handleClose();
       }
     });
+  };
+
+  const handleEdit = (id) => {
+    history.push(ROUTES.EXERCISE_EDIT.replace(':id', id));
+  };
+
+  const handleCopy = (id) => {
+    history.push(ROUTES.EXERCISE_COPY.replace(':id', id));
   };
 
   return (
@@ -252,14 +277,23 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                             : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, CATEGORY_TYPES.EXERCISE)} />
                           }
                         </div>
-                        <Form.Check
-                          type="checkbox"
-                          className="action"
+                        <Checkbox
+                          className="mt-1 custom-checkbox"
                           checked={selectedExercises.includes(exercise.id)}
-                          onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
+                          onChange={(checked) => onSectionChange(checked, exercise.id)}
+                          icon={
+                            <div className="custom-checkbox-item">
+                              <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                            </div>
+                          }
+                          borderColor="#0077C8"
+                          borderWidth={1.5}
+                          borderRadius={20}
+                          style={{ overflow: 'hidden' }}
+                          size={20}
                         />
                       </div>
-                      <div className="card-container" onClick={() => handleView(exercise.id)}>
+                      <div className="card-container" onClick={() => handleView(exercise)}>
                         <div className="card-img bg-light">
                           {
                             exercise.files.length > 0 && (
@@ -312,20 +346,10 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                           )}
                         </Card.Body>
                       </div>
-                      <div className="top-bar">
+                      <div className="d-flex justify-content-end">
                         {therapistId === exercise.therapist_id && (
-                          <div className="edit-btn">
-                            <EditAction as={Link} to={ROUTES.EXERCISE_EDIT.replace(':id', exercise.id)} />
-                          </div>
-                        )}
-                        {therapistId === exercise.therapist_id && (
-                          <div className="edit-btn">
+                          <div className="position-absolute delete-btn">
                             <DeleteAction className="ml-1" onClick={() => handleDelete(exercise.id)} disabled={exercise.is_used} />
-                          </div>
-                        )}
-                        {!exercise.therapist_id && allowCreateContent && (
-                          <div className="edit-btn">
-                            <CopyAction as={Link} to={ROUTES.EXERCISE_COPY.replace(':id', exercise.id)} />
                           </div>
                         )}
                       </div>
@@ -348,7 +372,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
         </Col>
       </Row>
-      {previewExercise && <ViewExercise showView handleViewClose={handleViewClose} exercise={previewExercise} />}
+      {previewExercise && <ViewExercise showView handleViewClose={handleViewClose} exercise={previewExercise} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
 
       <Dialog
         show={show}
@@ -370,7 +394,9 @@ Exercise.propTypes = {
   therapistId: PropTypes.number,
   allowCreateContent: PropTypes.bool,
   onSectionChange: PropTypes.func,
-  selectedExercises: PropTypes.array
+  selectedExercises: PropTypes.array,
+  handleCopy: PropTypes.func,
+  handEdit: PropTypes.func
 };
 
 export default withLocalize(Exercise);

@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import Dialog from 'components/Dialog';
 
-const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSave, exercise, readOnly }) => {
+const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSave, exercise, readOnly, handleCopy, handleEdit, showEdit, showCopy }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [index, setIndex] = useState(0);
@@ -73,6 +73,8 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
       confirmLabel={translate('common.save')}
       onCancel={handleViewClose}
       onConfirm={!readOnly ? handleSave : null}
+      onEdit={showEdit ? () => handleEdit(exercise.id) : null}
+      onCopy={showCopy ? () => handleCopy(exercise.id) : null}
     >
       <Form onSubmit={handleSave}>
         <Carousel activeIndex={index} onSelect={handleSelect} controls={exercise.files.length > 1} indicators={exercise.files.length > 1} className="view-exercise-carousel">
@@ -185,7 +187,15 @@ ViewExercise.propTypes = {
   handleViewSave: PropTypes.func,
   exercise: PropTypes.object,
   readOnly: PropTypes.bool,
-  customExercises: PropTypes.array
+  customExercises: PropTypes.array,
+  showCopy: PropTypes.bool,
+  showEdit: PropTypes.bool,
+  handleCopy: PropTypes.func,
+  handleEdit: PropTypes.func
+};
+
+ViewExercise.defaultProps = {
+  readOnly: true
 };
 
 ViewExercise.defaultProps = {

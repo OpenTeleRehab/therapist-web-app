@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import Dialog from 'components/Dialog';
 import { getTranslate } from 'react-localize-redux/lib/index';
 
-const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial }) => {
+const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial, handleCopy, handleEdit, showEdit, showCopy }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -16,6 +16,8 @@ const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial })
       title={educationMaterial.title}
       cancelLabel={translate('common.close')}
       onCancel={handleViewClose}
+      onEdit={showEdit ? () => handleEdit(educationMaterial.id) : null}
+      onCopy={showCopy ? () => handleCopy(educationMaterial.id) : null}
     >
       <Form>
         <Row>
@@ -88,7 +90,11 @@ const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial })
 ViewEducationMaterial.propTypes = {
   showView: PropTypes.bool,
   handleViewClose: PropTypes.func,
-  educationMaterial: PropTypes.array
+  educationMaterial: PropTypes.array,
+  showCopy: PropTypes.bool,
+  showEdit: PropTypes.bool,
+  handleEdit: PropTypes.func,
+  handleCopy: PropTypes.func
 };
 
 export default withLocalize(ViewEducationMaterial);

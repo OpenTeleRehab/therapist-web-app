@@ -166,7 +166,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
           <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} viewEducationMaterial={viewEducationMaterial} setViewEducationMaterial={setViewEducationMaterial} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedMaterials={oldSelectedMaterials} />
         </Tab>
         <Tab eventKey="questionnaire" title={translate('activity.questionnaires')}>
-          <Questionnaire selectedMaterials={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} viewQuestionnaire={viewQuestionnaire} setViewQuestionnaire={setViewQuestionnaire} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedQuestionnaires={oldSelectedQuestionnaires} />
+          <Questionnaire selectedQuestionnaires={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} viewQuestionnaire={viewQuestionnaire} setViewQuestionnaire={setViewQuestionnaire} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedQuestionnaires={oldSelectedQuestionnaires} />
         </Tab>
         {!isPreset && isOwnCreated &&
           <Tab eventKey="preset_treatment" title={translate('activity.preset_treatment')}>

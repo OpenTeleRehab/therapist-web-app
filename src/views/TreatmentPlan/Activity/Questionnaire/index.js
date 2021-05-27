@@ -24,6 +24,9 @@ import {
   BsSquare
 } from 'react-icons/bs';
 
+import * as Icon from 'react-icons/fi';
+import Checkbox from 'react-custom-checkbox';
+
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { getQuestionnaires } from 'store/questionnaire/actions';
@@ -36,7 +39,7 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
 
 let timer = null;
-const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQuestionnaire, setViewQuestionnaire, setShowPreview, isOwnCreated, oldSelectedQuestionnaires }) => {
+const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, viewQuestionnaire, setViewQuestionnaire, setShowPreview, isOwnCreated, oldSelectedQuestionnaires }) => {
   const dispatch = useDispatch();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const { questionnaireCategoryTreeData } = useSelector((state) => state.category);
@@ -255,13 +258,48 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
                             : <BsHeart size={20} />
                           }
                         </div>
-                        <Form.Check
-                          type="checkbox"
-                          className="float-right action"
-                          checked={selectedMaterials.includes(questionnaire.id)}
-                          onChange={(e) => { onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true); }}
-                          disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
-                        />
+                        {oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated ? (
+                          <Checkbox
+                            className="mt-1 custom-checkbox float-right disabled"
+                            checked={selectedQuestionnaires.includes(questionnaire.id)}
+                            onChange={(checked) => { onSectionChange(checked, questionnaire.id); setShowPreview(true); }}
+                            disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
+                            icon={
+                              <div className="custom-checkbox-item">
+                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                              </div>
+                            }
+                            borderColor="#0077C8"
+                            borderWidth={1.5}
+                            borderRadius={20}
+                            style={{ overflow: 'hidden' }}
+                            size={20}
+                          />
+                        ) : (
+                          <Checkbox
+                            className="mt-1 custom-checkbox float-right"
+                            checked={selectedQuestionnaires.includes(questionnaire.id)}
+                            onChange={(checked) => { onSectionChange(checked, questionnaire.id); setShowPreview(true); }}
+                            disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
+                            icon={
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flex: 1,
+                                  backgroundColor: '#0077C8',
+                                  alignSelf: 'stretch'
+                                }}>
+                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                              </div>
+                            }
+                            borderColor="#0077C8"
+                            borderWidth={1.5}
+                            borderRadius={20}
+                            style={{ overflow: 'hidden' }}
+                            size={20}
+                          />
+                        )
+                        }
                       </div>
                       <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
                         <div className="card-img bg-light">
@@ -324,7 +362,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
 
 Questionnaire.propTypes = {
   translate: PropTypes.func,
-  selectedMaterials: PropTypes.array,
+  selectedQuestionnaires: PropTypes.array,
   onSectionChange: PropTypes.func,
   viewQuestionnaire: PropTypes.bool,
   setViewQuestionnaire: PropTypes.func,

@@ -85,7 +85,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
                     {isOwnCreated && !readOnly ? (
                       <Button
                         className="btn-circle-sm m-1"
-                        variant="light"
+                        variant="primary"
                         onClick={() => onSelectionRemove(questionnaire.id)}
                       >
                         <BsX size={15} />
@@ -95,7 +95,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
                         {(!treatmentPlanQuestionnaires.includes(questionnaire.id) || questionnaire.created_by === therapistId) && !readOnly &&
                         <Button
                           className="btn-circle-sm m-1"
-                          variant="light"
+                          variant="primary"
                           onClick={() => onSelectionRemove(questionnaire.id)}
                         >
                           <BsX size={15} />

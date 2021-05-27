@@ -30,8 +30,6 @@ import { getCategoryTreeData } from 'store/category/actions';
 import { CATEGORY_TYPES } from 'variables/category';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import {
-  CopyAction,
-  EditAction,
   FavoriteAction,
   NonFavoriteAction,
   DeleteAction
@@ -40,6 +38,9 @@ import _ from 'lodash';
 import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
 import Dialog from 'components/Dialog';
+
+import * as Icon from 'react-icons/fi';
+import Checkbox from 'react-custom-checkbox';
 
 let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires }) => {
@@ -63,6 +64,8 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+  const [showCopy, setShowCopy] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const [id, setId] = useState();
   const [show, setShow] = useState(false);
@@ -137,10 +140,21 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   const handleViewQuestionnaire = (questionnaire) => {
     setViewQuestionnaire(true);
     setQuestionnaire(questionnaire);
+
+    setId(questionnaire.id);
+    if (!questionnaire.therapist_id && allowCreateContent) {
+      setShowCopy(true);
+    }
+
+    if (questionnaire.therapist_id === therapistId) {
+      setShowEdit(true);
+    }
   };
 
   const handleViewQuestionnaireClose = () => {
     setViewQuestionnaire(false);
+    setShowCopy(false);
+    setShowEdit(false);
   };
 
   const handleSetSelectedCategories = (parent, checked) => {
@@ -276,11 +290,20 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                             : <FavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 1, CATEGORY_TYPES.QUESTIONNAIRE)} />
                           }
                         </div>
-                        <Form.Check
-                          type="checkbox"
-                          className="action"
+                        <Checkbox
+                          className="mt-1 custom-checkbox"
                           checked={selectedQuestionnaires.includes(questionnaire.id)}
-                          onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
+                          onChange={(checked) => onSectionChange(checked, questionnaire.id)}
+                          icon={
+                            <div className="custom-checkbox-item">
+                              <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                            </div>
+                          }
+                          borderColor="#0077C8"
+                          borderWidth={1.5}
+                          borderRadius={20}
+                          style={{ overflow: 'hidden' }}
+                          size={20}
                         />
                       </div>
                       <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
@@ -319,20 +342,10 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                           </Card.Text>
                         </Card.Body>
                       </div>
-                      <div className="top-bar">
+                      <div className="d-flex justify-content-end">
                         {therapistId === questionnaire.therapist_id && (
-                          <div className="edit-btn">
-                            <EditAction onClick={() => handleEdit(questionnaire.id)}/>
-                          </div>
-                        )}
-                        {therapistId === questionnaire.therapist_id && (
-                          <div className="edit-btn">
+                          <div className="delete-btn">
                             <DeleteAction onClick={() => handleDelete(questionnaire.id)} disabled={questionnaire.is_used}/>
-                          </div>
-                        )}
-                        {!questionnaire.therapist_id && allowCreateContent && (
-                          <div className="edit-btn">
-                            <CopyAction onClick={() => handleCopy(questionnaire.id)} />
                           </div>
                         )}
                       </div>
@@ -352,7 +365,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
             </>
           )}
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
-          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire}/> }
+          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
         </Col>
       </Row>
       <Dialog
