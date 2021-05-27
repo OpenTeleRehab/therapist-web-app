@@ -216,7 +216,7 @@ const Dashboard = ({ translate }) => {
           <Accordion.Collapse eventKey="1">
             <Card.Body>
               <Row className="top-card-container">
-                <Col className="container-fluid content-row">
+                <Col className="container-fluid content-row" sm={6} md={6} lg={6}>
                   <Card className="h-100">
                     <Card.Header as="h5" className="chart-header">{translate('dashboard.total_ongoing_treatment_by_gender')}</Card.Header>
                     <Card.Body>
@@ -230,7 +230,7 @@ const Dashboard = ({ translate }) => {
                     </Card.Body>
                   </Card>
                 </Col>
-                <Col className="container-fluid content-row">
+                <Col className="container-fluid content-row" sm={6} md={6} lg={6}>
                   <Card className="h-100">
                     <Card.Header as="h5" className="chart-header">{translate('dashboard.total_ongoing_treatment_by_age')}</Card.Header>
                     <Card.Body>

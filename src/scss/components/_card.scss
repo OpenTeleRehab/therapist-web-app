@@ -186,3 +186,20 @@ a {
 .edit-icon-color {
 	color: $white;
 }
+
+.question-wrapper:last-child {
+	margin-bottom: 120px;
+}
+
+.questionnaire-sticky-btn {
+	position: fixed;
+	bottom: 0;
+	background-color: $white;
+	width: 100%;
+	border-top: 1px solid $light-grey;
+	margin-left: -13px;
+}
+.questionnaire-save-cancel-wrapper {
+	margin-right: 8%;
+	display: flex;
+}

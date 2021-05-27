@@ -8,7 +8,7 @@ import {
   Form,
   Row
 } from 'react-bootstrap';
-import { BsPlus, BsUpload, BsX, BsPlusCircle, BsArrowsMove } from 'react-icons/bs';
+import { BsPlus, BsUpload, BsX, BsArrowsMove } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { FaCopy, FaTrashAlt } from 'react-icons/fa';
 import settings from '../../../../settings';
@@ -87,10 +87,6 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
     values[index].type = e.target.value;
     values[index] = { ...values[index], answers: values[index].type === 'checkbox' || values[index].type === 'multiple' ? [{ description: '' }, { description: '' }] : [] };
     setQuestions(values);
-  };
-
-  const handleAddQuestion = () => {
-    setQuestions([...questions, { title: '', type: 'checkbox', answers: [{ description: '' }, { description: '' }], file: null }]);
   };
 
   const handleRemoveQuestion = (index) => {
@@ -357,17 +353,6 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
           )}
         </Droppable>
       </DragDropContext>
-      {enableButtons() &&
-        <Form.Group className={'my-4'}>
-          <Button
-            variant="link btn-lg"
-            onClick={handleAddQuestion}
-            className="p-0"
-          >
-            <BsPlusCircle size={20} /> {translate('questionnaire.new.question')}
-          </Button>
-        </Form.Group>
-      }
     </>
   );
 };
