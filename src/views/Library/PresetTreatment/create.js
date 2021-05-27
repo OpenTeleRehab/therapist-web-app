@@ -126,7 +126,7 @@ const CreatePresetTreatment = () => {
         </Button>
       </div>
 
-      <Form>
+      <Form onSubmit={handleSaveAsPreset}>
         <Form.Row>
           <Col md={6}>
             <Form.Group>

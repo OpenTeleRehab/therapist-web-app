@@ -167,7 +167,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
-      <Form>
+      <Form onSubmit={handleConfirm}>
         <Form.Group controlId="groupTitle">
           <Form.Label>{translate('appointment.patient')}</Form.Label>
           <span className="text-dark ml-1">*</span>

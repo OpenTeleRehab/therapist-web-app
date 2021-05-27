@@ -303,7 +303,7 @@ const CreateExercise = ({ translate }) => {
         <h1>{id ? isCopy ? translate('exercise.copy') : translate('exercise.edit') : translate('exercise.create')}</h1>
       </div>
 
-      <Form>
+      <Form onSubmit={handleSave}>
         <Row>
           <Col sm={4} xl={3}>
             <div className="exercise-media">
