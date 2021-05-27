@@ -74,7 +74,7 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
       onCancel={handleViewClose}
       onConfirm={!readOnly ? handleSave : null}
     >
-      <Form>
+      <Form onSubmit={handleSave}>
         <Carousel activeIndex={index} onSelect={handleSelect} controls={exercise.files.length > 1} indicators={exercise.files.length > 1} className="view-exercise-carousel">
           { exercise.files.map((file, index) => (
             <Carousel.Item key={index}>

@@ -411,7 +411,7 @@ const CreateTreatmentPlan = () => {
           onConfirm={handleSaveAsPreset}
           confirmLabel={translate('common.save')}
         >
-          <Form>
+          <Form onSubmit={handleSaveAsPreset}>
             <Form.Row>
               <Col>
                 <Form.Group>
