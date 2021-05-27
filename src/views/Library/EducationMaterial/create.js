@@ -292,7 +292,7 @@ const CreateEducationMaterial = ({ translate }) => {
               }
             </Accordion>
 
-            <Form.Group>
+            <Form.Group className="sticky-btn py-2 px-3 mb-0">
               <Button
                 onClick={handleSave}
                 disabled={isLoading}

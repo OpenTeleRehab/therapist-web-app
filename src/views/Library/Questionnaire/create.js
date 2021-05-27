@@ -304,7 +304,7 @@ const CreateQuestionnaire = ({ translate }) => {
               answerFieldError={answerFieldError}
               modifiable={!questionnaire.is_used || !id || isCopy}
             />
-            <div className="questionnaire-sticky-btn d-flex justify-content-between">
+            <div className="sticky-btn d-flex justify-content-between">
               {enableButtons() &&
                 <div className="py-1 px-1">
                   <Button

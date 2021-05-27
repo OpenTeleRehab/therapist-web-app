@@ -15,7 +15,7 @@ import {
   BsUpload,
   BsXCircle,
   BsX,
-  BsPlus,
+  BsPlusCircle,
   BsCaretDownFill,
   BsCaretRightFill,
   BsSquare,
@@ -171,6 +171,9 @@ const CreateExercise = ({ translate }) => {
 
   const handleAddFields = () => {
     setInputFields([...inputFields, { field: '', value: '' }]);
+    setTimeout(() => {
+      window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: 'smooth' });
+    }, 300);
   };
 
   const handleSave = () => {
@@ -343,7 +346,7 @@ const CreateExercise = ({ translate }) => {
               }
             </div>
           </Col>
-          <Col sm={7} xl={8}>
+          <Col sm={7} xl={8} className="mb-5">
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
               <Form.Control as="select" value={id ? language : ''} onChange={handleLanguageChange} disabled={!id}>
@@ -526,31 +529,30 @@ const CreateExercise = ({ translate }) => {
                 <Button
                   variant="link"
                   onClick={handleAddFields}
-                  className="p-0"
+                  className="p-0 mr-1"
                 >
-                  <BsPlus size={20} /> {translate('exercise.additional_field.add_more_field')}
+                  <BsPlusCircle size={20} /> {translate('exercise.additional_field.add_more_field')}
                 </Button>
               </Form.Group>
             }
-
-            <Form.Group>
-              <Button
-                onClick={handleSave}
-                disabled={isLoading}
-              >
-                {translate('common.save')}
-              </Button>
-              <Button
-                className="ml-2"
-                variant="outline-dark"
-                as={Link}
-                to={ROUTES.LIBRARY}
-                disabled={isLoading}
-              >
-                {translate('common.cancel')}
-              </Button>
-            </Form.Group>
           </Col>
+          <Form.Group className="sticky-btn py-2 px-4 mb-0 ml-0">
+            <Button
+              onClick={handleSave}
+              disabled={isLoading}
+            >
+              {translate('common.save')}
+            </Button>
+            <Button
+              className="ml-2"
+              variant="outline-dark"
+              as={Link}
+              to={ROUTES.LIBRARY}
+              disabled={isLoading}
+            >
+              {translate('common.cancel')}
+            </Button>
+          </Form.Group>
         </Row>
       </Form>
     </>
