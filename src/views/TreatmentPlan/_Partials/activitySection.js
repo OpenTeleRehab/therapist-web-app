@@ -266,18 +266,6 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   return (
     <>
       <div className="d-flex justify-content-center align-items-center flex-column">
-        {!readOnly && <h6 className="mb-0">{translate('treatment_plan.activities')}</h6>}
-        <div className="mt-3">
-          <span className="mr-3">
-            <b>{ readOnly ? _.sumBy(activities, a => a.type === 'exercise') : _.sumBy(activities, a => a.exercises ? a.exercises.length : 0) }</b> {translate('activity.exercises')}
-          </span>
-          <span className="mr-3">
-            <b>{ readOnly ? _.sumBy(activities, a => a.type === 'material') : _.sumBy(activities, a => a.materials ? a.materials.length : 0) }</b> {translate('activity.education_materials')}
-          </span>
-          <span>
-            <b>{ readOnly ? _.sumBy(activities, a => a.type === 'questionnaire') : _.sumBy(activities, a => a.questionnaires ? a.questionnaires.length : 0) }</b> {translate('activity.questionnaires')}
-          </span>
-        </div>
         <div className="d-flex align-items-center my-4">
           {weekElements()}
           {!readOnly && <Button

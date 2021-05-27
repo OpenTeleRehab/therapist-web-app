@@ -119,23 +119,46 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3">
-        <span>{breadcrumb}</span>
-        <div className="btn-toolbar mb-2 mb-md-0">
-          <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
-            <FaPhoneAlt size={20} />
-          </Button>
-          <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
-            <BsFillChatSquareFill size={20} />
-          </Button>
-          {!isSecondaryTherapist &&
+        { breadcrumb && (
+          <>
+            <span>{breadcrumb}</span>
+            <div className="btn-toolbar mb-2 mb-md-0">
+              <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
+                <FaPhoneAlt size={20} />
+              </Button>
+              <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
+                <BsFillChatSquareFill size={20} />
+              </Button>
+              {!isSecondaryTherapist &&
+                <DropdownButton alignRight variant="primary" title={translate('common.action')}>
+                  <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
+                  <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
+                  <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
+                </DropdownButton>
+              }
+            </div>
+          </>
+        )}
+      </div>
+      {!breadcrumb && (
+        <>
+          <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right">
+            <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
+              <FaPhoneAlt size={20} />
+            </Button>
+            <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
+              <BsFillChatSquareFill size={20} />
+            </Button>
+            {!isSecondaryTherapist &&
             <DropdownButton alignRight variant="primary" title={translate('common.action')}>
               <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
               <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
               <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
             </DropdownButton>
-          }
-        </div>
-      </div>
+            }
+          </div>
+        </>
+      )}
       <div className="p-3">
         <h4 className="mb-">{formFields.name}</h4>
         <div className="patient-info">
