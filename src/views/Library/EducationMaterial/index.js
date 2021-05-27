@@ -269,7 +269,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
               <Row>
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {material.is_favorite

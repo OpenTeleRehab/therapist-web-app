@@ -1,6 +1,6 @@
 .exercise-card {
 	overflow: hidden;
-	height: 315px;
+	height: 338px;
 	&:hover {
 		cursor: pointer;
 	}
@@ -14,14 +14,17 @@
 	}
 
   	.card-body {
-	  height: 120px;
+	  height: 143px;
 	}
 
 	.card-title {
 		overflow: hidden;
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 4;
+		-webkit-line-clamp: 3;
+		&:hover {
+			cursor: pointer;
+		}
 	}
 
 	.action {
@@ -88,15 +91,6 @@ a {
 		right: -10px;
 		top: -10px;
 		bottom: 0;
-	}
-}
-
-.material-card {
-  .card-title {
-	-webkit-line-clamp: 2;
-  }
-	&:hover {
-		cursor: pointer;
 	}
 }
 
