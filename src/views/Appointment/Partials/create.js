@@ -20,6 +20,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   const [date, setDate] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [note, setNote] = useState('');
   const [patientId, setPatientId] = useState('');
   const [formattedDate, setFormattedDate] = useState('');
   const [formattedFrom, setFormattedFrom] = useState('');
@@ -62,6 +63,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
         setDate(moment.utc(appointment.start_date).local());
         setFrom(moment.utc(appointment.start_date).local());
         setTo(moment.utc(appointment.end_date).local());
+        setNote(appointment.note);
       }
     }
   }, [editId, appointments, selectedPatientId]);
@@ -130,7 +132,8 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
         patient_id: patientId,
         therapist_id: profile.id,
         from: moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-        to: moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss')
+        to: moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+        note
       };
 
       const filter = {
@@ -270,6 +273,18 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
               )}
             </Col>
           </Form.Row>
+        </Form.Group>
+        <Form.Group controlId="groupNote">
+          <Form.Label>{translate('appointment.note')}</Form.Label>
+          <Form.Control
+            as="textarea"
+            name="note"
+            maxLength={255}
+            rows={3}
+            value={note}
+            placeholder={translate('appointment.note.placeholder')}
+            onChange={(e) => setNote(e.target.value)}
+          />
         </Form.Group>
       </Form>
     </Dialog>
