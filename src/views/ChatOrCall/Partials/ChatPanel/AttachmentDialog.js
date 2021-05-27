@@ -30,7 +30,7 @@ const AttachmentDialog = (
           <img src={attachment.url} alt="" className="w-100 img-thumbnail mb-1" />
         )}
       </div>
-      <Form>
+      <Form onSubmit={onConfirm}>
         <Form.Group>
           <Form.Label>{translate('chat_attachment.caption')}</Form.Label>
           <Form.Control value={attachment.caption} onChange={onCaptionChanged} type="text" />

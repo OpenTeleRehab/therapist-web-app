@@ -13,15 +13,23 @@ import Spinner from 'react-bootstrap/Spinner';
 const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
   const messageEndRef = useRef(null);
   const [showImagePopup, setShowImagePopup] = useState(false);
+  const [onAttachmentLoaded, setOnAttachmentLoaded] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const photoSwipeItems = [];
   let photoSwipeIndex = -1;
 
   useEffect(() => {
-    if (messages.length && messageEndRef) {
-      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, messageEndRef]);
+    scrollToBottom();
+    // eslint-disable-next-line
+  }, [messages]);
+
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      if (messages.length && messageEndRef) {
+        messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+  };
 
   const hasSameDay = (previousMessage, currentMessage) => {
     const previousCreatedAt = moment(previousMessage._updatedAt);
@@ -77,6 +85,9 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
             if (message.type === CHAT_TYPES.IMAGE) {
               setPhotoSwipeItem(attachment);
             }
+            if (onAttachmentLoaded) {
+              scrollToBottom();
+            }
 
             return (
               <div key={`message-${idx}`}>
@@ -90,9 +101,9 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
                     {type === CHAT_TYPES.TEXT ? (
                       <MessageText text={getMessageText(msg)} isVideoCall={isVideoCall} />
                     ) : type === CHAT_TYPES.IMAGE ? (
-                      <MessageImage attachment={attachment} index={photoSwipeIndex} onClick={imagePopupHandler} />
+                      <MessageImage attachment={attachment} index={photoSwipeIndex} onAttachmentLoaded={setOnAttachmentLoaded} onClick={imagePopupHandler} />
                     ) : (
-                      <MessageVideo attachment={attachment} />
+                      <MessageVideo attachment={attachment} onAttachmentLoaded={setOnAttachmentLoaded} />
                     )}
                     <div className={`d-flex flex-row align-items-center ${isSameOwner ? 'justify-content-end' : 'justify-content-start'} chat-message-info`}>
                       <span className="chat-message-time">{moment(_updatedAt).format('LT')}</span>
