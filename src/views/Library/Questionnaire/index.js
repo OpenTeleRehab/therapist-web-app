@@ -268,7 +268,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
               <Row>
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {questionnaire.is_favorite

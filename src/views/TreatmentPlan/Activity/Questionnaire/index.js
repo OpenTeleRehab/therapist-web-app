@@ -247,7 +247,7 @@ const Questionnaire = ({ translate, selectedMaterials, onSectionChange, viewQues
               <Row>
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={3}>
-                    <Card className="exercise-card material-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
                           {questionnaire.is_favorite
