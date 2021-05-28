@@ -156,6 +156,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
       onConfirm={handleConfirm}
       confirmLabel={translate('activity.add_to_day')}
       size="xl"
+      scrollable={true}
     >
       <Tabs transition={false} className="mb-3">
         <Tab eventKey="exercise" title={translate('activity.exercises')}>

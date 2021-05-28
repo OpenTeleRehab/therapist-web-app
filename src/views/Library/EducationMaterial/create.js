@@ -255,7 +255,7 @@ const CreateEducationMaterial = ({ translate }) => {
               </Form.File>
             </Form.Group>
 
-            <Accordion className="mb-3" defaultActiveKey={1}>
+            <Accordion className="material-category-wrapper" defaultActiveKey={1}>
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
