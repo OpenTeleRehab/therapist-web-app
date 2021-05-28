@@ -23,3 +23,17 @@ export const renderStatusBadge = (treatmentPlan) => {
     </Badge>
   );
 };
+
+export const getLastActivityDate = (startDate, activities) => {
+  const sortActivities = activities.sort((a, b) => a.week - b.week || a.day - b.day);
+  const rawActivities = sortActivities.filter((item) => item.exercises.length || item.materials.length || item.questionnaires.length);
+
+  if (rawActivities.length) {
+    const lastActivity = rawActivities[rawActivities.length - 1];
+    const remainingDay = 7 - lastActivity.day;
+    const day = (lastActivity.week * 7) - remainingDay - 1;
+    return moment(startDate, settings.date_format).add(day, 'days').format(settings.date_format);
+  }
+
+  return startDate;
+};

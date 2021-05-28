@@ -10,6 +10,7 @@ import TreatmentGoal from 'views/TreatmentPlan/_Partials/Goal';
 import moment from 'moment';
 import { createTreatmentPlan } from 'store/treatmentPlan/actions';
 import { getUsers } from '../../../store/user/actions';
+import { getLastActivityDate } from '../../../utils/treatmentPlan';
 
 const AssignPatient = ({ show, handleClose, weeks, activities }) => {
   const dispatch = useDispatch();
@@ -100,6 +101,8 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     }
 
     if (canSave) {
+      formFields.end_date = getLastActivityDate(formFields.start_date, activities);
+
       dispatch(createTreatmentPlan({
         ...formFields,
         total_of_weeks: weeks,
