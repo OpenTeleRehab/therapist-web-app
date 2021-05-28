@@ -1,0 +1,5 @@
+@each $color, $value in $theme-colors {
+	.fc .fc-button-#{$color} {
+		@include button-variant($value, $value);
+	}
+}

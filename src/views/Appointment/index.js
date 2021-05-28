@@ -12,10 +12,14 @@ import PropTypes from 'prop-types';
 import moment from 'moment';
 import 'moment/min/locales';
 import allLocales from '@fullcalendar/core/locales-all';
+import enLocale from 'locales/fullcalendar/en';
+import kmLocale from 'locales/fullcalendar/km';
 import settings from 'settings';
 import CreateAppointment from './Partials/create';
 import _ from 'lodash';
 import { getLayoutDirection } from '../../utils/layoutDirection';
+
+const calendarLocales = [...allLocales, enLocale, kmLocale];
 
 const Appointment = ({ translate }) => {
   const dispatch = useDispatch();
@@ -26,7 +30,7 @@ const Appointment = ({ translate }) => {
   const [events, setEvents] = useState([]);
   const [date, setDate] = useState();
   const [selectedDate, setSelectedDate] = useState();
-  const [locale, setLocale] = useState('');
+  const [locale, setLocale] = useState('en');
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState(null);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
@@ -125,7 +129,7 @@ const Appointment = ({ translate }) => {
         <FullCalendar
           isRTL={getLayoutDirection(profile.language_id, languages) === 'rtl'}
           ref={calendarRef}
-          locales={allLocales}
+          locales={calendarLocales}
           locale={locale}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
