@@ -4,6 +4,7 @@ import Dialog from 'components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import { Form, Col } from 'react-bootstrap';
+import _ from 'lodash';
 import { getUsers } from '../../../store/user/actions';
 import Datetime from 'components/DateTime';
 import moment from 'moment';
@@ -236,7 +237,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
                 onChange={(value) => {
                   setFrom(value);
                   if (typeof value === 'object') {
-                    setTo(value.add(15, 'minutes'));
+                    setTo(_.cloneDeep(value).add(15, 'minutes'));
                   }
                 }}
                 dateFormat={false}
