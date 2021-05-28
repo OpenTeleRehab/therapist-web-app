@@ -47,7 +47,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   const history = useHistory();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
@@ -347,7 +347,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                 setCurrentPage={setCurrentPage}
                 pageSize={pageSize}
                 setPageSize={setPageSize}
-                pageSizes={[8, 16, 24, 32, 40]}
+                pageSizes={[60, 120, 180, 240]}
               />
             </>
           )}

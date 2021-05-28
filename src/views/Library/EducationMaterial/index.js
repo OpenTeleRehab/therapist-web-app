@@ -48,7 +48,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
   const history = useHistory();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
   const { categoryTreeData } = useSelector((state) => state.category);
-  const [pageSize, setPageSize] = useState(8);
+  const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
@@ -348,7 +348,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                 setCurrentPage={setCurrentPage}
                 pageSize={pageSize}
                 setPageSize={setPageSize}
-                pageSizes={[8, 16, 24, 32, 40]}
+                pageSizes={[60, 120, 180, 240]}
               />
             </>
           )}
