@@ -4,7 +4,6 @@ import { withLocalize } from 'react-localize-redux';
 
 import { BiChevronLeftCircle } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
-
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
 import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/listCard';
@@ -33,7 +32,7 @@ const PreviewList = ({
         <BiChevronLeftCircle size={25} onClick={handleShow}/>
       </div>
       { showPreview &&
-        <div className="position-absolute w-25 selected-exercise-wrapper">
+        <div className="position-absolute w-25 selected-exercise-wrapper" style={{ height: document.body.scrollHeight }}>
           <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
           <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
           <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week} />
