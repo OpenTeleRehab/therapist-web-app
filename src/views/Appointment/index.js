@@ -82,13 +82,24 @@ const Appointment = ({ translate }) => {
   };
 
   const handleDateClick = (info) => {
-    setSelectedDate(moment(info.startStr));
+    const { startStr } = info;
+    if (selectedDate && selectedDate.isSame(startStr, 'day')) {
+      calendarRef.current.getApi().unselect();
+      setSelectedDate(undefined);
+    } else {
+      setSelectedDate(moment(startStr));
+    }
   };
 
   const handleEventClick = (info) => {
-    const calendarApi = calendarRef.current.getApi();
-    calendarApi.select(info.event.startStr);
-    setSelectedDate(moment(info.event.startStr));
+    const { startStr } = info.event;
+    if (selectedDate && selectedDate.isSame(startStr, 'day')) {
+      calendarRef.current.getApi().unselect();
+      setSelectedDate(undefined);
+    } else {
+      calendarRef.current.getApi().select(startStr);
+      setSelectedDate(moment(startStr));
+    }
   };
 
   const handleClose = () => {
@@ -131,18 +142,11 @@ const Appointment = ({ translate }) => {
               click: function () {
                 setShow(true);
               }
-            },
-            clearButton: {
-              text: translate('appointment.clear'),
-              click: function () {
-                calendarRef.current.getApi().unselect();
-                setSelectedDate(undefined);
-              }
             }
           }}
           headerToolbar={{
             left: 'title',
-            right: 'addAppointmentButton clearButton today prev,next'
+            right: 'addAppointmentButton today prev,next'
           }}
         />
         {
@@ -192,9 +196,7 @@ const Appointment = ({ translate }) => {
 
 const renderEventContent = (info) => {
   return (
-    <>
-      <div className="text-center text-truncate">{info.event.title}</div>
-    </>
+    <div className="text-center text-truncate">{info.event.title}</div>
   );
 };
 
