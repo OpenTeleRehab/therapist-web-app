@@ -9,6 +9,13 @@
 	tr.filter th {
 		background-color: theme-color('dark') !important;
 	}
+
+	.rdtPicker th.rdtNext,
+	.rdtPicker th.rdtPrev,
+	.rdtPicker th.rdtSwitch,
+	.rdtPicker .rdtDays th {
+	  background-color: theme-color('light') !important;
+	}
 }
 
 .questionnaire-title {
