@@ -37,7 +37,7 @@ const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDi
 
 const CustomTable = ({
   rows, columns, columnExtensions, pageSize, setPageSize, currentPage,
-  setCurrentPage, totalCount, setSearchValue, setFilters, onRowClick, filters,
+  setCurrentPage, totalCount, setSearchValue, setFilters, onRowClick, hover, filters,
   rightButton, hideSearchFilter, remotePaging, defaultSoringColumns, defaultHiddenColumnNames
 }) => {
   const localize = useSelector((state) => state.localize);
@@ -80,7 +80,7 @@ const CustomTable = ({
       <IntegratedSorting />
       {remotePaging ? <CustomPaging totalCount={totalCount} /> : <IntegratedPaging />}
       {onRowClick
-        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} />} />
+        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} className={hover} />} />
         : <Table columnExtensions={tableColumnExtensions} />
       }
       <TableHeaderRow />
@@ -110,6 +110,7 @@ CustomTable.propTypes = {
   setSearchValue: PropTypes.func,
   setFilters: PropTypes.func,
   onRowClick: PropTypes.func,
+  hover: PropTypes.string,
   filters: PropTypes.array,
   rightButton: PropTypes.object,
   hideSearchFilter: PropTypes.bool,
@@ -125,15 +126,17 @@ CustomTable.defaultProps = {
 
 export default CustomTable;
 
-const TableRow = ({ row, handleClick, ...rest }) => (
+const TableRow = ({ row, handleClick, className, ...rest }) => (
   <Table.Row
     {...rest}
     onClick={() => handleClick(row)}
+    className={className}
     style={{ cursor: 'pointer' }}
   />
 );
 
 TableRow.propTypes = {
   row: PropTypes.object,
-  handleClick: PropTypes.func
+  handleClick: PropTypes.func,
+  className: PropTypes.string
 };
