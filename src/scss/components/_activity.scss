@@ -35,6 +35,44 @@
 .activity-weekend-header-column-background {
 	background-color: $orange;
 }
+
 .material-category-wrapper {
 	margin-bottom: 6%;
+}
+
+.custom-checkbox {
+  svg {
+	stroke-width: 4px;
+  }
+}
+
+.card-remove-btn-wrapper {
+  .btn-circle-sm {
+	border-color: $primary;
+	border-width: 1.5px;
+	color: $primary;
+
+	&:hover {
+	  border-color: $secondary;
+	  background-color: $secondary;
+	  color: $white;
+	}
+
+	svg {
+	  stroke-width: 2px;
+	}
+  }
+}
+
+.custom-checkbox {
+  .custom-checkbox-item {
+	display: flex;
+	flex: 1 1 0%;
+	background-color: $primary;
+	align-self: stretch;
+  }
+
+  &.disabled {
+	opacity: 0.65;
+  }
 }

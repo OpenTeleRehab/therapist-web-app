@@ -32,8 +32,6 @@ import { CATEGORY_TYPES } from 'variables/category';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
 import {
-  CopyAction,
-  EditAction,
   FavoriteAction,
   NonFavoriteAction,
   DeleteAction
@@ -41,6 +39,9 @@ import {
 import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
 import Dialog from 'components/Dialog';
+
+import * as Icon from 'react-icons/fi';
+import Checkbox from 'react-custom-checkbox';
 
 let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials }) => {
@@ -64,6 +65,8 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
   const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+  const [showCopy, setShowCopy] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   const [id, setId] = useState();
   const [show, setShow] = useState(false);
@@ -135,13 +138,25 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
     setCurrentPage(1);
   };
 
-  const handleViewEducationMaterial = (educationMaterial) => {
+  const handleViewEducationMaterial = (id) => {
+    const educationMaterial = educationMaterials.find(educationMaterial => educationMaterial.id === id);
     setViewEducationMaterial(true);
     setEducationMaterial(educationMaterial);
+
+    setId(id);
+    if (!educationMaterial.therapist_id && allowCreateContent) {
+      setShowCopy(true);
+    }
+
+    if (educationMaterial.therapist_id === therapistId) {
+      setShowEdit(true);
+    }
   };
 
   const handleViewEducationMaterialClose = () => {
     setViewEducationMaterial(false);
+    setShowEdit(false);
+    setShowCopy(false);
   };
 
   const handleSetSelectedCategories = (parent, checked) => {
@@ -277,14 +292,23 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                             : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, CATEGORY_TYPES.MATERIAL)} />
                           }
                         </div>
-                        <Form.Check
-                          type="checkbox"
-                          className="action"
+                        <Checkbox
+                          className="mt-1 custom-checkbox"
                           checked={selectedMaterials.includes(material.id)}
-                          onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
+                          onChange={(checked) => onSectionChange(checked, material.id)}
+                          icon={
+                            <div className="custom-checkbox-item">
+                              <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                            </div>
+                          }
+                          borderColor="#0077C8"
+                          borderWidth={1.5}
+                          borderRadius={20}
+                          style={{ overflow: 'hidden' }}
+                          size={20}
                         />
                       </div>
-                      <div className="card-container" onClick={() => handleViewEducationMaterial(material)}>
+                      <div className="card-container" onClick={() => handleViewEducationMaterial(material.id)}>
                         <div className="card-img bg-light">
                           <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
                             <MdDescription size={80} />
@@ -320,20 +344,10 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                           </Card.Text>
                         </Card.Body>
                       </div>
-                      <div className="top-bar">
+                      <div className="d-flex justify-content-end">
                         {therapistId === material.therapist_id && (
-                          <div className="edit-btn">
-                            <EditAction onClick={() => handleEdit(material.id)} />
-                          </div>
-                        )}
-                        {therapistId === material.therapist_id && (
-                          <div className="edit-btn">
+                          <div className="delete-btn">
                             <DeleteAction className="ml-1" onClick={() => handleDelete(material.id)} disabled={material.is_used} />
-                          </div>
-                        )}
-                        {!material.therapist_id && allowCreateContent && (
-                          <div className="edit-btn">
-                            <CopyAction onClick={() => handleCopy(material.id)} />
                           </div>
                         )}
                       </div>
@@ -353,7 +367,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
             </>
           )}
           { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
-          { viewEducationMaterial && <ViewEducationMaterial showView={viewEducationMaterial} handleViewClose={handleViewEducationMaterialClose} educationMaterial={educationMaterial} />}
+          { viewEducationMaterial && <ViewEducationMaterial showView={viewEducationMaterial} handleViewClose={handleViewEducationMaterialClose} educationMaterial={educationMaterial} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
         </Col>
       </Row>
       <Dialog

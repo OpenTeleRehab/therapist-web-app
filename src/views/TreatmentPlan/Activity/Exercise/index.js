@@ -23,6 +23,9 @@ import {
   BsSquare, BsPersonFill
 } from 'react-icons/bs';
 
+import * as Icon from 'react-icons/fi';
+import Checkbox from 'react-custom-checkbox';
+
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
@@ -254,13 +257,42 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                             : <BsHeart size={20} />
                           }
                         </div>
-                        <Form.Check
-                          type="checkbox"
-                          className="action"
-                          checked={selectedExercises.includes(exercise.id)}
-                          onChange={(e) => { onSectionChange(e.currentTarget.checked, exercise.id); setShowPreview(true); }}
-                          disabled={oldSelectedExercises.includes(exercise.id) && !isOwnCreated}
-                        />
+                        {oldSelectedExercises.includes(exercise.id) && !isOwnCreated ? (
+                          <Checkbox
+                            className="mt-1 custom-checkbox float-right disabled"
+                            checked={selectedExercises.includes(exercise.id)}
+                            onChange={(checked) => { onSectionChange(checked, exercise.id); setShowPreview(true); }}
+                            disabled={oldSelectedExercises.includes(exercise.id) && !isOwnCreated}
+                            icon={
+                              <div className="custom-checkbox-item">
+                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                              </div>
+                            }
+                            borderColor="#0077C8"
+                            borderWidth={1.5}
+                            borderRadius={20}
+                            style={{ overflow: 'hidden' }}
+                            size={20}
+                          />
+                        ) : (
+                          <Checkbox
+                            className="mt-1 custom-checkbox float-right"
+                            checked={selectedExercises.includes(exercise.id)}
+                            onChange={(checked) => { onSectionChange(checked, exercise.id); setShowPreview(true); }}
+                            disabled={oldSelectedExercises.includes(exercise.id) && !isOwnCreated}
+                            icon={
+                              <div className="custom-checkbox-item">
+                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                              </div>
+                            }
+                            borderColor="#0077C8"
+                            borderWidth={1.5}
+                            borderRadius={20}
+                            style={{ overflow: 'hidden' }}
+                            size={20}
+                          />
+                        )
+                        }
                       </div>
                       <div className="card-container" onClick={() => handleView(exercise)}>
                         <div className="card-img bg-light">

@@ -23,6 +23,9 @@ import {
   BsSquare, BsPersonFill
 } from 'react-icons/bs';
 
+import * as Icon from 'react-icons/fi';
+import Checkbox from 'react-custom-checkbox';
+
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 
@@ -256,13 +259,48 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                             : <BsHeart size={20} />
                           }
                         </div>
-                        <Form.Check
-                          type="checkbox"
-                          className="float-right action"
-                          checked={selectedMaterials.includes(material.id)}
-                          onChange={(e) => { onSectionChange(e.currentTarget.checked, material.id); setShowPreview(true); }}
-                          disabled={oldSelectedMaterials.includes(material.id) && !isOwnCreated}
-                        />
+                        {oldSelectedMaterials.includes(material.id) && !isOwnCreated ? (
+                          <Checkbox
+                            className="mt-1 custom-checkbox float-right disabled"
+                            checked={selectedMaterials.includes(material.id)}
+                            onChange={(checked) => { onSectionChange(checked, material.id); setShowPreview(true); }}
+                            disabled={oldSelectedMaterials.includes(material.id) && !isOwnCreated}
+                            icon={
+                              <div className="custom-checkbox-item">
+                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                              </div>
+                            }
+                            borderColor="#0077C8"
+                            borderWidth={1.5}
+                            borderRadius={20}
+                            style={{ overflow: 'hidden' }}
+                            size={20}
+                          />
+                        ) : (
+                          <Checkbox
+                            className="mt-1 custom-checkbox float-right"
+                            checked={selectedMaterials.includes(material.id)}
+                            onChange={(checked) => { onSectionChange(checked, material.id); setShowPreview(true); }}
+                            disabled={oldSelectedMaterials.includes(material.id) && !isOwnCreated}
+                            icon={
+                              <div
+                                style={{
+                                  display: 'flex',
+                                  flex: 1,
+                                  backgroundColor: '#0077C8',
+                                  alignSelf: 'stretch'
+                                }}>
+                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
+                              </div>
+                            }
+                            borderColor="#0077C8"
+                            borderWidth={1.5}
+                            borderRadius={20}
+                            style={{ overflow: 'hidden' }}
+                            size={20}
+                          />
+                        )
+                        }
                       </div>
                       <div className="card-container" onClick={() => handleViewEducationMaterial(material)}>
                         <div className="card-img bg-light">

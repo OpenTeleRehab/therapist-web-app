@@ -13,6 +13,10 @@ const Dialog = (props) => {
     confirmLabel,
     disabledConfirmButton,
     children,
+    onCopy,
+    onEdit,
+    copyLabel,
+    editLabel,
     ...rest
   } = props;
 
@@ -37,6 +41,16 @@ const Dialog = (props) => {
             {confirmLabel}
           </Button>
         }
+        {onCopy &&
+          <Button variant="outline-dark" onClick={onCopy}>
+            {copyLabel}
+          </Button>
+        }
+        {onEdit &&
+          <Button variant="outline-dark" onClick={onEdit} >
+            {editLabel}
+          </Button>
+        }
         <Button variant="outline-dark" onClick={onCancel}>
           {cancelLabel}
         </Button>
@@ -53,12 +67,19 @@ Dialog.propTypes = {
   confirmLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   cancelLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   children: PropTypes.oneOfType([PropTypes.func, PropTypes.node]),
-  disabledConfirmButton: PropTypes.bool
+  disabledConfirmButton: PropTypes.bool,
+  onCopy: PropTypes.func,
+  onEdit: PropTypes.func,
+  copyLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  editLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node])
+
 };
 
 Dialog.defaultProps = {
   confirmLabel: <Translate id="common.create"/>,
   cancelLabel: <Translate id="common.cancel"/>,
+  copyLabel: <Translate id="common.copy"/>,
+  editLabel: <Translate id="common.edit"/>,
   disabledConfirmButton: false
 };
 

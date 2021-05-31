@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { Accordion, AccordionContext, Card, Form } from 'react-bootstrap';
 import { BsChevronDown, BsChevronRight } from 'react-icons/bs';
 
-const ViewQuestionnaire = ({ show, handleClose, questionnaire }) => {
+const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handleEdit, showEdit, showCopy }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -18,6 +18,8 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire }) => {
       onCancel={handleClose}
       cancelLabel={translate('common.close')}
       className="mt-3"
+      onEdit={showEdit ? () => handleEdit(questionnaire.id) : null}
+      onCopy={showCopy ? () => handleCopy(questionnaire.id) : null}
     >
       <div className="d-flex flex-column mb-2">
         <span className="font-weight-bold">{translate('questionnaire.description')}</span>
@@ -107,7 +109,11 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire }) => {
 ViewQuestionnaire.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
-  questionnaire: PropTypes.array
+  questionnaire: PropTypes.array,
+  showCopy: PropTypes.bool,
+  showEdit: PropTypes.bool,
+  handleCopy: PropTypes.func,
+  handleEdit: PropTypes.func
 };
 
 export default ViewQuestionnaire;

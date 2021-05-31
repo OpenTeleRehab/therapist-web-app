@@ -9892,6 +9892,11 @@ react-checkbox-tree@^1.6.0:
     nanoid "^2.0.0"
     prop-types "^15.5.8"
 
+react-custom-checkbox@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/react-custom-checkbox/-/react-custom-checkbox-1.0.7.tgz#cf2b7ed054a93ea7b567c6147fb2003e8a59e720"
+  integrity sha512-2gcYly2He5pLWlC9IWXglwenQkWPfZxaomskhbOSy55llP9sYe88gWCl7iGEd5bIkhDCD6eVf7aUNu1eLcLh8Q==
+
 react-datetime@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-datetime/-/react-datetime-3.0.4.tgz#176159d08d35c9e750f0be2f0b974e4f9532ffa5"
