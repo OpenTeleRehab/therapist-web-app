@@ -18,8 +18,8 @@ const CollapseToggle = ({ title, eventKey }) => {
         <div className="button-wrapper">
           <Button variant="outline-primary" className="btn-circle" onClick={handleOnClick}>
             {currentEventKey === eventKey
-              ? <BsChevronUp size={15} />
-              : <BsChevronDown size={15} />
+              ? <BsChevronUp size={14} />
+              : <BsChevronDown size={14} />
             }
           </Button>
         </div>

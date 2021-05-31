@@ -1,33 +1,60 @@
-.btn-circle {
-	background-color: $white;
-	width: 30px;
-	height: 30px;
-	padding: 0;
-	line-height: 0;
-	border-radius: 15px;
-	border: 2px solid $gray-500;
+.btn {
+	&-circle {
+		background-color: $white;
+		width: 30px;
+		height: 30px;
+		padding: 0;
+		line-height: 0;
+		border-radius: 15px;
+		border: 1px solid $gray-500;
 
-	&-sm {
-		@extend .btn-circle;
-		width: 20px;
-		height: 20px;
-		border-radius: 10px;
+		&-sm {
+			@extend .btn-circle;
+			width: 20px;
+			height: 20px;
+		}
+
+		&-lg {
+			width: 40px;
+			height: 40px;
+		}
+
+		&-sm,
+		&-lg {
+			@include border-radius(100%);
+		}
+
+		&-primary {
+			background-color: $white;
+			border-color: $primary;
+
+			&:hover,
+			&:focus,
+			&:active {
+				border-color: $secondary;
+				background-color: $secondary;
+			}
+		}
 	}
 
-	&-lg {
-		width: 40px;
-		height: 40px;
-		border-radius: 20px;
+	&-light-blue {
+		background-color: $blue-light;
+		padding: 0;
 	}
-}
 
-.btn-light-blue {
-  background-color: $blue-light;
-  padding: 0;
-}
+	&-in-btn {
+		position: absolute;
+		top: -10px;
+		right: -10px;
+	}
 
-.btn-in-btn {
-	position: absolute;
-	top: -10px;
-	right: -10px;
+	&:hover,
+	&:focus,
+	&:active {
+		.center-icon {
+			border-color: $secondary;
+			background-color: $secondary;
+			color: $white;
+		}
+	}
 }

@@ -100,11 +100,11 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                   <div className="card-remove-btn-wrapper">
                     {isOwnCreated && !readOnly ? (
                       <Button
-                        className="btn-circle-sm m-1"
-                        variant="primary"
+                        className="btn-circle-sm btn-circle-primary m-1"
+                        variant="outline-primary"
                         onClick={() => onSelectionRemove(exercise.id)}
                       >
-                        <BsX size={15} />
+                        <BsX size={14} />
                       </Button>
                     ) : (
                       <>
@@ -114,7 +114,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                           variant="primary"
                           onClick={() => onSelectionRemove(exercise.id)}
                         >
-                          <BsX size={15} />
+                          <BsX size={14} />
                         </Button>
                         }
                       </>
