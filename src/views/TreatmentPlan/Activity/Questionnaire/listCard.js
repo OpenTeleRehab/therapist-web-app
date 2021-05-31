@@ -88,7 +88,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
                         variant="primary"
                         onClick={() => onSelectionRemove(questionnaire.id)}
                       >
-                        <BsX size={15} />
+                        <BsX size={14} />
                       </Button>
                     ) : (
                       <>
@@ -98,7 +98,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
                           variant="primary"
                           onClick={() => onSelectionRemove(questionnaire.id)}
                         >
-                          <BsX size={15} />
+                          <BsX size={14} />
                         </Button>
                         }
                       </>

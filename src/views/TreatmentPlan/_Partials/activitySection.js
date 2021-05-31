@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { BsPlus, BsX, BsXCircle } from 'react-icons/bs';
+import { BsPlus, BsX } from 'react-icons/bs';
+import { RiDeleteBin5Line } from 'react-icons/ri';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import moment from 'moment';
@@ -94,21 +95,21 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           </Button>
           {i !== 1 && !readOnly && isOwnCreated ? (
             <Button
-              className="btn-circle-sm btn-in-btn"
-              variant="light"
+              className="btn-circle-sm btn-in-btn btn-circle-primary"
+              variant="outline-primary"
               onClick={() => handleRemoveWeek(i)}
             >
-              <BsX size={15} />
+              <BsX size={12} />
             </Button>
           ) : (
             <>
               {!readOnly && newWeeks.includes(i) &&
                 <Button
-                  className="btn-circle-sm btn-in-btn"
-                  variant="light"
+                  className="btn-circle-sm btn-in-btn btn-circle-primary"
+                  variant="outline-primary"
                   onClick={() => handleRemoveWeek(i)}
                 >
-                  <BsX size={15} />
+                  <BsX size={16} />
                 </Button>
               }
             </>
@@ -224,20 +225,20 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
                 {(isOwnCreated || isPreset) &&
                   <Button
                     variant="link"
-                    className="text-muted p-0"
+                    size="sm"
+                    className="p-0"
                     onClick={() => handleClearDayActivity(dayActivity)}
                   >
-                    <BsXCircle size={20} className="mr-1" />
-                    {translate('common.clear_all')}
+                    <RiDeleteBin5Line size={16} /> {translate('common.clear_all')}
                   </Button>
                 }
                 <Button
                   variant="link"
+                  size="sm"
                   className="p-0"
                   onClick={() => handleCopyDayActivity(dayActivity)}
                 >
-                  <BiCopyAlt size={20} className="mr-1" />
-                  {translate('common.copy_all')}
+                  <BiCopyAlt size={16} /> {translate('common.copy_all')}
                 </Button>
               </div>
             }
@@ -245,13 +246,13 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
             <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
 
-            <div className="text-center">
+            <div className="d-flex justify-content-center">
               {!readOnly && <Button
                 variant="outline-primary"
-                className="btn-circle-lg m-3"
+                className="d-flex justify-content-center align-items-center btn-circle-lg btn-circle-primary m-3"
                 onClick={() => handleAddActivity(i + 1)}
               >
-                <BsPlus size={15} />
+                <span><BsPlus size={24} /></span>
               </Button>
               }
             </div>
@@ -270,10 +271,10 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           {weekElements()}
           {!readOnly && <Button
             variant="outline-primary"
-            className="btn-circle"
+            className="btn-circle btn-circle-primary"
             onClick={handleAddWeek}
           >
-            <BsPlus size={15} />
+            <BsPlus size={16} />
           </Button>
           }
         </div>

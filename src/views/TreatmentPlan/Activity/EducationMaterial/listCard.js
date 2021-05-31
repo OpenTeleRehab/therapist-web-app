@@ -95,7 +95,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                         variant="primary"
                         onClick={() => onSelectionRemove(material.id)}
                       >
-                        <BsX size={15} />
+                        <BsX size={14} />
                       </Button>
                     ) : (
                       <>
@@ -105,7 +105,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                           variant="primary"
                           onClick={() => onSelectionRemove(material.id)}
                         >
-                          <BsX size={15} />
+                          <BsX size={14} />
                         </Button>
                         }
                       </>
