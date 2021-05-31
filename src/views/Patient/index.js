@@ -110,6 +110,7 @@ const Patient = () => {
         columnExtensions={columnExtensions}
         defaultHiddenColumnNames={defaultHiddenColumnNames}
         onRowClick={handleRowClick}
+        hover="hover-primary"
         rows={users.map(user => {
           return {
             id: user.id,
