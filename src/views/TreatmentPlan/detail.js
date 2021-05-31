@@ -68,7 +68,7 @@ const ViewTreatmentPlan = () => {
     if (id && !_.isEmpty(treatmentPlansDetail)) {
       setFormFields({
         name: treatmentPlansDetail.name,
-        description: treatmentPlansDetail.description,
+        description: treatmentPlansDetail.description || '',
         patient_id: treatmentPlansDetail.patient_id,
         start_date: moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format),
         end_date: moment(treatmentPlansDetail.end_date, settings.date_format).format(settings.date_format),
@@ -180,13 +180,7 @@ const ViewTreatmentPlan = () => {
               </OverlayTrigger>
             </span>
             <span className="mr-4"><strong>{translate('common.start_date')}:</strong> {formFields.start_date}</span>
-            <span className="mr-4"><strong>{translate('common.end_date')}:</strong> {formFields.end_date}</span>
-            <span className="mr-4"><strong>{translate('common.duration')}:</strong>&nbsp;
-              {weeks}&nbsp;
-              {
-                weeks === 1 ? translate('common.week') : translate('common.weeks')
-              }
-            </span>
+            <span className="mr-4"><strong>{translate('common.end_date')}:</strong> {formFields.end_date ? formFields.end_date : formFields.start_date}</span>
           </div>
         )}
       </div>

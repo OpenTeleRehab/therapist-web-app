@@ -19,6 +19,7 @@ import { getUsers } from '../../store/user/actions';
 import Dialog from '../../components/Dialog';
 import _ from 'lodash';
 import * as ROUTES from '../../variables/routes';
+import { getLastActivityDate } from '../../utils/treatmentPlan';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -222,6 +223,8 @@ const CreateTreatmentPlan = () => {
     }
 
     if (canSave) {
+      formFields.end_date = getLastActivityDate(formFields.start_date, activities);
+
       if (id && patientId) {
         dispatch(updateTreatmentPlan(id, {
           ...formFields,
