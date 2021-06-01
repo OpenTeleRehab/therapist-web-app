@@ -10,6 +10,8 @@ import Datetime from 'components/DateTime';
 import moment from 'moment';
 import settings from 'settings';
 import { createAppointment, updateAppointment } from 'store/appointment/actions';
+import Select from 'react-select';
+import scssColors from '../../../scss/custom.scss';
 
 const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedDate }) => {
   const dispatch = useDispatch();
@@ -163,6 +165,17 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
     }
   };
 
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
+  };
+
   return (
     <Dialog
       show={show}
@@ -175,21 +188,17 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
         <Form.Group controlId="groupTitle">
           <Form.Label>{translate('appointment.patient')}</Form.Label>
           <span className="text-dark ml-1">*</span>
-          <Form.Control
-            as="select"
-            name="patient_id"
-            onChange={(e) => setPatientId(e.target.value)}
-            value={patientId}
-            isInvalid={errorPatient}
-            disabled={editId || selectedPatientId}
-          >
-            <option>{translate('placeholder.patient')}</option>
-            {users.map(patient => (
-              <option key={patient.id} value={patient.id}>
-                {patient.last_name} {patient.first_name}
-              </option>
-            ))}
-          </Form.Control>
+          <Select
+            isDisabled={editId || selectedPatientId}
+            placeholder={translate('placeholder.patient')}
+            classNamePrefix="filter"
+            className={errorPatient ? 'is-invalid' : ''}
+            value={users.filter(option => option.id === patientId)}
+            getOptionLabel={option => `${option.last_name} ${option.first_name}`}
+            options={users}
+            onChange={(e) => setPatientId(e.id)}
+            styles={customSelectStyles}
+          />
           {errorPatient && (
             <Form.Control.Feedback type="invalid" className="d-block">
               {translate('error_message.appointment_patient_required')}

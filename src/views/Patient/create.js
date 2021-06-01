@@ -179,6 +179,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     return current.isBefore(moment());
   };
 
+  const handleSingleSelectChange = (key, value) => {
+    setFormFields({ ...formFields, [key]: value });
+  };
+
   const handleMultipleSelectChange = e => {
     setSelectedTherapists(Array.isArray(e) ? e.map(x => x.value) : []);
   };
@@ -307,36 +311,26 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         <Form.Row>
           <Form.Group as={Col} controlId="formCountry">
             <Form.Label>{translate('common.country')}</Form.Label>
-            <Form.Control
-              name="country_id"
-              onChange={handleChange}
+            <Select
               value={formFields.country_id}
-              placeholder={translate('placeholder.country')}
-              isInvalid={errorCountry}
-              as="select"
-              disabled="disabled"
-            >
-              { profile !== undefined && (
-                <option value={profile.country_id}>{getCountryName(profile.country_id, countries)}</option>)}
-            </Form.Control>
+              placeholder={getCountryName(profile.country_id, countries)}
+              classNamePrefix="filter"
+              className={errorCountry ? 'is-invalid' : ''}
+              isDisabled={true}
+            />
             <Form.Control.Feedback type="invalid">
               {translate('error.country')}
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group as={Col} controlId="formClinic">
             <Form.Label>{translate('common.clinic')}</Form.Label>
-            <Form.Control
-              name="clinic_id"
-              onChange={handleChange}
+            <Select
               value={formFields.clinic_id}
-              placeholder={translate('placeholder.clinic')}
-              isInvalid={errorClinic}
-              as="select"
-              disabled="disabled"
-            >
-              { profile !== undefined && (
-                <option value={profile.clinic_id}>{getClinicName(profile.clinic_id, clinics)}</option>)}
-            </Form.Control>
+              placeholder={getClinicName(profile.clinic_id, clinics)}
+              classNamePrefix="filter"
+              className={errorClinic ? 'is-invalid' : ''}
+              isDisabled={true}
+            />
             <Form.Control.Feedback type="invalid">
               {translate('error.clinic')}
             </Form.Control.Feedback>
@@ -346,19 +340,14 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           <Form.Group as={Col} controlId="formGender">
             <Form.Label>{translate('common.gender')}</Form.Label>
             <span className="text-dark ml-1">*</span>
-            <Form.Control
-              name="gender"
-              onChange={handleChange}
-              value={formFields.gender}
-              placeholder={translate('placeholder.gender')}
-              isInvalid={errorGender}
-              as="select"
-            >
-              <option value="">{translate('placeholder.gender')}</option>
-              {settings.genders.options.map((gender, index) => (
-                <option key={index} value={gender.value}>{gender.text}</option>
-              ))}
-            </Form.Control>
+            <Select
+              classNamePrefix="filter"
+              value={settings.genders.options.filter(option => option.value === formFields.gender)}
+              getOptionLabel={option => option.text}
+              options={settings.genders.options}
+              className={errorGender ? 'is-invalid' : ''}
+              onChange={(e) => handleSingleSelectChange('gender', e.value)}
+            />
             <Form.Control.Feedback type="invalid">
               {translate('error.gender')}
             </Form.Control.Feedback>

@@ -42,6 +42,8 @@ import Dialog from 'components/Dialog';
 
 import * as Icon from 'react-icons/fi';
 import Checkbox from 'react-custom-checkbox';
+import Select from 'react-select';
+import scssColors from '../../../scss/custom.scss';
 
 let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials }) => {
@@ -127,11 +129,6 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
     setCurrentPage(1);
   };
 
-  const handleLanguageChange = e => {
-    const { value } = e.target;
-    setLanguage(value);
-  };
-
   const handleCheckBoxChange = e => {
     const { name, checked } = e.target;
     setFormFields({ ...formFields, [name]: checked });
@@ -190,6 +187,17 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
     });
   };
 
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
+  };
+
   return (
     <>
       <Row>
@@ -226,13 +234,14 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
               </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
-                <Form.Control as="select" value={language} onChange={handleLanguageChange}>
-                  {languages.map((language, index) => (
-                    <option key={index} value={language.id}>
-                      {language.name}
-                    </option>
-                  ))}
-                </Form.Control>
+                <Select
+                  classNamePrefix="filter"
+                  value={languages.filter(option => option.id === language)}
+                  getOptionLabel={option => option.name}
+                  options={languages}
+                  onChange={(e) => setLanguage(e.id)}
+                  styles={customSelectStyles}
+                />
               </Form.Group>
               <Accordion>
                 {

@@ -8,6 +8,8 @@ import { FaGlobe } from 'react-icons/fa';
 
 import { getCountryName } from 'utils/country';
 import { getClinicName } from 'utils/clinic';
+import Select from 'react-select';
+import scssColors from '../../../scss/custom.scss';
 
 const Edition = () => {
   const clinics = useSelector(state => state.clinic.clinics);
@@ -79,6 +81,21 @@ const Edition = () => {
     return React.Fragment;
   }
 
+  const handleSingleSelectChange = (key, value) => {
+    setFormFields({ ...formFields, [key]: value });
+  };
+
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
+  };
+
   return (
     <Form className="my-4">
       <Form.Row>
@@ -124,60 +141,63 @@ const Edition = () => {
             <FaGlobe className="mr-1" />
             {translate('common.language')}
           </Form.Label>
-          <Form.Control
-            name="language_id"
-            as="select"
-            onChange={handleChange}
-            value={formFields.language_id}
-          >
-            <option value="">{translate('placeholder.language')}</option>
-            {languages.map((language, index) => (
-              <option key={index} value={language.id}>{language.name}</option>
-            ))}
-          </Form.Control>
+          <Select
+            placeholder={translate('placeholder.language')}
+            classNamePrefix="filter"
+            value={languages.filter(option => option.id === formFields.language_id)}
+            getOptionLabel={option => option.name}
+            options={[
+              { id: '', name: translate('placeholder.language') },
+              ...languages
+            ]}
+            onChange={(e) => handleSingleSelectChange('language_id', e.id)}
+            styles={customSelectStyles}
+          />
         </Form.Group>
       </Form.Row>
 
       <Form.Row>
         <Form.Group className="col-sm-4 md-4" controlId="formProfession">
           <Form.Label>{translate('common.profession')}</Form.Label>
-          <Form.Control
-            name="profession_id"
-            as="select"
-            onChange={handleChange}
-            value={formFields.profession_id}
-          >
-            <option value="">{translate('placeholder.profession')}</option>
-            {professions.map((profession, index) => (
-              <option key={index} value={profession.id}>{profession.name}</option>
-            ))}
-          </Form.Control>
+          <Select
+            placeholder={translate('placeholder.profession')}
+            classNamePrefix="filter"
+            value={professions.filter(option => option.id === formFields.profession_id)}
+            getOptionLabel={option => option.name}
+            options={[
+              {
+                id: '',
+                name: translate('placeholder.profession')
+              },
+              ...professions
+            ]}
+            onChange={(e) => handleSingleSelectChange('profession_id', e.id)}
+            styles={customSelectStyles}
+          />
         </Form.Group>
       </Form.Row>
 
       <Form.Row>
         <Form.Group className="col-sm-4 md-4" controlId="formCountry">
           <Form.Label>{translate('common.country')}</Form.Label>
-          <Form.Control
-            name="country_id"
-            as="select"
-            disabled
-          >
-            <option value={profile.country_id}>{getCountryName(profile.country_id, countries)}</option>
-          </Form.Control>
+          <Select
+            value={formFields.country_id}
+            placeholder={getCountryName(profile.country_id, countries)}
+            classNamePrefix="filter"
+            isDisabled={true}
+          />
         </Form.Group>
       </Form.Row>
 
       <Form.Row>
         <Form.Group className="col-sm-4 md-4" controlId="formClinic">
           <Form.Label>{translate('common.clinic')}</Form.Label>
-          <Form.Control
-            name="hospital_id"
-            as="select"
-            disabled
-          >
-            <option value={profile.clinic_id}>{getClinicName(profile.clinic_id, clinics)}</option>
-          </Form.Control>
+          <Select
+            value={formFields.clinic_id}
+            placeholder={getClinicName(profile.clinic_id, clinics)}
+            classNamePrefix="filter"
+            isDisabled={true}
+          />
         </Form.Group>
       </Form.Row>
 

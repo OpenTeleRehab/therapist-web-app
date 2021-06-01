@@ -23,6 +23,8 @@ import { FaRegCheckSquare } from 'react-icons/fa';
 import CheckboxTree from 'react-checkbox-tree';
 import _ from 'lodash';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
+import Select from 'react-select';
+import scssColors from '../../../scss/custom.scss';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
@@ -108,11 +110,6 @@ const CreateEducationMaterial = ({ translate }) => {
     // eslint-disable-next-line
   }, [id, educationMaterial, categoryTreeData]);
 
-  const handleLanguageChange = e => {
-    const { value } = e.target;
-    setLanguage(value);
-  };
-
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
@@ -185,6 +182,17 @@ const CreateEducationMaterial = ({ translate }) => {
     setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
   };
 
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -196,13 +204,15 @@ const CreateEducationMaterial = ({ translate }) => {
           <Col sm={12} xl={11}>
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
-              <Form.Control as="select" value={id ? language : ''} onChange={handleLanguageChange} disabled={!id}>
-                {languages.map((language, index) => (
-                  <option key={index} value={language.id}>
-                    {language.name}
-                  </option>
-                ))}
-              </Form.Control>
+              <Select
+                isDisabled={!id}
+                classNamePrefix="filter"
+                value={languages.filter(option => option.id === language)}
+                getOptionLabel={option => option.name}
+                options={languages}
+                onChange={(e) => setLanguage(e.id)}
+                styles={customSelectStyles}
+              />
             </Form.Group>
             <Form.Group controlId="formTitle">
               <Form.Label>{translate('education_material.title')}</Form.Label>

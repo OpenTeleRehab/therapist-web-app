@@ -19,6 +19,7 @@ $gray-900: #333333;
 $primary: $blue;
 $secondary: #06038D;
 $info: #99C9E9;
+$info-light: #DEE7FF;
 $danger: $red;
 $light: #EBEBEB;
 $dark: #5C5C5C;
@@ -31,6 +32,7 @@ $theme-colors: (
 	"secondary": $secondary,
 	"success": $green,
 	"info": $info,
+	"info-light": $info-light,
 	"danger": $danger,
 	"light": $light,
 	"dark": $dark,
@@ -46,6 +48,7 @@ $theme-colors: (
 	info: $info;
 	danger: $danger;
 	orange: $orange;
+	infoLight: $info-light;
 };
 
 // Toasts
