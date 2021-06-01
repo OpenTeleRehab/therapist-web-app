@@ -25,6 +25,7 @@ import { setting } from 'store/setting/reducers';
 import { profession } from 'store/profession/reducers';
 import { therapist } from 'store/therapist/reducers';
 import { staticPage } from 'store/staticPage/reducers';
+import { guidance } from 'store/guidance/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -46,7 +47,8 @@ export const rootReducer = {
   setting,
   profession,
   therapist,
-  staticPage
+  staticPage,
+  guidance
 };
 
 const devTool =
