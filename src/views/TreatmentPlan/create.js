@@ -249,7 +249,9 @@ const CreateTreatmentPlan = () => {
           therapist_id: profile.id
         }))
           .then(result => {
-            if (result && (patientId || activity)) {
+            if (result && !patientId) {
+              history.goBack();
+            } else if (result && (patientId || activity)) {
               history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', patientId));
             }
           });
