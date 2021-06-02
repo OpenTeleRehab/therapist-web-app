@@ -1,0 +1,15 @@
+.filter {
+	&__menu {
+		z-index: 999 !important;
+	}
+}
+
+.is-invalid {
+	.filter__control {
+		border-color: $danger;
+
+		&:hover {
+			border-color: $danger;
+		}
+	}
+}

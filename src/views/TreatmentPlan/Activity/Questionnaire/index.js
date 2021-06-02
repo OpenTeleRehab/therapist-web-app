@@ -37,6 +37,8 @@ import CheckboxTree from 'react-checkbox-tree';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import { FaRegCheckSquare } from 'react-icons/fa';
 import _ from 'lodash';
+import scssColors from '../../../../scss/custom.scss';
+import Select from 'react-select';
 
 let timer = null;
 const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, viewQuestionnaire, setViewQuestionnaire, setShowPreview, isOwnCreated, oldSelectedQuestionnaires }) => {
@@ -122,11 +124,6 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
     setCurrentPage(1);
   };
 
-  const handleLanguageChange = e => {
-    const { value } = e.target;
-    setLanguage(value);
-  };
-
   const handleCheckBoxChange = e => {
     const { name, checked } = e.target;
     setFormFields({ ...formFields, [name]: checked });
@@ -145,6 +142,17 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
   const handleSetSelectedCategories = (parent, checked) => {
     setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });
     setCurrentPage(1);
+  };
+
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
   };
 
   return (
@@ -192,13 +200,14 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
               </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
-                <Form.Control as="select" value={language} onChange={handleLanguageChange}>
-                  {languages.map((language, index) => (
-                    <option key={index} value={language.id}>
-                      {language.name}
-                    </option>
-                  ))}
-                </Form.Control>
+                <Select
+                  classNamePrefix="filter"
+                  value={languages.filter(option => option.id === language)}
+                  getOptionLabel={option => option.name}
+                  options={languages}
+                  onChange={(e) => setLanguage(e.id)}
+                  styles={customSelectStyles}
+                />
               </Form.Group>
               <Accordion>
                 {

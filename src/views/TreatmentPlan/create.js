@@ -20,6 +20,8 @@ import Dialog from '../../components/Dialog';
 import _ from 'lodash';
 import * as ROUTES from '../../variables/routes';
 import { getLastActivityDate } from '../../utils/treatmentPlan';
+import Select from 'react-select';
+import scssColors from '../../scss/custom.scss';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -146,6 +148,10 @@ const CreateTreatmentPlan = () => {
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleSingleSelectChange = (key, value) => {
+    setFormFields({ ...formFields, [key]: value });
   };
 
   const handleSaveAsPreset = () => {
@@ -275,6 +281,17 @@ const CreateTreatmentPlan = () => {
     setShow(false);
   };
 
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
+  };
+
   return (
     <>
       {patientId && (
@@ -315,20 +332,15 @@ const CreateTreatmentPlan = () => {
               <Form.Group>
                 <Form.Label>{translate('treatment_plan.patient')}</Form.Label>
                 <span className="text-dark ml-1">*</span>
-                <Form.Control
-                  as="select"
-                  name="patient_id"
-                  onChange={handleChange}
-                  value={formFields.patient_id}
-                  disabled={patientId}
-                >
-                  <option>{translate('placeholder.patient')}</option>
-                  {users.map(patient => (
-                    <option key={patient.id} value={patient.id}>
-                      {patient.last_name} {patient.first_name}
-                    </option>
-                  ))}
-                </Form.Control>
+                <Select
+                  isDisabled={patientId}
+                  classNamePrefix="filter"
+                  value={users.filter(option => option.id === parseInt(formFields.patient_id))}
+                  getOptionLabel={option => `${option.last_name} ${option.first_name}`}
+                  options={users}
+                  onChange={(e) => handleSingleSelectChange('patient_id', e.id)}
+                  styles={customSelectStyles}
+                />
                 {errorPatient && (
                   <Form.Control.Feedback type="invalid" className="d-block">
                     {translate('error_message.treatment_plan_patient_required')}
