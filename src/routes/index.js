@@ -16,6 +16,7 @@ import ViewPatient from 'views/Patient/viewPatient';
 import ViewTreatmentPlan from 'views/TreatmentPlan/detail';
 import NotFoundPage from 'views/NotFound';
 import ChatOrCall from 'views/ChatOrCall';
+import faqPage from 'views/Faq';
 
 import CreateExercise from 'views/Library/Exercise/create';
 import CreateEducationMaterial from 'views/Library/EducationMaterial/create';
@@ -128,6 +129,13 @@ const routes = [
     title: 'profile',
     path: ROUTES.PROFILE,
     component: Profile,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'faq',
+    path: ROUTES.FAQ,
+    component: faqPage,
     exact: true,
     type: PRIVATE
   },
