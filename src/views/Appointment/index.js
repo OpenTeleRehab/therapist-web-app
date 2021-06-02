@@ -2,10 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { Col, Row, Tabs, Tab, Badge } from 'react-bootstrap';
+import { Col, Row, Tabs, Tab } from 'react-bootstrap';
 import List from './Partials/list';
-import Request from './Partials/request';
-import Cancellation from './Partials/cancellation';
 import { getAppointments } from 'store/appointment/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -117,12 +115,6 @@ const Appointment = ({ translate }) => {
     setShow(true);
   };
 
-  const handleApprove = (id, patientId) => {
-    setSelectedPatientId(patientId);
-    setEditId(id);
-    setShow(true);
-  };
-
   return (
     <Row>
       <Col sm={12} xl={7}>
@@ -167,30 +159,6 @@ const Appointment = ({ translate }) => {
         <Tabs defaultActiveKey="list" id="uncontrolled-tab-example">
           <Tab eventKey="list" title={translate('appointment.appointment_list')}>
             <List handleEdit={handleEdit} selectedDate={selectedDate} date={date} />
-          </Tab>
-          <Tab
-            eventKey="request"
-            title={
-              <div className="d-flex align-items-center">
-                <span>{ translate('appointment.request_for_appointment')} </span>
-                {!!(appointments.requests && appointments.requests.length) &&
-                  <Badge variant="danger" className="circle d-md-block ml-2">{appointments.requests.length}</Badge>
-                }
-              </div>
-            }>
-            <Request handleApprove={handleApprove} selectedDate={selectedDate} date={date} />
-          </Tab>
-          <Tab
-            eventKey="cancel"
-            title={
-              <div className="d-flex align-items-center">
-                <span>{ translate('appointment.cancellation')} </span>
-                {!!(appointments.cancelRequests && appointments.cancelRequests.length) &&
-                  <Badge variant="danger" className="circle d-md-block ml-2">{appointments.cancelRequests.length}</Badge>
-                }
-              </div>
-            }>
-            <Cancellation selectedDate={selectedDate} date={date} />
           </Tab>
         </Tabs>
       </Col>

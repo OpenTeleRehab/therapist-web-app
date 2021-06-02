@@ -7,6 +7,7 @@ $font-family-base: Nunito, Arial, sans-serif;
 // Color
 $red: #FB4E4E;
 $orange: #E35205;
+$orange-light: #EDC8A3;
 $yellow: #FFD100;
 $green: #1AB759;
 $blue: #0077C8;
@@ -49,6 +50,7 @@ $theme-colors: (
 	danger: $danger;
 	orange: $orange;
 	infoLight: $info-light;
+	orangeLight: $orange-light;
 };
 
 // Toasts

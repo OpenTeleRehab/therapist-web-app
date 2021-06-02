@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { ListGroup } from 'react-bootstrap';
-import { DeleteAction, EditAction } from 'components/ActionIcons';
+import {
+  ApproveAction,
+  CancelAction,
+  DeleteAction,
+  EditAction
+} from 'components/ActionIcons';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import { getTranslate } from 'react-localize-redux';
@@ -9,6 +13,8 @@ import PropType from 'prop-types';
 import settings from 'settings';
 import Dialog from 'components/Dialog';
 import { deleteAppointment } from 'store/appointment/actions';
+import { APPOINTMENT_STATUS } from '../../../variables/appointment';
+import scssColors from 'scss/custom.scss';
 
 const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const dispatch = useDispatch();
@@ -61,32 +67,57 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
 
   return (
     <>
-      <ListGroup variant="flush">
-        {
-          approvedAppointments.map((group, index) => {
-            return (
-              <ListGroup.Item key={index}>
-                <div className="text-primary font-weight-bold">{group.date}</div>
-                {
-                  group.approves.map(appointment => {
-                    return (
-                      <div className="d-flex mt-3" key={appointment.id}>
-                        <div className="pr-3 mr-3 border-right">
-                          <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
-                          <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
-                        </div>
-                        <span>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</span>
-                        <EditAction className="ml-auto" onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
-                        <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
+      {
+        approvedAppointments.map((group, index) => {
+          return (
+            <div key={index}>
+              <div className="my-3 text-primary font-weight-bold">{group.date}</div>
+              {
+                group.approves.map(appointment => {
+                  const { therapist_status: therapistStatus, patient_status: patientStatus } = appointment;
+                  let additionDateStyle = { backgroundColor: scssColors.primary };
+                  let additionTextStyle = {};
+                  if ([therapistStatus, patientStatus].includes(APPOINTMENT_STATUS.INVITED)) {
+                    additionDateStyle = { backgroundColor: scssColors.orangeLight };
+                  } else if (
+                    [therapistStatus, patientStatus].includes(APPOINTMENT_STATUS.REJECTED)
+                  ) {
+                    additionDateStyle = { backgroundColor: scssColors.orange };
+                    additionTextStyle = { textDecorationLine: 'line-through' };
+                  }
+
+                  return (
+                    <div className="mx-3 mb-2 pr-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
+                      <div className="p-3 text-white" style={additionDateStyle}>
+                        <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
+                        <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
-                    );
-                  })
-                }
-              </ListGroup.Item>
-            );
-          })
-        }
-      </ListGroup>
+                      <div className="p-3" style={additionTextStyle}>
+                        {translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}
+                      </div>
+                      <div className="p-3 ml-auto">
+                        {appointment.created_by_therapist && (
+                          <>
+                            <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
+                            <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
+                          </>
+                        )}
+                        {!appointment.created_by_therapist && (
+                          <>
+                            <ApproveAction className="ml-auto" />
+                            <CancelAction className="ml-1" />
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
+              }
+              {(index < approvedAppointments.length - 1) && <hr />}
+            </div>
+          );
+        })
+      }
       <Dialog
         show={showDeleteDialog}
         title={translate('appointment.delete.title')}
