@@ -1,5 +1,6 @@
 export const DASHBOARD = '/';
 export const PROFILE = '/profile';
+export const FAQ = '/faq';
 export const PROFILE_PASSWORD = '/profile#password';
 export const PATIENT = '/patient';
 
