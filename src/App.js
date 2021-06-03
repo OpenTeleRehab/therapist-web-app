@@ -13,6 +13,7 @@ import keycloak from 'utils/keycloak';
 import 'scss/app.scss';
 import SplashScreen from 'components/SplashScreen';
 import ConfigurationProvider from './ConfigurationProvider';
+import Guidance from './components/Guidance';
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           <LocalizeProvider store={store}>
             <Router history={createBrowserHistory()}>
               <RouteSwitch />
+              <Guidance />
             </Router>
           </LocalizeProvider>
         </ConfigurationProvider>

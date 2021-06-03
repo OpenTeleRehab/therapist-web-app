@@ -25,7 +25,8 @@ const Edition = () => {
     last_name: '',
     first_name: '',
     language_id: '',
-    profession_id: ''
+    profession_id: '',
+    show_guidance: ''
   });
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorFirstName, setErrorFirstName] = useState(false);
@@ -36,7 +37,8 @@ const Edition = () => {
         last_name: profile.last_name,
         first_name: profile.first_name,
         language_id: profile.language_id,
-        profession_id: profile.profession_id
+        profession_id: profile.profession_id,
+        show_guidance: profile.show_guidance
       });
     }
   }, [profile]);
@@ -44,6 +46,11 @@ const Edition = () => {
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
+  };
+
+  const handleCheckBoxChange = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
   };
 
   const handleSave = () => {
@@ -197,6 +204,19 @@ const Edition = () => {
             placeholder={getClinicName(profile.clinic_id, clinics)}
             classNamePrefix="filter"
             isDisabled={true}
+          />
+        </Form.Group>
+      </Form.Row>
+
+      <Form.Row>
+        <Form.Group className="col-sm-4 md-4" controlId="formShowGuidance">
+          <Form.Check
+            custom
+            checked={formFields.show_guidance}
+            name="show_guidance"
+            type="checkbox"
+            label={translate('common.guidance.hide')}
+            onChange={handleCheckBoxChange}
           />
         </Form.Group>
       </Form.Row>
