@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 
-import { BsPlus } from 'react-icons/bs';
+import { BsPlus, BsChat } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment/moment';
@@ -28,6 +28,8 @@ const Patient = () => {
   const users = useSelector(state => state.user.users);
   const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
+  const { authToken, authUserId } = useSelector(state => state.rocketchat);
+
   const translate = getTranslate(localize);
   const history = useHistory();
 
@@ -81,11 +83,14 @@ const Patient = () => {
           filters,
           search_value: searchValue,
           page_size: pageSize,
-          page: currentPage + 1
+          page: currentPage + 1,
+          chat_rooms: profile.chat_rooms,
+          auth_token: authToken,
+          auth_userId: authUserId
         }));
       }, 500);
     }
-  }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
+  }, [currentPage, pageSize, searchValue, filters, dispatch, profile, authToken, authUserId]);
 
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
@@ -119,6 +124,7 @@ const Patient = () => {
         rows={users.map(user => {
           const notification = (
             <div className="d-flex">
+              {user.unreads ? <BsChat className="mr-1" size={20} /> : ''}
               {user.totalPainThreshold > 0 && (
                 <>
                   <span className="mr-2"><FaSadTear size={20} color={scssColors.orange}/><sup>{user.totalPainThreshold}</sup></span>
