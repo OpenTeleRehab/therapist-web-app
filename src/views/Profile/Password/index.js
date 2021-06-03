@@ -108,9 +108,16 @@ const Password = () => {
     setShowCurrentPassword(!showCurrentPassword);
   };
 
+  const handleFormSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
   return (
     <>
-      <Form className="mt-4">
+      <Form className="mt-4" onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row >
           <Form.Group className="col-sm-4 md-4" controlId="formCurrentPassword">
             <Form.Label>{translate('profile.current_password')}</Form.Label>

@@ -99,6 +99,13 @@ const CreatePresetTreatment = () => {
     setShowAssignDialog(false);
   };
 
+  const handleFormSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSaveAsPreset();
+    }
+  };
+
   return (
     <>
       <div className="d-flex mb-4">
@@ -126,7 +133,7 @@ const CreatePresetTreatment = () => {
         </Button>
       </div>
 
-      <Form onSubmit={handleSaveAsPreset}>
+      <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row>
           <Col md={6}>
             <Form.Group>

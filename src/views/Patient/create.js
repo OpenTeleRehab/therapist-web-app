@@ -269,6 +269,13 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     }
   };
 
+  const handleFormSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleConfirm();
+    }
+  };
+
   return (
     <Dialog
       show={show}
@@ -277,7 +284,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       onConfirm={handleConfirm}
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
-      <Form onSubmit={handleConfirm}>
+      <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="secondary-therapist">
           <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
           <Select

@@ -193,13 +193,20 @@ const CreateEducationMaterial = ({ translate }) => {
     })
   };
 
+  const handleFormSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSave();
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
         <h1>{id ? isCopy ? translate('education_material.copy') : translate('education_material.edit') : translate('education_material.create')}</h1>
       </div>
 
-      <Form onSubmit={handleSave}>
+      <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Row>
           <Col sm={12} xl={11}>
             <Form.Group controlId="formLanguage">

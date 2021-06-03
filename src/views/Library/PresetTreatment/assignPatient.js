@@ -3,7 +3,7 @@ import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
-import { Col, Form, Row } from 'react-bootstrap';
+import { Col, Form } from 'react-bootstrap';
 import settings from 'settings';
 import Datetime from 'components/DateTime';
 import TreatmentGoal from 'views/TreatmentPlan/_Partials/Goal';
@@ -119,6 +119,13 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     }
   };
 
+  const handleFormSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleConfirm();
+    }
+  };
+
   return (
     <Dialog
       show={show}
@@ -128,93 +135,95 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
       confirmLabel={translate('common.assign')}
       size="xl"
     >
-      <Row>
-        <Col md={3}>
-          <h6 className="mb-4">{translate('treatment_plan.general_information')}</h6>
-          <Form.Group>
-            <Form.Label>{translate('treatment_plan.name')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Form.Control
-              type="text"
-              name="name"
-              maxLength={255}
-              value={formFields.name}
-              placeholder={translate('placeholder.treatment_plan.name')}
-              onChange={handleChange}
-              isInvalid={errorName}
-            />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.treatment_plan.name')}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>{translate('common.description')}</Form.Label>
-            <span className="text-dark ml-1">*</span>
-            <Form.Control
-              as="textarea"
-              name="description"
-              maxLength={255}
-              rows={3}
-              value={formFields.description}
-              placeholder={translate('placeholder.description')}
-              onChange={handleChange}
-              isInvalid={errorDescription}
-            />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.description')}
-            </Form.Control.Feedback>
-          </Form.Group>
-        </Col>
-        <Col md={3}>
-          <h6 className="mb-4">{translate('treatment_plan.assign_to_patient')}</h6>
-          <Form.Group>
-            <Form.Label>{translate('treatment_plan.choose_a_patient')}</Form.Label>
-            <Form.Control
-              as="select"
-              name="patient_id"
-              onChange={handleChange}
-              value={formFields.patient_id}
-            >
-              <option>{translate('placeholder.patient')}</option>
-              {users.map(patient => (
-                <option key={patient.id} value={patient.id}>
-                  {patient.last_name} {patient.first_name}
-                </option>
-              ))}
-            </Form.Control>
-            {errorPatient && (
-              <Form.Control.Feedback type="invalid" className="d-block">
-                {translate('error_message.treatment_plan_patient_required')}
+      <Form onKeyPress={(e) => handleFormSubmit(e)}>
+        <Form.Row>
+          <Col md={3}>
+            <h6 className="mb-4">{translate('treatment_plan.general_information')}</h6>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.name')}</Form.Label>
+              <span className="text-dark ml-1">*</span>
+              <Form.Control
+                type="text"
+                name="name"
+                maxLength={255}
+                value={formFields.name}
+                placeholder={translate('placeholder.treatment_plan.name')}
+                onChange={handleChange}
+                isInvalid={errorName}
+              />
+              <Form.Control.Feedback type="invalid">
+                {translate('error.treatment_plan.name')}
               </Form.Control.Feedback>
-            )}
-          </Form.Group>
-          <Form.Group>
-            <Form.Label>{translate('common.start_date')}</Form.Label>
-            <Datetime
-              inputProps={{
-                name: 'start_date',
-                autoComplete: 'off',
-                className: errorStartDate ? 'form-control is-invalid' : 'form-control',
-                placeholder: translate('placeholder.start_date')
-              }}
-              dateFormat={settings.date_format}
-              timeFormat={false}
-              closeOnSelect={true}
-              value={formFields.start_date}
-              onChange={(value) => setStartDate(value)}
-              isValidDate={ validateDate }
-            />
-            {errorStartDate && (
-              <Form.Control.Feedback type="invalid" className="d-block">
-                {translate('error.start_date')}
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{translate('common.description')}</Form.Label>
+              <span className="text-dark ml-1">*</span>
+              <Form.Control
+                as="textarea"
+                name="description"
+                maxLength={255}
+                rows={3}
+                value={formFields.description}
+                placeholder={translate('placeholder.description')}
+                onChange={handleChange}
+                isInvalid={errorDescription}
+              />
+              <Form.Control.Feedback type="invalid">
+                {translate('error.description')}
               </Form.Control.Feedback>
-            )}
-          </Form.Group>
-        </Col>
-        <Col md={6}>
-          <TreatmentGoal goals={goals} setGoals={setGoals} />
-        </Col>
-      </Row>
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <h6 className="mb-4">{translate('treatment_plan.assign_to_patient')}</h6>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.choose_a_patient')}</Form.Label>
+              <Form.Control
+                as="select"
+                name="patient_id"
+                onChange={handleChange}
+                value={formFields.patient_id}
+              >
+                <option>{translate('placeholder.patient')}</option>
+                {users.map(patient => (
+                  <option key={patient.id} value={patient.id}>
+                    {patient.last_name} {patient.first_name}
+                  </option>
+                ))}
+              </Form.Control>
+              {errorPatient && (
+                <Form.Control.Feedback type="invalid" className="d-block">
+                  {translate('error_message.treatment_plan_patient_required')}
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{translate('common.start_date')}</Form.Label>
+              <Datetime
+                inputProps={{
+                  name: 'start_date',
+                  autoComplete: 'off',
+                  className: errorStartDate ? 'form-control is-invalid' : 'form-control',
+                  placeholder: translate('placeholder.start_date')
+                }}
+                dateFormat={settings.date_format}
+                timeFormat={false}
+                closeOnSelect={true}
+                value={formFields.start_date}
+                onChange={(value) => setStartDate(value)}
+                isValidDate={ validateDate }
+              />
+              {errorStartDate && (
+                <Form.Control.Feedback type="invalid" className="d-block">
+                  {translate('error.start_date')}
+                </Form.Control.Feedback>
+              )}
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <TreatmentGoal goals={goals} setGoals={setGoals} />
+          </Col>
+        </Form.Row>
+      </Form>
     </Dialog>
   );
 };
