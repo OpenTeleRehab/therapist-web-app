@@ -56,11 +56,9 @@ export const updateAppointmentStatus = (id, payload, filter) => async (dispatch)
   if (data.success) {
     dispatch(mutation.updateAppointmentStatusSuccess());
     dispatch(getAppointments(filter));
-    dispatch(showSuccessNotification('toast_title.edit_appointment', data.message));
     return true;
   } else {
     dispatch(mutation.updateAppointmentStatusFail());
-    dispatch(showErrorNotification('toast_title.edit_appointment', data.message));
     return false;
   }
 };
