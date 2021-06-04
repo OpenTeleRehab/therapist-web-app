@@ -2,19 +2,19 @@ import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Translate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
-import { FcCancel } from 'react-icons/fc';
+import { FaCalendarCheck } from 'react-icons/fa';
 
-export const CancelAction = ({ className, ...rest }) => (
+export const AcceptAction = ({ className, ...rest }) => (
   <OverlayTrigger
-    overlay={<Tooltip><Translate id="common.cancel" /></Tooltip>}
+    overlay={<Tooltip><Translate id="common.accept" /></Tooltip>}
   >
     <Button variant="link" className={`p-0 ${className}`} {...rest}>
-      <FcCancel size={25} />
+      <FaCalendarCheck size={25} />
     </Button>
   </OverlayTrigger>
 );
 
-CancelAction.propTypes = {
+AcceptAction.propTypes = {
   className: PropTypes.string,
   rest: PropTypes.any
 };

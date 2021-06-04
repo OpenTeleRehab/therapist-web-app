@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {
-  ApproveAction,
-  CancelAction,
+  AcceptAction,
+  RejectAction,
   DeleteAction,
   EditAction
 } from 'components/ActionIcons';
@@ -12,9 +12,15 @@ import _ from 'lodash';
 import PropType from 'prop-types';
 import settings from 'settings';
 import Dialog from 'components/Dialog';
-import { deleteAppointment } from 'store/appointment/actions';
+import {
+  deleteAppointment,
+  updateAppointmentStatus
+} from 'store/appointment/actions';
 import { APPOINTMENT_STATUS } from '../../../variables/appointment';
 import scssColors from 'scss/custom.scss';
+import {
+  showSuccessNotification
+} from '../../../store/notification/actions';
 
 const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const dispatch = useDispatch();
@@ -25,6 +31,8 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const [approvedAppointments, setApprovedAppointments] = useState([]);
   const [id, setId] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showAcceptDialog, setShowAcceptDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
 
   useEffect(() => {
     if (appointments.approves) {
@@ -41,9 +49,11 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
     setShowDeleteDialog(true);
   };
 
-  const handleDeleteDialogClose = () => {
+  const handleDialogClose = () => {
     setId(null);
     setShowDeleteDialog(false);
+    setShowAcceptDialog(false);
+    setShowRejectDialog(false);
   };
 
   const handleDeleteDialogConfirm = () => {
@@ -56,13 +66,55 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
     };
     dispatch(deleteAppointment(id, filter)).then(result => {
       if (result) {
-        handleDeleteDialogClose();
+        handleDialogClose();
+      }
+    });
+  };
+
+  const handleAcceptDialogConfirm = () => {
+    const filter = {
+      now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+      date: moment(date).locale('en').format(settings.date_format),
+      selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+      selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+      therapist_id: profile.id
+    };
+    dispatch(updateAppointmentStatus(id, { status: APPOINTMENT_STATUS.ACCEPTED }, filter)).then(result => {
+      if (result) {
+        dispatch(showSuccessNotification('toast_title.accept_appointment', 'success_message.appointment_accept'));
+        handleDialogClose();
+      }
+    });
+  };
+
+  const handleRejectDialogConfirm = () => {
+    const filter = {
+      now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+      date: moment(date).locale('en').format(settings.date_format),
+      selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+      selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+      therapist_id: profile.id
+    };
+    dispatch(updateAppointmentStatus(id, { status: APPOINTMENT_STATUS.REJECTED }, filter)).then(result => {
+      if (result) {
+        dispatch(showSuccessNotification('toast_title.reject_appointment', 'success_message.appointment_reject'));
+        handleDialogClose();
       }
     });
   };
 
   const isPast = (datetime) => {
     return datetime.isBefore(moment());
+  };
+
+  const handleAccept = (id) => {
+    setId(id);
+    setShowAcceptDialog(true);
+  };
+
+  const handleReject = (id) => {
+    setId(id);
+    setShowRejectDialog(true);
   };
 
   return (
@@ -102,10 +154,10 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
                             <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
                           </>
                         )}
-                        {!appointment.created_by_therapist && (
+                        {!appointment.created_by_therapist && therapistStatus === APPOINTMENT_STATUS.INVITED && (
                           <>
-                            <ApproveAction className="ml-auto" />
-                            <CancelAction className="ml-1" />
+                            <AcceptAction className="ml-auto" onClick={() => handleAccept(appointment.id)} />
+                            <RejectAction className="ml-1" onClick={() => handleReject(appointment.id)} />
                           </>
                         )}
                       </div>
@@ -122,11 +174,31 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
         show={showDeleteDialog}
         title={translate('appointment.delete.title')}
         cancelLabel={translate('common.no')}
-        onCancel={handleDeleteDialogClose}
+        onCancel={handleDialogClose}
         confirmLabel={translate('common.yes')}
         onConfirm={handleDeleteDialogConfirm}
       >
         <p>{translate('appointment.delete.content')}</p>
+      </Dialog>
+      <Dialog
+        show={showAcceptDialog}
+        title={translate('appointment.accept.title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleAcceptDialogConfirm}
+      >
+        <p>{translate('appointment.accept.content')}</p>
+      </Dialog>
+      <Dialog
+        show={showRejectDialog}
+        title={translate('appointment.reject.title')}
+        cancelLabel={translate('common.no')}
+        onCancel={handleDialogClose}
+        confirmLabel={translate('common.yes')}
+        onConfirm={handleRejectDialogConfirm}
+      >
+        <p>{translate('appointment.reject.content')}</p>
       </Dialog>
     </>
   );
