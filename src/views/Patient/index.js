@@ -15,6 +15,10 @@ import CustomTable from 'components/Table';
 import AgeCalculation from 'utils/age';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { getTranslate } from 'react-localize-redux';
+import 'react-step-progress-bar/styles.css';
+import { ProgressBar } from 'react-step-progress-bar';
+import { FaSadTear } from 'react-icons/all';
+import scssColors from 'scss/custom.scss';
 
 let timer = null;
 const Patient = () => {
@@ -36,7 +40,8 @@ const Patient = () => {
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
     { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
-    { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') }
+    { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
+    { name: 'notification', title: translate('common.notification') }
   ];
 
   const defaultHiddenColumnNames = [
@@ -112,6 +117,21 @@ const Patient = () => {
         onRowClick={handleRowClick}
         hover="hover-primary"
         rows={users.map(user => {
+          const notification = (
+            <div className="d-flex">
+              {user.totalPainThreshold > 0 && (
+                <>
+                  <span className="mr-2"><FaSadTear size={20} color={scssColors.orange}/><sup>{user.totalPainThreshold}</sup></span>
+                </>
+              )}
+              <div className="mt-2">
+                <ProgressBar
+                  width={75}
+                  percent={user.completed_percent || 0}
+                />
+              </div>
+            </div>
+          );
           return {
             id: user.id,
             identity: user.identity,
@@ -123,7 +143,8 @@ const Patient = () => {
             ongoing_treatment_plan: user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
             ongoing_treatment_status: renderStatusBadge(user.upcomingTreatmentPlan),
             next_appointment: '',
-            secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.label') : translate('common.primary_therapist.label')
+            secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.label') : translate('common.primary_therapist.label'),
+            notification
           };
         })}
       />
