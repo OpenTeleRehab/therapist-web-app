@@ -1,3 +1,4 @@
 export const APPOINTMENT_STATUS = {
-  approved: 'approved'
+  INVITED: 'invited',
+  REJECTED: 'rejected'
 };
