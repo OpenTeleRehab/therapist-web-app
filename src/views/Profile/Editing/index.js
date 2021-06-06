@@ -71,7 +71,9 @@ const Edition = () => {
     }
 
     if (canSave) {
-      dispatch(updateProfile(profile.id, formFields))
+      const language = languages.find(item => item.id === formFields.language_id);
+      const data = { ...formFields, language_code: (language ? language.code : null) };
+      dispatch(updateProfile(profile.id, data))
         .then((result) => {
           if (result) {
             history.goBack();
