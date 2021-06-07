@@ -57,6 +57,13 @@ const CreateTreatmentGoal = ({ show, editIndex, goals, setGoals, handleClose }) 
     }
   };
 
+  const handleFormSubmit = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleConfirm();
+    }
+  };
+
   return (
     <Dialog
       show={show}
@@ -65,7 +72,7 @@ const CreateTreatmentGoal = ({ show, editIndex, goals, setGoals, handleClose }) 
       onConfirm={handleConfirm}
       confirmLabel={editIndex !== undefined ? translate('common.save') : translate('common.add')}
     >
-      <Form onSubmit={handleConfirm}>
+      <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formFrequency">
           <Form.Label>{translate('treatment_plan.goal.frequency')}</Form.Label>
           <span className="text-dark ml-1">*</span>
