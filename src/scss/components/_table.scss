@@ -1,8 +1,12 @@
 .table {
-	.hover-primary {
-		&:hover {
-			background-color: $secondary;
-			color: $white;
-		}
+  .hover-primary {
+	&:hover {
+	  background-color: $secondary;
+	  color: $white;
+
+	  .chat-icon {
+		color: $white !important;
+	  }
 	}
+  }
 }

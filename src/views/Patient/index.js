@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 
-import { BsPlus, BsChat } from 'react-icons/bs';
+import { BsPlus, BsChatDotsFill } from 'react-icons/bs';
 import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment/moment';
@@ -124,7 +124,12 @@ const Patient = () => {
         rows={users.map(user => {
           const notification = (
             <div className="d-flex">
-              {user.unreads ? <BsChat className="mr-1" size={20} /> : ''}
+              {user.unreads > 0 && (
+                <div>
+                  <BsChatDotsFill className="chat-icon" size={20} color={scssColors.primary} />
+                  <sup>{user.unreads > 99 ? '99+' : user.unreads}</sup>
+                </div>
+              )}
               {user.totalPainThreshold > 0 && (
                 <>
                   <span className="mr-2"><FaSadTear size={20} color={scssColors.orange}/><sup>{user.totalPainThreshold}</sup></span>
