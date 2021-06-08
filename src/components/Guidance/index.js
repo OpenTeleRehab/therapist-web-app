@@ -7,6 +7,7 @@ import { getGuidances } from '../../store/guidance/actions';
 
 const Guidance = () => {
   const dispatch = useDispatch();
+  const languages = useSelector(state => state.language.languages);
   const { profile } = useSelector((state) => state.auth);
   const { guidances } = useSelector(state => state.guidance);
   const [showGuidance, setShowGuidance] = useState(!profile.show_guidance);
@@ -17,10 +18,12 @@ const Guidance = () => {
     // eslint-disable-next-line
   }, []);
 
+  const language = languages.find(item => item.id === profile.language_id);
   const [formFields, setFormFields] = useState({
     last_name: profile.last_name,
     first_name: profile.first_name,
     language_id: profile.language_id,
+    language_code: language ? language.code : null,
     profession_id: profile.profession_id,
     show_guidance: profile.show_guidance
   });
