@@ -22,6 +22,7 @@ import * as ROUTES from '../../variables/routes';
 import { getLastActivityDate } from '../../utils/treatmentPlan';
 import Select from 'react-select';
 import scssColors from '../../scss/custom.scss';
+import { getDiseases } from 'store/disease/actions';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -44,7 +45,8 @@ const CreateTreatmentPlan = () => {
     description: '',
     patient_id: patientId,
     start_date: '',
-    end_date: ''
+    end_date: '',
+    disease_id: ''
   });
   const [weeks, setWeeks] = useState(1);
   const [startDate, setStartDate] = useState('');
@@ -54,6 +56,7 @@ const CreateTreatmentPlan = () => {
   const [errorDescription, setErrorDescription] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorPatient, setErrorPatient] = useState(false);
+  const [errorDisease, setErrorDisease] = useState(false);
   const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
   const [readOnly] = useState(false);
@@ -64,12 +67,17 @@ const CreateTreatmentPlan = () => {
   const [originData, setOriginData] = useState([]);
   const [originGoals, setOriginGoals] = useState([]);
   const [treatmentPlanId, setTreatmentPlanId] = useState();
+  const diseases = useSelector((state) => state.disease.diseases);
 
   useEffect(() => {
     if (activity) {
       setActivities([activity]);
     }
   }, [activity]);
+
+  useEffect(() => {
+    dispatch(getDiseases());
+  }, [dispatch]);
 
   useEffect(() => {
     if (id) {
@@ -114,7 +122,8 @@ const CreateTreatmentPlan = () => {
         description: editingData.description,
         patient_id: editingData.patient_id,
         start_date: moment(editingData.start_date, settings.date_format).format(settings.date_format),
-        end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format)
+        end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format),
+        disease_id: editingData.disease_id
       });
       setEditingTreatmentPlan(editingData);
       setStartDate(moment(editingData.start_date, settings.date_format));
@@ -141,7 +150,8 @@ const CreateTreatmentPlan = () => {
       description: '',
       patient_id: patientId,
       start_date: '',
-      end_date: ''
+      end_date: '',
+      disease_id: ''
     });
   };
 
@@ -158,6 +168,7 @@ const CreateTreatmentPlan = () => {
     let canSave = true;
     setErrorPatient(false);
     setErrorStartDate(false);
+    setErrorDisease(false);
 
     if (presetName === '') {
       canSave = false;
@@ -219,6 +230,13 @@ const CreateTreatmentPlan = () => {
       setErrorPatient(true);
     } else {
       setErrorPatient(false);
+    }
+
+    if (!formFields.disease_id) {
+      canSave = false;
+      setErrorDisease(true);
+    } else {
+      setErrorDisease(false);
     }
 
     if (formFields.start_date === '' || !moment(formFields.start_date, settings.date_format).isValid()) {
@@ -385,14 +403,20 @@ const CreateTreatmentPlan = () => {
               <Col md={4}>
                 <Form.Group>
                   <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
-                  <Form.Control
-                    as="select"
-                    name="patient_id"
-                    onChange={handleChange}
-                    value={formFields.international_classification}
-                  >
-                    <option></option>
-                  </Form.Control>
+                  <span className="text-dark ml-1">*</span>
+                  <Select
+                    classNamePrefix="filter"
+                    value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
+                    getOptionLabel={option => `${option.name}`}
+                    options={diseases}
+                    onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
+                    styles={customSelectStyles}
+                  />
+                  {errorDisease && (
+                    <Form.Control.Feedback type="invalid" className="d-block">
+                      {translate('error_message.treatment_plan_disease_required')}
+                    </Form.Control.Feedback>
+                  )}
                 </Form.Group>
               </Col>
             </Row>
