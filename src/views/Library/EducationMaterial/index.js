@@ -323,7 +323,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                           {(material.file && (material.file.hasThumbnail || material.file.fileGroupType === MATERIAL_TYPE.image)) ? (
                             <img
                               className="img-fluid mx-auto d-block"
-                              src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${material.file.id}/?thumbnail=${material.file.hasThumbnail}`}
+                              src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${material.file.id}?thumbnail=${material.file.hasThumbnail}`}
                               alt="Material"
                             />
                           ) : (

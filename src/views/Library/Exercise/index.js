@@ -314,7 +314,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                                 </div>
                               ) ||
                               (exercise.files[0].fileType === 'video/mp4' &&
-                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}/?thumbnail=1`} alt="Exercise"
+                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}?thumbnail=1`} alt="Exercise"
                                 />
                               ) ||
                               ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
