@@ -3,3 +3,7 @@ export const TYPE = {
   questionnaire: 'questionnaire',
   exercise: 'exercise'
 };
+
+export const MATERIAL_TYPE = {
+  image: 'common.type.image'
+};

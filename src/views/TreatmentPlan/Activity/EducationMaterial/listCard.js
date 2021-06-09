@@ -21,7 +21,7 @@ import { useSelector } from 'react-redux';
 import ViewEducationMaterial from './viewEducationMaterial';
 import _ from 'lodash';
 import { User } from 'services/user';
-import { TYPE } from 'variables/activity';
+import { MATERIAL_TYPE, TYPE } from 'variables/activity';
 
 const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedMaterials, originData, day, week, showList, treatmentPlanId }) => {
   const localize = useSelector((state) => state.localize);
@@ -117,10 +117,18 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
             </div>
             <div className="card-container" onClick={() => handleViewMaterial(material)}>
               <div className="card-img bg-light">
-                <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
-                  <MdDescription size={80} />
-                  <p>{translate('activity.material').toUpperCase()}</p>
-                </div>
+                {(material.file && (material.file.hasThumbnail || material.file.fileGroupType === MATERIAL_TYPE.image)) ? (
+                  <img
+                    className="img-fluid mx-auto d-block"
+                    src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${material.file.id}/?thumbnail=${material.file.hasThumbnail}`}
+                    alt="Material"
+                  />
+                ) : (
+                  <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
+                    <MdDescription size={80} />
+                    <p>{translate('activity.material').toUpperCase()}</p>
+                  </div>
+                )}
               </div>
               <Card.Body className="d-flex flex-column justify-content-between">
                 <Card.Title>

@@ -44,6 +44,7 @@ import * as Icon from 'react-icons/fi';
 import Checkbox from 'react-custom-checkbox';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import { MATERIAL_TYPE } from '../../../variables/activity';
 
 let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials }) => {
@@ -319,10 +320,18 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                       </div>
                       <div className="card-container" onClick={() => handleViewEducationMaterial(material.id)}>
                         <div className="card-img bg-light">
-                          <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
-                            <MdDescription size={80} />
-                            <p>{translate('activity.material').toUpperCase()}</p>
-                          </div>
+                          {(material.file && (material.file.hasThumbnail || material.file.fileGroupType === MATERIAL_TYPE.image)) ? (
+                            <img
+                              className="img-fluid mx-auto d-block"
+                              src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${material.file.id}/?thumbnail=${material.file.hasThumbnail}`}
+                              alt="Material"
+                            />
+                          ) : (
+                            <div className="w-100 h-100 px-2 py-4 text-white bg-primary text-center">
+                              <MdDescription size={80} />
+                              <p>{translate('activity.material').toUpperCase()}</p>
+                            </div>
+                          )}
                         </div>
                         <Card.Body className="d-flex flex-column justify-content-between">
                           <Card.Title>
