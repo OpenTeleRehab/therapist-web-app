@@ -30,7 +30,7 @@ const Patient = () => {
   const { profile } = useSelector((state) => state.auth);
   const therapist = useSelector(state => state.auth.profile);
   const localize = useSelector((state) => state.localize);
-  const { authToken, authUserId, chatRooms } = useSelector(state => state.rocketchat);
+  const { authToken, chatRooms } = useSelector(state => state.rocketchat);
 
   const translate = getTranslate(localize);
   const history = useHistory();
@@ -85,14 +85,11 @@ const Patient = () => {
           filters,
           search_value: searchValue,
           page_size: pageSize,
-          page: currentPage + 1,
-          chat_rooms: profile.chat_rooms,
-          auth_token: authToken,
-          auth_userId: authUserId
+          page: currentPage + 1
         }));
       }, 500);
     }
-  }, [currentPage, pageSize, searchValue, filters, dispatch, profile, authToken, authUserId]);
+  }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && therapist.chat_rooms.length && authToken) {
