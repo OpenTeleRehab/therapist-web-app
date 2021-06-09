@@ -26,6 +26,7 @@ export const updateVideoCallStatus = (payload) => (dispatch) => {
 
 export const getChatRooms = () => async (dispatch, getState) => {
   const { profile } = getState().auth;
+  const { authToken, authUserId } = getState().rocketchat;
   const payload = {
     therapist_id: profile.id,
     enabled: 1,
@@ -36,14 +37,15 @@ export const getChatRooms = () => async (dispatch, getState) => {
   if (data.success) {
     const chatRooms = [];
     const roomIds = profile.chat_rooms;
-    data.data.forEach(user => {
+    for (const user of data.data) {
       if (user.chat_user_id) {
         const fIndex = roomIds.findIndex(r => r.includes(user.chat_user_id));
+
         if (fIndex > -1) {
           chatRooms.push({
             rid: roomIds[fIndex],
             name: `${user.last_name} ${user.first_name}`,
-            unread: 0,
+            unread: await Rocketchat.getMessageCounters(roomIds[fIndex], authUserId, authToken),
             u: {
               _id: user.chat_user_id,
               username: user.identity,
@@ -54,7 +56,7 @@ export const getChatRooms = () => async (dispatch, getState) => {
           });
         }
       }
-    });
+    }
     dispatch(mutation.getChatRoomsSuccess(chatRooms));
     return chatRooms.length > 0;
   } else {

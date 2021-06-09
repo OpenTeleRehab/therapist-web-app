@@ -19,6 +19,7 @@ import 'react-step-progress-bar/styles.css';
 import { ProgressBar } from 'react-step-progress-bar';
 import { FaSadTear } from 'react-icons/all';
 import scssColors from 'scss/custom.scss';
+import { getChatRooms } from '../../store/rocketchat/actions';
 
 let timer = null;
 const Patient = () => {
@@ -27,8 +28,9 @@ const Patient = () => {
   const [editId, setEditId] = useState('');
   const users = useSelector(state => state.user.users);
   const { profile } = useSelector((state) => state.auth);
+  const therapist = useSelector(state => state.auth.profile);
   const localize = useSelector((state) => state.localize);
-  const { authToken, authUserId } = useSelector(state => state.rocketchat);
+  const { authToken, authUserId, chatRooms } = useSelector(state => state.rocketchat);
 
   const translate = getTranslate(localize);
   const history = useHistory();
@@ -92,8 +94,26 @@ const Patient = () => {
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile, authToken, authUserId]);
 
+  useEffect(() => {
+    if (therapist && therapist.chat_user_id && therapist.chat_rooms.length && authToken) {
+      dispatch(getChatRooms());
+    }
+  }, [authToken, dispatch, therapist]);
+
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
+  };
+
+  const totalRoomUnreadMessages = ($roomIds) => {
+    let unread = 0;
+
+    chatRooms.map((chatRoom) => {
+      if ($roomIds.find(r => r === chatRoom.rid)) {
+        unread = chatRoom.unread;
+      }
+    });
+
+    return unread;
   };
 
   return (
@@ -123,24 +143,22 @@ const Patient = () => {
         hover="hover-primary"
         rows={users.map(user => {
           const notification = (
-            <div className="d-flex">
-              {user.unreads > 0 && (
-                <div>
-                  <BsChatDotsFill className="chat-icon" size={20} color={scssColors.primary} />
-                  <sup>{user.unreads > 99 ? '99+' : user.unreads}</sup>
+            <div className="notify-lists d-flex align-items-center">
+              <div className="notify-list-item mr-2">
+                <ProgressBar width={75} percent={user.completed_percent || 0} />
+              </div>
+              {user.totalPainThreshold > 0 && (
+                <div className="notify-list-item mr-2">
+                  <FaSadTear className="pain-threshold-icon mr-1" size={20} color={scssColors.orange}/>
+                  <sup>{user.totalPainThreshold}</sup>
                 </div>
               )}
-              {user.totalPainThreshold > 0 && (
-                <>
-                  <span className="mr-2"><FaSadTear size={20} color={scssColors.orange}/><sup>{user.totalPainThreshold}</sup></span>
-                </>
+              {totalRoomUnreadMessages(user.chat_rooms) > 0 && (
+                <div className="notify-list-item">
+                  <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary} />
+                  <sup>{totalRoomUnreadMessages(user.chat_rooms) > 99 ? '99+' : totalRoomUnreadMessages(user.chat_rooms)}</sup>
+                </div>
               )}
-              <div className="mt-2">
-                <ProgressBar
-                  width={75}
-                  percent={user.completed_percent || 0}
-                />
-              </div>
             </div>
           );
           return {
