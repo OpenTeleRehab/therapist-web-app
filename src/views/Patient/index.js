@@ -103,7 +103,7 @@ const Patient = () => {
 
   const totalRoomUnreadMessages = ($roomIds) => {
     let unread = 0;
-
+    // eslint-disable-next-line
     chatRooms.map((chatRoom) => {
       if ($roomIds.find(r => r === chatRoom.rid)) {
         unread = chatRoom.unread;

@@ -102,6 +102,10 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   const handleConfirm = () => {
     let canSave = true;
 
+    const now = moment().locale('en').format('YYYY-MM-DD HH:mm:ss');
+    const fromTimeThen = moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
+    const toTimeThen = moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
+
     if (!patientId) {
       canSave = false;
       setErrorPatient(true);
@@ -116,14 +120,14 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
       setErrorDate(false);
     }
 
-    if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').isValid()) {
+    if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').isValid() || !moment(now).isBefore(fromTimeThen)) {
       canSave = false;
       setErrorFrom(true);
     } else {
       setErrorFrom(false);
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').isBefore(moment(formattedFrom, 'hh:mm A'))) {
+    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').isBefore(moment(formattedFrom, 'hh:mm A')) || !moment(now).isBefore(toTimeThen)) {
       canSave = false;
       setErrorTo(true);
     } else {
