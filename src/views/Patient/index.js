@@ -144,10 +144,10 @@ const Patient = () => {
               <div className="notify-list-item mr-2">
                 <ProgressBar width={75} percent={user.completed_percent || 0} />
               </div>
-              {user.totalPainThreshold > 0 && (
+              {user.total_pain_threshold > 0 && (
                 <div className="notify-list-item mr-2">
-                  <FaSadTear className="pain-threshold-icon mr-1" size={20} color={scssColors.orange}/>
-                  <sup>{user.totalPainThreshold}</sup>
+                  <FaSadTear className="threshold-icon mr-1" size={20} color={scssColors.orange}/>
+                  <sup>{user.total_pain_threshold}</sup>
                 </div>
               )}
               {totalRoomUnreadMessages(user.chat_rooms) > 0 && (
