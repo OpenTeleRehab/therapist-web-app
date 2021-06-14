@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 import { selectRoom } from 'store/rocketchat/actions';
 import { formatDate } from 'utils/general';
 import _ from 'lodash';
-import { loadMessagesInRoom, markMessagesAsRead } from 'utils/rocketchat';
+import { loadMessagesInRoom } from 'utils/rocketchat';
+import { markMessagesAsRead } from 'utils/chat';
 import { CALL_STATUS, CHAT_TYPES } from 'variables/rocketchat';
 
 const ChatRoomList = (
