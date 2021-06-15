@@ -3,6 +3,7 @@ import { User } from 'services/user';
 import { mutation } from './mutations';
 import { showErrorNotification } from 'store/notification/actions';
 import { getMessage } from 'utils/general';
+import { markMessagesAsRead } from 'utils/chat';
 
 export const connectWebsocket = (payload) => (dispatch) => {
   dispatch(mutation.setWebsocketConnectionSuccess(payload));
@@ -130,12 +131,15 @@ export const selectRoom = (payload) => (dispatch, getState) => {
   }
 };
 
-export const appendNewMessage = (payload) => (dispatch, getState) => {
+export const appendNewMessage = (payload, socket) => (dispatch, getState) => {
   const { messages, chatRooms, selectedRoom, authUserId } = getState().rocketchat;
+  const { profile } = getState().auth;
   let currentRoom = false;
   if (selectedRoom !== undefined && selectedRoom.rid === payload.rid) {
     currentRoom = true;
     const fIndex = messages.findIndex(msg => msg._id === payload._id);
+    markMessagesAsRead(socket, selectedRoom.rid, profile.id);
+
     if (fIndex === -1) {
       messages.push(payload);
     } else {

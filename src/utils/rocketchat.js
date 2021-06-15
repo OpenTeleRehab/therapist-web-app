@@ -100,7 +100,7 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
           dispatch(updateVideoCallStatus({ _id, status: msg }));
         }
         const newMessage = getMessage(fields.args[0], authUserId, authToken);
-        dispatch(appendNewMessage(newMessage));
+        dispatch(appendNewMessage(newMessage, socket));
       } else if (collection === 'stream-notify-logged') {
         // trigger user logged status
         const res = fields.args[0];
@@ -146,17 +146,6 @@ export const updateMessage = (socket, message, therapistId) => {
     method: 'updateMessage',
     id: getUniqueId(therapistId),
     params: [{ ...message }]
-  };
-  socket.send(JSON.stringify(options));
-};
-
-// @TODO look like the method is not working
-export const markMessagesAsRead = (socket, roomId, therapistId) => {
-  const options = {
-    msg: 'method',
-    method: 'readMessages',
-    id: getUniqueId(therapistId),
-    params: [roomId]
   };
   socket.send(JSON.stringify(options));
 };
