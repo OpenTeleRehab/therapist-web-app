@@ -40,7 +40,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
 
   useEffect(() => {
     if (profile) {
-      dispatch(getUsers({ therapist_id: profile.id, page_size: 999 }));
+      dispatch(getUsers({ therapist_id: profile.id, page_size: 999, enabled: true }));
     }
   }, [profile, dispatch]);
 
