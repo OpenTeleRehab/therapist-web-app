@@ -4,12 +4,11 @@ import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import Select from 'react-select';
 import scssColors from '../../../../scss/custom.scss';
-import { STATUS } from 'variables/treatmentPlan';
 
-const TreatmentStatusFilterCell = ({ filter, onFilter }) => {
+const StatusFilterCell = ({ filter, onFilter }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
-  const [status, setStatus] = useState('');
+  const [type, setType] = useState('');
 
   const customSelectStyles = {
     option: (provided) => ({
@@ -22,27 +21,23 @@ const TreatmentStatusFilterCell = ({ filter, onFilter }) => {
     })
   };
 
-  const treatmentStatusData = [
+  const types = [
     {
       value: '',
       name: translate('common.all')
     },
     {
       value: 1,
-      name: translate(`common.${STATUS.finished}`)
+      name: translate('common.primary_therapist.label')
     },
     {
       value: 2,
-      name: translate(`common.${STATUS.planned}`)
-    },
-    {
-      value: 3,
-      name: translate(`common.${STATUS.on_going}`)
+      name: translate('common.secondary_therapist.label')
     }
   ];
 
   const handleFilter = (value) => {
-    setStatus(value);
+    setType(value);
     onFilter(value === '' ? null : { value });
   };
 
@@ -50,9 +45,9 @@ const TreatmentStatusFilterCell = ({ filter, onFilter }) => {
     <th>
       <Select
         classNamePrefix="filter"
-        value={treatmentStatusData.filter(item => item.value === status) }
+        value={types.filter(item => item.value === type) }
         getOptionLabel={option => option.name}
-        options={treatmentStatusData}
+        options={types}
         onChange={(e) => handleFilter(e.value)}
         styles={customSelectStyles}
       />
@@ -60,7 +55,7 @@ const TreatmentStatusFilterCell = ({ filter, onFilter }) => {
   );
 };
 
-TreatmentStatusFilterCell.propTypes = {
+StatusFilterCell.propTypes = {
   filter: PropTypes.shape({
     value: PropTypes.oneOfType([
       PropTypes.string,
@@ -70,4 +65,4 @@ TreatmentStatusFilterCell.propTypes = {
   onFilter: PropTypes.func.isRequired
 };
 
-export default TreatmentStatusFilterCell;
+export default StatusFilterCell;

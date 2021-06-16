@@ -42,7 +42,7 @@ const Patient = () => {
     { name: 'date_of_birth', title: translate('common.date_of_birth') },
     { name: 'age', title: translate('common.age') },
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
-    { name: 'ongoing_treatment_status', title: translate('common.ongoing_treatment_status') },
+    { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
     { name: 'notification', title: translate('common.notification') }
@@ -56,7 +56,7 @@ const Patient = () => {
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
     { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
-    { columnName: 'ongoing_treatment_status', wordWrapEnabled: true },
+    { columnName: 'treatment_status', wordWrapEnabled: true },
     { columnName: 'next_appointment', wordWrapEnabled: true }
   ];
 
@@ -167,7 +167,7 @@ const Patient = () => {
             date_of_birth: user.date_of_birth !== null ? moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
             ongoing_treatment_plan: user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0].name : user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
-            ongoing_treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.upcomingTreatmentPlan),
+            treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.upcomingTreatmentPlan),
             next_appointment: '',
             secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.label') : translate('common.primary_therapist.label'),
             notification
