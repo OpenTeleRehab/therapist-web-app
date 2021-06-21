@@ -1,7 +1,7 @@
 const CustomPhoneNumber = (dialCode, phoneNumber) => {
-  const phoneNumberOnly = phoneNumber.split(dialCode);
+  const phoneNumberOnly = phoneNumber.replace(dialCode, '');
 
-  return dialCode ? `(+${dialCode})-` + phoneNumberOnly[1] : phoneNumber;
+  return dialCode ? `(+${dialCode})-` + phoneNumberOnly : phoneNumber;
 };
 
 export default CustomPhoneNumber;
