@@ -42,6 +42,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [errorFirstName, setErrorFirstName] = useState(false);
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorClass, setErrorClass] = useState('');
+  const [errorPhoneMessage, setErrorPhoneMessage] = useState('');
   const [errorGender, setErrorGender] = useState(false);
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
   const [selectedTherapists, setSelectedTherapists] = useState([]);
@@ -219,6 +220,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
       canSave = false;
       setErrorClass('d-block text-danger invalid-feedback');
+      setErrorPhoneMessage(translate('error.phone'));
     } else {
       setErrorClass('invalid-feedback');
 
@@ -227,6 +229,16 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       if (numOnly[1].match('^0')) {
         formValues = { ...formFields, phone: formFields.dial_code + numOnly[1].slice(1) };
       }
+    }
+
+    if (formValues.phone !== '') {
+      therapistService.getPatientByPhoneNumber(formValues.phone).then(res => {
+        if (res) {
+          canSave = false;
+          setErrorClass('d-block text-danger invalid-feedback');
+          setErrorPhoneMessage(translate('error_message.phone_exists'));
+        }
+      });
     }
 
     if (canSave) {
@@ -312,7 +324,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             }}
           />
           <Form.Control.Feedback type="invalid" class={errorClass}>
-            {translate('error.phone')}
+            {errorPhoneMessage}
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Row>
