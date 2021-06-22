@@ -38,7 +38,7 @@ const getUsers = payload => {
 };
 
 const activateDeactivateAccount = (id, enabled) => {
-  return axios.post(`/patient/activateDeactivateAccount/${id}`, enabled)
+  return axios.post(`/patient/activateDeactivateAccount/${id}`, enabled, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
@@ -50,7 +50,7 @@ const activateDeactivateAccount = (id, enabled) => {
 };
 
 const deleteAccount = (id) => {
-  return axios.post(`/patient/deleteAccount/${id}`)
+  return axios.post(`/patient/deleteAccount/${id}`, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
