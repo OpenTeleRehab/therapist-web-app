@@ -43,6 +43,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorClass, setErrorClass] = useState('');
   const [errorPhoneMessage, setErrorPhoneMessage] = useState('');
+  const [phoneExist, setPhoneExist] = useState(false);
   const [errorGender, setErrorGender] = useState(false);
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
   const [selectedTherapists, setSelectedTherapists] = useState([]);
@@ -147,8 +148,27 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         setFormFields({ ...formFields, date_of_birth: '', age: '' });
       }
     }
+
+    let formValues = formFields;
+    if (formFields.phone) {
+      const phoneValue = formFields.phone;
+      const numOnly = phoneValue.split(formFields.dial_code);
+      if (numOnly[1].match('^0')) {
+        formValues = { ...formFields, phone: formFields.dial_code + numOnly[1].slice(1) };
+      }
+
+      if (formValues.phone) {
+        therapistService.getPatientByPhoneNumber(formValues.phone).then(res => {
+          if (res.data > 0) {
+            setPhoneExist(true);
+          } else {
+            setPhoneExist(false);
+          }
+        });
+      }
+    }
     // eslint-disable-next-line
-  }, [dob, formFields.therapist_id]);
+  }, [dob, formFields.therapist_id, formFields.phone]);
 
   const resetData = () => {
     setErrorCountry(false);
@@ -157,6 +177,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     setErrorLastName(false);
     setErrorGender(false);
     setErrorInvalidDob(false);
+    setPhoneExist(false);
     setFormFields({
       first_name: '',
       last_name: '',
@@ -222,23 +243,20 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       setErrorClass('d-block text-danger invalid-feedback');
       setErrorPhoneMessage(translate('error.phone'));
     } else {
-      setErrorClass('invalid-feedback');
+      if (phoneExist) {
+        canSave = false;
+        setErrorClass('d-block text-danger invalid-feedback');
+        setErrorPhoneMessage(translate('error_message.phone_exists'));
+      } else {
+        setErrorClass('invalid-feedback');
+        canSave = true;
+      }
 
       const phoneValue = formFields.phone;
       const numOnly = phoneValue.split(formFields.dial_code);
       if (numOnly[1].match('^0')) {
         formValues = { ...formFields, phone: formFields.dial_code + numOnly[1].slice(1) };
       }
-    }
-
-    if (formValues.phone !== '') {
-      therapistService.getPatientByPhoneNumber(formValues.phone).then(res => {
-        if (res) {
-          canSave = false;
-          setErrorClass('d-block text-danger invalid-feedback');
-          setErrorPhoneMessage(translate('error_message.phone_exists'));
-        }
-      });
     }
 
     if (canSave) {
