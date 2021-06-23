@@ -56,8 +56,7 @@ const Patient = () => {
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
     { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
-    { columnName: 'treatment_status', wordWrapEnabled: true },
-    { columnName: 'next_appointment', wordWrapEnabled: true }
+    { columnName: 'treatment_status', wordWrapEnabled: true }
   ];
 
   const [pageSize, setPageSize] = useState(60);
@@ -168,7 +167,7 @@ const Patient = () => {
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
             ongoing_treatment_plan: user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0].name : user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
             treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.upcomingTreatmentPlan),
-            next_appointment: '',
+            next_appointment: user.upcoming_appointment ? moment.utc(user.upcoming_appointment.start_date).local().format(settings.date_format + ' hh:mm A') : '',
             secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.label') : translate('common.primary_therapist.label'),
             notification
           };

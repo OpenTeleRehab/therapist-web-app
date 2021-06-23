@@ -8,6 +8,7 @@ import DateRangeFilterCell from 'components/Table/FilterCells/DateRangeFilterCel
 import DateOfBirthFilterCell from 'components/Table/FilterCells/DateOfBirthFilterCell';
 import NumberFilterCell from './NumberFilterCell';
 import TherapistTypeFilterCell from './TherapistTypeFilterCell';
+import NextAppointmentFilterCell from './NextAppointmentFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -17,7 +18,7 @@ const FilterCell = (props) => {
     return <TreatmentStatusFilterCell {...props} />;
   } else if (column.name === 'start_date' || column.name === 'end_date') {
     return <DateRangeFilterCell {...props} />;
-  } else if (column.name === 'action' || column.name === 'notification' || column.name === 'next_appointment') {
+  } else if (column.name === 'action' || column.name === 'notification') {
     return <th className="dx-g-bs4-fixed-cell position-sticky" style={{ right: 0 }} />;
   } else if (column.name === 'date_of_birth') {
     return <DateOfBirthFilterCell {...props} />;
@@ -25,6 +26,8 @@ const FilterCell = (props) => {
     return <NumberFilterCell {...props} />;
   } else if (column.name === 'secondary_therapist') {
     return <TherapistTypeFilterCell {...props} />;
+  } else if (column.name === 'next_appointment') {
+    return <NextAppointmentFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };
