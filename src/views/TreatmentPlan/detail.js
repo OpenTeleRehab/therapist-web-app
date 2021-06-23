@@ -27,9 +27,10 @@ import QuestionnaireTab from './TabContents/questionnaireTab';
 import ActivitySection from './_Partials/activitySection';
 import AdherenceTab from './TabContents/adherenceTab';
 import _ from 'lodash';
-import { renderStatusBadge } from '../../utils/treatmentPlan';
+import { renderStatusBadge, getDisease } from '../../utils/treatmentPlan';
 import GoalTrackingTab from './TabContents/goalTrakingTab';
 import Dialog from 'components/Dialog';
+import { getDiseases } from 'store/disease/actions';
 
 const ViewTreatmentPlan = () => {
   const history = useHistory();
@@ -47,7 +48,8 @@ const ViewTreatmentPlan = () => {
     start_date: '',
     end_date: '',
     patient_name: '',
-    status: ''
+    status: '',
+    disease: ''
   });
   const [weeks, setWeeks] = useState(1);
   const [key, setKey] = useState(TAB.activities);
@@ -56,6 +58,11 @@ const ViewTreatmentPlan = () => {
   const [readOnly] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const diseases = useSelector((state) => state.disease.diseases);
+
+  useEffect(() => {
+    dispatch(getDiseases());
+  }, [dispatch]);
 
   useEffect(() => {
     if (id) {
@@ -72,7 +79,8 @@ const ViewTreatmentPlan = () => {
         patient_id: treatmentPlansDetail.patient_id,
         start_date: moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format),
         end_date: moment(treatmentPlansDetail.end_date, settings.date_format).format(settings.date_format),
-        status: treatmentPlansDetail.status
+        status: treatmentPlansDetail.status,
+        disease: getDisease(treatmentPlansDetail.disease_id, diseases)
       });
       setWeeks(treatmentPlansDetail.total_of_weeks);
       setActivities(treatmentPlansDetail.activities);
@@ -169,6 +177,9 @@ const ViewTreatmentPlan = () => {
         </div>
         {patientId && (
           <div className="patient-info">
+            <span className="mr-4">
+              <strong>{translate('common.ICD')}:</strong>&nbsp; {formFields.disease}
+            </span>
             <span className="mr-4">
               <strong>{translate('common.description')}:</strong>&nbsp;
               <OverlayTrigger
