@@ -15,7 +15,7 @@ const PresetTreatment = ({ translate, presetId, onSectionChange, setViewPreset, 
   const { profile } = useSelector((state) => state.auth);
   const { presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
 
-  const [pageSize, setPageSize] = useState(50);
+  const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
