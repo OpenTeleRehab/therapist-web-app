@@ -50,7 +50,7 @@ const activateDeactivateAccount = (id, enabled) => {
 };
 
 const deleteAccount = (id) => {
-  return axios.post(`/patient/deleteAccount/${id}`, { headers: { country: getCountryIsoCode() } })
+  return axios.post(`/patient/deleteAccount/${id}`, null, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
