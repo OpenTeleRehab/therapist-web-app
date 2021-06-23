@@ -90,6 +90,7 @@ const TreatmentHistory = () => {
           columns={columns}
           columnExtensions={columnExtensions}
           onRowClick={handleRowClick}
+          hover="hover-primary"
           rows={treatmentPlans.map(treatmentPlan => {
             return {
               id: treatmentPlan.id,
