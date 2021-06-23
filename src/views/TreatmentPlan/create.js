@@ -56,7 +56,6 @@ const CreateTreatmentPlan = () => {
   const [errorDescription, setErrorDescription] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorPatient, setErrorPatient] = useState(false);
-  const [errorDisease, setErrorDisease] = useState(false);
   const [goals, setGoals] = useState([]);
   const [activities, setActivities] = useState([]);
   const [readOnly] = useState(false);
@@ -168,7 +167,6 @@ const CreateTreatmentPlan = () => {
     let canSave = true;
     setErrorPatient(false);
     setErrorStartDate(false);
-    setErrorDisease(false);
 
     if (presetName === '') {
       canSave = false;
@@ -230,13 +228,6 @@ const CreateTreatmentPlan = () => {
       setErrorPatient(true);
     } else {
       setErrorPatient(false);
-    }
-
-    if (!formFields.disease_id) {
-      canSave = false;
-      setErrorDisease(true);
-    } else {
-      setErrorDisease(false);
     }
 
     if (formFields.start_date === '' || !moment(formFields.start_date, settings.date_format).isValid()) {
@@ -403,20 +394,19 @@ const CreateTreatmentPlan = () => {
               <Col md={4}>
                 <Form.Group>
                   <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
-                  <span className="text-dark ml-1">*</span>
+                  <span className="text-dark ml-1"></span>
                   <Select
+                    placeholder={translate('placeholder.disease')}
                     classNamePrefix="filter"
                     value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
                     getOptionLabel={option => `${option.name}`}
-                    options={diseases}
+                    options={[
+                      { id: '', name: translate('placeholder.disease') },
+                      ...diseases
+                    ]}
                     onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
                     styles={customSelectStyles}
                   />
-                  {errorDisease && (
-                    <Form.Control.Feedback type="invalid" className="d-block">
-                      {translate('error_message.treatment_plan_disease_required')}
-                    </Form.Control.Feedback>
-                  )}
                 </Form.Group>
               </Col>
             </Row>

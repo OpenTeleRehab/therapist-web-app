@@ -4,6 +4,7 @@ import { Badge } from 'react-bootstrap';
 import moment from 'moment';
 import settings from '../settings';
 import { Translate } from 'react-localize-redux';
+import _ from 'lodash';
 
 export const renderStatusBadge = (treatmentPlan) => {
   if (!treatmentPlan || !treatmentPlan.id) {
@@ -36,4 +37,10 @@ export const getLastActivityDate = (startDate, activities) => {
   }
 
   return startDate;
+};
+
+export const getDisease = (id, diseases) => {
+  const disease = _.findLast(diseases, { id: parseInt(id, 10) });
+
+  return disease ? disease.name : '';
 };
