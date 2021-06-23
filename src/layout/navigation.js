@@ -51,7 +51,8 @@ const Navigation = ({ translate }) => {
           <img
             src="/images/logo.png"
             className="d-inline-block align-top"
-            alt="Handicap International logo"
+            alt="OpenTeleRehap logo"
+            width="125"
           />
         </Link>
       </Navbar.Brand>
