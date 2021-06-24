@@ -27,6 +27,8 @@ import { therapist } from 'store/therapist/reducers';
 import { staticPage } from 'store/staticPage/reducers';
 import { guidance } from 'store/guidance/reducers';
 import { disease } from 'store/disease/reducers';
+import { termAndCondition } from 'store/termAndCondition/reducers';
+import { privacyPolicy } from 'store/privacyPolicy/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -50,7 +52,9 @@ export const rootReducer = {
   therapist,
   staticPage,
   guidance,
-  disease
+  disease,
+  privacyPolicy,
+  termAndCondition
 };
 
 const devTool =
