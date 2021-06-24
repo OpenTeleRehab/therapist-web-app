@@ -553,23 +553,29 @@ const CreateExercise = ({ translate }) => {
               </Form.Group>
             }
           </Col>
-          <Form.Group className="sticky-btn py-2 px-4 mb-0 ml-0">
-            <Button
-              onClick={handleSave}
-              disabled={isLoading}
-            >
-              {translate('common.save')}
-            </Button>
-            <Button
-              className="ml-2"
-              variant="outline-dark"
-              as={Link}
-              to={ROUTES.LIBRARY}
-              disabled={isLoading}
-            >
-              {translate('common.cancel')}
-            </Button>
-          </Form.Group>
+        </Row>
+        <Row>
+          <Col sm={12} xl={11} className="question-wrapper">
+            <div className="sticky-btn d-flex justify-content-end">
+              <div className="py-2 questionnaire-save-cancel-wrapper px-3">
+                <Button
+                  onClick={handleSave}
+                  disabled={isLoading}
+                >
+                  {translate('common.save')}
+                </Button>
+                <Button
+                  className="ml-2"
+                  variant="outline-dark"
+                  as={Link}
+                  to={ROUTES.LIBRARY}
+                  disabled={isLoading}
+                >
+                  {translate('common.cancel')}
+                </Button>
+              </div>
+            </div>
+          </Col>
         </Row>
       </Form>
     </>

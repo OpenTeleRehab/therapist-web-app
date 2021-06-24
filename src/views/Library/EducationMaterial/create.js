@@ -308,24 +308,29 @@ const CreateEducationMaterial = ({ translate }) => {
                 ))
               }
             </Accordion>
-
-            <Form.Group className="sticky-btn py-2 px-3 mb-0">
-              <Button
-                onClick={handleSave}
-                disabled={isLoading}
-              >
-                {translate('common.save')}
-              </Button>
-              <Button
-                className="ml-2"
-                variant="outline-dark"
-                as={Link}
-                to={ROUTES.LIBRARY_EDUCATION}
-                disabled={isLoading}
-              >
-                {translate('common.cancel')}
-              </Button>
-            </Form.Group>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={12} xl={11} className="question-wrapper">
+            <div className="sticky-btn d-flex justify-content-end">
+              <div className="py-2 questionnaire-save-cancel-wrapper px-3">
+                <Button
+                  onClick={handleSave}
+                  disabled={isLoading}
+                >
+                  {translate('common.save')}
+                </Button>
+                <Button
+                  className="ml-2"
+                  variant="outline-dark"
+                  as={Link}
+                  to={ROUTES.LIBRARY_EDUCATION}
+                  disabled={isLoading}
+                >
+                  {translate('common.cancel')}
+                </Button>
+              </div>
+            </div>
           </Col>
         </Row>
       </Form>
