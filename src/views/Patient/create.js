@@ -36,6 +36,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const therapistsByClinic = useSelector(state => state.therapist.therapistsByClinic);
   const clinics = useSelector(state => state.clinic.clinics);
   const { profile } = useSelector((state) => state.auth);
+  const definedCountries = useSelector(state => state.country.definedCountries);
 
   const [errorCountry, setErrorCountry] = useState(false);
   const [errorClinic, setErrorClinic] = useState(false);
@@ -335,7 +336,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             country={getCountryIsoCode().toLowerCase()}
             value={formFields.phone}
             onlyCountries={
-              countries.map(country => { return country.iso_code.toLowerCase(); })
+              definedCountries.map(country => { return country.iso_code.toLowerCase(); })
             }
             onChange={(value, country) => {
               setFormFields({ ...formFields, phone: value, dial_code: country.dialCode });
