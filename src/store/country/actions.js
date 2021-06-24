@@ -14,3 +14,14 @@ export const getCountries = () => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const getDefinedCountries = () => async dispatch => {
+  dispatch(mutation.getDefinedCountriesRequest());
+  const data = await Country.getDefinedCountries();
+  if (data.success) {
+    dispatch(mutation.getDefinedCountriesSuccess(data.data));
+  } else {
+    dispatch(mutation.getDefinedCountriesFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};

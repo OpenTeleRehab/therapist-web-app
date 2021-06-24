@@ -7,6 +7,11 @@ export const country = (state = initialState, action) => {
         countries: action.data
       });
     }
+    case 'GET_DEFINED_COUNTRIES_SUCCESS': {
+      return Object.assign({}, state, {
+        definedCountries: action.data
+      });
+    }
     default:
       return state;
   }
