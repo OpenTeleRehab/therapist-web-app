@@ -1,6 +1,8 @@
 export const DASHBOARD = '/';
 export const PROFILE = '/profile';
 export const FAQ = '/faq';
+export const TC = '/term-condition';
+export const PP = '/privacy-policy';
 export const PROFILE_PASSWORD = '/profile#password';
 export const PATIENT = '/patient';
 

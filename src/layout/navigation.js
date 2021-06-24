@@ -123,6 +123,12 @@ const Navigation = ({ translate }) => {
                 <Dropdown.Item as={Link} to={ROUTES.FAQ}>
                   {translate('profile.faq')}
                 </Dropdown.Item>
+                <Dropdown.Item as={Link} to={ROUTES.TC}>
+                  {translate('profile.tc')}
+                </Dropdown.Item>
+                <Dropdown.Item as={Link} to={ROUTES.PP}>
+                  {translate('profile.pp')}
+                </Dropdown.Item>
                 <Dropdown.Item onClick={handleShow}>{translate('logout')}</Dropdown.Item>
                 <Dialog
                   show={show}
