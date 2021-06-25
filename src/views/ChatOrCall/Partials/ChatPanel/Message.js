@@ -25,7 +25,7 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
 
   const scrollToBottom = () => {
     setTimeout(() => {
-      if (messages.length && messageEndRef) {
+      if (messages.length && messageEndRef && messageEndRef.current !== null) {
         messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
       }
     }, 100);
