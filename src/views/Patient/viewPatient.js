@@ -14,7 +14,7 @@ const ViewPatient = () => {
   return (
     <>
       <div className="top-content">
-        <PatientInfo id={patientId} translate={translate} breadcrumb={translate('common.patient_detail')}/>
+        <PatientInfo id={patientId} translate={translate} />
       </div>
       <TreatmentHistory />
     </>
