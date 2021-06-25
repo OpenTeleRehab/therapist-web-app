@@ -351,97 +351,94 @@ const CreateTreatmentPlan = () => {
       <Form onKeyPress={(e) => handleAssignFormSubmit(e)}>
         <Accordion defaultActiveKey="0">
           <Accordion.Collapse eventKey="0">
-            <Row>
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label>{translate('treatment_plan.patient')}</Form.Label>
-                  <span className="text-dark ml-1">*</span>
-                  <Select
-                    isDisabled={patientId}
-                    classNamePrefix="filter"
-                    value={users.filter(option => option.id === parseInt(formFields.patient_id))}
-                    getOptionLabel={option => `${option.last_name} ${option.first_name}`}
-                    options={users}
-                    onChange={(e) => handleSingleSelectChange('patient_id', e.id)}
-                    styles={customSelectStyles}
-                  />
-                  {errorPatient && (
-                    <Form.Control.Feedback type="invalid" className="d-block">
-                      {translate('error_message.treatment_plan_patient_required')}
+            <>
+              <Row>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label>{translate('treatment_plan.patient')}</Form.Label>
+                    <span className="text-dark ml-1">*</span>
+                    <Select
+                      isDisabled={patientId}
+                      classNamePrefix="filter"
+                      value={users.filter(option => option.id === parseInt(formFields.patient_id))}
+                      getOptionLabel={option => `${option.last_name} ${option.first_name}`}
+                      options={users}
+                      onChange={(e) => handleSingleSelectChange('patient_id', e.id)}
+                      styles={customSelectStyles}
+                    />
+                    {errorPatient && (
+                      <Form.Control.Feedback type="invalid" className="d-block">
+                        {translate('error_message.treatment_plan_patient_required')}
+                      </Form.Control.Feedback>
+                    )}
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label>{translate('treatment_plan.name')}</Form.Label>
+                    <span className="text-dark ml-1">*</span>
+                    <Form.Control
+                      type="text"
+                      name="name"
+                      maxLength={255}
+                      value={formFields.name}
+                      placeholder={translate('placeholder.treatment_plan.name')}
+                      onChange={handleChange}
+                      isInvalid={errorName}
+                      disabled={!isOwnCreated}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {translate('error.treatment_plan.name')}
                     </Form.Control.Feedback>
-                  )}
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label>{translate('treatment_plan.name')}</Form.Label>
-                  <span className="text-dark ml-1">*</span>
-                  <Form.Control
-                    type="text"
-                    name="name"
-                    maxLength={255}
-                    value={formFields.name}
-                    placeholder={translate('placeholder.treatment_plan.name')}
-                    onChange={handleChange}
-                    isInvalid={errorName}
-                    disabled={!isOwnCreated}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {translate('error.treatment_plan.name')}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-              <Col md={4}>
-                <Form.Group>
-                  <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
-                  <span className="text-dark ml-1"></span>
-                  <Select
-                    placeholder={translate('placeholder.disease')}
-                    classNamePrefix="filter"
-                    value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
-                    getOptionLabel={option => `${option.name}`}
-                    options={[
-                      { id: '', name: translate('placeholder.disease') },
-                      ...diseases
-                    ]}
-                    onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
-                    styles={customSelectStyles}
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group>
+                    <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
+                    <span className="text-dark ml-1"></span>
+                    <Select
+                      placeholder={translate('placeholder.disease')}
+                      classNamePrefix="filter"
+                      value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
+                      getOptionLabel={option => `${option.name}`}
+                      options={[
+                        { id: '', name: translate('placeholder.disease') },
+                        ...diseases
+                      ]}
+                      onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
+                      styles={customSelectStyles}
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={6}>
+                  <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} isOwnCreated={isOwnCreated} originGoals={originGoals} />
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>{translate('treatment_plan.description')}</Form.Label>
+                    <span className="text-dark ml-1">*</span>
+                    <Form.Control
+                      as="textarea"
+                      name="description"
+                      maxLength={255}
+                      rows={3}
+                      value={formFields.description}
+                      placeholder={translate('placeholder.description')}
+                      onChange={handleChange}
+                      isInvalid={errorDescription}
+                      disabled={!isOwnCreated}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {translate('error.description')}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+              </Row>
+            </>
           </Accordion.Collapse>
           <CollapseToggle eventKey="0" />
-        </Accordion>
-        <Accordion defaultActiveKey="1">
-          <Accordion.Collapse eventKey="1">
-            <Row>
-              <Col md={6}>
-                <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} isOwnCreated={isOwnCreated} originGoals={originGoals} />
-              </Col>
-              <Col md={6}>
-                <Form.Group>
-                  <Form.Label>{translate('treatment_plan.description')}</Form.Label>
-                  <span className="text-dark ml-1">*</span>
-                  <Form.Control
-                    as="textarea"
-                    name="description"
-                    maxLength={255}
-                    rows={3}
-                    value={formFields.description}
-                    placeholder={translate('placeholder.description')}
-                    onChange={handleChange}
-                    isInvalid={errorDescription}
-                    disabled={!isOwnCreated}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {translate('error.description')}
-                  </Form.Control.Feedback>
-                </Form.Group>
-              </Col>
-            </Row>
-          </Accordion.Collapse>
-          <CollapseToggle eventKey="1" />
         </Accordion>
         <div className="treatment-plan-date">
           <Row>
