@@ -174,7 +174,7 @@ const PatientInfo = ({ id, translate }) => {
 
   return (
     <>
-      <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right">
+      <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right mt-3">
         <Button
           variant="link"
           className="mr-2 btn-circle-lg btn-light-blue"
@@ -190,7 +190,7 @@ const PatientInfo = ({ id, translate }) => {
           <BsFillChatSquareFill size={20} />
         </Button>
         {!isSecondaryTherapist &&
-        <DropdownButton alignRight variant="primary" title={translate('common.action')}>
+        <DropdownButton alignRight variant="primary" title={translate('common.action')} className="mr-3">
           <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
           <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
           <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>

@@ -316,18 +316,6 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
-        <Form.Group controlId="secondary-therapist">
-          <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
-          <Select
-            value={options.filter(obj => selectedTherapists.includes(obj.value))}
-            isMulti
-            options={options}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            onChange={handleMultipleSelectChange}
-            isClearable
-          />
-        </Form.Group>
         <Form.Group controlId="formPhone">
           <Form.Label>{translate('common.phone')}</Form.Label>
           <span className="text-dark ml-1">*</span>
@@ -446,6 +434,18 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
+        <Form.Group controlId="secondary-therapist">
+          <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
+          <Select
+            value={options.filter(obj => selectedTherapists.includes(obj.value))}
+            isMulti
+            options={options}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            onChange={handleMultipleSelectChange}
+            isClearable
+          />
+        </Form.Group>
         <Form.Group controlId="formNote">
           <Form.Label>{translate('common.note')}</Form.Label>
           <Form.Control
