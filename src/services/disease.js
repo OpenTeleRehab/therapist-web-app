@@ -1,7 +1,7 @@
 import axios from 'utils/admin-axios';
 
-const getDiseases = () => {
-  return axios.get('/disease')
+const getDiseases = payload => {
+  return axios.get('/disease', { params: payload })
     .then(
       res => {
         return res.data;

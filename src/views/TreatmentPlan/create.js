@@ -75,8 +75,8 @@ const CreateTreatmentPlan = () => {
   }, [activity]);
 
   useEffect(() => {
-    dispatch(getDiseases());
-  }, [dispatch]);
+    dispatch(getDiseases({ lang: profile.language_id }));
+  }, [dispatch, profile]);
 
   useEffect(() => {
     if (id) {

@@ -4,9 +4,9 @@ import {
   showErrorNotification
 } from 'store/notification/actions';
 
-export const getDiseases = () => async dispatch => {
+export const getDiseases = payload => async dispatch => {
   dispatch(mutation.getDiseasesRequest());
-  const data = await Disease.getDiseases();
+  const data = await Disease.getDiseases(payload);
   if (data.success) {
     dispatch(mutation.getDiseasesSuccess(data.data));
   } else {
