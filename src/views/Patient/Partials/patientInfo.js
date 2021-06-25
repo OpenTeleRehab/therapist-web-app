@@ -23,7 +23,7 @@ import { activateDeactivateAccount, getUsers, deleteAccount } from 'store/user/a
 import CreatePatient from 'views/Patient/create';
 import Dialog from 'components/Dialog';
 
-const PatientInfo = ({ id, translate, breadcrumb }) => {
+const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
   const users = useSelector(state => state.user.users);
   const { profile } = useSelector((state) => state.auth);
@@ -118,47 +118,21 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
 
   return (
     <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center px-3 pt-3">
-        { breadcrumb && (
-          <>
-            <span>{breadcrumb}</span>
-            <div className="btn-toolbar mb-2 mb-md-0">
-              <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
-                <FaPhoneAlt size={20} />
-              </Button>
-              <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
-                <BsFillChatSquareFill size={20} />
-              </Button>
-              {!isSecondaryTherapist &&
-                <DropdownButton alignRight variant="primary" title={translate('common.action')}>
-                  <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
-                  <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
-                  <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
-                </DropdownButton>
-              }
-            </div>
-          </>
-        )}
+      <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right">
+        <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
+          <FaPhoneAlt size={20} />
+        </Button>
+        <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
+          <BsFillChatSquareFill size={20} />
+        </Button>
+        {!isSecondaryTherapist &&
+        <DropdownButton alignRight variant="primary" title={translate('common.action')}>
+          <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
+          <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
+          <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
+        </DropdownButton>
+        }
       </div>
-      {!breadcrumb && (
-        <>
-          <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right">
-            <Button variant="link" className="mr-2 btn-circle-lg btn-light-blue">
-              <FaPhoneAlt size={20} />
-            </Button>
-            <Button variant="link" className="mr-4 btn-circle-lg btn-light-blue">
-              <BsFillChatSquareFill size={20} />
-            </Button>
-            {!isSecondaryTherapist &&
-            <DropdownButton alignRight variant="primary" title={translate('common.action')}>
-              <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
-              <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
-              <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
-            </DropdownButton>
-            }
-          </div>
-        </>
-      )}
       <div className="p-3">
         <h4 className="mb-">{formFields.name}</h4>
         <div className="patient-info">
@@ -207,8 +181,7 @@ const PatientInfo = ({ id, translate, breadcrumb }) => {
 
 PatientInfo.propTypes = {
   id: PropTypes.string,
-  translate: PropTypes.func,
-  breadcrumb: PropTypes.string
+  translate: PropTypes.func
 };
 
 export default PatientInfo;
