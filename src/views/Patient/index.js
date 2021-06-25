@@ -17,7 +17,7 @@ import { renderStatusBadge } from 'utils/treatmentPlan';
 import { getTranslate } from 'react-localize-redux';
 import 'react-step-progress-bar/styles.css';
 import { ProgressBar } from 'react-step-progress-bar';
-import { FaSadTear } from 'react-icons/all';
+import { TiWarning } from 'react-icons/all';
 import scssColors from 'scss/custom.scss';
 import { getChatRooms } from '../../store/rocketchat/actions';
 
@@ -145,7 +145,7 @@ const Patient = () => {
               </div>
               {user.total_pain_threshold > 0 && (
                 <div className="notify-list-item mr-2">
-                  <FaSadTear className="threshold-icon mr-1" size={20} color={scssColors.orange}/>
+                  <TiWarning className="threshold-icon mr-1" size={20} color={scssColors.orange}/>
                   <sup>{user.total_pain_threshold}</sup>
                 </div>
               )}
