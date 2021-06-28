@@ -21,6 +21,7 @@ import scssColors from 'scss/custom.scss';
 import {
   showSuccessNotification
 } from '../../../store/notification/actions';
+import { BsPersonFill } from 'react-icons/bs';
 
 const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const dispatch = useDispatch();
@@ -127,37 +128,44 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
               {
                 group.approves.map(appointment => {
                   const { therapist_status: therapistStatus, patient_status: patientStatus } = appointment;
-                  let additionDateStyle = { backgroundColor: scssColors.primary };
                   let additionTextStyle = {};
+                  let statusTextStyle = { color: scssColors.primary };
+                  let statusText = 'appointment.status.accept';
                   if ([therapistStatus, patientStatus].includes(APPOINTMENT_STATUS.INVITED)) {
-                    additionDateStyle = { backgroundColor: scssColors.orangeLight };
+                    statusTextStyle = { color: scssColors.dark };
+                    statusText = 'appointment.status.pending';
                   } else if (
                     [therapistStatus, patientStatus].includes(APPOINTMENT_STATUS.REJECTED)
                   ) {
-                    additionDateStyle = { backgroundColor: scssColors.orange };
                     additionTextStyle = { textDecorationLine: 'line-through' };
+                    statusTextStyle = { color: scssColors.orange };
+                    statusText = 'appointment.status.cancel';
                   }
 
                   return (
                     <div className="mx-3 mb-2 pr-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
-                      <div className="p-3 text-white" style={additionDateStyle}>
+                      <div className="p-3 text-white" style={{ backgroundColor: scssColors.primary }}>
                         <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
-                      <div className="p-3" style={additionTextStyle}>
-                        {translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}
+                      <div className="p-3">
+                        <div style={additionTextStyle}>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</div>
+                        <div className="mt-3 status-text mr-3" style={statusTextStyle}>
+                          {translate(statusText)}
+                        </div>
                       </div>
                       <div className="p-3 ml-auto">
                         {appointment.created_by_therapist && (
                           <>
                             <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
                             <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
+                            <div className="appointment-own-icon"><BsPersonFill size={20} color={scssColors.primary}/></div>
                           </>
                         )}
-                        {!appointment.created_by_therapist && therapistStatus === APPOINTMENT_STATUS.INVITED && (
+                        {!appointment.created_by_therapist && (
                           <>
-                            <AcceptAction className="ml-auto" onClick={() => handleAccept(appointment.id)} />
-                            <RejectAction className="ml-1" onClick={() => handleReject(appointment.id)} />
+                            <AcceptAction className="ml-auto" onClick={() => handleAccept(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.ACCEPTED} />
+                            <RejectAction className="ml-1" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED} />
                           </>
                         )}
                       </div>
