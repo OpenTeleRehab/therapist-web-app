@@ -4,9 +4,9 @@ import {
   showErrorNotification
 } from 'store/notification/actions';
 
-export const getPublishPrivacyPolicy = () => async dispatch => {
+export const getPublishPrivacyPolicy = payload => async dispatch => {
   dispatch(mutation.getPublishPrivacyPolicyRequest());
-  const res = await PrivacyPolicy.getPublishPrivacyPolicy();
+  const res = await PrivacyPolicy.getPublishPrivacyPolicy(payload);
   if (res) {
     dispatch(mutation.getPublishPrivacyPolicySuccess(res.data));
   } else {

@@ -6,10 +6,11 @@ import PropTypes from 'prop-types';
 const TermConditionPage = ({ translate }) => {
   const dispatch = useDispatch();
   const { publishTermAndConditionPage } = useSelector(state => state.termAndCondition);
+  const { profile } = useSelector(state => state.auth);
 
   useEffect(() => {
-    dispatch(getPublishTermCondition());
-  }, [dispatch]);
+    dispatch(getPublishTermCondition({ lang: profile.language_id }));
+  }, [dispatch, profile]);
 
   return (
     <>

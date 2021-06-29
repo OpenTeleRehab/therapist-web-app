@@ -7,10 +7,10 @@ import {
   showSpinner
 } from 'store/spinnerOverlay/actions';
 
-export const getPublishTermCondition = () => async dispatch => {
+export const getPublishTermCondition = payload => async dispatch => {
   dispatch(mutation.getPublishTermConditionRequest());
   dispatch(showSpinner(true));
-  const data = await TermAndCondition.getPublishTermConditionPage();
+  const data = await TermAndCondition.getPublishTermConditionPage(payload);
   if (data) {
     dispatch(mutation.getPublishTermConditionSuccess(data.data));
     dispatch(showSpinner(false));
