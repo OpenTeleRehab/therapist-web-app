@@ -1,18 +1,50 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Dialog from 'components/Dialog';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import { Col, Form, Row } from 'react-bootstrap';
 import _ from 'lodash';
+import { User } from '../../../services/user';
+import { TYPE } from '../../../variables/activity';
 
-const CopyActivity = ({ show, handleClose, activities, setActivities, dayActivityToCopy, weeks }) => {
+const CopyActivity = ({ show, handleClose, activities, setActivities, dayActivityToCopy, weeks, treatmentPlanId, lang, therapistId }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [selectedDays, setSelectedDays] = useState([]);
   const [selectedWeeks, setSelectedWeeks] = useState([]);
   const [errorDay, setErrorDay] = useState(false);
   const [errorWeek, setErrorWeek] = useState(false);
+  const [customExercises, setCustomExercises] = useState([]);
+
+  useEffect(() => {
+    if (dayActivityToCopy.customExercises) {
+      dayActivityToCopy.exercises.forEach(exercise => {
+        const customExercise = dayActivityToCopy.customExercises.find(custom => custom.id === exercise);
+        if (customExercise) {
+          customExercises.push(customExercise);
+        } else {
+          User.getActivitiesByIds([exercise], treatmentPlanId, TYPE.exercise, dayActivityToCopy.day, dayActivityToCopy.week, lang, therapistId).then(res => {
+            if (res.data) {
+              res.data.forEach(data => {
+                customExercises.push({ additional_information: data.additional_information, reps: data.reps, sets: data.sets, id: data.id });
+              });
+            }
+          });
+        }
+      });
+    } else {
+      User.getActivitiesByIds(dayActivityToCopy.exercises, treatmentPlanId, TYPE.exercise, dayActivityToCopy.day, dayActivityToCopy.week, lang, therapistId).then(res => {
+        if (res.data) {
+          res.data.forEach(data => {
+            customExercises.push({ additional_information: data.additional_information, reps: data.reps, sets: data.sets, id: data.id });
+          });
+        }
+      });
+    }
+    setCustomExercises(customExercises);
+    // eslint-disable-next-line
+  }, [lang, dayActivityToCopy]);
 
   const handleDayChange = (e) => {
     const checked = e.target.checked;
@@ -61,6 +93,7 @@ const CopyActivity = ({ show, handleClose, activities, setActivities, dayActivit
             newActivities.push({
               week: selectedWeeks[i],
               day: selectedDays[j],
+              customExercises: customExercises,
               exercises: dayActivities.exercises ? dayActivities.exercises : [],
               materials: dayActivities.materials ? dayActivities.materials : [],
               questionnaires: dayActivities.questionnaires ? dayActivities.questionnaires : []
@@ -155,7 +188,10 @@ CopyActivity.propTypes = {
   activities: PropTypes.array,
   setActivities: PropTypes.func,
   dayActivityToCopy: PropTypes.object,
-  weeks: PropTypes.number
+  weeks: PropTypes.number,
+  treatmentPlanId: PropTypes.number,
+  lang: PropTypes.any,
+  therapistId: PropTypes.number
 };
 
 export default CopyActivity;

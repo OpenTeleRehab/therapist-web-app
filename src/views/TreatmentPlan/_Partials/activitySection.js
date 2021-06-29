@@ -315,6 +315,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           setActivities={setActivities}
           dayActivityToCopy={dayActivityToCopy}
           weeks={weeks}
+          treatmentPlanId={treatmentPlanId}
+          lang={lang}
+          therapistId={therapistId}
         />
       }
     </>
