@@ -61,8 +61,8 @@ const ViewTreatmentPlan = () => {
   const diseases = useSelector((state) => state.disease.diseases);
 
   useEffect(() => {
-    dispatch(getDiseases());
-  }, [dispatch]);
+    dispatch(getDiseases({ lang: profile.language_id }));
+  }, [dispatch, profile]);
 
   useEffect(() => {
     if (id) {
