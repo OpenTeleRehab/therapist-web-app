@@ -6,10 +6,11 @@ import PropTypes from 'prop-types';
 const PrivacyPolicyPage = ({ translate }) => {
   const dispatch = useDispatch();
   const { publishPrivacyPolicy } = useSelector(state => state.privacyPolicy);
+  const { profile } = useSelector(state => state.auth);
 
   useEffect(() => {
-    dispatch(getPublishPrivacyPolicy());
-  }, [dispatch]);
+    dispatch(getPublishPrivacyPolicy({ lang: profile.language_id }));
+  }, [dispatch, profile]);
 
   return (
     <>
