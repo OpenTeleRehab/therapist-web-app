@@ -19,7 +19,7 @@ import { getSettings } from 'store/setting/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import { Exercise as exerciseService } from 'services/exercise';
 import _ from 'lodash';
-import PreviewList from './previewList';
+import PreviewList from './Partials/previewList';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -40,6 +40,7 @@ const Library = ({ translate }) => {
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [selectedQuestionnaires, setSelectedQuestionnaires] = useState([]);
+  const [isShowPreviewList, setIsShowPreviewList] = useState(false);
 
   useEffect(() => {
     if (queryString.parse(search).tab === VIEW_EDUCATION) {
@@ -85,6 +86,14 @@ const Library = ({ translate }) => {
       });
     }
   }, [therapistId, view, treatmentPlans, maxLibraries]);
+
+  useEffect(() => {
+    if (selectedExercises.length || selectedMaterials.length || selectedQuestionnaires.length) {
+      setIsShowPreviewList(true);
+    } else {
+      setIsShowPreviewList(false);
+    }
+  }, [selectedExercises, selectedMaterials, selectedQuestionnaires]);
 
   const handleSwitchFavorite = (id, isFavorite, type) => {
     switch (type) {
@@ -144,32 +153,33 @@ const Library = ({ translate }) => {
         </div>
       </div>
 
-      <Nav variant="tabs" activeKey={view} className="mb-3">
-        <Nav.Item>
-          <Nav.Link as={Link} to={ROUTES.LIBRARY} eventKey={VIEW_EXERCISE}>
-            {translate('library.exercises')}
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link as={Link} to={ROUTES.LIBRARY_EDUCATION} eventKey={VIEW_EDUCATION}>
-            {translate('library.education_materials')}
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link as={Link} to={ROUTES.LIBRARY_QUESTIONNAIRE} eventKey={VIEW_QUESTIONNAIRE}>
-            {translate('library.questionnaires')}
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link as={Link} to={ROUTES.LIBRARY_PRESET_TREATMENT} eventKey={VIEW_PRESET_TREATMENT}>
-            {translate('library.preset_treatments')}
-          </Nav.Link>
-        </Nav.Item>
-      </Nav>
-      <div className="position-relative">
-        { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleExercisesChange} selectedExercises={selectedExercises}/> }
-        { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleMaterialsChange} selectedMaterials={selectedMaterials} /> }
-        { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleQuestionnairesChange} selectedQuestionnaires={selectedQuestionnaires} /> }
+      <div className={`position-relative library-panel ${isShowPreviewList ? 'show' : ''}`}>
+        <Nav variant="tabs" activeKey={view} className="mb-3">
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.LIBRARY} eventKey={VIEW_EXERCISE}>
+              {translate('library.exercises')}
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.LIBRARY_EDUCATION} eventKey={VIEW_EDUCATION}>
+              {translate('library.education_materials')}
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.LIBRARY_QUESTIONNAIRE} eventKey={VIEW_QUESTIONNAIRE}>
+              {translate('library.questionnaires')}
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link as={Link} to={ROUTES.LIBRARY_PRESET_TREATMENT} eventKey={VIEW_PRESET_TREATMENT}>
+              {translate('library.preset_treatments')}
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
+
+        { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleExercisesChange} selectedExercises={selectedExercises} isShowPreviewList={isShowPreviewList}/> }
+        { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleMaterialsChange} selectedMaterials={selectedMaterials} isShowPreviewList={isShowPreviewList}/> }
+        { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleQuestionnairesChange} selectedQuestionnaires={selectedQuestionnaires} isShowPreviewList={isShowPreviewList} /> }
         { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
 
         { view !== VIEW_PRESET_TREATMENT &&
@@ -180,6 +190,7 @@ const Library = ({ translate }) => {
             onExerciseRemove={id => handleExercisesChange(false, id)}
             onMaterialRemove={id => handleMaterialsChange(false, id)}
             onQuestionnaireRemove={id => handleQuestionnairesChange(false, id)}
+            showPreviewList={setIsShowPreviewList}
           />
         }
       </div>

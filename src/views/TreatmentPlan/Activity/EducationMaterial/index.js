@@ -43,7 +43,7 @@ import scssColors from '../../../../scss/custom.scss';
 import { MATERIAL_TYPE } from '../../../../variables/activity';
 
 let timer = null;
-const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial, setShowPreview, isOwnCreated, oldSelectedMaterials }) => {
+const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial, setShowPreview, isOwnCreated, oldSelectedMaterials, showPreview }) => {
   const dispatch = useDispatch();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
   const { educationMaterialCategoryTreeData } = useSelector((state) => state.category);
@@ -160,7 +160,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
   return (
     <>
       <Row>
-        <Col sm={5} md={4} lg={3}>
+        <Col sm={5} md={4} lg={3} className="library-panel__filter">
           <Card bg="info">
             <Card.Header>
               <Form.Group className="search-box-with-icon">
@@ -250,7 +250,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
             </Card.Body>
           </Card>
         </Col>
-        <Col sm={7} md={8} lg={9}>
+        <Col sm={7} md={8} lg={showPreview ? 7 : 9}>
           { educationMaterials.length === 0 && (
             <div className="card h-100 d-flex justify-content-center align-items-center">
               <big className="text-muted">{translate('common.no_data')}</big>
@@ -260,7 +260,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
             <>
               <Row>
                 { educationMaterials.map(material => (
-                  <Col key={material.id} md={6} lg={3}>
+                  <Col key={material.id} md={6} lg={showPreview ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
@@ -387,7 +387,8 @@ EducationMaterial.propTypes = {
   setViewEducationMaterial: PropTypes.func,
   setShowPreview: PropTypes.func,
   oldSelectedMaterials: PropTypes.array,
-  isOwnCreated: PropTypes.bool
+  isOwnCreated: PropTypes.bool,
+  showPreview: PropTypes.bool
 };
 
 export default withLocalize(EducationMaterial);

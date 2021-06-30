@@ -41,7 +41,7 @@ import scssColors from '../../../../scss/custom.scss';
 import Select from 'react-select';
 
 let timer = null;
-const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, viewQuestionnaire, setViewQuestionnaire, setShowPreview, isOwnCreated, oldSelectedQuestionnaires }) => {
+const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, viewQuestionnaire, setViewQuestionnaire, setShowPreview, isOwnCreated, oldSelectedQuestionnaires, showPreview }) => {
   const dispatch = useDispatch();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
   const { questionnaireCategoryTreeData } = useSelector((state) => state.category);
@@ -158,7 +158,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
   return (
     <>
       <Row>
-        <Col sm={5} md={4} lg={3}>
+        <Col sm={5} md={4} lg={3} className="library-panel__filter">
           <Card bg="info">
             <Card.Header>
               <Form.Group className="search-box-with-icon">
@@ -248,7 +248,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
             </Card.Body>
           </Card>
         </Col>
-        <Col sm={7} md={8} lg={9}>
+        <Col sm={7} md={8} lg={showPreview ? 7 : 9}>
           { questionnaires.length === 0 && (
             <div className="card h-100 d-flex justify-content-center align-items-center">
               <big className="text-muted">{translate('common.no_data')}</big>
@@ -258,7 +258,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
             <>
               <Row>
                 { questionnaires.map(questionnaire => (
-                  <Col key={questionnaire.id} md={6} lg={3}>
+                  <Col key={questionnaire.id} md={6} lg={ showPreview ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
@@ -377,7 +377,8 @@ Questionnaire.propTypes = {
   setViewQuestionnaire: PropTypes.func,
   setShowPreview: PropTypes.func,
   oldSelectedQuestionnaires: PropTypes.array,
-  isOwnCreated: PropTypes.bool
+  isOwnCreated: PropTypes.bool,
+  showPreview: PropTypes.bool
 };
 
 export default withLocalize(Questionnaire);
