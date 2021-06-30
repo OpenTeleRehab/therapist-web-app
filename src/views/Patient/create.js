@@ -159,7 +159,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       }
 
       if (formValues.phone) {
-        therapistService.getPatientByPhoneNumber(formValues.phone).then(res => {
+        therapistService.getPatientByPhoneNumber(formValues.phone, editId || '').then(res => {
           if (res.data > 0) {
             setPhoneExist(true);
           } else {
@@ -213,6 +213,28 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const handleConfirm = () => {
     let canSave = true;
 
+    let formValues = formFields;
+    if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
+      canSave = false;
+      setErrorClass('d-block text-danger invalid-feedback');
+      setErrorPhoneMessage(translate('error.phone'));
+    } else {
+      if (phoneExist) {
+        canSave = false;
+        setErrorClass('d-block text-danger invalid-feedback');
+        setErrorPhoneMessage(translate('error_message.phone_exists'));
+      } else {
+        setErrorClass('invalid-feedback');
+        canSave = true;
+      }
+
+      const phoneValue = formFields.phone;
+      const numOnly = phoneValue.split(formFields.dial_code);
+      if (numOnly[1].match('^0')) {
+        formValues = { ...formFields, phone: formFields.dial_code + numOnly[1].slice(1) };
+      }
+    }
+
     if (formFields.first_name === '') {
       canSave = false;
       setErrorFirstName(true);
@@ -236,28 +258,6 @@ const CreatePatient = ({ show, handleClose, editId }) => {
 
     if (errorInvalidDob) {
       canSave = false;
-    }
-
-    let formValues = formFields;
-    if (formFields.phone === '' || formFields.phone === undefined || formFields.dial_code === formFields.phone) {
-      canSave = false;
-      setErrorClass('d-block text-danger invalid-feedback');
-      setErrorPhoneMessage(translate('error.phone'));
-    } else {
-      if (phoneExist) {
-        canSave = false;
-        setErrorClass('d-block text-danger invalid-feedback');
-        setErrorPhoneMessage(translate('error_message.phone_exists'));
-      } else {
-        setErrorClass('invalid-feedback');
-        canSave = true;
-      }
-
-      const phoneValue = formFields.phone;
-      const numOnly = phoneValue.split(formFields.dial_code);
-      if (numOnly[1].match('^0')) {
-        formValues = { ...formFields, phone: formFields.dial_code + numOnly[1].slice(1) };
-      }
     }
 
     if (canSave) {

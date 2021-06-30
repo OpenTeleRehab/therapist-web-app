@@ -27,8 +27,14 @@ const deleteTherapistChatRoomById = (id, chatRoomId) => {
     });
 };
 
-const getPatientByPhoneNumber = (phone) => {
-  const params = { phone: phone };
+const getPatientByPhoneNumber = (phone, patientId) => {
+  let params = '';
+  if (patientId !== '') {
+    params = { phone: phone, patient_id: patientId };
+  } else {
+    params = { phone: phone };
+  }
+
   return axios.get('patient/by-phone-number', { params })
     .then(
       res => {
