@@ -139,36 +139,44 @@ const PatientInfo = ({ id, translate }) => {
   };
 
   const handleSelectRoomToChat = () => {
-    const findIndex = chatRooms.findIndex(r => r.u._id === formFields.chat_user_id);
-    if (findIndex !== -1) {
-      dispatch(selectRoom(chatRooms[findIndex]));
-      loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
-      setTimeout(() => {
-        markMessagesAsRead(chatSocket, chatRooms[findIndex].rid, therapist.id);
-      }, 1000);
-      history.push(ROUTES.CHAT_OR_CALL);
-    } else {
-      dispatch(showErrorNotification('chat_or_call', 'error_message.chat_nonactivated'));
+    if (id && users.length) {
+      const patient = users.find(user => user.id === parseInt(id));
+      const findIndex = chatRooms.findIndex(r => r.u._id === patient.chat_user_id);
+
+      if (findIndex !== -1 && patient.enabled) {
+        dispatch(selectRoom(chatRooms[findIndex]));
+        loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
+        setTimeout(() => {
+          markMessagesAsRead(chatSocket, chatRooms[findIndex].rid, therapist.id);
+        }, 1000);
+        history.push(ROUTES.CHAT_OR_CALL);
+      } else {
+        dispatch(showErrorNotification('chat_or_call', 'error_message.chat_nonactivated'));
+      }
     }
   };
 
   const handleSelectRoomToCall = () => {
-    const findIndex = chatRooms.findIndex(r => r.u._id === formFields.chat_user_id);
-    if (findIndex !== -1) {
-      const newMessage = {
-        _id: generateHash(),
-        rid: chatRooms[findIndex].rid,
-        msg: CALL_STATUS.AUDIO_STARTED
-      };
-      sendNewMessage(chatSocket, newMessage, therapist.id);
-      dispatch(selectRoom(chatRooms[findIndex]));
-      loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
-      setTimeout(() => {
-        markMessagesAsRead(chatSocket, chatRooms[findIndex].rid, therapist.id);
-      }, 1000);
-      history.push(ROUTES.CHAT_OR_CALL);
-    } else {
-      dispatch(showErrorNotification('chat_or_call', 'error_message.chat_nonactivated'));
+    if (id && users.length) {
+      const patient = users.find(user => user.id === parseInt(id));
+      const findIndex = chatRooms.findIndex(r => r.u._id === patient.chat_user_id);
+
+      if (findIndex !== -1 && patient.enabled) {
+        const newMessage = {
+          _id: generateHash(),
+          rid: chatRooms[findIndex].rid,
+          msg: CALL_STATUS.AUDIO_STARTED
+        };
+        sendNewMessage(chatSocket, newMessage, therapist.id);
+        dispatch(selectRoom(chatRooms[findIndex]));
+        loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
+        setTimeout(() => {
+          markMessagesAsRead(chatSocket, chatRooms[findIndex].rid, therapist.id);
+        }, 1000);
+        history.push(ROUTES.CHAT_OR_CALL);
+      } else {
+        dispatch(showErrorNotification('chat_or_call', 'error_message.chat_nonactivated'));
+      }
     }
   };
 
