@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
+import { Row, Col } from 'react-bootstrap';
 
-import { BiChevronLeftCircle } from 'react-icons/bi';
+import { BiChevronLeftCircle, BiChevronRightCircle } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
 import ListExerciseCard from 'views/TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMaterial/listCard';
@@ -14,6 +15,7 @@ const PreviewList = ({
   originData, day, week
 }) => {
   const { profile } = useSelector((state) => state.auth);
+  const [previewListHeight, setPreviewListHeight] = useState('100%');
 
   const handleShow = () => {
     setShowPreview(!showPreview);
@@ -26,19 +28,33 @@ const PreviewList = ({
     // eslint-disable-next-line
   }, [selectedExercises, selectedMaterials, selectedQuestionnaires]);
 
+  useEffect(() => {
+    if (showPreview) {
+      const modalBody = document.getElementsByClassName('modal-body');
+      setPreviewListHeight(modalBody[0].scrollHeight);
+    }
+  }, [showPreview]);
+
   return (
-    <>
-      <div className="position-absolute p-2 show-select-exercise-button">
-        <BiChevronLeftCircle size={25} onClick={handleShow}/>
-      </div>
-      { showPreview &&
-        <div className="position-absolute w-25 selected-exercise-wrapper" style={{ height: document.body.scrollHeight }}>
-          <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
-          <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
-          <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week} />
+    <Row>
+      <Col sm={5} md={4} lg={2} className={`library-preview pr-0 ${showPreview ? 'show' : ''}`}>
+        <div className="library-preview-header mt-3">
+          <span className="icon">
+            {showPreview
+              ? <BiChevronRightCircle size={26} onClick={handleShow} />
+              : <BiChevronLeftCircle size={26} onClick={handleShow} />
+            }
+          </span>
         </div>
-      }
-    </>
+        { showPreview &&
+          <div className="library-preview-body" style={{ height: previewListHeight }}>
+            <ListExerciseCard exerciseIds={selectedExercises} onSelectionRemove={onExerciseRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
+            <ListEducationMaterialCard materialIds={selectedMaterials} onSelectionRemove={onMaterialRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week}/>
+            <ListQuestionnaireCard questionnaireIds={selectedQuestionnaires} onSelectionRemove={onQuestionnaireRemove} therapistId={profile.id} isOwnCreated={isOwnCreated} originData={originData} day={day} week={week} />
+          </div>
+        }
+      </Col>
+    </Row>
   );
 };
 

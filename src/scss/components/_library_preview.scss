@@ -1,0 +1,42 @@
+.library {
+	&-panel {
+		&__filter {
+			transition: width 2s;
+		}
+	}
+
+	&-preview {
+		position: absolute;
+		top: 0;
+		right: 0;
+		z-index: 10;
+
+		&.show {
+			height: 100%;
+
+			.library-preview-header {
+				text-align: left;
+			}
+		}
+
+		&-header {
+			height: 42px;
+			padding: 8px 0;
+			text-align: right;
+
+			.icon {
+				background-color: $white;
+				border-radius: 50%;
+			}
+		}
+
+		&-body {
+			background-color: $light;
+			box-shadow: -2px 0px 1px rgba(0, 0, 0, 0.2);
+			height: calc(100% - 58px);
+			padding: 0.2rem;
+			overflow-y: auto;
+			width: 100%;
+		}
+	}
+}

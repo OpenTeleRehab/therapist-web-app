@@ -40,7 +40,7 @@ import Select from 'react-select';
 import scssColors from 'scss/custom.scss';
 
 let timer = null;
-const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise, setShowPreview, isOwnCreated, oldSelectedExercises }) => {
+const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise, setShowPreview, isOwnCreated, oldSelectedExercises, showPreview }) => {
   const dispatch = useDispatch();
   const { loading, exercises, filters } = useSelector(state => state.exercise);
   const { exerciseCategoryTreeData } = useSelector((state) => state.category);
@@ -157,7 +157,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
   return (
     <>
       <Row>
-        <Col sm={5} md={4} lg={3}>
+        <Col sm={5} md={4} lg={3} className="library-panel__filter">
           <Card bg="info">
             <Card.Header>
               <Form.Group className="search-box-with-icon">
@@ -247,7 +247,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
             </Card.Body>
           </Card>
         </Col>
-        <Col sm={7} md={8} lg={9}>
+        <Col sm={7} md={8} lg={showPreview ? 7 : 9}>
           { exercises.length === 0 && (
             <div className="card h-100 d-flex justify-content-center align-items-center">
               <big className="text-muted">{translate('common.no_data')}</big>
@@ -257,7 +257,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
             <>
               <Row>
                 { exercises.map(exercise => (
-                  <Col key={exercise.id} md={6} lg={3}>
+                  <Col key={exercise.id} md={6} lg={showPreview ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
@@ -387,7 +387,8 @@ Exercise.propTypes = {
   setViewExercise: PropTypes.func,
   setShowPreview: PropTypes.func,
   isOwnCreated: PropTypes.bool,
-  oldSelectedExercises: PropTypes.array
+  oldSelectedExercises: PropTypes.array,
+  showPreview: PropTypes.bool
 };
 
 export default withLocalize(Exercise);

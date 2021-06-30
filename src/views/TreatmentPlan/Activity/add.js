@@ -160,13 +160,13 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
     >
       <Tabs transition={false} className="mb-3">
         <Tab eventKey="exercise" title={translate('activity.exercises')}>
-          <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} viewExercise={viewExercise} setViewExercise={setViewExercise} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedExercises={oldSelectedExercises} />
+          <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} viewExercise={viewExercise} setViewExercise={setViewExercise} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedExercises={oldSelectedExercises} showPreview={showPreview}/>
         </Tab>
         <Tab eventKey="education" title={translate('activity.education_materials')}>
-          <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} viewEducationMaterial={viewEducationMaterial} setViewEducationMaterial={setViewEducationMaterial} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedMaterials={oldSelectedMaterials} />
+          <EducationMaterial selectedMaterials={selectedMaterials} onSectionChange={handleMaterialsChange} viewEducationMaterial={viewEducationMaterial} setViewEducationMaterial={setViewEducationMaterial} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedMaterials={oldSelectedMaterials} showPreview={showPreview} />
         </Tab>
         <Tab eventKey="questionnaire" title={translate('activity.questionnaires')}>
-          <Questionnaire selectedQuestionnaires={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} viewQuestionnaire={viewQuestionnaire} setViewQuestionnaire={setViewQuestionnaire} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedQuestionnaires={oldSelectedQuestionnaires} />
+          <Questionnaire selectedQuestionnaires={selectedQuestionnaires} onSectionChange={handleQuestionnairesChange} viewQuestionnaire={viewQuestionnaire} setViewQuestionnaire={setViewQuestionnaire} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedQuestionnaires={oldSelectedQuestionnaires} showPreview={showPreview} />
         </Tab>
         {!isPreset && isOwnCreated &&
           <Tab eventKey="preset_treatment" title={translate('activity.preset_treatment')}>

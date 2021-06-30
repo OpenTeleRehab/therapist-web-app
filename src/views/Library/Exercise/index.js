@@ -33,7 +33,7 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 
 let timer = null;
-const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises }) => {
+const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -186,7 +186,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
   return (
     <>
       <Row>
-        <Col sm={5} md={4} lg={3}>
+        <Col sm={5} md={4} lg={3} className="library-panel__filter">
           <Card bg="info">
             <Card.Header>
               <SearchInput
@@ -267,7 +267,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
             </Card.Body>
           </Card>
         </Col>
-        <Col sm={7} md={8} lg={9}>
+        <Col sm={7} md={8} lg={isShowPreviewList ? 7 : 9}>
           { exercises.length === 0 && (
             <div className="card h-100 d-flex justify-content-center align-items-center">
               <big className="text-muted">{translate('common.no_data')}</big>
@@ -277,7 +277,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
             <>
               <Row>
                 { exercises.map(exercise => (
-                  <Col key={exercise.id} md={6} lg={3}>
+                  <Col key={exercise.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn">
@@ -405,7 +405,8 @@ Exercise.propTypes = {
   onSectionChange: PropTypes.func,
   selectedExercises: PropTypes.array,
   handleCopy: PropTypes.func,
-  handEdit: PropTypes.func
+  handEdit: PropTypes.func,
+  isShowPreviewList: PropTypes.bool
 };
 
 export default withLocalize(Exercise);

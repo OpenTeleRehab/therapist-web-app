@@ -45,7 +45,7 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 
 let timer = null;
-const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires }) => {
+const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
@@ -199,7 +199,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   return (
     <>
       <Row>
-        <Col sm={5} md={4} lg={3}>
+        <Col sm={5} md={4} lg={3} className="library-panel__filter">
           <Card bg="info">
             <Card.Header>
               <SearchInput
@@ -280,7 +280,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
             </Card.Body>
           </Card>
         </Col>
-        <Col sm={7} md={8} lg={9}>
+        <Col sm={7} md={8} lg={isShowPreviewList ? 7 : 9}>
           { questionnaires.length === 0 && (
             <div className="card h-100 d-flex justify-content-center align-items-center">
               <big className="text-muted">{translate('common.no_data')}</big>
@@ -290,7 +290,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
             <>
               <Row>
                 { questionnaires.map(questionnaire => (
-                  <Col key={questionnaire.id} md={6} lg={3}>
+                  <Col key={questionnaire.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn">
@@ -397,7 +397,8 @@ Questionnaire.propTypes = {
   therapistId: PropTypes.number,
   allowCreateContent: PropTypes.bool,
   onSectionChange: PropTypes.func,
-  selectedQuestionnaires: PropTypes.array
+  selectedQuestionnaires: PropTypes.array,
+  isShowPreviewList: PropTypes.bool
 };
 
 export default withLocalize(Questionnaire);

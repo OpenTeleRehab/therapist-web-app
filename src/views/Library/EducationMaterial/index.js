@@ -47,7 +47,7 @@ import scssColors from '../../../scss/custom.scss';
 import { MATERIAL_TYPE } from '../../../variables/activity';
 
 let timer = null;
-const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials }) => {
+const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
@@ -202,7 +202,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
   return (
     <>
       <Row>
-        <Col sm={5} md={4} lg={3}>
+        <Col sm={5} md={4} lg={3} className="library-panel__filter">
           <Card bg="info">
             <Card.Header>
               <SearchInput
@@ -283,7 +283,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
             </Card.Body>
           </Card>
         </Col>
-        <Col sm={7} md={8} lg={9}>
+        <Col sm={7} md={8} lg={isShowPreviewList ? 7 : 9}>
           { educationMaterials.length === 0 && (
             <div className="card h-100 d-flex justify-content-center align-items-center">
               <big className="text-muted">{translate('common.no_data')}</big>
@@ -293,7 +293,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
             <>
               <Row>
                 { educationMaterials.map(material => (
-                  <Col key={material.id} md={6} lg={3}>
+                  <Col key={material.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4">
                       <div className="top-bar">
                         <div className="favorite-btn">
@@ -408,7 +408,8 @@ EducationMaterial.propTypes = {
   therapistId: PropTypes.number,
   allowCreateContent: PropTypes.bool,
   onSectionChange: PropTypes.func,
-  selectedMaterials: PropTypes.array
+  selectedMaterials: PropTypes.array,
+  isShowPreviewList: PropTypes.bool
 };
 
 export default withLocalize(EducationMaterial);
