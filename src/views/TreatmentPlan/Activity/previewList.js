@@ -15,7 +15,7 @@ const PreviewList = ({
   originData, day, week
 }) => {
   const { profile } = useSelector((state) => state.auth);
-  const [previewListHeight, setPreviewListHeight] = useState('100%');
+  const [previewListHeight, setPreviewListHeight] = useState('');
 
   const handleShow = () => {
     setShowPreview(!showPreview);
