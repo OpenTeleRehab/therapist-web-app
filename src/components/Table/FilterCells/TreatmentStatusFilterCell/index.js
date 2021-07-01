@@ -19,7 +19,8 @@ const TreatmentStatusFilterCell = ({ filter, onFilter }) => {
       '&:hover': {
         backgroundColor: scssColors.infoLight
       }
-    })
+    }),
+    menuPortal: base => ({ ...base, zIndex: 1000 })
   };
 
   const treatmentStatusData = [
@@ -54,6 +55,7 @@ const TreatmentStatusFilterCell = ({ filter, onFilter }) => {
         getOptionLabel={option => option.name}
         options={treatmentStatusData}
         onChange={(e) => handleFilter(e.value)}
+        menuPortalTarget={document.body}
         styles={customSelectStyles}
       />
     </th>

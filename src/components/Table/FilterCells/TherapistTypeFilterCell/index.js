@@ -18,7 +18,8 @@ const StatusFilterCell = ({ filter, onFilter }) => {
       '&:hover': {
         backgroundColor: scssColors.infoLight
       }
-    })
+    }),
+    menuPortal: base => ({ ...base, zIndex: 1000 })
   };
 
   const types = [
@@ -49,6 +50,7 @@ const StatusFilterCell = ({ filter, onFilter }) => {
         getOptionLabel={option => option.name}
         options={types}
         onChange={(e) => handleFilter(e.value)}
+        menuPortalTarget={document.body}
         styles={customSelectStyles}
       />
     </th>
