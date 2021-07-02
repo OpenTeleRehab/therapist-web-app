@@ -86,8 +86,7 @@ const ViewTreatmentPlan = () => {
       setActivities(treatmentPlansDetail.activities);
       setStartDate(moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format));
     }
-    // eslint-disable-next-line
-  }, [id, treatmentPlansDetail]);
+  }, [id, treatmentPlansDetail, diseases]);
 
   const handleDelete = () => {
     setShowDeleteDialog(true);
