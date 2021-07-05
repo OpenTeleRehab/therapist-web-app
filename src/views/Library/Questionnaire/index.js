@@ -48,11 +48,10 @@ let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { loading, questionnaires, filters } = useSelector(state => state.questionnaire);
+  const { loading, questionnaires, filters, totalCount } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
     search_value: '',
     favorites_only: false,
@@ -95,11 +94,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
         page_size: pageSize,
         page: currentPage,
         therapist_id: therapistId
-      })).then(result => {
-        if (result) {
-          setTotalCount(result.total_count);
-        }
-      });
+      }));
     }, 500);
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 

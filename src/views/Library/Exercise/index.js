@@ -37,7 +37,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
   const dispatch = useDispatch();
   const history = useHistory();
 
-  const { loading, exercises, filters } = useSelector(state => state.exercise);
+  const { loading, exercises, filters, totalCount } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
   const [previewExercise, setPreviewExercise] = useState(null);
@@ -51,7 +51,6 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
 
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [language, setLanguage] = useState('');
   const [formFields, setFormFields] = useState({
     search_value: '',
@@ -83,11 +82,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
         page_size: pageSize,
         page: currentPage,
         therapist_id: therapistId
-      })).then(result => {
-        if (result) {
-          setTotalCount(result.total_count);
-        }
-      });
+      }));
     }, 500);
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 

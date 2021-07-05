@@ -11,6 +11,7 @@ export const exercise = (state = initialState, action) => {
       return Object.assign({}, state, {
         exercises: action.data,
         filters: action.filters,
+        totalCount: action.info.total_count,
         loading: false
       });
     }

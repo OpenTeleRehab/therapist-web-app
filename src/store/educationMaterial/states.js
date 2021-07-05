@@ -2,5 +2,6 @@ export const initialState = {
   filters: {},
   educationMaterials: [],
   educationMaterial: {},
-  loading: false
+  loading: false,
+  totalCount: 0
 };

@@ -42,11 +42,10 @@ import scssColors from 'scss/custom.scss';
 let timer = null;
 const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise, setShowPreview, isOwnCreated, oldSelectedExercises, showPreview }) => {
   const dispatch = useDispatch();
-  const { loading, exercises, filters } = useSelector(state => state.exercise);
+  const { loading, exercises, filters, totalCount } = useSelector(state => state.exercise);
   const { exerciseCategoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
     search_value: '',
     favorites_only: false,
@@ -104,11 +103,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
         page_size: pageSize,
         page: currentPage,
         therapist_id: therapistId
-      })).then(result => {
-        if (result) {
-          setTotalCount(result.total_count);
-        }
-      });
+      }));
     }, 500);
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 

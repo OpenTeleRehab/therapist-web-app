@@ -7,8 +7,7 @@ export const getEducationMaterials = payload => async dispatch => {
   dispatch(mutation.getEducationMaterialsRequest());
   const data = await EducationMaterial.getEducationMaterials(payload);
   if (data.success) {
-    dispatch(mutation.getEducationMaterialsSuccess(data.data, payload));
-    return data.info;
+    dispatch(mutation.getEducationMaterialsSuccess(data.data, payload, data.info));
   } else {
     dispatch(mutation.getEducationMaterialsFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));

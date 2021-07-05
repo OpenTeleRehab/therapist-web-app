@@ -7,8 +7,7 @@ export const getExercises = payload => async dispatch => {
   dispatch(mutation.getExercisesRequest());
   const data = await Exercise.getExercises(payload);
   if (data.success) {
-    dispatch(mutation.getExercisesSuccess(data.data, payload));
-    return data.info;
+    dispatch(mutation.getExercisesSuccess(data.data, payload, data.info));
   } else {
     dispatch(mutation.getExercisesFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));
