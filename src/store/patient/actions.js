@@ -3,9 +3,9 @@ import { mutation } from './mutations';
 
 import { showErrorNotification } from 'store/notification/actions';
 
-export const getPatients = therapistId => async dispatch => {
+export const getPatients = payload => async dispatch => {
   dispatch(mutation.getPatientsRequest());
-  const data = await Patient.getPatients(therapistId);
+  const data = await Patient.getPatients(payload);
   if (data.success) {
     dispatch(mutation.getPatientsSuccess(data.data));
     return data.info;
