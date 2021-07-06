@@ -45,11 +45,10 @@ import { MATERIAL_TYPE } from '../../../../variables/activity';
 let timer = null;
 const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial, setShowPreview, isOwnCreated, oldSelectedMaterials, showPreview }) => {
   const dispatch = useDispatch();
-  const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
+  const { loading, educationMaterials, filters, totalCount } = useSelector(state => state.educationMaterial);
   const { educationMaterialCategoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
     search_value: '',
     favorites_only: false,
@@ -107,11 +106,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
         lang: language,
         page: currentPage,
         therapist_id: therapistId
-      })).then(result => {
-        if (result) {
-          setTotalCount(result.total_count);
-        }
-      });
+      }));
     }, 500);
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 

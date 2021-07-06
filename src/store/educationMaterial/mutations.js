@@ -2,10 +2,11 @@ const getEducationMaterialsRequest = () => ({
   type: 'GET_EDUCATION_MATERIALS_REQUEST'
 });
 
-const getEducationMaterialsSuccess = (data, filters) => ({
+const getEducationMaterialsSuccess = (data, filters, info) => ({
   type: 'GET_EDUCATION_MATERIALS_SUCCESS',
   data,
-  filters
+  filters,
+  info
 });
 
 const getEducationMaterialsFail = () => ({

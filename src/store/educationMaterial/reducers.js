@@ -12,6 +12,7 @@ export const educationMaterial = (state = initialState, action) => {
       return Object.assign({}, state, {
         educationMaterials: action.data,
         filters: action.filters,
+        totalCount: action.info.total_count,
         loading: false
       });
     }

@@ -5,7 +5,8 @@ export const questionnaire = (state = initialState, action) => {
     case 'GET_QUESTIONNAIRES_SUCCESS': {
       return Object.assign({}, state, {
         questionnaires: action.data,
-        filters: action.filters
+        filters: action.filters,
+        totalCount: action.info.total_count
       });
     }
     case 'GET_QUESTIONNAIRE_SUCCESS': {

@@ -2,5 +2,6 @@ export const initialState = {
   filters: {},
   exercises: [],
   exercise: {},
-  loading: false
+  loading: false,
+  totalCount: 0
 };

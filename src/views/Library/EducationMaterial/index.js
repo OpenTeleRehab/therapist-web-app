@@ -50,11 +50,10 @@ let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { loading, educationMaterials, filters } = useSelector(state => state.educationMaterial);
+  const { loading, educationMaterials, filters, totalCount } = useSelector(state => state.educationMaterial);
   const { categoryTreeData } = useSelector((state) => state.category);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalCount, setTotalCount] = useState(0);
   const [formFields, setFormFields] = useState({
     search_value: '',
     favorites_only: false,
@@ -97,11 +96,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
         therapist_id: therapistId,
         lang: language,
         page: currentPage
-      })).then(result => {
-        if (result) {
-          setTotalCount(result.total_count);
-        }
-      });
+      }));
     }, 500);
   }, [language, formFields, selectedCategories, therapistId, currentPage, pageSize, dispatch]);
 

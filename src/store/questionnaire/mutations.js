@@ -2,10 +2,11 @@ const getQuestionnairesRequest = () => ({
   type: 'GET_QUESTIONNAIRES_REQUEST'
 });
 
-const getQuestionnairesSuccess = (data, filters) => ({
+const getQuestionnairesSuccess = (data, filters, info) => ({
   type: 'GET_QUESTIONNAIRES_SUCCESS',
   data,
-  filters
+  filters,
+  info
 });
 
 const getQuestionnairesFail = () => ({
