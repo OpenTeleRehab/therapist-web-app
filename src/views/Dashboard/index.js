@@ -25,7 +25,8 @@ const Dashboard = ({ translate }) => {
 
   useEffect(() => {
     dispatch(getPatients({
-      therapist_id: profile.id
+      therapist_id: profile.id,
+      enabled: 1
     }));
   }, [profile, dispatch]);
 
