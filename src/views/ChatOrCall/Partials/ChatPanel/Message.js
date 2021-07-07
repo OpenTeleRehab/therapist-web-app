@@ -43,7 +43,7 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
 
   const getMessageText = (msg) => {
     let text = msg || '';
-    if (msg === CALL_STATUS.AUDIO_MISSED || msg === CALL_STATUS.VIDEO_MISSED) {
+    if (msg === CALL_STATUS.AUDIO_MISSED || msg === CALL_STATUS.VIDEO_MISSED || CALL_STATUS.BUSY) {
       text = translate(msg);
     } else if ([CALL_STATUS.AUDIO_STARTED, CALL_STATUS.VIDEO_STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
       text = translate(msg);

@@ -20,5 +20,6 @@ export const CALL_STATUS = {
   VIDEO_STARTED: 'jitsi_call_video_started',
   VIDEO_MISSED: 'jitsi_call_video_missed',
   VIDEO_ENDED: 'jitsi_call_video_ended',
-  ACCEPTED: 'jitsi_call_accepted'
+  ACCEPTED: 'jitsi_call_accepted',
+  BUSY: 'jitsi_call_busy'
 };
