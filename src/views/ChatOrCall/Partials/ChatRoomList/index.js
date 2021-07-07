@@ -50,7 +50,7 @@ const ChatRoomList = (
     if (type !== undefined && type !== CHAT_TYPES.TEXT) {
       lastMsg = translate('chat_attachment.title');
       className = 'text-primary';
-    } else if (msg === CALL_STATUS.AUDIO_MISSED || msg === CALL_STATUS.VIDEO_MISSED) {
+    } else if (msg === CALL_STATUS.AUDIO_MISSED || msg === CALL_STATUS.VIDEO_MISSED || msg === CALL_STATUS.BUSY) {
       lastMsg = translate(msg);
       className = 'text-danger';
     } else if ([CALL_STATUS.AUDIO_STARTED, CALL_STATUS.VIDEO_STARTED, CALL_STATUS.ACCEPTED].includes(msg)) {
