@@ -16,6 +16,7 @@ const ChatPanel = (
     translate,
     userStatus,
     chatUserId,
+    chatRooms,
     selectedRoom,
     messages,
     hideChatPanel,
@@ -73,7 +74,7 @@ const ChatPanel = (
 
   return (
     <>
-      {selectedRoom ? (
+      {selectedRoom && chatRooms.length ? (
         <>
           <div className="chat-message-header d-flex justify-content-between align-items-center">
             <h4 className="font-weight-bold mb-0 d-flex align-items-center">
@@ -115,6 +116,7 @@ ChatPanel.propTypes = {
   translate: PropTypes.func,
   userStatus: PropTypes.func,
   chatUserId: PropTypes.string,
+  chatRooms: PropTypes.array,
   selectedRoom: PropTypes.object,
   messages: PropTypes.array,
   hideChatPanel: PropTypes.func,

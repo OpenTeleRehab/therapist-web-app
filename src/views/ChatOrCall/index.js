@@ -189,6 +189,7 @@ const ChatOrCall = ({ translate }) => {
                 <ChatPanel
                   translate={translate}
                   chatUserId={therapist.chat_user_id}
+                  chatRooms={chatRooms}
                   selectedRoom={selectedRoom}
                   messages={messages}
                   isVideoCall={setIsVideoCall}
