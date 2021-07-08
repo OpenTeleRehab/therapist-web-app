@@ -1,22 +1,17 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import PaginationBootstrap from 'react-bootstrap-4-pagination';
+import ReactPaginate from 'react-paginate';
 import PropTypes from 'prop-types';
 import { Translate } from 'react-localize-redux';
 
 let recordStart = 0;
 let recordEnd = 0;
 
-const Pagination = ({ pageSize, totalCount, currentPage, setCurrentPage, showMax, pageSizes, setPageSize }) => {
+const Pagination = ({ pageSize, totalCount, currentPage, setCurrentPage, pageSizes, setPageSize }) => {
   currentPage = Math.max(1, currentPage);
-  const paginationConfig = {
-    totalPages: Math.max(1, Math.ceil(totalCount / pageSize)),
-    currentPage,
-    showMax
-  };
 
   const handleClick = page => {
-    setCurrentPage(page);
+    setCurrentPage(page.selected + 1);
   };
 
   const handlePageSizeChange = e => {
@@ -37,12 +32,17 @@ const Pagination = ({ pageSize, totalCount, currentPage, setCurrentPage, showMax
       </span>
 
       <div className="float-right mr-3">
-        <PaginationBootstrap
-          threeDots
-          prevNext
-          center={false}
-          onClick={handleClick}
-          {...paginationConfig}
+        <ReactPaginate
+          previousLabel={'⟨'}
+          nextLabel={'⟩'}
+          breakLabel={'...'}
+          pageCount={Math.max(1, Math.ceil(totalCount / pageSize))}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={4}
+          onPageChange={handleClick}
+          containerClassName={'pagination'}
+          activeClassName={'active-paginate'}
+          disabledClassName={'disable-style'}
         />
       </div>
 
@@ -66,7 +66,6 @@ Pagination.propTypes = {
   pageSize: PropTypes.number,
   totalCount: PropTypes.number,
   currentPage: PropTypes.number,
-  showMax: PropTypes.number,
   setCurrentPage: PropTypes.func,
   pageSizes: PropTypes.array,
   setPageSize: PropTypes.func
@@ -75,7 +74,6 @@ Pagination.propTypes = {
 Pagination.defaultProps = {
   totalCount: 0,
   currentPage: 1,
-  showMax: 5,
   pageSize: 10,
   pageSizes: [10, 20, 30, 40, 50]
 };
