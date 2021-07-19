@@ -168,6 +168,7 @@ const Edition = () => {
             ]}
             onChange={(e) => handleSingleSelectChange('language_id', e.id)}
             styles={customSelectStyles}
+            aria-label="Language"
           />
         </Form.Group>
       </Form.Row>
@@ -189,6 +190,7 @@ const Edition = () => {
             ]}
             onChange={(e) => handleSingleSelectChange('profession_id', e.id)}
             styles={customSelectStyles}
+            aria-label="Profession"
           />
         </Form.Group>
       </Form.Row>

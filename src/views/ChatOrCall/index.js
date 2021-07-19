@@ -149,6 +149,7 @@ const ChatOrCall = ({ translate }) => {
                   value={searchValue}
                   onChange={e => setSearchValue(e.target.value)}
                   placeholder={translate('common.search.placeholder')}
+                  aria-label="Search"
                 />
               </Form.Group>
             </div>

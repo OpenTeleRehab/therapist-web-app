@@ -45,6 +45,7 @@ const DateRangeFilterCell = ({ filter, onFilter }) => {
           placeholder={translate('common.timerange.placeholder')}
           readOnly
           onChange={e => onFilter(e.target.value ? { value: e.target.value } : null)}
+          aria-label="Date range"
         />
       </DateRangePicker>
     </th>

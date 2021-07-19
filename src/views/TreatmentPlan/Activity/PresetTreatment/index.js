@@ -78,6 +78,7 @@ const PresetTreatment = ({ translate, presetId, onSectionChange, setViewPreset, 
               checked={presetId === treatmentPlan.id}
               onChange={(e) => onSectionChange(e.currentTarget.checked, treatmentPlan.id)}
               name={`preset-${treatmentPlan.id}`}
+              aria-label="checkbox"
             />
           );
           return {

@@ -188,6 +188,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   placeholder={translate('questionnaire.title.placeholder')}
                                   isInvalid={questionTitleError[index]}
                                   maxLength={settings.textMaxLength}
+                                  aria-label="Title"
                                 />
                                 <Form.Control.Feedback type="invalid">
                                   {translate('question.title.required')}
@@ -212,7 +213,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                               {enableButtons() &&
                                 <div className="btn btn-sm text-primary position-relative overflow-hidden" >
                                   <BsUpload size={15}/> Upload Image
-                                  <input type="file" name="file" className="position-absolute upload-btn" onChange={e => handleFileChange(e, index)} accept="image/*"/>
+                                  <input type="file" name="file" className="position-absolute upload-btn" onChange={e => handleFileChange(e, index)} accept="image/*" aria-label="Upload"/>
                                 </div>
                               }
                             </Col>
@@ -236,7 +237,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   <Row key={answerIndex}>
                                     <Col sm={8} xs={7}>
                                       <Form.Check type='checkbox'>
-                                        <Form.Check.Input type='checkbox' isValid className="mt-3" disabled />
+                                        <Form.Check.Input type='checkbox' isValid className="mt-3" disabled aria-label="checkbox"/>
                                         <Form.Check.Label className="w-100">
                                           <Form.Group controlId={`formValue${answerIndex}`}>
                                             <Form.Control
@@ -245,6 +246,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               placeholder={translate('question.answer.description.placeholder')}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerFieldError[index] ? answerFieldError[index][answerIndex] : false}
+                                              aria-label="Value"
                                             />
                                             <Form.Control.Feedback type="invalid">
                                               {translate('question.answer.description.required')}
@@ -275,7 +277,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   <Row key={answerIndex}>
                                     <Col sm={8} xl={7}>
                                       <Form.Check type='radio'>
-                                        <Form.Check.Input type='radio' isValid className="mt-3" disabled />
+                                        <Form.Check.Input type='radio' isValid className="mt-3" disabled aria-label="radio" />
                                         <Form.Check.Label className="w-100">
                                           <Form.Group controlId={`formValue${answerIndex}`}>
                                             <Form.Control
@@ -284,6 +286,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               placeholder={translate('question.answer.description.placeholder')}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerFieldError[index] ? answerFieldError[index][answerIndex] : false}
+                                              aria-label="Value"
                                             />
                                             <Form.Control.Feedback type="invalid">
                                               {translate('question.answer.description.required')}
@@ -314,6 +317,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   <Form.Control
                                     disabled
                                     name="value"
+                                    aria-label="Open text"
                                   />
                                 </Form.Group>
                               )
@@ -325,6 +329,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     disabled
                                     type="number"
                                     name="value"
+                                    aria-label="Open number"
                                   />
                                 </Form.Group>
                               )

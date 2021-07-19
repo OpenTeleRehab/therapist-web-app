@@ -169,6 +169,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                   value={formFields.search_value}
                   onChange={handleChange}
                   placeholder={translate('exercise.search')}
+                  aria-label="Search"
                 />
               </Form.Group>
             </Card.Header>
@@ -201,6 +202,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                   options={languages}
                   onChange={(e) => setLanguage(e.id)}
                   styles={customSelectStyles}
+                  aria-label="Language"
                 />
               </Form.Group>
               <Accordion>

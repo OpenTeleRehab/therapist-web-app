@@ -374,7 +374,7 @@ const CreateTreatmentPlan = () => {
                   </Form.Group>
                 </Col>
                 <Col md={4}>
-                  <Form.Group>
+                  <Form.Group controlId="formTreatmentName">
                     <Form.Label>{translate('treatment_plan.name')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
                     <Form.Control
@@ -407,6 +407,7 @@ const CreateTreatmentPlan = () => {
                       ]}
                       onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
                       styles={customSelectStyles}
+                      aria-label="Disease"
                     />
                   </Form.Group>
                 </Col>
@@ -416,7 +417,7 @@ const CreateTreatmentPlan = () => {
                   <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} isOwnCreated={isOwnCreated} originGoals={originGoals} />
                 </Col>
                 <Col md={6}>
-                  <Form.Group>
+                  <Form.Group controlId="formDescription">
                     <Form.Label>{translate('treatment_plan.description')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
                     <Form.Control

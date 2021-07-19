@@ -221,6 +221,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                   options={languages}
                   onChange={(e) => setLanguage(e.id)}
                   styles={customSelectStyles}
+                  aria-label="Language"
                 />
               </Form.Group>
               <Accordion>

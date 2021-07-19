@@ -34,7 +34,8 @@ const DateOfBirthFilterCell = ({ filter, onFilter }) => {
           name: 'date',
           autoComplete: 'off',
           className: 'form-control',
-          placeholder: translate('placeholder.date')
+          placeholder: translate('placeholder.date'),
+          title: 'date of birth'
         }}
         dateFormat={settings.date_format}
         timeFormat={false}

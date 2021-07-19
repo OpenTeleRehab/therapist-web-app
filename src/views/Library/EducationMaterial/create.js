@@ -219,6 +219,7 @@ const CreateEducationMaterial = ({ translate }) => {
                 options={languages}
                 onChange={(e) => setLanguage(e.id)}
                 styles={customSelectStyles}
+                aria-label="Language"
               />
             </Form.Group>
             <Form.Group controlId="formTitle">

@@ -209,6 +209,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
             options={users}
             onChange={(e) => setPatientId(e.id)}
             styles={customSelectStyles}
+            aria-label="Patient"
           />
           {errorPatient && (
             <Form.Control.Feedback type="invalid" className="d-block">

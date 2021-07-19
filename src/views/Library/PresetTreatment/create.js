@@ -136,7 +136,7 @@ const CreatePresetTreatment = () => {
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row>
           <Col md={6}>
-            <Form.Group>
+            <Form.Group controlId="formName">
               <Form.Label>{translate('treatment_plan.preset.name')}</Form.Label>
               <span className="text-dark ml-1">*</span>
               <Form.Control

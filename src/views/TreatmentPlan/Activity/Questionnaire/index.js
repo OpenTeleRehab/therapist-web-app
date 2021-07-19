@@ -170,6 +170,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                   value={formFields.search_value}
                   onChange={handleChange}
                   placeholder={translate('questionnaire.search')}
+                  aria-label="Search"
                 />
               </Form.Group>
             </Card.Header>
@@ -202,6 +203,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                   options={languages}
                   onChange={(e) => setLanguage(e.id)}
                   styles={customSelectStyles}
+                  aria-label="Language"
                 />
               </Form.Group>
               <Accordion>

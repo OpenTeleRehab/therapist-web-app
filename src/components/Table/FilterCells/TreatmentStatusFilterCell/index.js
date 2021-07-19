@@ -57,6 +57,7 @@ const TreatmentStatusFilterCell = ({ filter, onFilter }) => {
         onChange={(e) => handleFilter(e.value)}
         menuPortalTarget={document.body}
         styles={customSelectStyles}
+        aria-label="Treatment status"
       />
     </th>
   );
