@@ -373,6 +373,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               options={settings.genders.options}
               className={errorGender ? 'is-invalid' : ''}
               onChange={(e) => handleSingleSelectChange('gender', e.value)}
+              aria-label="Gender"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.gender')}
@@ -444,6 +445,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             classNamePrefix="select"
             onChange={handleMultipleSelectChange}
             isClearable
+            aria-label="Secondary therapist"
           />
         </Form.Group>
         <Form.Group controlId="formNote">

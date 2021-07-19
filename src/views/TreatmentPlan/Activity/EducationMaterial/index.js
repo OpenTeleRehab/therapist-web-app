@@ -172,6 +172,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                   value={formFields.search_value}
                   onChange={handleChange}
                   placeholder={translate('education_material.search')}
+                  arial-label="Search"
                 />
               </Form.Group>
             </Card.Header>
@@ -204,6 +205,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                   options={languages}
                   onChange={(e) => setLanguage(e.id)}
                   styles={customSelectStyles}
+                  aria-label="Language"
                 />
               </Form.Group>
               <Accordion>

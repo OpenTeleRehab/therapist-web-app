@@ -19,6 +19,7 @@ const SearchInput = ({ name, value, placeholder, onChange, onClear }) => {
         value={value}
         placeholder={placeholder}
         onChange={onChange}
+        aria-label="Search"
       />
     </Form.Group>
   );

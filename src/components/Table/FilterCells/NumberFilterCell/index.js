@@ -8,7 +8,7 @@ const NumberFilterCell = ({ filter, onFilter }) => {
   const translate = getTranslate(localize);
   return (
     <th>
-      <input type="number" className="form-control" onChange={(e) => onFilter(e.target.value ? { value: e.target.value } : null)} placeholder={translate('common.search.placeholder')}/>
+      <input type="number" className="form-control" onChange={(e) => onFilter(e.target.value ? { value: e.target.value } : null)} placeholder={translate('common.search.placeholder')} aria-label="Number"/>
     </th>
   );
 };

@@ -18,6 +18,7 @@ const Input = ({ onValueChange, value, translate }) => {
         onChange={(e) => onValueChange(e.target.value)}
         value={value}
         placeholder={translate('common.search.placeholder')}
+        aria-label="Search"
       />
     </Form>
   );

@@ -52,6 +52,7 @@ const StatusFilterCell = ({ filter, onFilter }) => {
         onChange={(e) => handleFilter(e.value)}
         menuPortalTarget={document.body}
         styles={customSelectStyles}
+        aria-label="Therapist type"
       />
     </th>
   );
