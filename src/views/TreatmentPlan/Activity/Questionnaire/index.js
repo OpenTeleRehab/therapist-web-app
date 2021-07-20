@@ -159,6 +159,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
               <Form.Group className="search-box-with-icon">
                 <BsSearch className="search-icon" />
                 <Button
+                  aria-label="Clear search"
                   variant="light"
                   className="clear-btn"
                   onClick={handleClearSearch}

@@ -325,6 +325,7 @@ const CreateTreatmentPlan = () => {
       <div className="d-flex mb-4">
         <h4>{translate(`${patientId || activity ? 'treatment_plan.treatment_planning' : 'treatment_plan.preset'}`)}</h4>
         <Button
+          aria-label="Cancel"
           className="ml-auto"
           variant="outline-primary"
           onClick={handleCancel}
@@ -333,6 +334,7 @@ const CreateTreatmentPlan = () => {
         </Button>
         {(!id || !patientId) && (
           <Button
+            aria-label="Save preset"
             className="ml-2"
             variant="primary"
             onClick={handleShowPresetDialog}
@@ -341,6 +343,7 @@ const CreateTreatmentPlan = () => {
           </Button>
         )}
         <Button
+          aria-label="Save"
           className="ml-2"
           variant="primary"
           onClick={handleAssign}

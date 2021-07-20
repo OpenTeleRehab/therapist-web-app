@@ -8,6 +8,7 @@ const SearchInput = ({ name, value, placeholder, onChange, onClear }) => {
     <Form.Group className="search-box-with-icon">
       <BsSearch className="search-icon" />
       <Button
+        aria-label="Clear"
         variant="light"
         className="clear-btn"
         onClick={onClear}

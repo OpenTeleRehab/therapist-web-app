@@ -137,6 +137,7 @@ const ChatOrCall = ({ translate }) => {
               <Form.Group className="search-box-with-icon">
                 <BsSearch className="search-icon" />
                 <Button
+                  aria-label="Clear"
                   variant=""
                   className="clear-btn"
                   disabled={!searchValue.length}

@@ -8,7 +8,7 @@ export const CopyAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.copy" /></Tooltip>}
   >
-    <Button variant="link" className={`p-0 ${className}`} {...rest}>
+    <Button aria-label="Copy all" variant="link" className={`p-0 ${className}`} {...rest}>
       <BiCopyAlt size={25} />
     </Button>
   </OverlayTrigger>

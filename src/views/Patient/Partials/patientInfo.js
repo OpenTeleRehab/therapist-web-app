@@ -184,6 +184,7 @@ const PatientInfo = ({ id, translate }) => {
     <>
       <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right mt-3">
         <Button
+          aria-label="Call"
           variant="link"
           className="mr-2 btn-circle-lg btn-light-blue"
           onClick={() => handleSelectRoomToCall()}
@@ -191,6 +192,7 @@ const PatientInfo = ({ id, translate }) => {
           <FaPhoneAlt size={20} />
         </Button>
         <Button
+          aria-label="Chat"
           variant="link"
           className="mr-4 btn-circle-lg btn-light-blue"
           onClick={() => handleSelectRoomToChat()}

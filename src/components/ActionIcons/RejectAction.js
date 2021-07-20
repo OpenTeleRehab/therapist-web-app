@@ -8,7 +8,7 @@ export const RejectAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.reject" /></Tooltip>}
   >
-    <Button variant="link" className={`text-danger p-0 ${className}`} {...rest}>
+    <Button aria-label="Reject" variant="link" className={`text-danger p-0 ${className}`} {...rest}>
       <FaCalendarTimes size={25} />
     </Button>
   </OverlayTrigger>

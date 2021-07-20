@@ -8,7 +8,7 @@ export const ViewAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.view" /></Tooltip>}
   >
-    <Button variant="link" className={`p-0 ${className}`} {...rest}>
+    <Button aria-label="View" variant="link" className={`p-0 ${className}`} {...rest}>
       <BsFillEyeFill size={25} />
     </Button>
   </OverlayTrigger>
