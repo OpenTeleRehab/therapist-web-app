@@ -266,6 +266,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                         </div>
                         {oldSelectedExercises.includes(exercise.id) && !isOwnCreated ? (
                           <Checkbox
+                            id={exercise.id}
                             className="mt-1 custom-checkbox float-right disabled"
                             checked={selectedExercises.includes(exercise.id)}
                             onChange={(checked) => { onSectionChange(checked, exercise.id); setShowPreview(true); }}

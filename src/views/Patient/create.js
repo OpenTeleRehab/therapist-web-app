@@ -317,9 +317,12 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formPhone">
-          <Form.Label>{translate('common.phone')}</Form.Label>
+          <label htmlFor="phone">{translate('common.phone')}</label>
           <span className="text-dark ml-1">*</span>
           <PhoneInput
+            inputProps={{
+              id: 'phone'
+            }}
             countryCodeEditable={false}
             country={getCountryIsoCode().toLowerCase()}
             value={formFields.phone}
@@ -343,6 +346,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               classNamePrefix="filter"
               className={errorCountry ? 'is-invalid' : ''}
               isDisabled={true}
+              aria-label="Country"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.country')}
@@ -356,6 +360,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               classNamePrefix="filter"
               className={errorClinic ? 'is-invalid' : ''}
               isDisabled={true}
+              aria-label="Clinic"
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.clinic')}
@@ -380,9 +385,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group as={Col} controlId="formDateOfBirth">
-            <Form.Label>{translate('common.dateOfBirth')}</Form.Label>
+            <label htmlFor="date-of-birth">{translate('common.dateOfBirth')}</label>
             <Datetime
               inputProps={{
+                id: 'date-of-birth',
                 name: 'date_of_birth',
                 autoComplete: 'off',
                 className: errorInvalidDob ? 'form-control is-invalid' : 'form-control',

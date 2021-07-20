@@ -108,7 +108,7 @@ const AdherenceTab = () => {
       <div className="card mt-4">
         <div className="card-header form-row">
           <div className="form-group col-xs-5">
-            <label>{translate('common.time_range')}</label>
+            <label htmlFor="time-range">{translate('common.time_range')}</label>
             <DateRangePicker
               ref={dateRangePickerRef}
               initialSettings={{
@@ -122,6 +122,7 @@ const AdherenceTab = () => {
               onCancel={handleCancel}
             >
               <input
+                id="time-range"
                 type="text"
                 className="form-control"
                 placeholder={translate('common.timerange.placeholder')}

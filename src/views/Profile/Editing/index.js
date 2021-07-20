@@ -199,6 +199,7 @@ const Edition = () => {
         <Form.Group className="col-sm-4 md-4" controlId="formCountry">
           <Form.Label>{translate('common.country')}</Form.Label>
           <Select
+            aria-label={getCountryName(profile.country_id, countries)}
             value={formFields.country_id}
             placeholder={getCountryName(profile.country_id, countries)}
             classNamePrefix="filter"
@@ -211,6 +212,7 @@ const Edition = () => {
         <Form.Group className="col-sm-4 md-4" controlId="formClinic">
           <Form.Label>{translate('common.clinic')}</Form.Label>
           <Select
+            aria-label={getClinicName(profile.clinic_id, clinics)}
             value={formFields.clinic_id}
             placeholder={getClinicName(profile.clinic_id, clinics)}
             classNamePrefix="filter"
