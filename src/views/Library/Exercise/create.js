@@ -499,6 +499,7 @@ const CreateExercise = ({ translate }) => {
                       <div className="remove-btn-container">
                         <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{translate('common.remove')}</Tooltip>}>
                           <Button
+                            aria-label="Remove exercise"
                             variant="outline-danger"
                             className="btn-remove"
                             onClick={() => handleRemoveFields(index)}
@@ -545,6 +546,7 @@ const CreateExercise = ({ translate }) => {
             {enableButtons() &&
               <Form.Group>
                 <Button
+                  aria-label="Add file"
                   variant="link"
                   onClick={handleAddFields}
                   className="p-0 mr-1"
@@ -560,12 +562,14 @@ const CreateExercise = ({ translate }) => {
             <div className="sticky-btn d-flex justify-content-end">
               <div className="py-2 questionnaire-save-cancel-wrapper px-3">
                 <Button
+                  aria-label="Save"
                   onClick={handleSave}
                   disabled={isLoading}
                 >
                   {translate('common.save')}
                 </Button>
                 <Button
+                  aria-label="Cancel"
                   className="ml-2"
                   variant="outline-dark"
                   as={Link}

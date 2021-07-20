@@ -88,6 +88,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
       elements.push(
         <div className="position-relative mr-3" key={`week-tab-${i}`}>
           <Button
+            aria-label="Current week"
             variant={currentWeek === i ? 'primary' : 'outline-primary'}
             onClick={() => setCurrentWeek(i)}
           >
@@ -95,6 +96,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           </Button>
           {i !== 1 && !readOnly && isOwnCreated ? (
             <Button
+              aria-label="Remove week"
               className="btn-circle-sm btn-in-btn btn-circle-primary"
               variant="outline-primary"
               onClick={() => handleRemoveWeek(i)}
@@ -105,6 +107,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             <>
               {!readOnly && newWeeks.includes(i) &&
                 <Button
+                  aria-label="Remove week"
                   className="btn-circle-sm btn-in-btn btn-circle-primary"
                   variant="outline-primary"
                   onClick={() => handleRemoveWeek(i)}
@@ -248,6 +251,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
 
             <div className="d-flex justify-content-center">
               {!readOnly && <Button
+                aria-label="Add activity"
                 variant="outline-primary"
                 className="d-flex justify-content-center align-items-center btn-circle-lg btn-circle-primary m-3"
                 onClick={() => handleAddActivity(i + 1)}
@@ -270,6 +274,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         <div className="d-flex align-items-center my-4">
           {weekElements()}
           {!readOnly && <Button
+            aria-label="Add week"
             variant="outline-primary"
             className="btn-circle btn-circle-primary"
             onClick={handleAddWeek}

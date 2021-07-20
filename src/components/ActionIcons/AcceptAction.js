@@ -8,7 +8,7 @@ export const AcceptAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.accept" /></Tooltip>}
   >
-    <Button variant="link" className={`p-0 ${className}`} {...rest}>
+    <Button aria-label="Accept" variant="link" className={`p-0 ${className}`} {...rest}>
       <FaCalendarCheck size={25} />
     </Button>
   </OverlayTrigger>

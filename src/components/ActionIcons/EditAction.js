@@ -8,7 +8,7 @@ export const EditAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.edit" /></Tooltip>}
   >
-    <Button variant="link" className={`p-0 ${className}`} {...rest}>
+    <Button aria-label="Edit" variant="link" className={`p-0 ${className}`} {...rest}>
       <BiEdit size={25} />
     </Button>
   </OverlayTrigger>

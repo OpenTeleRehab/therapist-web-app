@@ -8,7 +8,7 @@ export const FavoriteAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.favorite" /></Tooltip>}
   >
-    <Button variant="link" className={`p-0 ${className}`} {...rest}>
+    <Button aria-label="Flag favorite" variant="link" className={`p-0 ${className}`} {...rest}>
       <BsHeart size={20} />
     </Button>
   </OverlayTrigger>
@@ -18,7 +18,7 @@ export const NonFavoriteAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.nonFavorite" /></Tooltip>}
   >
-    <Button variant="link" className={`p-0 ${className}`} {...rest}>
+    <Button aria-label="Unflag favorite" variant="link" className={`p-0 ${className}`} {...rest}>
       <BsHeartFill size={20} />
     </Button>
   </OverlayTrigger>

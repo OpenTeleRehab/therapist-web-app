@@ -91,6 +91,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                   <div className="card-remove-btn-wrapper">
                     {isOwnCreated && !readOnly ? (
                       <Button
+                        aria-label="Remove education material"
                         className="btn-circle-sm m-1"
                         variant="primary"
                         onClick={() => onSelectionRemove(material.id)}
@@ -101,6 +102,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                       <>
                         {(!treatmentPlanMaterials.includes(material.id) || material.created_by === therapistId) && !readOnly &&
                         <Button
+                          aria-label="Remove education material"
                           className="btn-circle-sm m-1"
                           variant="primary"
                           onClick={() => onSelectionRemove(material.id)}

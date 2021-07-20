@@ -8,7 +8,7 @@ export const DeleteAction = ({ className, ...rest }) => (
   <OverlayTrigger
     overlay={<Tooltip><Translate id="common.delete" /></Tooltip>}
   >
-    <Button variant="link" className={`text-danger p-0 ${className}`} {...rest}>
+    <Button aria-label="Delete" variant="link" className={`text-danger p-0 ${className}`} {...rest}>
       <FaTrashAlt size={20} />
     </Button>
   </OverlayTrigger>

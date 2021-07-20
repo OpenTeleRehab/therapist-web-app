@@ -16,7 +16,7 @@ const CollapseToggle = ({ title, eventKey }) => {
       </div>
       <div className="accordion-collapse-toggle">
         <div className="button-wrapper">
-          <Button variant="outline-primary" className="btn-circle" onClick={handleOnClick}>
+          <Button aria-label="collapse expand" variant="outline-primary" className="btn-circle" onClick={handleOnClick}>
             {currentEventKey === eventKey
               ? <BsChevronUp size={14} />
               : <BsChevronDown size={14} />
