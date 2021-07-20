@@ -218,10 +218,11 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
           )}
         </Form.Group>
         <Form.Group controlId="groupDate">
-          <Form.Label>{translate('appointment.date')}</Form.Label>
+          <label htmlFor="appointment-date">{translate('appointment.date')}</label>
           <span className="text-dark ml-1">*</span>
           <Datetime
             inputProps={{
+              id: 'appointment-date',
               name: 'date',
               autoComplete: 'off',
               className: errorDate ? 'form-control is-invalid' : 'form-control',
@@ -243,10 +244,11 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
         <Form.Group controlId="groupTime">
           <Form.Row>
             <Col>
-              <Form.Label>{translate('appointment.from')}</Form.Label>
+              <label htmlFor="time-from">{translate('appointment.from')}</label>
               <span className="text-dark ml-1">*</span>
               <Datetime
                 inputProps={{
+                  id: 'time-from',
                   name: 'from',
                   autoComplete: 'off',
                   className: errorFrom ? 'form-control is-invalid' : 'form-control',
@@ -271,10 +273,11 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
               )}
             </Col>
             <Col>
-              <Form.Label>{translate('appointment.to')}</Form.Label>
+              <label htmlFor="time-to">{translate('appointment.to')}</label>
               <span className="text-dark ml-1">*</span>
               <Datetime
                 inputProps={{
+                  id: 'time-to',
                   name: 'to',
                   autoComplete: 'off',
                   className: errorTo ? 'form-control is-invalid' : 'form-control',

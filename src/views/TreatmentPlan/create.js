@@ -368,6 +368,7 @@ const CreateTreatmentPlan = () => {
                       options={users}
                       onChange={(e) => handleSingleSelectChange('patient_id', e.id)}
                       styles={customSelectStyles}
+                      aria-label="Patient"
                     />
                     {errorPatient && (
                       <Form.Control.Feedback type="invalid" className="d-block">
@@ -448,9 +449,10 @@ const CreateTreatmentPlan = () => {
           <Row>
             <Col md={4}>
               <Form.Group>
-                <Form.Label>{translate('common.start_date')}</Form.Label>
+                <label htmlFor="start-date">{translate('common.start_date')}</label>
                 <Datetime
                   inputProps={{
+                    id: 'start-date',
                     name: 'start_date',
                     autoComplete: 'off',
                     className: errorStartDate ? 'form-control is-invalid' : 'form-control',
