@@ -63,6 +63,16 @@
 	  text-decoration: none;
 	}
   }
+
+	.dropdown {
+		.dropdown-toggle {
+			&.focus-visible,
+			&:focus-visible {
+				outline: 2px solid $black !important;
+				padding-bottom: 15px;
+			}
+		}
+	}
 }
 
 @include media-breakpoint-up(xl) {
