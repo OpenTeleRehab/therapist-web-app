@@ -23,9 +23,6 @@ import {
   BsSquare, BsPersonFill
 } from 'react-icons/bs';
 
-import * as Icon from 'react-icons/fi';
-import Checkbox from 'react-custom-checkbox';
-
 import Pagination from 'components/Pagination';
 import { getExercises } from 'store/exercise/actions';
 import Spinner from 'react-bootstrap/Spinner';
@@ -210,7 +207,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                 {
                   exerciseCategoryTreeData.map(category => (
                     <Card key={category.value} className="mb-3 rounded">
-                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                      <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         {category.label}
                         <div className="ml-auto text-nowrap">
                           <span className="mr-3">
@@ -265,39 +262,26 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                           }
                         </div>
                         {oldSelectedExercises.includes(exercise.id) && !isOwnCreated ? (
-                          <Checkbox
+                          <Form.Check
+                            type="checkbox"
                             id={exercise.id}
-                            className="mt-1 custom-checkbox float-right disabled"
                             checked={selectedExercises.includes(exercise.id)}
-                            onChange={(checked) => { onSectionChange(checked, exercise.id); setShowPreview(true); }}
+                            onChange={(e) => {
+                              onSectionChange(e.currentTarget.checked, exercise.id); setShowPreview(true);
+                            }}
+                            custom={true}
                             disabled={oldSelectedExercises.includes(exercise.id) && !isOwnCreated}
-                            icon={
-                              <div className="custom-checkbox-item">
-                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
-                              </div>
-                            }
-                            borderColor="#0077C8"
-                            borderWidth={1.5}
-                            borderRadius={20}
-                            style={{ overflow: 'hidden' }}
-                            size={20}
                           />
                         ) : (
-                          <Checkbox
-                            className="mt-1 custom-checkbox float-right"
+                          <Form.Check
+                            type="checkbox"
+                            id={exercise.id}
                             checked={selectedExercises.includes(exercise.id)}
-                            onChange={(checked) => { onSectionChange(checked, exercise.id); setShowPreview(true); }}
+                            onChange={(e) => {
+                              onSectionChange(e.currentTarget.checked, exercise.id); setShowPreview(true);
+                            }}
+                            custom={true}
                             disabled={oldSelectedExercises.includes(exercise.id) && !isOwnCreated}
-                            icon={
-                              <div className="custom-checkbox-item">
-                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
-                              </div>
-                            }
-                            borderColor="#0077C8"
-                            borderWidth={1.5}
-                            borderRadius={20}
-                            style={{ overflow: 'hidden' }}
-                            size={20}
                           />
                         )
                         }

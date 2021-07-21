@@ -1,11 +1,20 @@
-.accordion-collapse-toggle {
-	position: relative;
-	.button-wrapper {
-		position: absolute;
-		top: -15px;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		text-align: center;
+.accordion {
+	.card {
+		&-header {
+			margin: 0 !important;
+		}
+	}
+
+	&-collapse-toggle {
+		position: relative;
+
+		.button-wrapper {
+			position: absolute;
+			top: -15px;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			text-align: center;
+		}
 	}
 }

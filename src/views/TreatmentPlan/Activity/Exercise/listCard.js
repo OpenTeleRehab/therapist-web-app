@@ -101,7 +101,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                     {isOwnCreated && !readOnly ? (
                       <Button
                         aria-label="Remove exercise"
-                        className="btn-circle-sm btn-circle-primary m-1"
+                        className="btn-circle-sm btn-circle-primary"
                         variant="outline-primary"
                         onClick={() => onSelectionRemove(exercise.id)}
                       >
@@ -112,7 +112,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                         {(!treatmentPlanExercises.includes(exercise.id) || exercise.created_by === therapistId) && !readOnly &&
                         <Button
                           aria-label="Remove exercise"
-                          className="btn-circle-sm m-1"
+                          className="btn-circle-sm"
                           variant="primary"
                           onClick={() => onSelectionRemove(exercise.id)}
                         >
