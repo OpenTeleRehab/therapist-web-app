@@ -119,6 +119,7 @@ const InputToolbar = (props) => {
             onKeyPress={(e) => onKeyPressHandler(e)}
             placeholder={props.translate('placeholder.type.message')}
             style={{ height: textAreaHeight }}
+            aria-label="Chat text"
           />
           {text.length > 0 && (
             <Button variant="" className="chat-send-btn p-0" onClick={() => onSendHandler()}>
@@ -133,6 +134,7 @@ const InputToolbar = (props) => {
             className="position-absolute upload-btn"
             accept="video/*, image/*"
             onChange={(e) => onAttachmentChangeHandler(e)}
+            aria-label="Attachment"
           />
           <ImAttachment size={20} color="#858585" />
           <span className="d-none d-md-block">{props.translate('common.attach_file')}</span>

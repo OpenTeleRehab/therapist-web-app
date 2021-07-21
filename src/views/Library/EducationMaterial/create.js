@@ -238,7 +238,7 @@ const CreateEducationMaterial = ({ translate }) => {
               </Form.Control.Feedback>
             </Form.Group>
 
-            <Form.Group controlId="formFile">
+            <Form.Group>
               <Form.Label>{translate('education_material.upload_file')}</Form.Label>
               <span className="text-dark ml-1">*</span>
               <Form.File custom>
@@ -247,6 +247,7 @@ const CreateEducationMaterial = ({ translate }) => {
                   onChange={handleFileChange}
                   isInvalid={fileError}
                   accept="audio/*, video/*, image/*, .pdf"
+                  aria-label="File"
                 />
                 <Form.File.Label>{renderUploadFileName()}</Form.File.Label>
                 <Form.Control.Feedback type="invalid">
