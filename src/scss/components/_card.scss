@@ -78,12 +78,34 @@ a {
 }
 
 .top-bar {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0 10px;
-  background-color: rgba(255, 255, 255, 0.5);
-  cursor: auto;
+	background-color: rgba(255, 255, 255, 0.5);
+	cursor: auto;
+	display: flex;
+	justify-content: space-between;
+	padding: 3px 10px;
+	width: 100%;
+
+	.custom-control-label {
+		&:before,
+		&:after {
+			cursor: pointer;
+			left: -20px;
+			height: 20px;
+			width: 20px;
+		}
+
+		&:before {
+			border-color: $primary;
+		}
+	}
+
+	.custom-checkbox {
+		.custom-control-label {
+			&:before {
+				border-radius: 50%;
+			}
+		}
+	}
 }
 
 .exercise-media {

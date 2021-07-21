@@ -12,9 +12,6 @@ import {
   BsPersonFill
 } from 'react-icons/bs';
 
-import * as Icon from 'react-icons/fi';
-import Checkbox from 'react-custom-checkbox';
-
 import Pagination from 'components/Pagination';
 import { getExercises, deleteExercise } from 'store/exercise/actions';
 import SearchInput from 'components/Form/SearchInput';
@@ -228,7 +225,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                 {
                   categoryTreeData.map(category => (
                     <Card className="mb-3 rounded" key={category.value}>
-                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                      <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         {category.label}
                         <div className="ml-auto text-nowrap">
                           <span className="mr-3">
@@ -282,20 +279,12 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                             : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, CATEGORY_TYPES.EXERCISE)} />
                           }
                         </div>
-                        <Checkbox
-                          className="mt-1 custom-checkbox"
+                        <Form.Check
+                          type="checkbox"
+                          id={exercise.id}
                           checked={selectedExercises.includes(exercise.id)}
-                          onChange={(checked) => onSectionChange(checked, exercise.id)}
-                          icon={
-                            <div className="custom-checkbox-item">
-                              <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
-                            </div>
-                          }
-                          borderColor="#0077C8"
-                          borderWidth={1.5}
-                          borderRadius={20}
-                          style={{ overflow: 'hidden' }}
-                          size={20}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
+                          custom={true}
                         />
                       </div>
                       <div className="card-container" onClick={() => handleView(exercise)}>

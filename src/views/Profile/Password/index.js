@@ -96,18 +96,6 @@ const Password = () => {
     history.goBack();
   };
 
-  const handleShowNewPassword = () => {
-    setShowNewPassword(!showNewPassword);
-  };
-
-  const handleShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const handleShowCurrentPassword = () => {
-    setShowCurrentPassword(!showCurrentPassword);
-  };
-
   const handleFormSubmit = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -128,8 +116,14 @@ const Password = () => {
                 onChange={handleChange}
                 isInvalid={passwordError}
               />
-              <InputGroup.Append onClick={handleShowCurrentPassword} className="show-hide-password-btn">
-                <InputGroup.Text>{showCurrentPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}</InputGroup.Text>
+              <InputGroup.Append className="show-hide-password-btn">
+                <Button
+                  variant="light"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  onKeyPress={(event) => event.key === 'Enter' && setShowCurrentPassword(!showCurrentPassword)}
+                >
+                  {showCurrentPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}
+                </Button>
               </InputGroup.Append>
               <Form.Control.Feedback type="invalid">
                 {translate('error.current_password')}
@@ -147,8 +141,14 @@ const Password = () => {
                 onChange={handleChange}
                 isInvalid={newPasswordError || newPasswordValidationError || newPasswordValidationExist}
               />
-              <InputGroup.Append onClick={handleShowNewPassword} className="show-hide-password-btn">
-                <InputGroup.Text>{showNewPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}</InputGroup.Text>
+              <InputGroup.Append className="show-hide-password-btn">
+                <Button
+                  variant="light"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  onKeyPress={(event) => event.key === 'Enter' && setShowNewPassword(!showNewPassword)}
+                >
+                  {showNewPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}
+                </Button>
               </InputGroup.Append>
               <Form.Control.Feedback type="invalid">
                 {newPasswordError && translate('error.new_password')}
@@ -168,8 +168,14 @@ const Password = () => {
                 onChange={handleChange}
                 isInvalid={confirmPasswordError || confirmPasswordNotMatchError }
               />
-              <InputGroup.Append onClick={handleShowConfirmPassword} className="show-hide-password-btn">
-                <InputGroup.Text>{showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}</InputGroup.Text>
+              <InputGroup.Append className="show-hide-password-btn">
+                <Button
+                  variant="light"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  onKeyPress={(event) => event.key === 'Enter' && setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20}/>}
+                </Button>
               </InputGroup.Append>
               <Form.Control.Feedback type="invalid">
                 {confirmPasswordError && translate('error.confirm_password')}

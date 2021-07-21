@@ -9,7 +9,7 @@ const renderInput = (props, openCalendar, closeCalendar) => {
   };
 
   return (
-    <input {...props} onKeyDown={handleKeyDown} />
+    <input {...props} onKeyDown={handleKeyDown} onBlur={() => closeCalendar()} />
   );
 };
 

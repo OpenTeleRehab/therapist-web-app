@@ -70,7 +70,9 @@ video {
 
 //show and hide password
 .show-hide-password-btn {
-	cursor: pointer;
+	button {
+		border-color: $gray-400;
+	}
 }
 
 //appointment calendar

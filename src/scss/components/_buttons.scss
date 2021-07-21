@@ -56,3 +56,12 @@
 		}
 	}
 }
+
+.react-checkbox-tree {
+	button {
+		&.focus-visible,
+		&:focus-visible {
+			outline: 1px solid $dark !important;
+		}
+	}
+}

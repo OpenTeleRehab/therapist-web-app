@@ -24,9 +24,6 @@ import {
   BsSquare
 } from 'react-icons/bs';
 
-import * as Icon from 'react-icons/fi';
-import Checkbox from 'react-custom-checkbox';
-
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
 import { getQuestionnaires } from 'store/questionnaire/actions';
@@ -211,7 +208,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                 {
                   questionnaireCategoryTreeData.map(category => (
                     <Card key={category.value} className="mb-3 rounded">
-                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                      <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         {category.label}
                         <div className="ml-auto text-nowrap">
                           <span className="mr-3">
@@ -266,44 +263,26 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                           }
                         </div>
                         {oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated ? (
-                          <Checkbox
-                            className="mt-1 custom-checkbox float-right disabled"
+                          <Form.Check
+                            type="checkbox"
+                            id={questionnaire.id}
                             checked={selectedQuestionnaires.includes(questionnaire.id)}
-                            onChange={(checked) => { onSectionChange(checked, questionnaire.id); setShowPreview(true); }}
+                            onChange={(e) => {
+                              onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true);
+                            }}
+                            custom={true}
                             disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
-                            icon={
-                              <div className="custom-checkbox-item">
-                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
-                              </div>
-                            }
-                            borderColor="#0077C8"
-                            borderWidth={1.5}
-                            borderRadius={20}
-                            style={{ overflow: 'hidden' }}
-                            size={20}
                           />
                         ) : (
-                          <Checkbox
-                            className="mt-1 custom-checkbox float-right"
+                          <Form.Check
+                            type="checkbox"
+                            id={questionnaire.id}
                             checked={selectedQuestionnaires.includes(questionnaire.id)}
-                            onChange={(checked) => { onSectionChange(checked, questionnaire.id); setShowPreview(true); }}
+                            onChange={(e) => {
+                              onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true);
+                            }}
+                            custom={true}
                             disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
-                            icon={
-                              <div
-                                style={{
-                                  display: 'flex',
-                                  flex: 1,
-                                  backgroundColor: '#0077C8',
-                                  alignSelf: 'stretch'
-                                }}>
-                                <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
-                              </div>
-                            }
-                            borderColor="#0077C8"
-                            borderWidth={1.5}
-                            borderRadius={20}
-                            style={{ overflow: 'hidden' }}
-                            size={20}
                           />
                         )
                         }

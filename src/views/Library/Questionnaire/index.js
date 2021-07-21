@@ -39,8 +39,6 @@ import * as ROUTES from 'variables/routes';
 import { useHistory } from 'react-router-dom';
 import Dialog from 'components/Dialog';
 
-import * as Icon from 'react-icons/fi';
-import Checkbox from 'react-custom-checkbox';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 
@@ -241,7 +239,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                 {
                   categoryTreeData.map(category => (
                     <Card className="mb-3 rounded" key={category.value}>
-                      <Accordion.Toggle as={Card.Header} eventKey={category.value} className="d-flex align-items-center">
+                      <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         {category.label}
                         <div className="ml-auto text-nowrap">
                           <span className="mr-3">
@@ -295,20 +293,12 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                             : <FavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 1, CATEGORY_TYPES.QUESTIONNAIRE)} />
                           }
                         </div>
-                        <Checkbox
-                          className="mt-1 custom-checkbox"
+                        <Form.Check
+                          type="checkbox"
+                          id={questionnaire.id}
                           checked={selectedQuestionnaires.includes(questionnaire.id)}
-                          onChange={(checked) => onSectionChange(checked, questionnaire.id)}
-                          icon={
-                            <div className="custom-checkbox-item">
-                              <Icon.FiCheck color="white" size={16} viewBox="0 0 21 23" />
-                            </div>
-                          }
-                          borderColor="#0077C8"
-                          borderWidth={1.5}
-                          borderRadius={20}
-                          style={{ overflow: 'hidden' }}
-                          size={20}
+                          onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
+                          custom={true}
                         />
                       </div>
                       <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
