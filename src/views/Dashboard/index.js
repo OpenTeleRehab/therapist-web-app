@@ -164,7 +164,7 @@ const Dashboard = ({ translate }) => {
       </Row>
       <Accordion defaultActiveKey="0" className="mb-3">
         <Card>
-          <Accordion.Toggle as={Card.Header} variant="link" eventKey="0" className="d-flex align-items-center">
+          <Accordion.Toggle eventKey="0" className="d-flex align-items-center card-header border-0">
             {translate('patient')}
             <div className="ml-auto text-nowrap">
               <ContextAwareToggle eventKey="0" />
@@ -208,7 +208,7 @@ const Dashboard = ({ translate }) => {
       </Accordion>
       <Accordion defaultActiveKey="1" className="mb-3">
         <Card>
-          <Accordion.Toggle as={Card.Header} variant="link" eventKey="1" className="d-flex align-items-center">
+          <Accordion.Toggle eventKey="1" className="d-flex align-items-center card-header border-0">
             {translate('common.ongoing_treatment')}
             <div className="ml-auto text-nowrap">
               <ContextAwareToggle eventKey="1" />
