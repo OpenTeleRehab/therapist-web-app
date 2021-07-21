@@ -78,17 +78,17 @@ const ChatPanel = (
         <>
           <div className="chat-message-header d-flex justify-content-between align-items-center">
             <h4 className="font-weight-bold mb-0 d-flex align-items-center">
-              <Button variant="link" className="d-md-none btn-back" onClick={() => hideChatPanel(true)}>
+              <Button variant="link" className="d-md-none btn-back" onClick={() => hideChatPanel(true)} aria-label="Status">
                 <BsChevronLeft size={18} color="#0077C8" />
               </Button>
               {selectedRoom.name}
               {userStatus(selectedRoom, 'md')}
             </h4>
             <div className="d-flex justify-content-end">
-              <Button variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => handleCall(false)}>
+              <Button variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => handleCall(false)} aria-label="Audio call">
                 <IoCallOutline size={18} color="#333333" />
               </Button>
-              <Button variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => handleCall(true)}>
+              <Button variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => handleCall(true)} aria-label="Video call">
                 <IoVideocamOutline size={18} color="#333333" />
               </Button>
             </div>
