@@ -53,6 +53,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
                             inline label={answer.description}
                             type='checkbox'
                             disabled
+                            aria-label="checkbox"
                           />
                         </div>
                       ))
@@ -66,6 +67,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
                             inline label={answer.description}
                             type='radio'
                             disabled
+                            aria-label="radio button"
                           />
                         </div>
                       ))
@@ -78,6 +80,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
                           <Form.Control
                             disabled
                             type="text"
+                            aria-label="Text input box"
                           />
                         </Form.Group>
                       </div>
@@ -90,6 +93,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
                           <Form.Control
                             disabled
                             type="number"
+                            aria-label="Number input box"
                           />
                         </Form.Group>
                       </div>

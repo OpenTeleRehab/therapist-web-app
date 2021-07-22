@@ -152,6 +152,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     variant="link"
                                     size="sm"
                                     className="text-dark p-0 mr-5 mb-3 drag-button"
+                                    aria-label="Move question"
                                   >
                                     <BsArrowsMove size={20}/>
                                   </Button>
@@ -162,6 +163,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     size="sm"
                                     className="text-primary p-0 mr-1"
                                     onClick={() => handleCloneQuestion(index)}
+                                    aria-label="Clone question"
                                   >
                                     <FaCopy size={20} />
                                   </Button>
@@ -171,6 +173,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     className="text-danger p-0"
                                     onClick={() => handleRemoveQuestion(index)}
                                     disabled={questions.length === 1}
+                                    aria-label="Remove question"
                                   >
                                     <FaTrashAlt size={20} />
                                   </Button>
@@ -262,6 +265,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         className="remove-btn"
                                         onClick={() => handleAnswerRemove(index, answerIndex)}
                                         disabled={question.answers.length <= 2}
+                                        aria-label="Remove button"
                                       >
                                         <BsX size={15} />
                                       </Button>
@@ -302,6 +306,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         className="remove-btn"
                                         onClick={() => handleAnswerRemove(index, answerIndex)}
                                         disabled={question.answers.length <= 2}
+                                        aria-label="Remove button"
                                       >
                                         <BsX size={15} />
                                       </Button>
