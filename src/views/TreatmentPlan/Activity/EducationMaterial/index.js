@@ -267,7 +267,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                         {oldSelectedMaterials.includes(material.id) && !isOwnCreated ? (
                           <Form.Check
                             type="checkbox"
-                            id={material.id}
+                            id={`material-${material.id}`}
                             checked={selectedMaterials.includes(material.id)}
                             onChange={(e) => {
                               onSectionChange(e.currentTarget.checked, material.id); setShowPreview(true);
@@ -279,7 +279,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                         ) : (
                           <Form.Check
                             type="checkbox"
-                            id={material.id}
+                            id={`material-${material.id}`}
                             checked={selectedMaterials.includes(material.id)}
                             onChange={(e) => {
                               onSectionChange(e.currentTarget.checked, material.id); setShowPreview(true);

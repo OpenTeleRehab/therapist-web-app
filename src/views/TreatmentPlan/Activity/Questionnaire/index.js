@@ -265,7 +265,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                         {oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated ? (
                           <Form.Check
                             type="checkbox"
-                            id={questionnaire.id}
+                            id={`questionnaire-${questionnaire.id}`}
                             checked={selectedQuestionnaires.includes(questionnaire.id)}
                             onChange={(e) => {
                               onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true);
@@ -277,7 +277,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                         ) : (
                           <Form.Check
                             type="checkbox"
-                            id={questionnaire.id}
+                            id={`questionnaire-${questionnaire.id}`}
                             checked={selectedQuestionnaires.includes(questionnaire.id)}
                             onChange={(e) => {
                               onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true);
