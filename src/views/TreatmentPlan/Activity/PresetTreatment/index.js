@@ -23,7 +23,7 @@ const PresetTreatment = ({ translate, presetId, onSectionChange, setViewPreset, 
   const [name, setName] = useState('');
 
   const columns = [
-    { name: 'selection', title: ' ' },
+    { name: 'selection', title: 'Selection' },
     { name: 'name', title: translate('treatment_plan.preset.name') },
     { name: 'total_of_weeks', title: translate('common.duration') }
   ];
@@ -59,47 +59,49 @@ const PresetTreatment = ({ translate, presetId, onSectionChange, setViewPreset, 
 
   return (
     <>
-      <CustomTable
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        setSearchValue={setSearchValue}
-        setFilters={setFilters}
-        filters={filters}
-        columns={columns}
-        columnExtensions={columnExtensions}
-        onRowClick={handleRowClick}
-        rows={presetTreatmentPlans.map(treatmentPlan => {
-          const numberOfWeeks = treatmentPlan.total_of_weeks;
-          const action = (
-            <Form.Check
-              type="checkbox"
-              checked={presetId === treatmentPlan.id}
-              onChange={(e) => onSectionChange(e.currentTarget.checked, treatmentPlan.id)}
-              name={`preset-${treatmentPlan.id}`}
-              aria-label="checkbox"
-            />
-          );
-          return {
-            id: treatmentPlan.id,
-            selection: action,
-            name: treatmentPlan.name,
-            total_of_weeks: `${numberOfWeeks} ${translate(numberOfWeeks > 1 ? 'common.weeks' : 'common.week')}`
-          };
-        })}
-      />
-      {viewPreset &&
-      <Dialog
-        show={viewPreset}
-        title={name}
-        cancelLabel={translate('common.close')}
-        onCancel={handleViewClose}
-        size="xl"
-      >
-        <ViewTreatmentPlan id={id}/>
-      </Dialog>
-      }
+      <div className={'indent-first-heading'}>
+        <CustomTable
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          setSearchValue={setSearchValue}
+          setFilters={setFilters}
+          filters={filters}
+          columns={columns}
+          columnExtensions={columnExtensions}
+          onRowClick={handleRowClick}
+          rows={presetTreatmentPlans.map(treatmentPlan => {
+            const numberOfWeeks = treatmentPlan.total_of_weeks;
+            const action = (
+              <Form.Check
+                type="checkbox"
+                checked={presetId === treatmentPlan.id}
+                onChange={(e) => onSectionChange(e.currentTarget.checked, treatmentPlan.id)}
+                name={`preset-${treatmentPlan.id}`}
+                aria-label="checkbox"
+              />
+            );
+            return {
+              id: treatmentPlan.id,
+              selection: action,
+              name: treatmentPlan.name,
+              total_of_weeks: `${numberOfWeeks} ${translate(numberOfWeeks > 1 ? 'common.weeks' : 'common.week')}`
+            };
+          })}
+        />
+        {viewPreset &&
+        <Dialog
+          show={viewPreset}
+          title={name}
+          cancelLabel={translate('common.close')}
+          onCancel={handleViewClose}
+          size="xl"
+        >
+          <ViewTreatmentPlan id={id}/>
+        </Dialog>
+        }
+      </div>
     </>
   );
 };

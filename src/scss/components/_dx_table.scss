@@ -31,3 +31,13 @@
 		color: $primary;
 	}
 }
+
+.indent-first-heading {
+	thead {
+		th:first-child {
+			.dx-rg-bs4-table-header-title {
+				text-indent: -9999px;
+			}
+		}
+	}
+}
