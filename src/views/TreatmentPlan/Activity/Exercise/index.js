@@ -264,7 +264,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                         {oldSelectedExercises.includes(exercise.id) && !isOwnCreated ? (
                           <Form.Check
                             type="checkbox"
-                            id={exercise.id}
+                            id={`exercise-${exercise.id}`}
                             checked={selectedExercises.includes(exercise.id)}
                             onChange={(e) => {
                               onSectionChange(e.currentTarget.checked, exercise.id); setShowPreview(true);
@@ -276,7 +276,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                         ) : (
                           <Form.Check
                             type="checkbox"
-                            id={exercise.id}
+                            id={`exercise-${exercise.id}`}
                             checked={selectedExercises.includes(exercise.id)}
                             onChange={(e) => {
                               onSectionChange(e.currentTarget.checked, exercise.id); setShowPreview(true);
