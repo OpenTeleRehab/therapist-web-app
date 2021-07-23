@@ -352,9 +352,9 @@ const CreateExercise = ({ translate }) => {
                   <div>{mediaUpload.fileName} {mediaUpload.fileSize ? ('(' + mediaUpload.fileSize + 'kB )') : ''}</div>
                 </div>
               ))}
-              <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" >
+              <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()} >
                 <BsUpload size={15}/> Upload Image
-                <input type="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload" />
+                <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload" />
               </div>
               { mediaUploadsError &&
                 <div className="text-danger">{translate('exercise.media_upload.required')}</div>
@@ -458,7 +458,7 @@ const CreateExercise = ({ translate }) => {
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
-                    <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="d-flex align-items-center">
+                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.currentTarget.click()}>
                       {category.label}
                       <div className="ml-auto">
                         <span className="mr-3">
@@ -550,6 +550,7 @@ const CreateExercise = ({ translate }) => {
                   variant="link"
                   onClick={handleAddFields}
                   className="p-0 mr-1"
+                  onKeyPress={(e) => e.key === 'Enter' && e.currentTarget.click()}
                 >
                   <BsPlusCircle size={20} /> {translate('exercise.additional_field.add_more_field')}
                 </Button>

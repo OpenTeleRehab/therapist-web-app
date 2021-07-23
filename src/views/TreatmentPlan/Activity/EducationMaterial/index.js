@@ -170,7 +170,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                   value={formFields.search_value}
                   onChange={handleChange}
                   placeholder={translate('education_material.search')}
-                  arial-label="Search"
+                  aria-label="Search"
                 />
               </Form.Group>
             </Card.Header>
@@ -256,7 +256,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
               <Row>
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={showPreview ? 4 : 3}>
-                    <Card className="exercise-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('material-' + material.id).click()}>
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
                           {material.is_favorite
@@ -274,6 +274,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                             }}
                             custom={true}
                             disabled={oldSelectedMaterials.includes(material.id) && !isOwnCreated}
+                            label={`material-${material.id}`}
                           />
                         ) : (
                           <Form.Check
@@ -285,11 +286,12 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
                             }}
                             custom={true}
                             disabled={oldSelectedMaterials.includes(material.id) && !isOwnCreated}
+                            label={`material-${material.id}`}
                           />
                         )
                         }
                       </div>
-                      <div className="card-container" onClick={() => handleViewEducationMaterial(material)}>
+                      <div id={`material-${material.id}`} className="card-container" onClick={() => handleViewEducationMaterial(material)}>
                         <div className="card-img bg-light">
                           {(material.file && (material.file.hasThumbnail || material.file.fileGroupType === MATERIAL_TYPE.image)) ? (
                             <img

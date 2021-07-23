@@ -32,7 +32,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
       {questionnaire.questions.map((question, index) => (
         <Accordion key={index}>
           <Card className="mb-3 question-card">
-            <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="card-header view-question-card-header d-flex justify-content-between">
+            <Accordion.Toggle eventKey={index + 1} className="card-header view-question-card-header d-flex justify-content-between card-header border-0">
               <h6>{translate('questionnaire.question_number', { number: index + 1 })}</h6>
               <ContextAwareToggle eventKey={index + 1} />
             </Accordion.Toggle>

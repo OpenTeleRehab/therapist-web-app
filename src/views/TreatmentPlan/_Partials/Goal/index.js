@@ -105,6 +105,7 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
             variant="link"
             onClick={handleAddGoal}
             className="p-0"
+            onKeyPress={(event) => event.key === 'Enter' && event.currentTarget.click()}
           >
             <BsPlusCircle size={20} /> {translate('treatment_plan.goal.add')}
           </Button>
