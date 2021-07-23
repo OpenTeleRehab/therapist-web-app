@@ -278,7 +278,7 @@ const CreateQuestionnaire = ({ translate }) => {
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
-                    <Accordion.Toggle as={Card.Header} eventKey={index + 1} className="d-flex align-items-center">
+                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.currentTarget.click()}>
                       {category.label}
                       <div className="ml-auto">
                         <span className="mr-3">
@@ -329,6 +329,7 @@ const CreateQuestionnaire = ({ translate }) => {
                     variant="link btn-lg"
                     onClick={handleAddQuestion}
                     className="py-1"
+                    onKeyPress={(event) => event.key === 'Enter' && event.currentTarget.click()}
                   >
                     <BsPlusCircle size={20} /> {translate('questionnaire.new.question')}
                   </Button>

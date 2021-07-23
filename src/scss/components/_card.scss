@@ -86,6 +86,8 @@ a {
 	width: 100%;
 
 	.custom-control-label {
+		text-indent: -9999px;
+
 		&:before,
 		&:after {
 			cursor: pointer;

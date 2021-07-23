@@ -254,7 +254,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
               <Row>
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={ showPreview ? 4 : 3}>
-                    <Card className="exercise-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('questionnaire-' + questionnaire.id).click()}>
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
                           {questionnaire.is_favorite
@@ -272,6 +272,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                             }}
                             custom={true}
                             disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
+                            label={`questionnaire-${questionnaire.id}`}
                           />
                         ) : (
                           <Form.Check
@@ -283,11 +284,12 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                             }}
                             custom={true}
                             disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
+                            label={`questionnaire-${questionnaire.id}`}
                           />
                         )
                         }
                       </div>
-                      <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
+                      <div id={`questionnaire-${questionnaire.id}`} className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
                         <div className="card-img bg-light">
                           <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
                             <img src={'/images/questionnaire.svg'} alt='questionnaire' />

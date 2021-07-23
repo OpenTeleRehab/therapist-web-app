@@ -73,10 +73,11 @@ const ChatRoomList = (
           return (
             <ListGroup as="ul" key={index}>
               <ListGroup.Item
-                as="li"
+                as="button"
                 className="d-flex justify-content-between align-items-center"
                 active={room.rid === selected.rid}
                 onClick={() => handleSelectRoomToChat(index)}
+                tabIndex="0"
               >
                 <div className="chat-room-item">
                   <p className="mb-0 d-flex align-items-center">

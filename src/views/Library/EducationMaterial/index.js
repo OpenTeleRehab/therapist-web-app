@@ -288,7 +288,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
               <Row>
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={isShowPreviewList ? 4 : 3}>
-                    <Card className="exercise-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('material-' + material.id).click()}>
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {material.is_favorite
@@ -302,9 +302,10 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                           checked={selectedMaterials.includes(material.id)}
                           onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
                           custom={true}
+                          label={`material-${material.id}`}
                         />
                       </div>
-                      <div className="card-container" onClick={() => handleViewEducationMaterial(material.id)}>
+                      <div id={`material-${material.id}`} className="card-container" onClick={() => handleViewEducationMaterial(material.id)}>
                         <div className="card-img bg-light">
                           {(material.file && (material.file.hasThumbnail || material.file.fileGroupType === MATERIAL_TYPE.image)) ? (
                             <img

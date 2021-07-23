@@ -253,7 +253,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={showPreview ? 4 : 3}>
-                    <Card className="exercise-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('exercise-' + exercise.id).click()}>
                       <div className="top-bar">
                         <div className="favorite-btn btn-link">
                           {exercise.is_favorite
@@ -271,6 +271,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                             }}
                             custom={true}
                             disabled={oldSelectedExercises.includes(exercise.id) && !isOwnCreated}
+                            label={`exercise-${exercise.id}`}
                           />
                         ) : (
                           <Form.Check
@@ -282,11 +283,12 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                             }}
                             custom={true}
                             disabled={oldSelectedExercises.includes(exercise.id) && !isOwnCreated}
+                            label={`exercise-${exercise.id}`}
                           />
                         )
                         }
                       </div>
-                      <div className="card-container" onClick={() => handleView(exercise)}>
+                      <div id={`exercise-${exercise.id}`} className="card-container" onClick={() => handleView(exercise)}>
                         <div className="card-img bg-light">
                           {
                             exercise.files.length > 0 && (

@@ -127,7 +127,7 @@ const InputToolbar = (props) => {
             </Button>
           )}
         </div>
-        <Button variant="" className="chat-add-attachment-btn position-relative p-0">
+        <Button as={Button} variant="light" className="chat-add-attachment-btn position-relative p-0" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()}>
           <input
             type="file"
             name="attachments"
@@ -135,6 +135,7 @@ const InputToolbar = (props) => {
             accept="video/*, image/*"
             onChange={(e) => onAttachmentChangeHandler(e)}
             aria-label="Attachment"
+            id="file"
           />
           <ImAttachment size={20} color="#858585" />
           <span className="d-none d-md-block">{props.translate('common.attach_file')}</span>

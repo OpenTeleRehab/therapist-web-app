@@ -271,7 +271,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
               <Row>
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={isShowPreviewList ? 4 : 3}>
-                    <Card className="exercise-card shadow-sm mb-4">
+                    <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('exercise-' + exercise.id).click()}>
                       <div className="top-bar">
                         <div className="favorite-btn">
                           {exercise.is_favorite
@@ -285,9 +285,10 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                           checked={selectedExercises.includes(exercise.id)}
                           onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
                           custom={true}
+                          label={`exercise-${exercise.id}`}
                         />
                       </div>
-                      <div className="card-container" onClick={() => handleView(exercise)}>
+                      <div id={`exercise-${exercise.id}`} className="card-container" onClick={() => handleView(exercise)}>
                         <div className="card-img bg-light">
                           {
                             exercise.files.length > 0 && (
