@@ -200,6 +200,13 @@ const CreateEducationMaterial = ({ translate }) => {
     }
   };
 
+  const handleFileUpload = (e) => {
+    if (e.key === 'Enter') {
+      document.getElementById('file').click();
+      e.stopPropagation();
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -248,6 +255,8 @@ const CreateEducationMaterial = ({ translate }) => {
                   isInvalid={fileError}
                   accept="audio/*, video/*, image/*, .pdf"
                   aria-label="File"
+                  id="file"
+                  onKeyPress={(event) => handleFileUpload(event)}
                 />
                 <Form.File.Label>{renderUploadFileName()}</Form.File.Label>
                 <Form.Control.Feedback type="invalid">
