@@ -75,15 +75,15 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
                   <>
                     {!readOnly && isOwnCreated ? (
                       <div className="float-right">
-                        <EditAction className="ml-1" onClick={() => handleEditGoal(i)} />
-                        <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} />
+                        <EditAction className="ml-1" onClick={() => handleEditGoal(i)} onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} />
+                        <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} />
                       </div>
                     ) : (
                       <>
                         {!originGoals.find(g => g.id === goal.id) && !readOnly &&
                           <div className="float-right">
-                            <EditAction className="ml-1" onClick={() => handleEditGoal(i)} />
-                            <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} />
+                            <EditAction className="ml-1" onClick={() => handleEditGoal(i)} onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} />
+                            <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} />
                           </div>
                         }
                       </>
@@ -105,7 +105,7 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
             variant="link"
             onClick={handleAddGoal}
             className="p-0"
-            onKeyPress={(event) => event.key === 'Enter' && event.currentTarget.click()}
+            onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()}
           >
             <BsPlusCircle size={20} /> {translate('treatment_plan.goal.add')}
           </Button>

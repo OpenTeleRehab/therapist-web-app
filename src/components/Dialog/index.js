@@ -37,7 +37,7 @@ const Dialog = (props) => {
 
       <Modal.Footer>
         {onConfirm &&
-          <Button variant="primary" onClick={onConfirm} disabled={disabledConfirmButton}>
+          <Button variant="primary" onClick={onConfirm} disabled={disabledConfirmButton} onKeyPress={(e) => e.key === 'Enter' && e.stopPropagation()}>
             {confirmLabel}
           </Button>
         }
@@ -51,7 +51,7 @@ const Dialog = (props) => {
             {editLabel}
           </Button>
         }
-        <Button variant="outline-dark" onClick={onCancel}>
+        <Button variant="outline-dark" onClick={onCancel} onKeyPress={(e) => e.key === 'Enter' && e.stopPropagation()}>
           {cancelLabel}
         </Button>
       </Modal.Footer>
