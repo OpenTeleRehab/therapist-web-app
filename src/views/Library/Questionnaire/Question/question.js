@@ -123,14 +123,14 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
     setQuestions(updatedQuestions);
   };
 
-  const handleFileUpload = (e) => {
+  const handleFileUpload = (e, index) => {
     if (e.key === 'Enter') {
-      document.getElementById('file').click();
+      document.getElementById('file' + index).click();
       e.stopPropagation();
     }
   };
 
-  const handleNewAnswer = (e) => {
+  const handleEnterKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.stopPropagation();
     }
@@ -219,6 +219,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         variant="outline-danger"
                                         className="remove-btn"
                                         onClick={() => handleFileRemove(index)}
+                                        onKeyPress={(e) => handleEnterKeyPress(e)}
                                       >
                                         <BsX size={15} />
                                       </Button>
@@ -227,9 +228,9 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                 </div>
                               }
                               {enableButtons() &&
-                                <div className="btn btn-sm text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)} >
+                                <div className="btn btn-sm text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event, index)} >
                                   <BsUpload size={15}/> Upload Image
-                                  <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={e => handleFileChange(e, index)} accept="image/*" aria-label="Upload"/>
+                                  <input type="file" id={`file${index}`} name="file" className="position-absolute upload-btn" onChange={e => handleFileChange(e, index)} accept="image/*" aria-label="Upload"/>
                                 </div>
                               }
                             </Col>
@@ -279,6 +280,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         onClick={() => handleAnswerRemove(index, answerIndex)}
                                         disabled={question.answers.length <= 2}
                                         aria-label="Remove button"
+                                        onKeyPress={(e) => handleEnterKeyPress(e)}
                                       >
                                         <BsX size={15} />
                                       </Button>
@@ -320,6 +322,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         onClick={() => handleAnswerRemove(index, answerIndex)}
                                         disabled={question.answers.length <= 2}
                                         aria-label="Remove button"
+                                        onKeyPress={(e) => handleEnterKeyPress(e)}
                                       >
                                         <BsX size={15} />
                                       </Button>
@@ -359,7 +362,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     variant="link"
                                     onClick={() => handleAddAnswer(index)}
                                     className="p-0"
-                                    onKeyPress={(event) => handleNewAnswer(event)}
+                                    onKeyPress={(event) => handleEnterKeyPress(event)}
                                   >
                                     <BsPlus size={15} /> {translate('question.add.more.answer')}
                                   </Button>
