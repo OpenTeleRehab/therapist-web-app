@@ -315,6 +315,12 @@ const CreateExercise = ({ translate }) => {
     }
   };
 
+  const handleNewField = (e) => {
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -550,7 +556,7 @@ const CreateExercise = ({ translate }) => {
                   variant="link"
                   onClick={handleAddFields}
                   className="p-0 mr-1"
-                  onKeyPress={(e) => e.key === 'Enter' && e.currentTarget.click()}
+                  onKeyPress={(e) => handleNewField(e)}
                 >
                   <BsPlusCircle size={20} /> {translate('exercise.additional_field.add_more_field')}
                 </Button>
