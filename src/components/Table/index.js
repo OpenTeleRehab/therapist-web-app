@@ -80,7 +80,7 @@ const CustomTable = ({
       <IntegratedSorting />
       {remotePaging ? <CustomPaging totalCount={totalCount} /> : <IntegratedPaging />}
       {onRowClick
-        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} className={hover} tabindex={0} />} />
+        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} className={hover} tabIndex={0} />} />
         : <Table columnExtensions={tableColumnExtensions} />
       }
       <TableHeaderRow />

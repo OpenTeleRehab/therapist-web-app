@@ -5,11 +5,21 @@
 		cursor: pointer;
 	}
 
+	&:focus {
+		outline: 0 none;
+	}
+
+	&.focus-visible,
+	&:focus-visible {
+		outline: 5px auto $dark !important;
+	}
+
 	.img-fluid {
 		width: 100%;
 		height: 157px;
 		object-fit: cover;
 	}
+
 	.card-img {
 		height: 157px;
 	}
