@@ -321,6 +321,13 @@ const CreateExercise = ({ translate }) => {
     }
   };
 
+  const handleFileUpload = (e) => {
+    if (e.key === 'Enter') {
+      document.getElementById('file').click();
+      e.stopPropagation();
+    }
+  };
+
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -358,7 +365,7 @@ const CreateExercise = ({ translate }) => {
                   <div>{mediaUpload.fileName} {mediaUpload.fileSize ? ('(' + mediaUpload.fileSize + 'kB )') : ''}</div>
                 </div>
               ))}
-              <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()} >
+              <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)} >
                 <BsUpload size={15}/> Upload Image
                 <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload" />
               </div>
