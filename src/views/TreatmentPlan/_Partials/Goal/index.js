@@ -62,7 +62,7 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
         </small>
       </h6>
 
-      {goals.length > 0 ? (
+      {goals.length > 0 && (
         <Card className="mb-2">
           <ListGroup variant="flush">
             {goals.map((goal, i) => {
@@ -95,8 +95,6 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
             })}
           </ListGroup>
         </Card>
-      ) : (
-        <span>{translate('treatment_plan.goal.no_goals')}</span>
       )}
 
       {!readOnly && goals.length < 4 && isOwnCreated && (

@@ -53,7 +53,6 @@ const CreateTreatmentPlan = () => {
   const [editingTreatmentPlan, setEditingTreatmentPlan] = useState([]);
 
   const [errorName, setErrorName] = useState(false);
-  const [errorDescription, setErrorDescription] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorPatient, setErrorPatient] = useState(false);
   const [goals, setGoals] = useState([]);
@@ -142,7 +141,6 @@ const CreateTreatmentPlan = () => {
 
   const resetData = () => {
     setErrorName(false);
-    setErrorDescription(false);
     setErrorStartDate(false);
     setFormFields({
       name: '',
@@ -214,13 +212,6 @@ const CreateTreatmentPlan = () => {
       setErrorName(true);
     } else {
       setErrorName(false);
-    }
-
-    if (formFields.description === '') {
-      canSave = false;
-      setErrorDescription(true);
-    } else {
-      setErrorDescription(false);
     }
 
     if (!formFields.patient_id) {
@@ -423,7 +414,6 @@ const CreateTreatmentPlan = () => {
                 <Col md={6}>
                   <Form.Group controlId="formDescription">
                     <Form.Label>{translate('treatment_plan.description')}</Form.Label>
-                    <span className="text-dark ml-1">*</span>
                     <Form.Control
                       as="textarea"
                       name="description"
@@ -432,12 +422,8 @@ const CreateTreatmentPlan = () => {
                       value={formFields.description}
                       placeholder={translate('placeholder.description')}
                       onChange={handleChange}
-                      isInvalid={errorDescription}
                       disabled={!isOwnCreated}
                     />
-                    <Form.Control.Feedback type="invalid">
-                      {translate('error.description')}
-                    </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
               </Row>
