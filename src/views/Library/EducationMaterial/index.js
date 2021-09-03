@@ -352,7 +352,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                       <div className="d-flex justify-content-end">
                         {therapistId === material.therapist_id && (
                           <div className="delete-btn">
-                            <DeleteAction className="ml-1" onClick={() => handleDelete(material.id)} disabled={material.is_used} />
+                            <DeleteAction className="ml-1" onClick={() => handleDelete(material.id)} />
                           </div>
                         )}
                       </div>

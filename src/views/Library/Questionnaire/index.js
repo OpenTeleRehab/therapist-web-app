@@ -341,7 +341,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                       <div className="d-flex justify-content-end">
                         {therapistId === questionnaire.therapist_id && (
                           <div className="delete-btn">
-                            <DeleteAction onClick={() => handleDelete(questionnaire.id)} disabled={questionnaire.is_used}/>
+                            <DeleteAction onClick={() => handleDelete(questionnaire.id)} />
                           </div>
                         )}
                       </div>

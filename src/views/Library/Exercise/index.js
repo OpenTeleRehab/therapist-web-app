@@ -344,7 +344,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                       <div className="d-flex justify-content-end">
                         {therapistId === exercise.therapist_id && (
                           <div className="position-absolute delete-btn">
-                            <DeleteAction className="ml-1" onClick={() => handleDelete(exercise.id)} disabled={exercise.is_used} />
+                            <DeleteAction className="ml-1" onClick={() => handleDelete(exercise.id)} />
                           </div>
                         )}
                       </div>
