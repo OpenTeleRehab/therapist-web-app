@@ -73,7 +73,7 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
                   </Badge>
                   {goal.title}
                   <>
-                    {!readOnly && isOwnCreated ? (
+                    {!readOnly ? (
                       <div className="float-right">
                         <EditAction className="ml-1" onClick={() => handleEditGoal(i)} onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} />
                         <DeleteAction className="ml-1" onClick={() => handleDeleteGoal(i)} onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} />
@@ -97,7 +97,7 @@ const TreatmentGoal = ({ goals, setGoals, readOnly, isOwnCreated, originGoals })
         </Card>
       )}
 
-      {!readOnly && goals.length < 4 && isOwnCreated && (
+      {!readOnly && goals.length < 4 && (
         <Form.Group className="my-4">
           <Button
             variant="link"
