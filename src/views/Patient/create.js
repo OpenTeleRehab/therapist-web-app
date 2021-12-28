@@ -376,6 +376,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               value={settings.genders.options.filter(option => option.value === formFields.gender)}
               getOptionLabel={option => option.text}
               options={settings.genders.options}
+              placeholder={translate('placeholder.gender')}
               className={errorGender ? 'is-invalid' : ''}
               onChange={(e) => handleSingleSelectChange('gender', e.value)}
               aria-label="Gender"
@@ -447,6 +448,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             value={options.filter(obj => selectedTherapists.includes(obj.value))}
             isMulti
             options={options}
+            placeholder={translate('placeholder.therapist')}
             className="basic-multi-select"
             classNamePrefix="select"
             onChange={handleMultipleSelectChange}

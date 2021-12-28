@@ -366,7 +366,7 @@ const CreateExercise = ({ translate }) => {
                 </div>
               ))}
               <div className="btn btn-sm bg-white btn-outline-primary text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event)} >
-                <BsUpload size={15}/> Upload Image
+                <BsUpload size={15}/> {translate('exercise.media_upload')}
                 <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload" />
               </div>
               { mediaUploadsError &&
