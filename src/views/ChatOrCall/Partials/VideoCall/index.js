@@ -33,6 +33,9 @@ const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indica
     clientNode: '',
     disableDeepLinking: '',
     enableWelcomePage: false,
+    prejoinConfig: {
+      enabled: false
+    },
     startAudioOnly: !isVideoOn,
     startWithAudioMuted: isMuted
   };
