@@ -208,7 +208,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                   exerciseCategoryTreeData.map(category => (
                     <Card key={category.value} className="mb-3 rounded">
                       <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
-                        {category.label}
+                        <span className="text-truncate pr-2">{category.label}</span>
                         <div className="ml-auto text-nowrap">
                           <span className="mr-3">
                             {selectedCategories[category.value] ? selectedCategories[category.value].length : 0}
