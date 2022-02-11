@@ -1,4 +1,4 @@
-import axios from 'utils/admin-axios';
+import axios from 'utils/gAdminAxios';
 import _ from 'lodash';
 
 const getEducationMaterials = payload => {
