@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getTranslate, withLocalize } from 'react-localize-redux';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Button } from 'react-bootstrap';
 
 import { BiChevronLeftCircle, BiChevronRightCircle } from 'react-icons/bi';
 import { useSelector } from 'react-redux';
@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import ListExerciseCard from '../../TreatmentPlan/Activity/Exercise/listCard';
 import ListEducationMaterialCard from '../../TreatmentPlan/Activity/EducationMaterial/listCard';
 import ListQuestionnaireCard from '../../TreatmentPlan/Activity/Questionnaire/listCard';
-import { Button } from 'react-bootstrap/esm/index';
 import * as ROUTES from '../../../variables/routes';
 import { useHistory } from 'react-router-dom';
 

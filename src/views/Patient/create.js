@@ -261,9 +261,11 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     }
 
     if (canSave) {
+      const url = window.location.href;
       const payload = {
         ...formValues,
-        secondary_therapists: selectedTherapists
+        secondary_therapists: selectedTherapists,
+        stage: url.includes('local') ? 'local' : url.includes('demo') ? 'demo' : 'live'
       };
 
       if (editId) {
