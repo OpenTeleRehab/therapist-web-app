@@ -11,6 +11,8 @@ import ListEducationMaterialCard from '../../TreatmentPlan/Activity/EducationMat
 import ListQuestionnaireCard from '../../TreatmentPlan/Activity/Questionnaire/listCard';
 import * as ROUTES from '../../../variables/routes';
 import { useHistory } from 'react-router-dom';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const PreviewList = ({
   selectedExercises, selectedMaterials, selectedQuestionnaires,
@@ -19,6 +21,7 @@ const PreviewList = ({
   const [isShow, setIsShow] = useState(false);
   const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const translate = getTranslate(localize);
   const history = useHistory();
 
@@ -77,6 +80,7 @@ const PreviewList = ({
           }
         </Col>
       </Row>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

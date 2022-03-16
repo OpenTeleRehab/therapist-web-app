@@ -28,6 +28,7 @@ import Dialog from 'components/Dialog';
 import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 let timer = null;
 const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises, isShowPreviewList }) => {
@@ -39,6 +40,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
   const { languages } = useSelector(state => state.language);
   const [previewExercise, setPreviewExercise] = useState(null);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [showCopy, setShowCopy] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -379,6 +381,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

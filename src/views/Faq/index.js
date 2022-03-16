@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFaqPage } from 'store/staticPage/actions';
+import customColorScheme from '../../utils/customColorScheme';
+import _ from 'lodash';
 
 const FaqPage = () => {
   const dispatch = useDispatch();
   const { profile } = useSelector(state => state.auth);
   const { faqPage } = useSelector(state => state.staticPage);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   useEffect(() => {
     dispatch(getFaqPage({
@@ -33,6 +36,7 @@ const FaqPage = () => {
           <div className="p-3 flex-grow-1" dangerouslySetInnerHTML={{ __html: faqPage.content }} style={{ color: faqPage.text_color, backgroundColor: faqPage.background_color }} />
         </div>
       }
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

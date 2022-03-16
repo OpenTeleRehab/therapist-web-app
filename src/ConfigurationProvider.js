@@ -10,6 +10,7 @@ import { setChatSubscribeIds } from 'store/rocketchat/actions';
 import { initialChatSocket } from 'utils/rocketchat';
 import { getUniqueId } from 'utils/general';
 import { getProfessions } from 'store/profession/actions';
+import { getColorScheme } from 'store/colorScheme/actions';
 
 import SplashScreen from 'components/SplashScreen';
 import AppContext from 'context/AppContext';
@@ -51,6 +52,7 @@ const ConfigurationProvider = ({ children }) => {
 
       dispatch(getCountries());
       dispatch(getLanguages());
+      dispatch(getColorScheme());
     }
   }, [appLoading, dispatch]);
 

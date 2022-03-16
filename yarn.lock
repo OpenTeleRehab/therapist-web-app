@@ -3915,6 +3915,11 @@ css@^2.0.0, css@^2.2.3:
     source-map-resolve "^0.5.2"
     urix "^0.1.0"
 
+cssbeautify@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/cssbeautify/-/cssbeautify-0.3.1.tgz#12dd1f734035c2e6faca67dcbdcef74e42811397"
+  integrity sha1-Et0fc0A1wub6ymfcvc73TkKBE5c=
+
 cssdb@^4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/cssdb/-/cssdb-4.4.0.tgz#3bf2f2a68c10f5c6a08abd92378331ee803cddb0"
@@ -9880,6 +9885,11 @@ react-paginate@^7.1.3:
   dependencies:
     prop-types "^15.6.1"
 
+react-parm@^1.0.0:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/react-parm/-/react-parm-1.1.1.tgz#a88af214ff942aac517ec21a4aea8a57104512d3"
+  integrity sha512-fei1OHIwwYWTdAeiJSCz8VHCIIeZTI65fmtFRtoejwYMOQGgJcim0K1RTz69kTnvwviQI+a9vU3t0MZR52hSLQ==
+
 react-phone-input-2@^2.13.9:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/react-phone-input-2/-/react-phone-input-2-2.14.0.tgz#75dff7ba503becc7a19e0e8ff5aa3d878265af77"
@@ -10027,6 +10037,15 @@ react-step-progress-bar@^1.0.3:
     classnames "^2.2.6"
     invariant "^2.2.4"
     react-transition-group "^2.4.0"
+
+react-style-tag@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/react-style-tag/-/react-style-tag-2.0.4.tgz#f647859882ec3d50ced3c9143dd0e88bb33b7b3e"
+  integrity sha512-IPOb0ahaJS+5oH+F0LiOexlz/KhwPeyQYluP/a8UGxKVZ1WU/ZBeosSEcwO9IrstOZlUJN5Jrp0YyKxkYNq5og==
+  dependencies:
+    cssbeautify "^0.3.1"
+    react-parm "^1.0.0"
+    stylis "^3.5.0"
 
 react-transition-group@^2.4.0:
   version "2.9.0"
@@ -11357,6 +11376,11 @@ stylehacks@^4.0.0:
     browserslist "^4.0.0"
     postcss "^7.0.0"
     postcss-selector-parser "^3.0.0"
+
+stylis@^3.5.0:
+  version "3.5.4"
+  resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.5.4.tgz#f665f25f5e299cf3d64654ab949a57c768b73fbe"
+  integrity sha512-8/3pSmthWM7lsPBKv7NXkzn2Uc9W7NotcwGNpJaa3k7WMM1XDCA4MgT5k/8BIexd5ydZdboXtU90XH9Ec4Bv/Q==
 
 stylis@^4.0.3:
   version "4.0.10"

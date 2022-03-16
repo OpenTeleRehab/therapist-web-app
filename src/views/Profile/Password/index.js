@@ -7,11 +7,14 @@ import { useHistory } from 'react-router-dom';
 import { updatePassword } from 'store/auth/actions';
 import validatePassword from '../../../utils/validatePassword';
 import { FaEye, FaEyeSlash } from 'react-icons/all';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const passwordLength = 8;
 const Password = () => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const translate = getTranslate(localize);
   const history = useHistory();
 
@@ -201,6 +204,7 @@ const Password = () => {
           </Button>
         </Form.Row>
       </Form>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

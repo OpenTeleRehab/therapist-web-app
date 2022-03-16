@@ -17,6 +17,8 @@ import { CALL_STATUS, USER_STATUS } from 'variables/rocketchat';
 import VideoCall from 'views/ChatOrCall/Partials/VideoCall';
 import { generateHash } from 'utils/general';
 import { sendNewMessage, updateMessage } from 'utils/rocketchat';
+import customColorScheme from '../../utils/customColorScheme';
+import _ from 'lodash';
 
 const CALL_WAITING_TIMEOUT = 60000; // 1 minute
 const ChatOrCall = ({ translate }) => {
@@ -25,6 +27,7 @@ const ChatOrCall = ({ translate }) => {
   const { idleTimer } = useContext(AppContext);
   const chatSocket = useContext(RocketchatContext);
   const therapist = useSelector(state => state.auth.profile);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const { authToken, chatRooms, messages, selectedRoom, isChatConnected, videoCall } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
   const [hideChatPanel, setHideChatPanel] = useState(true);
@@ -204,6 +207,7 @@ const ChatOrCall = ({ translate }) => {
           )}
         </Row>
       )}
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

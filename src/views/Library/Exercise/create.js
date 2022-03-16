@@ -39,6 +39,7 @@ import { CATEGORY_TYPES } from 'variables/category';
 import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const CreateExercise = ({ translate }) => {
   const { languages } = useSelector(state => state.language);
   const { exercise, filters } = useSelector(state => state.exercise);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [language, setLanguage] = useState('');
   const [therapistId, setTherapistId] = useState('');
@@ -597,6 +599,7 @@ const CreateExercise = ({ translate }) => {
           </Col>
         </Row>
       </Form>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

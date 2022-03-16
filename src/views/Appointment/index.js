@@ -16,6 +16,7 @@ import settings from 'settings';
 import CreateAppointment from './Partials/create';
 import _ from 'lodash';
 import { getLayoutDirection } from '../../utils/layoutDirection';
+import customColorScheme from '../../utils/customColorScheme';
 
 const calendarLocales = [...allLocales, enLocale, kmLocale];
 
@@ -24,6 +25,7 @@ const Appointment = ({ translate }) => {
   const { appointments } = useSelector((state) => state.appointment);
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const calendarRef = useRef();
   const [events, setEvents] = useState([]);
   const [date, setDate] = useState();
@@ -162,6 +164,7 @@ const Appointment = ({ translate }) => {
           </Tab>
         </Tabs>
       </Col>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </Row>
   );
 };
