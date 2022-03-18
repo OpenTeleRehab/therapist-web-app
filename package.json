@@ -54,6 +54,7 @@
     "react-scripts": "3.4.3",
     "react-select": "^4.3.1",
     "react-step-progress-bar": "^1.0.3",
+    "react-style-tag": "^2.0.4",
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0"
   },

@@ -41,6 +41,7 @@ import Dialog from 'components/Dialog';
 
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires, isShowPreviewList }) => {
@@ -48,6 +49,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   const history = useHistory();
   const { loading, questionnaires, filters, totalCount } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(1);
   const [formFields, setFormFields] = useState({
@@ -374,6 +376,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

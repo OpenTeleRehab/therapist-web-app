@@ -10,11 +10,13 @@ import { AgeInYear } from '../../utils/age';
 import settings from 'settings';
 import { FaNotesMedical } from 'react-icons/fa';
 import { ContextAwareToggle } from '../../components/Accordion/ContextAwareToggle';
+import customColorScheme from '../../utils/customColorScheme';
 
 const Dashboard = ({ translate }) => {
   const dispatch = useDispatch();
   const patients = useSelector(state => state.patient.patients);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [totalPatient, setTotalPatient] = useState(0);
   const [totalOngoingTreatment, setTotalOngoingTreatment] = useState(0);
   const [totalOngoingByGender, setTotalOngoingByGender] = useState([]);
@@ -136,7 +138,7 @@ const Dashboard = ({ translate }) => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <IoPerson size={45} color="#0077C8"/>
+                  <IoPerson size={45} color={_.isEmpty(colorScheme) ? '#0077C8' : colorScheme.primary_color}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.total_patient')}</h6>
@@ -151,7 +153,7 @@ const Dashboard = ({ translate }) => {
             <Card.Body>
               <Row>
                 <Col sm={5} md={4} lg={3}>
-                  <FaNotesMedical size={45} color="#0077C8"/>
+                  <FaNotesMedical size={45} color={_.isEmpty(colorScheme) ? '#0077C8' : colorScheme.primary_color}/>
                 </Col>
                 <Col sm={7} md={8} lg={9}>
                   <h6 className="card-text">{translate('common.ongoing_treatment')}</h6>
@@ -250,6 +252,7 @@ const Dashboard = ({ translate }) => {
           </Accordion.Collapse>
         </Card>
       </Accordion>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

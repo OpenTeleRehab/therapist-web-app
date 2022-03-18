@@ -25,6 +25,7 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Question from './Question/question';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -36,6 +37,7 @@ const CreateQuestionnaire = ({ translate }) => {
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
   const { categoryTreeData } = useSelector((state) => state.category);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [language, setLanguage] = useState('');
   const [formFields, setFormFields] = useState({
     title: '',
@@ -383,6 +385,7 @@ const CreateQuestionnaire = ({ translate }) => {
           </Col>
         </Row>
       </Form>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

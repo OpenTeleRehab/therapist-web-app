@@ -33,6 +33,8 @@ import {
 } from '../../../store/notification/actions';
 import { generateHash } from '../../../utils/general';
 import { CALL_STATUS } from '../../../variables/rocketchat';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -41,6 +43,7 @@ const PatientInfo = ({ id, translate }) => {
   const therapist = useSelector(state => state.auth.profile);
   const countries = useSelector(state => state.country.countries);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
   const [showActivateDeactivateDialog, setShowActivateDeactivateDialog] = useState(false);
@@ -249,6 +252,7 @@ const PatientInfo = ({ id, translate }) => {
       >
         <p>{translate('patient.delete_confirmation_message')}</p>
       </Dialog>
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

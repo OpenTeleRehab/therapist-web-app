@@ -86,7 +86,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
                       <Button
                         aria-label="Remove questionnaire"
                         className="btn-circle-sm"
-                        variant="primary"
+                        variant="outline-primary"
                         onClick={() => onSelectionRemove(questionnaire.id)}
                       >
                         <BsX size={14} />
@@ -97,7 +97,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
                         <Button
                           aria-label="Remove questionnaire"
                           className="btn-circle-sm"
-                          variant="primary"
+                          variant="outline-primary"
                           onClick={() => onSelectionRemove(questionnaire.id)}
                         >
                           <BsX size={14} />

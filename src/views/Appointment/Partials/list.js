@@ -29,6 +29,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { appointments } = useSelector((state) => state.appointment);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const [approvedAppointments, setApprovedAppointments] = useState([]);
   const [id, setId] = useState('');
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -129,7 +130,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
                 group.approves.map(appointment => {
                   const { therapist_status: therapistStatus, patient_status: patientStatus } = appointment;
                   let additionTextStyle = {};
-                  let statusTextStyle = { color: scssColors.primary };
+                  let statusTextStyle = { color: _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color };
                   let statusText = 'appointment.status.accept';
                   if ([therapistStatus, patientStatus].includes(APPOINTMENT_STATUS.INVITED)) {
                     statusTextStyle = { color: scssColors.dark };
@@ -144,7 +145,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
 
                   return (
                     <div className="mx-3 mb-2 pr-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
-                      <div className="p-3 text-white" style={{ backgroundColor: scssColors.primary }}>
+                      <div className="p-3 text-white" style={{ backgroundColor: _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color }}>
                         <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
@@ -159,7 +160,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
                           <>
                             <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
                             <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
-                            <div className="appointment-own-icon"><BsPersonFill size={20} color={scssColors.primary}/></div>
+                            <div className="appointment-own-icon"><BsPersonFill size={20} color={_.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color}/></div>
                           </>
                         )}
                         {!appointment.created_by_therapist && (

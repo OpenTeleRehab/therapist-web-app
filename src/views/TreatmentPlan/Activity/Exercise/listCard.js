@@ -113,7 +113,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                         <Button
                           aria-label="Remove exercise"
                           className="btn-circle-sm"
-                          variant="primary"
+                          variant="outline-primary"
                           onClick={() => onSelectionRemove(exercise.id)}
                         >
                           <BsX size={14} />

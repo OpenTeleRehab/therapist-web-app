@@ -10,11 +10,14 @@ import {
 
 import ActivitySection from 'views/TreatmentPlan/_Partials/activitySection';
 import AssignPatient from './assignPatient';
+import customColorScheme from '../../../utils/customColorScheme';
+import _ from 'lodash';
 
 const CreatePresetTreatment = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
+  const { colorScheme } = useSelector(state => state.colorScheme);
   const translate = getTranslate(localize);
   const { id } = useParams();
 
@@ -173,6 +176,7 @@ const CreatePresetTreatment = () => {
           activities={activities}
         />
       )}
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

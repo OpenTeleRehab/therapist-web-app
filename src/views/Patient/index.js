@@ -20,6 +20,8 @@ import { ProgressBar } from 'react-step-progress-bar';
 import { TiWarning } from 'react-icons/all';
 import scssColors from 'scss/custom.scss';
 import { getChatRooms } from '../../store/rocketchat/actions';
+import customColorScheme from '../../utils/customColorScheme';
+import _ from 'lodash';
 
 let timer = null;
 const Patient = () => {
@@ -31,6 +33,7 @@ const Patient = () => {
   const therapist = useSelector(state => state.auth.profile);
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
+  const { colorScheme } = useSelector(state => state.colorScheme);
 
   const translate = getTranslate(localize);
   const history = useHistory();
@@ -173,6 +176,7 @@ const Patient = () => {
           };
         })}
       />
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };

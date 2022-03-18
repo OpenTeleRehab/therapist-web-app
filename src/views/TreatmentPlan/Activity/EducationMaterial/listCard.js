@@ -93,7 +93,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                       <Button
                         aria-label="Remove education material"
                         className="btn-circle-sm"
-                        variant="primary"
+                        variant="outline-primary"
                         onClick={() => onSelectionRemove(material.id)}
                       >
                         <BsX size={14} />
@@ -104,7 +104,7 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
                         <Button
                           aria-label="Remove education material"
                           className="btn-circle-sm"
-                          variant="primary"
+                          variant="outline-primary"
                           onClick={() => onSelectionRemove(material.id)}
                         >
                           <BsX size={14} />
