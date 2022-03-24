@@ -16,6 +16,7 @@ import ListEducationMaterialCard from 'views/TreatmentPlan/Activity/EducationMat
 import ListQuestionnaireCard from 'views/TreatmentPlan/Activity/Questionnaire/listCard';
 import { BiCopyAlt } from 'react-icons/bi';
 import CopyActivity from './copyActivity';
+import customColorScheme from '../../../utils/customColorScheme';
 
 const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities, readOnly, isPreset, isOwnCreated, originData, treatmentPlanId }) => {
   const localize = useSelector((state) => state.localize);
@@ -28,6 +29,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const [day, setDay] = useState(1);
   const [weekToRemove, setWeekToRemove] = useState(0);
   const { profile } = useSelector((state) => state.auth);
+  const { colorScheme } = useSelector((state) => state.colorScheme);
   const [lang, setLang] = useState('');
   const [therapistId, setTherapistId] = useState();
   const [openCopyDialog, setOpenCopyDialog] = useState(false);
@@ -325,6 +327,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           therapistId={therapistId}
         />
       }
+      { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
 };
