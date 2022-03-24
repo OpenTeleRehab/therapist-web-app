@@ -62,7 +62,7 @@ const ColorScheme = (color) => {
               border-top-color: ${color.primary_color};
             }
             .text-primary {
-              color: ${color.primary_text_color} !important;
+              color: ${color.primary_color} !important;
             }
             .btn-outline-primary {
               border-color: ${color.primary_color} !important;
