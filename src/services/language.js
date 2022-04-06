@@ -1,4 +1,4 @@
-import axios from 'utils/admin-axios';
+import axios from 'utils/gAdminAxios';
 
 const getLanguages = () => {
   return axios.get('/language')
