@@ -1,7 +1,7 @@
 const settings = {
   date_format: 'DD/MM/YYYY',
   textMaxLength: 255,
-  fileMaxUploadSize: 25, // MB
+  fileMaxUploadSize: 100, // MB
   genders: {
     options: [
       { text: 'Male', value: 'male' },
@@ -11,7 +11,7 @@ const settings = {
   },
   noteMaxLength: 50,
   educationMaterial: {
-    maxFileSize: 25 // MB
+    maxFileSize: 100 // MB
   },
   maxAge: 80,
   minAge: 0,
