@@ -138,8 +138,7 @@ const Library = ({ translate }) => {
 
   return (
     <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1>{translate('library')}</h1>
+      <div className="d-flex justify-content-end flex-wrap flex-md-nowrap align-items-center mb-3">
         <div className="btn-toolbar mb-2 mb-md-0">
           <div className="btn-toolbar mb-2 mb-md-0">
             {newContentLink && allowCreateContent && (
