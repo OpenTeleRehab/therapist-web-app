@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Nav, Button } from 'react-bootstrap';
+import { Nav, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { BsPlus } from 'react-icons/bs';
@@ -141,12 +141,27 @@ const Library = ({ translate }) => {
       <div className="d-flex justify-content-end flex-wrap flex-md-nowrap align-items-center mb-3">
         <div className="btn-toolbar mb-2 mb-md-0">
           <div className="btn-toolbar mb-2 mb-md-0">
-            {newContentLink && allowCreateContent && (
-              <Button
-                as={Link} to={newContentLink}>
-                <BsPlus size={20} className="mr-1" />
-                {translate('common.new_content')}
-              </Button>
+            {newContentLink && (
+              allowCreateContent ? (
+                <Button
+                  as={Link} to={newContentLink}
+                >
+                  <BsPlus size={20} className="mr-1" />
+                  {translate('common.new_content')}
+                </Button>
+              ) : (
+                <OverlayTrigger
+                  placement="bottom"
+                  overlay={<Tooltip id="button-tooltip">{translate('library.content_upload_reach_limit', { number: maxLibraries })}</Tooltip>}
+                >
+                  <span className="d-inline-block">
+                    <Button disabled style={{ pointerEvents: 'none' }}>
+                      <BsPlus size={20} className="mr-1" />
+                      {translate('common.new_content')}
+                    </Button>
+                  </span>
+                </OverlayTrigger>
+              )
             )}
           </div>
         </div>
