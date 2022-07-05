@@ -40,6 +40,8 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
+import { toMB } from '../../../utils/file';
+import settings from '../../../settings';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -63,7 +65,6 @@ const CreateExercise = ({ translate }) => {
     reps: ''
   });
   const [inputFields, setInputFields] = useState([]);
-
   const [titleError, setTitleError] = useState(false);
   const [setsError, setSetsError] = useState(false);
   const [repsError, setRepsError] = useState(false);
@@ -189,11 +190,12 @@ const CreateExercise = ({ translate }) => {
       canSave = false;
       setMediaUploadsError(true);
     } else {
-      setMediaUploadsError(false);
+      setMediaUploadsError(toMB(_.sumBy(mediaUploads, (item) => item.file.size)) > settings.fileMaxUploadSize);
     }
 
     const errorInputFields = [];
     const errorValueFields = [];
+
     for (let i = 0; i < inputFields.length; i++) {
       if (inputFields[i].field === '') {
         canSave = false;
@@ -209,6 +211,7 @@ const CreateExercise = ({ translate }) => {
         errorValueFields.push(false);
       }
     }
+
     setInputFieldError(errorInputFields);
     setInputValueError(errorValueFields);
 
@@ -291,6 +294,7 @@ const CreateExercise = ({ translate }) => {
       };
     }
   };
+
   const handleFileRemove = (index) => {
     const mediaFiles = mediaUploads;
     if (index !== -1) {
@@ -342,7 +346,7 @@ const CreateExercise = ({ translate }) => {
             <div className="exercise-media">
               <h4>{translate('exercise.media')}</h4>
               { mediaUploads.map((mediaUpload, index) => (
-                <div key={index} className="mb-2 position-relative w-75" >
+                <div key={index} className="mb-2 position-relative w-75">
                   <div className="position-absolute remove-btn-wrapper">
                     <BsXCircle size={20} onClick={() => handleFileRemove(index)}/>
                   </div>
@@ -371,8 +375,11 @@ const CreateExercise = ({ translate }) => {
                 <BsUpload size={15}/> {translate('exercise.media_upload')}
                 <input type="file" id="file" name="file" className="position-absolute upload-btn" onChange={handleFileChange} multiple accept="audio/*, video/*, image/*" aria-label="Upload" />
               </div>
-              { mediaUploadsError &&
+              { mediaUploads.length === 0 && mediaUploadsError &&
                 <div className="text-danger">{translate('exercise.media_upload.required')}</div>
+              }
+              { mediaUploads.length > 0 && mediaUploadsError &&
+                <div className="text-danger">{translate('exercise.media_upload.max_size', { size: settings.fileMaxUploadSize })}</div>
               }
             </div>
           </Col>
