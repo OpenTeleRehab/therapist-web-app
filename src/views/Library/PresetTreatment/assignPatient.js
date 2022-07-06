@@ -11,6 +11,9 @@ import moment from 'moment';
 import { createTreatmentPlan } from 'store/treatmentPlan/actions';
 import { getUsers } from '../../../store/user/actions';
 import { getLastActivityDate } from '../../../utils/treatmentPlan';
+import { getDiseases } from '../../../store/disease/actions';
+import Select from 'react-select';
+import scssColors from '../../../scss/custom.scss';
 
 const AssignPatient = ({ show, handleClose, weeks, activities }) => {
   const dispatch = useDispatch();
@@ -18,10 +21,10 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
   const translate = getTranslate(localize);
 
   const { users } = useSelector(state => state.user);
+  const diseases = useSelector((state) => state.disease.diseases);
   const { profile } = useSelector(state => state.auth);
   const [startDate, setStartDate] = useState('');
   const [errorName, setErrorName] = useState(false);
-  const [errorDescription, setErrorDescription] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorPatient, setErrorPatient] = useState(false);
   const [goals, setGoals] = useState([]);
@@ -30,7 +33,8 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     description: '',
     patient_id: '',
     start_date: '',
-    end_date: ''
+    end_date: '',
+    disease_id: ''
   });
 
   useEffect(() => {
@@ -59,6 +63,10 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     }
   }, [profile, dispatch]);
 
+  useEffect(() => {
+    dispatch(getDiseases({ lang: profile.language_id }));
+  }, [dispatch, profile]);
+
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
@@ -77,13 +85,6 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
       setErrorName(true);
     } else {
       setErrorName(false);
-    }
-
-    if (formFields.description === '') {
-      canSave = false;
-      setErrorDescription(true);
-    } else {
-      setErrorDescription(false);
     }
 
     if (!formFields.patient_id) {
@@ -119,6 +120,21 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     }
   };
 
+  const handleSingleSelectChange = (key, value) => {
+    setFormFields({ ...formFields, [key]: value });
+  };
+
+  const customSelectStyles = {
+    option: (provided) => ({
+      ...provided,
+      color: 'black',
+      backgroundColor: 'white',
+      '&:hover': {
+        backgroundColor: scssColors.infoLight
+      }
+    })
+  };
+
   const handleFormSubmit = (e) => {
     if (e.key === 'Enter') {
       e.preventDefault();
@@ -137,42 +153,6 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row>
-          <Col md={3}>
-            <h6 className="mb-4">{translate('treatment_plan.general_information')}</h6>
-            <Form.Group>
-              <Form.Label>{translate('treatment_plan.name')}</Form.Label>
-              <span className="text-dark ml-1">*</span>
-              <Form.Control
-                type="text"
-                name="name"
-                maxLength={255}
-                value={formFields.name}
-                placeholder={translate('placeholder.treatment_plan.name')}
-                onChange={handleChange}
-                isInvalid={errorName}
-              />
-              <Form.Control.Feedback type="invalid">
-                {translate('error.treatment_plan.name')}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>{translate('common.description')}</Form.Label>
-              <span className="text-dark ml-1">*</span>
-              <Form.Control
-                as="textarea"
-                name="description"
-                maxLength={255}
-                rows={3}
-                value={formFields.description}
-                placeholder={translate('placeholder.description')}
-                onChange={handleChange}
-                isInvalid={errorDescription}
-              />
-              <Form.Control.Feedback type="invalid">
-                {translate('error.description')}
-              </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
           <Col md={3}>
             <h6 className="mb-4">{translate('treatment_plan.assign_to_patient')}</h6>
             <Form.Group>
@@ -217,6 +197,54 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
                   {translate('error.start_date')}
                 </Form.Control.Feedback>
               )}
+            </Form.Group>
+          </Col>
+          <Col md={3}>
+            <h6 className="mb-4">{translate('treatment_plan.general_information')}</h6>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.name')}</Form.Label>
+              <span className="text-dark ml-1">*</span>
+              <Form.Control
+                type="text"
+                name="name"
+                maxLength={255}
+                value={formFields.name}
+                placeholder={translate('placeholder.treatment_plan.name')}
+                onChange={handleChange}
+                isInvalid={errorName}
+              />
+              <Form.Control.Feedback type="invalid">
+                {translate('error.treatment_plan.name')}
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
+              <span className="text-dark ml-1"></span>
+              <Select
+                placeholder={translate('placeholder.disease')}
+                classNamePrefix="filter"
+                value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
+                getOptionLabel={option => `${option.name}`}
+                options={[
+                  { id: '', name: translate('placeholder.disease') },
+                  ...diseases
+                ]}
+                onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
+                styles={customSelectStyles}
+                aria-label="Disease"
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.description')}</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="description"
+                maxLength={255}
+                rows={3}
+                value={formFields.description}
+                placeholder={translate('placeholder.description')}
+                onChange={handleChange}
+              />
             </Form.Group>
           </Col>
           <Col md={6}>

@@ -198,8 +198,4 @@ ViewExercise.defaultProps = {
   readOnly: true
 };
 
-ViewExercise.defaultProps = {
-  readOnly: true
-};
-
 export default ViewExercise;

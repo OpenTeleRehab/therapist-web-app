@@ -31,6 +31,8 @@ import { renderStatusBadge, getDisease } from '../../utils/treatmentPlan';
 import GoalTrackingTab from './TabContents/goalTrakingTab';
 import Dialog from 'components/Dialog';
 import { getDiseases } from 'store/disease/actions';
+import AssignPatient from '../Library/PresetTreatment/assignPatient';
+import { TYPE } from '../../variables/activity';
 
 const ViewTreatmentPlan = () => {
   const history = useHistory();
@@ -59,6 +61,8 @@ const ViewTreatmentPlan = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const diseases = useSelector((state) => state.disease.diseases);
+  const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [presetActivities, setPresetActivities] = useState([]);
 
   useEffect(() => {
     dispatch(getDiseases({ lang: profile.language_id }));
@@ -88,6 +92,33 @@ const ViewTreatmentPlan = () => {
     }
   }, [id, treatmentPlansDetail, diseases]);
 
+  useEffect(() => {
+    const groupActivitiesByWeek = _.groupBy(activities, function (item) {
+      return item.week;
+    });
+    const data = [];
+    _.forEach(groupActivitiesByWeek, (activityByWeek) => {
+      const activityData = [];
+      const groupActivitiesByDay = _.groupBy(activityByWeek, function (item) {
+        return item.day;
+      });
+      _.forEach(groupActivitiesByDay, (activityByDay) => {
+        const customExercises = activityByDay.filter(d => d.custom === true);
+        const custom = [];
+        const activity = activityByDay.find(d => d.day);
+        const exercises = activityByDay.filter(d => d.type === TYPE.exercise).map(obj => obj.activity_id);
+        const materials = activityByDay.filter(d => d.type === TYPE.material).map(obj => obj.activity_id);
+        const questionnaires = activityByDay.filter(d => d.type === TYPE.questionnaire).map(obj => obj.activity_id);
+        _.forEach(customExercises, (customExercise) => {
+          custom.push({ sets: customExercise.sets, reps: customExercise.reps, additional_information: customExercise.additional_information, id: customExercise.activity_id });
+        });
+        activityData.push({ day: activity.day, week: activity.week, exercises: exercises, materials: materials, questionnaires: questionnaires, customExercises: custom });
+      });
+      data.push(...activityData);
+    });
+    setPresetActivities(data);
+  }, [activities]);
+
   const handleDelete = () => {
     setShowDeleteDialog(true);
   };
@@ -111,6 +142,14 @@ const ViewTreatmentPlan = () => {
   const handleDownload = () => {
     setDownloading(true);
     dispatch(downloadTreatmentPlan(id)).then(() => setDownloading(false));
+  };
+
+  const handleAssign = () => {
+    setShowAssignDialog(true);
+  };
+
+  const handleCloseAssignDialog = () => {
+    setShowAssignDialog(false);
   };
 
   return (
@@ -164,6 +203,13 @@ const ViewTreatmentPlan = () => {
                 to={ROUTES.LIBRARY_PRESET_TREATMENT}
               >
                 &lt; {translate('treatment_plan.back_to_preset_list')}
+              </Button>
+              <Button
+                className="mr-2"
+                variant="outline-primary"
+                onClick={handleAssign}
+              >
+                {translate('common.assign')}
               </Button>
               <DropdownButton alignRight variant="primary" title={translate('common.action')}>
                 <Dropdown.Item as={Link} to={ROUTES.LIBRARY_TREATMENT_PLAN_EDIT.replace(':id', id)}>
@@ -231,6 +277,15 @@ const ViewTreatmentPlan = () => {
       >
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
+
+      { showAssignDialog && (
+        <AssignPatient
+          handleClose={handleCloseAssignDialog}
+          show={showAssignDialog}
+          weeks={weeks}
+          activities={presetActivities}
+        />
+      )}
     </>
   );
 };
