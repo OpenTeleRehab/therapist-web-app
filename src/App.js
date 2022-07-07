@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router-dom';
+import { Route, Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import { LocalizeProvider } from 'react-localize-redux';
 import { ReactKeycloakProvider } from '@react-keycloak/web';
@@ -29,6 +29,7 @@ const App = () => {
         <ConfigurationProvider>
           <LocalizeProvider store={store}>
             <Router history={createBrowserHistory()}>
+              <Route path="/patient" />
               <RouteSwitch />
               <Guidance />
             </Router>
