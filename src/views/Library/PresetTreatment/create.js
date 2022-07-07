@@ -27,6 +27,7 @@ const CreatePresetTreatment = () => {
   const [errorName, setErrorName] = useState(false);
   const [activities, setActivities] = useState([]);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [readOnly] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -166,6 +167,8 @@ const CreatePresetTreatment = () => {
         activities={activities}
         setActivities={setActivities}
         isPreset={true}
+        readOnly={readOnly}
+        treatmentPlanId={id}
       />
 
       { showAssignDialog && (

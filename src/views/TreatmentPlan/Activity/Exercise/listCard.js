@@ -15,7 +15,7 @@ import ViewExercise from 'views/Library/Exercise/view';
 import _ from 'lodash';
 import { TYPE } from 'variables/activity';
 
-const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercises, onSelectionRemove, onSelectionModify, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData, showList, treatmentPlanId }) => {
+const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercises, onSelectionRemove, onSelectionModify, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData, showList, treatmentPlanId, isPreset }) => {
   const [exercises, setExercises] = useState([]);
   const [exercise, setExercise] = useState([]);
   const [viewExercise, setViewExercise] = useState(false);
@@ -26,7 +26,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
       setExercises(exerciseObjs);
     } else if (exerciseIds && exerciseIds.length > 0) {
       if (showList) {
-        User.getActivitiesByIds(exerciseIds, treatmentPlanId, TYPE.exercise, day, week, lang, therapistId).then(res => {
+        User.getActivitiesByIds(exerciseIds, treatmentPlanId, TYPE.exercise, day, week, lang, therapistId, isPreset).then(res => {
           if (res.data) {
             setExercises(res.data);
           }
@@ -199,7 +199,8 @@ ListExerciseCard.propTypes = {
   day: PropTypes.number,
   week: PropTypes.number,
   showList: PropTypes.bool,
-  treatmentPlanId: PropTypes.number
+  treatmentPlanId: PropTypes.number,
+  isPreset: PropTypes.bool
 };
 
 export default withLocalize(ListExerciseCard);
