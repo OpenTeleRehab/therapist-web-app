@@ -94,9 +94,9 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
     setQuestions([...questions]);
   };
 
-  const enableButtons = () => {
+  const enableButtons = (question, isEnabled) => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code === languageObj.fallback && modifiable;
+    return languageObj && languageObj.code === languageObj.fallback && (modifiable || !question.id || isEnabled);
   };
 
   const handleCloneQuestion = (index) => {
@@ -156,43 +156,48 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                         <Card.Header className="test">
                           <Card.Title className="d-flex justify-content-between">
                             <h5>{translate('questionnaire.question_number', { number: index + 1 })}</h5>
-                            {enableButtons() &&
-                              <>
-                                <div
-                                  {...provided.dragHandleProps}
-                                >
-                                  <Button
-                                    variant="link"
-                                    size="sm"
-                                    className="text-dark p-0 mr-5 mb-3 drag-button"
-                                    aria-label="Move question"
+                            <>
+                              {enableButtons(question, true) &&
+                                  <div
+                                    {...provided.dragHandleProps}
                                   >
-                                    <BsArrowsMove size={20}/>
-                                  </Button>
-                                </div>
-                                <div>
-                                  <Button
-                                    variant="link"
-                                    size="sm"
-                                    className="text-primary p-0 mr-1"
-                                    onClick={() => handleCloneQuestion(index)}
-                                    aria-label="Clone question"
-                                  >
-                                    <FaCopy size={20} />
-                                  </Button>
-                                  <Button
-                                    variant="link"
-                                    size="sm"
-                                    className="text-danger p-0"
-                                    onClick={() => handleRemoveQuestion(index)}
-                                    disabled={questions.length === 1}
-                                    aria-label="Remove question"
-                                  >
-                                    <FaTrashAlt size={20} />
-                                  </Button>
-                                </div>
-                              </>
-                            }
+                                    <Button
+                                      variant="link"
+                                      size="sm"
+                                      className="text-dark p-0 mr-5 mb-3 drag-button justify-center"
+                                      aria-label="Move question"
+                                    >
+                                      <BsArrowsMove size={20}/>
+                                    </Button>
+                                  </div>
+                              }
+                              <div>
+                                {enableButtons(question) &&
+                                  <>
+                                    <Button
+                                      variant="link"
+                                      size="sm"
+                                      className="text-primary p-0 mr-1"
+                                      onClick={() => handleCloneQuestion(index)}
+                                      aria-label="Clone question"
+                                    >
+                                      <FaCopy size={20}/>
+                                    </Button>
+                                    <Button
+                                      variant="link"
+                                      size="sm"
+                                      className="text-danger p-0"
+                                      onClick={() => handleRemoveQuestion(
+                                        index)}
+                                      disabled={questions.length === 1}
+                                      aria-label="Remove question"
+                                    >
+                                      <FaTrashAlt size={20}/>
+                                    </Button>
+                                  </>
+                                }
+                              </div>
+                            </>
                           </Card.Title>
                           <Row>
                             <Col sm={8} xl={7}>
@@ -213,7 +218,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                               { question.file &&
                                 <div className="mb-2 w-50 d-flex justify-content-between">
                                   <img src={readImage(question.file)} alt="..." className="img-thumbnail"/>
-                                  {enableButtons() &&
+                                  {enableButtons(question) &&
                                     <div className="ml-3">
                                       <Button
                                         variant="outline-danger"
@@ -227,7 +232,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                   }
                                 </div>
                               }
-                              {enableButtons() &&
+                              {enableButtons(question) &&
                                 <div className="btn btn-sm text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event, index)} >
                                   <BsUpload size={15}/> {translate('question.media_upload')}
                                   <input type="file" id={`file${index}`} name="file" className="position-absolute upload-btn" onChange={e => handleFileChange(e, index)} accept="image/*" aria-label="Upload"/>
@@ -236,7 +241,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                             </Col>
                             <Col sm={5} xl={4}>
                               <Form.Group controlId={`formType${index}`}>
-                                <Form.Control name ="type" as="select" value={question.type} onChange={e => handleSelectChange(index, e)} disabled={!enableButtons()}>
+                                <Form.Control name ="type" as="select" value={question.type} onChange={e => handleSelectChange(index, e)} disabled={!enableButtons(question)}>
                                   <option value='checkbox'>{translate('question.type.checkbox')}</option>
                                   <option value='multiple'>{translate('question.type.multiple_choice')}</option>
                                   <option value='open-text'>{translate('question.type.open_ended_free_text')}</option>
@@ -272,7 +277,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         </Form.Check.Label>
                                       </Form.Check>
                                     </Col>
-                                    {enableButtons() &&
+                                    {enableButtons(question, !answer.id) &&
                                     <Col sm={4} xl={3} className="mt-1">
                                       <Button
                                         variant="outline-danger"
@@ -314,7 +319,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         </Form.Check.Label>
                                       </Form.Check>
                                     </Col>
-                                    {enableButtons() &&
+                                    {enableButtons(question, !answer.id) &&
                                     <Col sm={4} xl={3} className="mt-1">
                                       <Button
                                         variant="outline-danger"
@@ -356,7 +361,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                               )
                             }
                             {
-                              (enableButtons() && (question.type === 'checkbox' || question.type === 'multiple')) &&
+                              (enableButtons(question, true) && (question.type === 'checkbox' || question.type === 'multiple')) &&
                                 <Form.Group className="ml-3">
                                   <Button
                                     variant="link"
