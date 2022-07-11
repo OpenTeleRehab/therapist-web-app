@@ -5,9 +5,12 @@ import Message from './Message';
 import InputToolbar from './InputToolbar';
 import { BsChevronLeft } from 'react-icons/bs';
 import { IoCallOutline, IoVideocamOutline } from 'react-icons/io5';
-import { CALL_STATUS, CHAT_TYPES } from 'variables/rocketchat';
-import { useDispatch } from 'react-redux';
-import { postAttachmentMessage } from 'store/rocketchat/actions';
+import { CALL_STATUS, CHAT_TYPES, USER_STATUS } from 'variables/rocketchat';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  postAttachmentMessage,
+  sendPodcastNotification
+} from 'store/rocketchat/actions';
 import { generateHash } from 'utils/general';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
@@ -24,6 +27,7 @@ const ChatPanel = (
     onSendMessage
   }) => {
   const dispatch = useDispatch();
+  const therapist = useSelector(state => state.auth.profile);
   const [msgOuterHeight, setMsgOuterHeight] = useState(MIN_MSG_OUTER_HEIGHT);
   const [allMessages, setAllMessages] = useState(messages);
 
@@ -49,6 +53,7 @@ const ChatPanel = (
       received: false,
       isVideoCall: false
     };
+
     if (text !== '') {
       newMessage.msg = text;
       newMessage.type = CHAT_TYPES.TEXT;
@@ -63,13 +68,28 @@ const ChatPanel = (
         url
       };
       dispatch(postAttachmentMessage(selectedRoom.rid, attachment));
+      handleSendPodcastNotification(therapist, selectedRoom, 'chat_attachment.title', true);
     }
+
     setAllMessages(messages.concat([newMessage]));
   };
 
   const handleCall = (isVideo) => {
     onSendMessage(isVideo ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
     isVideoCall(isVideo);
+  };
+
+  const handleSendPodcastNotification = (therapist, selectedRoom, body, translatable) => {
+    if (therapist && selectedRoom.u.status === USER_STATUS.OFFLINE) {
+      const notification = {
+        identity: selectedRoom.u.username,
+        title: therapist.first_name + ' ' + therapist.last_name,
+        body: body,
+        translatable: translatable
+      };
+
+      dispatch(sendPodcastNotification(notification));
+    }
   };
 
   return (
