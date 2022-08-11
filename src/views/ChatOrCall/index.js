@@ -126,6 +126,20 @@ const ChatOrCall = ({ translate }) => {
   };
 
   const handleUpdateMessage = (msg, _id) => {
+    const rid = selectedRoom.rid;
+    const identity = selectedRoom.u.username;
+    const title = therapist.first_name + ' ' + therapist.last_name;
+    const notification = {
+      _id,
+      rid,
+      identity,
+      title,
+      body: msg,
+      translatable: false
+    };
+
+    dispatch(sendPodcastNotification(notification));
+
     const message = {
       _id,
       rid: selectedRoom.rid,
