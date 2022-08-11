@@ -1,4 +1,5 @@
 import { Rocketchat } from 'services/roketchat';
+import { Firebase } from 'services/firebase';
 import { User } from 'services/user';
 import { mutation } from './mutations';
 import { showErrorNotification } from 'store/notification/actions';
@@ -180,4 +181,8 @@ export const postAttachmentMessage = (roomId, attachment) => async (dispatch, ge
     dispatch(showErrorNotification('toast_title.error_message', data.message));
     return false;
   }
+};
+
+export const sendPodcastNotification = (payload) => async () => {
+  await Firebase.sendPodcastNotification(payload);
 };

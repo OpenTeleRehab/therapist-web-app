@@ -7,7 +7,7 @@ import {
   setIsOnChatPage,
   getChatRooms,
   getCurrentChatUsersStatus,
-  getLastMessages
+  getLastMessages, sendPodcastNotification
 } from 'store/rocketchat/actions';
 import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
 import ChatPanel from 'views/ChatOrCall/Partials/ChatPanel';
@@ -104,15 +104,42 @@ const ChatOrCall = ({ translate }) => {
   };
 
   const handleSendMessage = (msg) => {
-    const newMessage = {
-      _id: generateHash(),
-      rid: selectedRoom.rid,
-      msg
-    };
+    const _id = generateHash();
+    const rid = selectedRoom.rid;
+    const newMessage = { _id, rid, msg };
+
     sendNewMessage(chatSocket, newMessage, therapist.id);
+
+    const identity = selectedRoom.u.username;
+    const title = therapist.first_name + ' ' + therapist.last_name;
+
+    const notification = {
+      _id,
+      rid,
+      identity,
+      title,
+      body: msg,
+      translatable: false
+    };
+
+    dispatch(sendPodcastNotification(notification));
   };
 
   const handleUpdateMessage = (msg, _id) => {
+    const rid = selectedRoom.rid;
+    const identity = selectedRoom.u.username;
+    const title = therapist.first_name + ' ' + therapist.last_name;
+    const notification = {
+      _id,
+      rid,
+      identity,
+      title,
+      body: msg,
+      translatable: false
+    };
+
+    dispatch(sendPodcastNotification(notification));
+
     const message = {
       _id,
       rid: selectedRoom.rid,

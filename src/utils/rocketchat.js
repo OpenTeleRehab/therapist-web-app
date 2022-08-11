@@ -4,6 +4,7 @@ import {
   authenticateChatUser,
   connectWebsocket,
   getMessagesForSelectedRoom,
+  setChatSubscribeIds,
   updateChatUserStatus,
   updateVideoCallStatus
 } from 'store/rocketchat/actions';
@@ -196,4 +197,21 @@ export const deleteChatRoom = (socket, roomId, therapistId) => {
   };
 
   socket.send(JSON.stringify(options));
+};
+
+export const initialTermChatSocket = (dispatch, profile) => {
+  const tempSubscribeIds = {
+    loginId: getUniqueId(profile.id),
+    roomMessageId: getUniqueId(profile.id),
+    notifyLoggedId: getUniqueId(profile.id)
+  };
+
+  dispatch(setChatSubscribeIds(tempSubscribeIds));
+
+  return initialChatSocket(
+    dispatch,
+    tempSubscribeIds,
+    profile.identity,
+    profile.chat_password
+  );
 };
