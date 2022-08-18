@@ -132,11 +132,13 @@ const CreateEducationMaterial = ({ translate }) => {
       setTitleError(false);
     }
 
-    if (!materialFile && (formFields.file === undefined || toMB(formFields.file.size) > maxFileSize)) {
+    setFileError(false);
+    if (!materialFile && formFields.file === undefined) {
       canSave = false;
       setFileError(true);
-    } else {
-      setFileError(false);
+    } else if (formFields.file !== undefined && toMB(formFields.file.size) > maxFileSize) {
+      canSave = false;
+      setFileError(true);
     }
 
     let serializedSelectedCats = [];
