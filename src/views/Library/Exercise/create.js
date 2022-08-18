@@ -190,7 +190,15 @@ const CreateExercise = ({ translate }) => {
       canSave = false;
       setMediaUploadsError(true);
     } else {
-      setMediaUploadsError(toMB(_.sumBy(mediaUploads, (item) => item.file.size)) > settings.fileMaxUploadSize);
+      let totalSize = 0;
+      mediaUploads.forEach(item => {
+        totalSize += item.file ? item.file.size : (item.size || 0);
+      });
+      const error = toMB(totalSize) > settings.fileMaxUploadSize;
+      setMediaUploadsError(error);
+      if (error) {
+        canSave = false;
+      }
     }
 
     const errorInputFields = [];
