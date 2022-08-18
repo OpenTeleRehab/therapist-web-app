@@ -47,7 +47,7 @@ const Navigation = ({ translate }) => {
   return (
     <Navbar bg="primary" variant="dark" expand="xl" sticky="top" className="main-nav">
       <Navbar.Brand>
-        <Link to={ROUTES.DASHBOARD}>
+        <Link to={ROUTES.PATIENT}>
           <img
             src="/images/logo.png"
             className="d-inline-block align-top"
