@@ -208,7 +208,7 @@ const CreateQuestionnaire = ({ translate }) => {
 
   const enableButtons = () => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
-    return languageObj && languageObj.code === languageObj.fallback && (questionnaire.is_used || !id || isCopy);
+    return languageObj && languageObj.code === languageObj.fallback;
   };
 
   const customSelectStyles = {
