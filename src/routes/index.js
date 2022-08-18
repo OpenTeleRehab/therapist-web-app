@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 
 import PageLayout from 'layout/layout';
@@ -235,6 +235,9 @@ const RouteSwitch = () => {
   return (
     <Suspense fallback={<Spinner animation="border" />}>
       <Switch>
+        <PrivateRoute exact path="/" key="redirect-route">
+          <Redirect to={ROUTES.PATIENT} />
+        </PrivateRoute>
         {routeComponents}
       </Switch>
     </Suspense>
