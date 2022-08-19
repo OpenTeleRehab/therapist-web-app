@@ -59,7 +59,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   });
 
   const languages = useSelector(state => state.language.languages);
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState(undefined);
   const { profile } = useSelector((state) => state.auth);
   const [questionnaire, setQuestionnaire] = useState([]);
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
@@ -76,6 +76,8 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
       setLanguage(filters.lang);
     } else if (profile && profile.language_id) {
       setLanguage(profile.language_id);
+    } else {
+      setLanguage('');
     }
   }, [filters, profile]);
 
@@ -99,7 +101,10 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   useEffect(() => {
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
+    if (language !== undefined) {
+      dispatch(getCategoryTreeData(
+        { type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
+    }
   }, [language, dispatch]);
 
   useEffect(() => {

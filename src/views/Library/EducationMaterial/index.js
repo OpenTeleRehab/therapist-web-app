@@ -61,7 +61,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
   });
 
   const languages = useSelector(state => state.language.languages);
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState(undefined);
   const { profile } = useSelector((state) => state.auth);
   const [educationMaterial, setEducationMaterial] = useState([]);
   const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
@@ -78,6 +78,8 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
       setLanguage(filters.lang);
     } else if (profile && profile.language_id) {
       setLanguage(profile.language_id);
+    } else {
+      setLanguage('');
     }
   }, [filters, profile]);
 
@@ -101,7 +103,10 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
   }, [language, formFields, selectedCategories, therapistId, currentPage, pageSize, dispatch]);
 
   useEffect(() => {
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
+    if (language !== undefined) {
+      dispatch(
+        getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
+    }
   }, [language, dispatch]);
 
   useEffect(() => {
