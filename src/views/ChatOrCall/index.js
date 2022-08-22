@@ -206,7 +206,7 @@ const ChatOrCall = ({ translate }) => {
                   </Button>
                   <VideoCall
                     roomName={selectedRoom.rid}
-                    displayName={selectedRoom.name}
+                    displayName={therapist.first_name + ' ' + therapist.last_name}
                     isVideoCall={isVideoCall}
                     onUpdateMessage={handleUpdateMessage}
                     indicator={videoCall}
