@@ -12,7 +12,7 @@ import PropTypes from 'prop-types';
 import SplashScreen from 'components/SplashScreen';
 import { CALL_STATUS } from 'variables/rocketchat';
 
-const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indicator, callingText }) => {
+const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indicator, callingText, recipient }) => {
   const [isVideoOn, setIsVideoOn] = useState(isVideoCall);
   const [isMuted, setIsMuted] = useState(true);
 
@@ -70,7 +70,7 @@ const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indica
         <div className="incoming d-flex flex-column">
           <div className="incoming-participant text-center d-flex justify-content-center align-items-end h-50">
             <div className="incoming-participant-info">
-              <h2>{displayName}</h2>
+              <h2>{recipient}</h2>
               <p>{callingText}</p>
             </div>
           </div>
@@ -105,7 +105,8 @@ VideoCall.propTypes = {
   isVideoCall: PropTypes.bool,
   onUpdateMessage: PropTypes.func,
   indicator: PropTypes.object,
-  callingText: PropTypes.string
+  callingText: PropTypes.string,
+  recipient: PropTypes.string
 };
 
 export default VideoCall;
