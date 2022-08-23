@@ -211,6 +211,7 @@ const ChatOrCall = ({ translate }) => {
                     onUpdateMessage={handleUpdateMessage}
                     indicator={videoCall}
                     callingText={translate('video_call_starting')}
+                    recipient={selectedRoom.name}
                   />
                 </div>
               </Col>
