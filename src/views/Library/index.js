@@ -81,11 +81,11 @@ const Library = ({ translate }) => {
     if (therapistId) {
       exerciseService.countTherapistLibraries(therapistId).then(res => {
         if (res.success) {
-          setAllowCreateContent(res.data < maxLibraries);
+          setAllowCreateContent(res.data < maxLibraries || queryString.parse(search).tab === VIEW_PRESET_TREATMENT);
         }
       });
     }
-  }, [therapistId, view, treatmentPlans, maxLibraries]);
+  }, [therapistId, view, treatmentPlans, maxLibraries, search]);
 
   useEffect(() => {
     if (selectedExercises.length || selectedMaterials.length || selectedQuestionnaires.length) {
