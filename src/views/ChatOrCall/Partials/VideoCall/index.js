@@ -37,7 +37,10 @@ const VideoCall = ({ roomName, displayName, isVideoCall, onUpdateMessage, indica
       enabled: false
     },
     startAudioOnly: !isVideoOn,
-    startWithAudioMuted: isMuted
+    startWithAudioMuted: isMuted,
+    toolbarConfig: {
+      alwaysVisible: true
+    }
   };
 
   const onEndCall = () => {
