@@ -77,6 +77,19 @@ const deleteExerciseFail = () => ({
   type: 'DELETE_EXERCISE_FAIL'
 });
 
+const translateExerciseRequest = () => ({
+  type: 'TRANSLATE_EXERCISE_REQUEST'
+});
+
+const translateExerciseSuccess = (data) => ({
+  type: 'TRANSLATE_EXERCISE_SUCCESS',
+  data
+});
+
+const translateExerciseFail = () => ({
+  type: 'TRANSLATE_EXERCISE_FAIL'
+});
+
 const clearFilterExercisesRequest = () => ({
   type: 'CLEAR_FILTER_EXERCISES_REQUEST'
 });
@@ -100,5 +113,8 @@ export const mutation = {
   clearFilterExercisesRequest,
   updateFavoriteRequest,
   updateFavoriteFail,
-  updateFavoriteSuccess
+  updateFavoriteSuccess,
+  translateExerciseRequest,
+  translateExerciseSuccess,
+  translateExerciseFail
 };

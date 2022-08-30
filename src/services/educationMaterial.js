@@ -43,6 +43,23 @@ const createEducationMaterial = (payload) => {
     });
 };
 
+const translateEducationMaterial = (payload) => {
+  const formData = new FormData();
+  _.forIn(payload, (value, key) => {
+    formData.append(key, value);
+  });
+
+  return axios.post('/education-material/suggest', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const updateEducationMaterial = (id, payload) => {
   const formData = new FormData();
   _.forIn(payload, (value, key) => {
@@ -106,5 +123,6 @@ export const EducationMaterial = {
   updateEducationMaterial,
   getEducationMaterial,
   deleteEducationMaterial,
-  updateFavorite
+  updateFavorite,
+  translateEducationMaterial
 };

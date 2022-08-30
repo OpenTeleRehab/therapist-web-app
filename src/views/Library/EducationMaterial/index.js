@@ -44,6 +44,7 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import { MATERIAL_TYPE } from '../../../variables/activity';
 import customColorScheme from '../../../utils/customColorScheme';
+import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
 
 let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials, isShowPreviewList }) => {
@@ -188,6 +189,10 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
     });
   };
 
+  const handleTranslate = (id) => {
+    history.push(ROUTES.EDUCATION_MATERIAL_TRANSLATE.replace(':id', id).replace(':lang', language));
+  };
+
   const customSelectStyles = {
     option: (provided) => ({
       ...provided,
@@ -296,14 +301,20 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('material-' + material.id).click()}>
-                      <div className="top-bar">
+                      <div className="top-bar justify-content-start">
                         <div className="favorite-btn">
                           {material.is_favorite
                             ? <NonFavoriteAction onClick={() => handleSwitchFavorite(material.id, 0, CATEGORY_TYPES.MATERIAL)} />
                             : <FavoriteAction onClick={() => handleSwitchFavorite(material.id, 1, CATEGORY_TYPES.MATERIAL)} />
                           }
                         </div>
+                        <div className="ml-2">
+                          {material.auto_translated && (
+                            <TranslateAction onClick={() => handleTranslate(material.id)} />
+                          )}
+                        </div>
                         <Form.Check
+                          className="ml-auto"
                           type="checkbox"
                           id={material.id}
                           checked={selectedMaterials.includes(material.id)}

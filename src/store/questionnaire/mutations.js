@@ -78,6 +78,18 @@ const updateFavoriteFail = () => ({
   type: 'UPDATE_FAVORITE_FAIL'
 });
 
+const translateQuestionnaireRequest = () => ({
+  type: 'TRANSLATE_QUESTIONNAIRE_REQUEST'
+});
+
+const translateQuestionnaireSuccess = () => ({
+  type: 'TRANSLATE_QUESTIONNAIRE_SUCCESS'
+});
+
+const translateQuestionnaireFail = () => ({
+  type: 'TRANSLATE_QUESTIONNAIRE_FAIL'
+});
+
 export const mutation = {
   getQuestionnairesRequest,
   getQuestionnairesSuccess,
@@ -97,5 +109,8 @@ export const mutation = {
   deleteQuestionnaireRequest,
   deleteQuestionnaireSuccess,
   deleteQuestionnaireFail,
-  clearFilterQuestionnairesRequest
+  clearFilterQuestionnairesRequest,
+  translateQuestionnaireRequest,
+  translateQuestionnaireSuccess,
+  translateQuestionnaireFail
 };

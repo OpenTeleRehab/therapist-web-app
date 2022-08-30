@@ -48,6 +48,23 @@ const createQuestionnaire = (payload) => {
     });
 };
 
+const translateQuestionnaire = (payload) => {
+  const formData = new FormData();
+  formData.append('lang', payload.lang);
+  formData.append('therapist_id', payload.therapist_id);
+  formData.append('data', JSON.stringify(payload));
+
+  return axios.post('/questionnaire/suggest', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const updateQuestionnaire = (id, payload) => {
   const formData = new FormData();
   formData.append('lang', payload.lang);
@@ -118,5 +135,6 @@ export const Questionnaire = {
   getQuestionnaire,
   createQuestionnaire,
   updateQuestionnaire,
-  deleteQuestionnaire
+  deleteQuestionnaire,
+  translateQuestionnaire
 };
