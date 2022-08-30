@@ -153,8 +153,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row>
-          <Col md={3}>
-            <h6 className="mb-4">{translate('treatment_plan.assign_to_patient')}</h6>
+          <Col lg={4}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.choose_a_patient')}</Form.Label>
               <Form.Control
@@ -176,6 +175,66 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
                 </Form.Control.Feedback>
               )}
             </Form.Group>
+          </Col>
+          <Col lg={4}>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.name')}</Form.Label>
+              <span className="text-dark ml-1">*</span>
+              <Form.Control
+                type="text"
+                name="name"
+                maxLength={255}
+                value={formFields.name}
+                placeholder={translate('placeholder.treatment_plan.name')}
+                onChange={handleChange}
+                isInvalid={errorName}
+              />
+              <Form.Control.Feedback type="invalid">
+                {translate('error.treatment_plan.name')}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col lg={4}>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
+              <span className="text-dark ml-1"></span>
+              <Select
+                placeholder={translate('placeholder.disease')}
+                classNamePrefix="filter"
+                value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
+                getOptionLabel={option => `${option.name}`}
+                options={[
+                  { id: '', name: translate('placeholder.disease') },
+                  ...diseases
+                ]}
+                onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
+                styles={customSelectStyles}
+                aria-label="Disease"
+              />
+            </Form.Group>
+          </Col>
+        </Form.Row>
+        <Form.Row>
+          <Col lg={6}>
+            <TreatmentGoal goals={goals} setGoals={setGoals} />
+          </Col>
+          <Col lg={6}>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.description')}</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="description"
+                maxLength={255}
+                rows={3}
+                value={formFields.description}
+                placeholder={translate('placeholder.description')}
+                onChange={handleChange}
+              />
+            </Form.Group>
+          </Col>
+        </Form.Row>
+        <Form.Row>
+          <Col lg={4}>
             <Form.Group>
               <Form.Label>{translate('common.start_date')}</Form.Label>
               <Datetime
@@ -198,57 +257,6 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
                 </Form.Control.Feedback>
               )}
             </Form.Group>
-          </Col>
-          <Col md={3}>
-            <h6 className="mb-4">{translate('treatment_plan.general_information')}</h6>
-            <Form.Group>
-              <Form.Label>{translate('treatment_plan.name')}</Form.Label>
-              <span className="text-dark ml-1">*</span>
-              <Form.Control
-                type="text"
-                name="name"
-                maxLength={255}
-                value={formFields.name}
-                placeholder={translate('placeholder.treatment_plan.name')}
-                onChange={handleChange}
-                isInvalid={errorName}
-              />
-              <Form.Control.Feedback type="invalid">
-                {translate('error.treatment_plan.name')}
-              </Form.Control.Feedback>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
-              <span className="text-dark ml-1"></span>
-              <Select
-                placeholder={translate('placeholder.disease')}
-                classNamePrefix="filter"
-                value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
-                getOptionLabel={option => `${option.name}`}
-                options={[
-                  { id: '', name: translate('placeholder.disease') },
-                  ...diseases
-                ]}
-                onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
-                styles={customSelectStyles}
-                aria-label="Disease"
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>{translate('treatment_plan.description')}</Form.Label>
-              <Form.Control
-                as="textarea"
-                name="description"
-                maxLength={255}
-                rows={3}
-                value={formFields.description}
-                placeholder={translate('placeholder.description')}
-                onChange={handleChange}
-              />
-            </Form.Group>
-          </Col>
-          <Col md={6}>
-            <TreatmentGoal goals={goals} setGoals={setGoals} />
           </Col>
         </Form.Row>
       </Form>
