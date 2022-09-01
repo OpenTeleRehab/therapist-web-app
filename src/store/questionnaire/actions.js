@@ -58,6 +58,20 @@ export const createQuestionnaire = (payload) => async dispatch => {
   }
 };
 
+export const translateQuestionnaire = (payload) => async dispatch => {
+  dispatch(mutation.translateQuestionnaireRequest());
+  const data = await Questionnaire.translateQuestionnaire(payload);
+  if (data.success) {
+    dispatch(mutation.translateQuestionnaireSuccess());
+    dispatch(showSuccessNotification('toast_title.translate_questionnaire', data.message));
+    return true;
+  } else {
+    dispatch(mutation.translateQuestionnaireFail());
+    dispatch(showErrorNotification('toast_title.translate_questionnaire', data.message));
+    return false;
+  }
+};
+
 export const updateQuestionnaire = (id, payload) => async dispatch => {
   dispatch(mutation.updateQuestionnaireRequest());
   const data = await Questionnaire.updateQuestionnaire(id, payload);

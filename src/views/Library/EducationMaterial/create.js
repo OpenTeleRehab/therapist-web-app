@@ -7,7 +7,7 @@ import { Link, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import * as ROUTES from '../../../variables/routes';
 import {
   createEducationMaterial,
-  getEducationMaterial, updateEducationMaterial
+  getEducationMaterial, translateEducationMaterial, updateEducationMaterial
 } from '../../../store/educationMaterial/actions';
 import { formatFileSize, toMB } from '../../../utils/file';
 import settings from '../../../settings';
@@ -30,8 +30,9 @@ import customColorScheme from '../../../utils/customColorScheme';
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { id } = useParams();
+  const { id, lang } = useParams();
   const isCopy = useRouteMatch(ROUTES.EDUCATION_MATERIAL_COPY);
+  const isTranslate = useRouteMatch(ROUTES.EDUCATION_MATERIAL_TRANSLATE);
   const { maxFileSize } = settings.educationMaterial;
 
   const { languages } = useSelector(state => state.language);
@@ -56,13 +57,13 @@ const CreateEducationMaterial = ({ translate }) => {
 
   useEffect(() => {
     if (languages.length) {
-      if (id && filters && filters.lang) {
-        setLanguage(filters.lang);
+      if (id && ((filters && filters.lang) || lang)) {
+        setLanguage(lang || filters.lang);
       } else {
         setLanguage(languages[0].id);
       }
     }
-  }, [languages, filters, id]);
+  }, [languages, filters, id, lang]);
 
   useEffect(() => {
     dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }));
@@ -148,7 +149,7 @@ const CreateEducationMaterial = ({ translate }) => {
 
     if (canSave) {
       setIsLoading(true);
-      if (id && !isCopy) {
+      if (id && !isCopy && !isTranslate) {
         dispatch(updateEducationMaterial(id, { ...formFields, categories: serializedSelectedCats, lang: language, therapist_id: therapistId }))
           .then(result => {
             if (result) {
@@ -157,19 +158,27 @@ const CreateEducationMaterial = ({ translate }) => {
             setIsLoading(false);
           });
       } else {
-        dispatch(createEducationMaterial({
-          ...formFields,
-          categories: serializedSelectedCats,
-          lang: language,
-          therapist_id: therapistId,
-          copy_id: isCopy ? id : ''
-        }))
-          .then(result => {
+        if (isTranslate) {
+          dispatch(translateEducationMaterial({ ...formFields, lang: language, id, file_id: educationMaterial.file_id, therapist_id: therapistId })).then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY_EDUCATION);
             }
             setIsLoading(false);
           });
+        } else {
+          dispatch(createEducationMaterial({
+            ...formFields,
+            categories: serializedSelectedCats,
+            lang: language,
+            therapist_id: therapistId,
+            copy_id: isCopy ? id : ''
+          })).then(result => {
+            if (result) {
+              history.push(ROUTES.LIBRARY_EDUCATION);
+            }
+            setIsLoading(false);
+          });
+        }
       }
     }
   };
@@ -214,7 +223,7 @@ const CreateEducationMaterial = ({ translate }) => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1>{id ? isCopy ? translate('education_material.copy') : translate('education_material.edit') : translate('education_material.create')}</h1>
+        <h1>{id ? isTranslate ? translate('education_material.translate') : isCopy ? translate('education_material.copy') : translate('education_material.edit') : translate('education_material.create')}</h1>
       </div>
 
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
@@ -223,9 +232,9 @@ const CreateEducationMaterial = ({ translate }) => {
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
               <Select
-                isDisabled={!id}
+                isDisabled={!id || isTranslate}
                 classNamePrefix="filter"
-                value={languages.filter(option => option.id === language)}
+                value={languages.filter(option => option.id.toString() === language.toString())}
                 getOptionLabel={option => option.name}
                 options={languages}
                 onChange={(e) => setLanguage(e.id)}
@@ -261,6 +270,7 @@ const CreateEducationMaterial = ({ translate }) => {
                   aria-label="File"
                   id="file"
                   onKeyPress={(event) => handleFileUpload(event)}
+                  disabled={isTranslate}
                 />
                 <Form.File.Label>{renderUploadFileName()}</Form.File.Label>
                 <Form.Control.Feedback type="invalid">
@@ -291,7 +301,7 @@ const CreateEducationMaterial = ({ translate }) => {
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
-                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()}>
+                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslate}>
                       {category.label}
                       <div className="ml-auto">
                         <span className="mr-3">
@@ -300,7 +310,7 @@ const CreateEducationMaterial = ({ translate }) => {
                         <ContextAwareToggle eventKey={index + 1} />
                       </div>
                     </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index + 1}>
+                    <Accordion.Collapse eventKey={!isTranslate ? index + 1 : ''}>
                       <Card.Body>
                         <CheckboxTree
                           nodes={category.children || []}

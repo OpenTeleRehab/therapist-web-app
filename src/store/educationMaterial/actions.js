@@ -58,6 +58,20 @@ export const createEducationMaterial = (payload) => async dispatch => {
   }
 };
 
+export const translateEducationMaterial = (payload) => async dispatch => {
+  dispatch(mutation.translateEducationMaterialRequest());
+  const data = await EducationMaterial.translateEducationMaterial(payload);
+  if (data.success) {
+    dispatch(mutation.translateEducationMaterialSuccess());
+    dispatch(showSuccessNotification('toast_title.translate_education_material', data.message));
+    return true;
+  } else {
+    dispatch(mutation.translateEducationMaterialFail());
+    dispatch(showErrorNotification('toast_title.translate_education_material', data.message));
+    return false;
+  }
+};
+
 export const updateEducationMaterial = (id, payload, mediaUploads) => async dispatch => {
   dispatch(mutation.updateEducationMaterialRequest());
   const data = await EducationMaterial.updateEducationMaterial(id, payload, mediaUploads);

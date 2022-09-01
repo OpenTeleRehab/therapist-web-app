@@ -29,6 +29,7 @@ import { useHistory } from 'react-router-dom';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
+import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
 
 let timer = null;
 const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises, isShowPreviewList }) => {
@@ -171,6 +172,10 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
     history.push(ROUTES.EXERCISE_COPY.replace(':id', id));
   };
 
+  const handleTranslate = (id) => {
+    history.push(ROUTES.EXERCISE_TRANSLATE.replace(':id', id).replace(':lang', language));
+  };
+
   const customSelectStyles = {
     option: (provided) => ({
       ...provided,
@@ -279,14 +284,20 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                 { exercises.map(exercise => (
                   <Col key={exercise.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('exercise-' + exercise.id).click()}>
-                      <div className="top-bar">
-                        <div className="favorite-btn">
+                      <div className="top-bar justify-content-start">
+                        <div className="favorite-btn ">
                           {exercise.is_favorite
                             ? <NonFavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 0, CATEGORY_TYPES.EXERCISE)} />
                             : <FavoriteAction onClick={() => handleSwitchFavorite(exercise.id, 1, CATEGORY_TYPES.EXERCISE)} />
                           }
                         </div>
+                        <div className="ml-2">
+                          {exercise.auto_translated && (
+                            <TranslateAction onClick={() => handleTranslate(exercise.id)} />
+                          )}
+                        </div>
                         <Form.Check
+                          className="ml-auto"
                           type="checkbox"
                           id={exercise.id}
                           checked={selectedExercises.includes(exercise.id)}
