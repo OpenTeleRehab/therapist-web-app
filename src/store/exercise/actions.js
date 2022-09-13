@@ -88,6 +88,20 @@ export const deleteExercise = id => async (dispatch, getState) => {
   }
 };
 
+export const translateExercise = (payload) => async dispatch => {
+  dispatch(mutation.translateExerciseRequest());
+  const data = await Exercise.translateExercise(payload);
+  if (data.success) {
+    dispatch(mutation.translateExerciseSuccess());
+    dispatch(showSuccessNotification('toast_title.translate_exercise', data.message));
+    return true;
+  } else {
+    dispatch(mutation.translateExerciseFail());
+    dispatch(showErrorNotification('toast_title.translate_exercise', data.message));
+    return false;
+  }
+};
+
 export const clearFilterExercises = () => async dispatch => {
   dispatch(mutation.clearFilterExercisesRequest());
 };

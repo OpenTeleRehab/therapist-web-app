@@ -7,7 +7,7 @@ import { Link, useHistory, useParams, useRouteMatch } from 'react-router-dom';
 import * as ROUTES from '../../../variables/routes';
 import {
   createQuestionnaire,
-  getQuestionnaire,
+  getQuestionnaire, translateQuestionnaire,
   updateQuestionnaire
 } from '../../../store/questionnaire/actions';
 import { getCategoryTreeData } from 'store/category/actions';
@@ -31,8 +31,9 @@ import Dialog from '../../../components/Dialog';
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { id } = useParams();
+  const { id, lang } = useParams();
   const isCopy = useRouteMatch(ROUTES.QUESTIONNAIRE_COPY);
+  const isTranslate = useRouteMatch(ROUTES.QUESTIONNAIRE_TRANSLATE);
 
   const { languages } = useSelector(state => state.language);
   const { questionnaire, filters } = useSelector(state => state.questionnaire);
@@ -58,13 +59,13 @@ const CreateQuestionnaire = ({ translate }) => {
 
   useEffect(() => {
     if (languages.length) {
-      if (id && filters && filters.lang) {
-        setLanguage(filters.lang);
+      if (id && ((filters && filters.lang) || lang)) {
+        setLanguage(lang || filters.lang);
       } else {
         setLanguage(languages[0].id);
       }
     }
-  }, [languages, filters, id]);
+  }, [languages, filters, id, lang]);
 
   useEffect(() => {
     dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.QUESTIONNAIRE, lang: language }));
@@ -168,7 +169,7 @@ const CreateQuestionnaire = ({ translate }) => {
 
     if (canSave) {
       setIsLoading(true);
-      if (id && !isCopy) {
+      if (id && !isCopy && !isTranslate) {
         dispatch(updateQuestionnaire(id, { ...formFields, categories: serializedSelectedCats, lang: language, questions, therapist_id: therapistId }))
           .then(result => {
             if (result) {
@@ -177,20 +178,28 @@ const CreateQuestionnaire = ({ translate }) => {
             setIsLoading(false);
           });
       } else {
-        dispatch(createQuestionnaire({
-          ...formFields,
-          categories: serializedSelectedCats,
-          lang: language,
-          questions,
-          therapist_id: therapistId,
-          copy_id: isCopy ? id : ''
-        }))
-          .then(result => {
+        if (isTranslate) {
+          dispatch(translateQuestionnaire({ ...formFields, lang: language, id, therapist_id: therapistId, questions })).then(result => {
             if (result) {
               history.push(ROUTES.LIBRARY_QUESTIONNAIRE);
             }
             setIsLoading(false);
           });
+        } else {
+          dispatch(createQuestionnaire({
+            ...formFields,
+            categories: serializedSelectedCats,
+            lang: language,
+            questions,
+            therapist_id: therapistId,
+            copy_id: isCopy ? id : ''
+          })).then(result => {
+            if (result) {
+              history.push(ROUTES.LIBRARY_QUESTIONNAIRE);
+            }
+            setIsLoading(false);
+          });
+        }
       }
     }
   };
@@ -255,7 +264,7 @@ const CreateQuestionnaire = ({ translate }) => {
   return (
     <>
       <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <h1>{ id ? isCopy ? translate('questionnaire.copy') : translate('questionnaire.edit') : translate('questionnaire.create')}</h1>
+        <h1>{ id ? isTranslate ? translate('questionnaire.translate') : isCopy ? translate('questionnaire.copy') : translate('questionnaire.edit') : translate('questionnaire.create')}</h1>
       </div>
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Row>
@@ -280,9 +289,9 @@ const CreateQuestionnaire = ({ translate }) => {
             <Form.Group controlId="formLanguage">
               <Form.Label>{translate('common.show_language.version')}</Form.Label>
               <Select
-                isDisabled={!id}
+                isDisabled={!id || isTranslate}
                 classNamePrefix="filter"
-                value={languages.filter(option => option.id === language)}
+                value={languages.filter(option => option.id.toString() === language.toString())}
                 getOptionLabel={option => option.name}
                 options={languages}
                 onChange={(e) => setLanguage(e.id)}
@@ -312,7 +321,7 @@ const CreateQuestionnaire = ({ translate }) => {
               {
                 categoryTreeData.map((category, index) => (
                   <Card key={index}>
-                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()}>
+                    <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslate}>
                       {category.label}
                       <div className="ml-auto">
                         <span className="mr-3">
@@ -321,7 +330,7 @@ const CreateQuestionnaire = ({ translate }) => {
                         <ContextAwareToggle eventKey={index + 1} />
                       </div>
                     </Accordion.Toggle>
-                    <Accordion.Collapse eventKey={index + 1}>
+                    <Accordion.Collapse eventKey={!isTranslate ? index + 1 : ''}>
                       <Card.Body>
                         <CheckboxTree
                           nodes={category.children || []}

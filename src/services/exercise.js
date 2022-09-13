@@ -128,6 +128,23 @@ const deleteExercise = id => {
     });
 };
 
+const translateExercise = (payload) => {
+  const formData = new FormData();
+  _.forIn(payload, (value, key) => {
+    formData.append(key, value);
+  });
+
+  return axios.post('/exercise/suggest', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Exercise = {
   getExercises,
   getExercise,
@@ -136,5 +153,6 @@ export const Exercise = {
   deleteExercise,
   getExercisesByIds,
   countTherapistLibraries,
-  updateFavorite
+  updateFavorite,
+  translateExercise
 };

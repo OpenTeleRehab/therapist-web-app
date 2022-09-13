@@ -42,6 +42,7 @@ import Dialog from 'components/Dialog';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
+import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
 
 let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires, isShowPreviewList }) => {
@@ -185,6 +186,10 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
     });
   };
 
+  const handleTranslate = (id) => {
+    history.push(ROUTES.QUESTIONNAIRE_TRANSLATE.replace(':id', id).replace(':lang', language));
+  };
+
   const customSelectStyles = {
     option: (provided) => ({
       ...provided,
@@ -293,14 +298,20 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('questionnaire-' + questionnaire.id).click()}>
-                      <div className="top-bar">
+                      <div className="top-bar justify-content-start">
                         <div className="favorite-btn">
                           {questionnaire.is_favorite
                             ? <NonFavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 0, CATEGORY_TYPES.QUESTIONNAIRE)} />
                             : <FavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 1, CATEGORY_TYPES.QUESTIONNAIRE)} />
                           }
                         </div>
+                        <div className="ml-2">
+                          {questionnaire.auto_translated && (
+                            <TranslateAction onClick={() => handleTranslate(questionnaire.id)} />
+                          )}
+                        </div>
                         <Form.Check
+                          className="ml-auto"
                           type="checkbox"
                           id={questionnaire.id}
                           checked={selectedQuestionnaires.includes(questionnaire.id)}

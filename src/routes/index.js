@@ -72,8 +72,22 @@ const routes = [
     type: PRIVATE
   },
   {
+    title: 'exercise.translate',
+    path: ROUTES.EXERCISE_TRANSLATE,
+    component: CreateExercise,
+    exact: true,
+    type: PRIVATE
+  },
+  {
     title: 'education_material.create',
     path: ROUTES.EDUCATION_MATERIAL_CREATE,
+    component: CreateEducationMaterial,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'education_material.translate',
+    path: ROUTES.EDUCATION_MATERIAL_TRANSLATE,
     component: CreateEducationMaterial,
     exact: true,
     type: PRIVATE
@@ -109,6 +123,13 @@ const routes = [
   {
     title: 'questionnaire.copy',
     path: ROUTES.QUESTIONNAIRE_COPY,
+    component: CreateQuestionnaire,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'questionnaire.translate',
+    path: ROUTES.QUESTIONNAIRE_TRANSLATE,
     component: CreateQuestionnaire,
     exact: true,
     type: PRIVATE

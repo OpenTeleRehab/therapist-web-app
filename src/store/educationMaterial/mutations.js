@@ -81,6 +81,19 @@ const clearFilterEducationMaterialsRequest = () => ({
   type: 'CLEAR_FILTER_EDUCATION_MATERIALS_REQUEST'
 });
 
+const translateEducationMaterialRequest = () => ({
+  type: 'TRANSLATE_EDUCATION_MATERIAL_REQUEST'
+});
+
+const translateEducationMaterialSuccess = (data) => ({
+  type: 'TRANSLATE_EDUCATION_MATERIAL_SUCCESS',
+  data
+});
+
+const translateEducationMaterialFail = () => ({
+  type: 'TRANSLATE_EDUCATION_MATERIAL_FAIL'
+});
+
 export const mutation = {
   getEducationMaterialsFail,
   getEducationMaterialsRequest,
@@ -100,5 +113,8 @@ export const mutation = {
   clearFilterEducationMaterialsRequest,
   updateFavoriteRequest,
   updateFavoriteSuccess,
-  updateFavoriteFail
+  updateFavoriteFail,
+  translateEducationMaterialRequest,
+  translateEducationMaterialSuccess,
+  translateEducationMaterialFail
 };
