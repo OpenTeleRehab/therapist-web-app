@@ -43,6 +43,7 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
+import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires, isShowPreviewList }) => {
@@ -71,6 +72,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
 
   const [id, setId] = useState();
   const [show, setShow] = useState(false);
+  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -115,6 +117,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
+      setProcessedCategoryTreeData(filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false));
     }
   }, [categoryTreeData]);
 
@@ -249,7 +252,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
               </Form.Group>
               <Accordion>
                 {
-                  categoryTreeData.map(category => (
+                  processedCategoryTreeData.map(category => (
                     <Card className="mb-3 rounded" key={category.value}>
                       <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         <span className="text-truncate pr-2">{category.label}</span>

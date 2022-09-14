@@ -45,6 +45,7 @@ import scssColors from '../../../scss/custom.scss';
 import { MATERIAL_TYPE } from '../../../variables/activity';
 import customColorScheme from '../../../utils/customColorScheme';
 import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
+import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials, isShowPreviewList }) => {
@@ -73,6 +74,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
 
   const [id, setId] = useState();
   const [show, setShow] = useState(false);
+  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -117,6 +119,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
+      setProcessedCategoryTreeData(filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false));
     }
   }, [categoryTreeData]);
 
@@ -252,7 +255,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
               </Form.Group>
               <Accordion>
                 {
-                  categoryTreeData.map(category => (
+                  processedCategoryTreeData.map(category => (
                     <Card className="mb-3 rounded" key={category.value}>
                       <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         <span className="text-truncate pr-2">{category.label}</span>
