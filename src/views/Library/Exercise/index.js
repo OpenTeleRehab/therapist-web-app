@@ -30,6 +30,7 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
+import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 let timer = null;
 const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises, isShowPreviewList }) => {
@@ -59,6 +60,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
   });
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (filters && filters.lang) {
@@ -102,6 +104,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
+      setProcessedCategoryTreeData(filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false));
     }
   }, [categoryTreeData]);
 
@@ -235,7 +238,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
               </Form.Group>
               <Accordion>
                 {
-                  categoryTreeData.map(category => (
+                  processedCategoryTreeData.map(category => (
                     <Card className="mb-3 rounded" key={category.value}>
                       <Accordion.Toggle eventKey={category.value} className="d-flex align-items-center card-header border-0">
                         <span className="text-truncate pr-2">{category.label}</span>
