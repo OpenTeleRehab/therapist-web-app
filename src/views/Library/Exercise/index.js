@@ -292,7 +292,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                           }
                         </div>
                         <div className="ml-2">
-                          {exercise.auto_translated && (
+                          {exercise.auto_translated && therapistId !== exercise.therapist_id && (
                             <TranslateAction onClick={() => handleTranslate(exercise.id)} />
                           )}
                         </div>
