@@ -309,7 +309,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                           }
                         </div>
                         <div className="ml-2">
-                          {questionnaire.auto_translated && (
+                          {questionnaire.auto_translated && therapistId !== questionnaire.therapist_id && (
                             <TranslateAction onClick={() => handleTranslate(questionnaire.id)} />
                           )}
                         </div>

@@ -312,7 +312,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                           }
                         </div>
                         <div className="ml-2">
-                          {material.auto_translated && (
+                          {material.auto_translated && therapistId !== material.therapist_id && (
                             <TranslateAction onClick={() => handleTranslate(material.id)} />
                           )}
                         </div>
