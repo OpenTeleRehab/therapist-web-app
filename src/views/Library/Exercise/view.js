@@ -6,6 +6,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import Dialog from 'components/Dialog';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSave, exercise, readOnly, handleCopy, handleEdit, showEdit, showCopy }) => {
   const localize = useSelector((state) => state.localize);
@@ -177,6 +178,9 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
           </Form.Group>
         )}
       </Form>
+      { exercise.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </Dialog>
   );
 };

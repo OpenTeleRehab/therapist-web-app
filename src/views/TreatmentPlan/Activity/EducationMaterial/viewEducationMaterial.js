@@ -5,6 +5,7 @@ import { Col, Form, Row } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import Dialog from 'components/Dialog';
 import { getTranslate } from 'react-localize-redux/lib/index';
+import GoogleTranslationAttribute from '../../../../components/GoogleTranslationAttribute';
 
 const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial }) => {
   const localize = useSelector((state) => state.localize);
@@ -80,6 +81,9 @@ const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial })
           </Col>
         </Row>
       </Form>
+      { educationMaterial.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </Dialog>
   );
 };

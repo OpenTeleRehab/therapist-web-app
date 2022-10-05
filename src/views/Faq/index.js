@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getFaqPage } from 'store/staticPage/actions';
 import customColorScheme from '../../utils/customColorScheme';
 import _ from 'lodash';
+import GoogleTranslationAttribute from '../../components/GoogleTranslationAttribute';
 
 const FaqPage = () => {
   const dispatch = useDispatch();
@@ -37,6 +38,9 @@ const FaqPage = () => {
         </div>
       }
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
+      { faqPage.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </>
   );
 };

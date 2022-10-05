@@ -4,6 +4,7 @@ import { Translate } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProfile } from '../../store/auth/actions';
 import { getGuidances } from '../../store/guidance/actions';
+import GoogleTranslationAttribute from '../GoogleTranslationAttribute';
 
 const Guidance = () => {
   const dispatch = useDispatch();
@@ -55,6 +56,9 @@ const Guidance = () => {
       </Modal.Header>
       <Modal.Body>
         <div dangerouslySetInnerHTML={{ __html: guidances.length > 0 && guidances[currentIndex].content }} />
+        { guidances.length > 0 && guidances[currentIndex].auto_translated === true && (
+          <GoogleTranslationAttribute />
+        )}
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Form.Check
