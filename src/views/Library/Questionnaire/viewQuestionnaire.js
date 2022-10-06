@@ -5,6 +5,7 @@ import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import { Accordion, AccordionContext, Card, Form } from 'react-bootstrap';
 import { BsChevronDown, BsChevronRight } from 'react-icons/bs';
+import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
 const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handleEdit, showEdit, showCopy }) => {
   const localize = useSelector((state) => state.localize);
@@ -106,6 +107,9 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
         </Accordion>
       ))
       }
+      { questionnaire.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </Dialog>
   );
 };

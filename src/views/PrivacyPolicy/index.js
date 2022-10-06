@@ -4,6 +4,7 @@ import { getPublishPrivacyPolicy } from 'store/privacyPolicy/actions';
 import PropTypes from 'prop-types';
 import customColorScheme from '../../utils/customColorScheme';
 import _ from 'lodash';
+import GoogleTranslationAttribute from '../../components/GoogleTranslationAttribute';
 
 const PrivacyPolicyPage = ({ translate }) => {
   const dispatch = useDispatch();
@@ -24,6 +25,9 @@ const PrivacyPolicyPage = ({ translate }) => {
         </div>
       }
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
+      { publishPrivacyPolicy.auto_translated === true && (
+        <GoogleTranslationAttribute />
+      )}
     </>
   );
 };
