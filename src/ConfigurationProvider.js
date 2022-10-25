@@ -57,7 +57,7 @@ const ConfigurationProvider = ({ children }) => {
   }, [appLoading, dispatch]);
 
   useEffect(() => {
-    if (profile && profile.chat_user_id && profile.chat_rooms.length) {
+    if (profile && profile.chat_user_id) {
       const subscribeIds = {
         loginId: getUniqueId(profile.id),
         roomMessageId: getUniqueId(profile.id),
