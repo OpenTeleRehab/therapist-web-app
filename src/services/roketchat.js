@@ -10,10 +10,10 @@ const createInstance = (userId, authToken) => {
   });
 };
 
-const getUserStatus = (userIds, authUserId, authToken) => {
+const getUserStatus = (userNames, authUserId, authToken) => {
   const instance = createInstance(authUserId, authToken);
   const fields = JSON.stringify({ status: 1 });
-  const query = JSON.stringify({ _id: { $in: userIds } });
+  const query = JSON.stringify({ username: { $in: userNames } });
   return instance.get(`/users.list?fields=${fields}&query=${query}&count=999999`)
     .then(
       res => {

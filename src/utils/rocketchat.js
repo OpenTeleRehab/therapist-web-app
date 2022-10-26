@@ -4,7 +4,6 @@ import {
   authenticateChatUser,
   connectWebsocket,
   getMessagesForSelectedRoom,
-  setChatSubscribeIds,
   updateChatUserStatus,
   updateVideoCallStatus
 } from 'store/rocketchat/actions';
@@ -13,7 +12,6 @@ import { USER_STATUS } from 'variables/rocketchat';
 import { getUniqueId, getMessage } from './general';
 
 export const initialChatSocket = (dispatch, subscribeIds, username, password) => {
-  let isConnected = false;
   let authUserId = '';
   let authToken = '';
   const { loginId, roomMessageId, notifyLoggedId } = subscribeIds;
@@ -21,27 +19,24 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
   // register websocket
   const socket = new WebSocket(process.env.REACT_APP_ROCKET_CHAT_WEBSOCKET);
 
-  // observer
-  socket.onclose = (e) => {
+  socket.addEventListener('open', () => {
+    const options = {
+      msg: 'connect',
+      version: '1',
+      support: ['1']
+    };
+    socket.send(JSON.stringify(options));
+  });
+
+  socket.addEventListener('close', (e) => {
     if (e.target.readyState === socket.CLOSED) {
       dispatch(connectWebsocket(false));
     }
-  };
-  socket.onmessage = (e) => {
+  });
+  socket.addEventListener('message', (e) => {
     const response = JSON.parse(e.data);
     const { id, result, error, collection, fields } = response;
     const resMessage = response.msg;
-
-    // create connection
-    if (!isConnected && resMessage === undefined && socket.readyState === socket.OPEN) {
-      isConnected = true;
-      const options = {
-        msg: 'connect',
-        version: '1',
-        support: ['1', 'pre2', 'pre1']
-      };
-      socket.send(JSON.stringify(options));
-    }
 
     if (resMessage === 'ping') {
       // Keep connection alive
@@ -115,7 +110,7 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
         socket.close();
       }
     }
-  };
+  });
 
   return socket;
 };
@@ -197,21 +192,4 @@ export const deleteChatRoom = (socket, roomId, therapistId) => {
   };
 
   socket.send(JSON.stringify(options));
-};
-
-export const initialTermChatSocket = (dispatch, profile) => {
-  const tempSubscribeIds = {
-    loginId: getUniqueId(profile.id),
-    roomMessageId: getUniqueId(profile.id),
-    notifyLoggedId: getUniqueId(profile.id)
-  };
-
-  dispatch(setChatSubscribeIds(tempSubscribeIds));
-
-  return initialChatSocket(
-    dispatch,
-    tempSubscribeIds,
-    profile.identity,
-    profile.chat_password
-  );
 };
