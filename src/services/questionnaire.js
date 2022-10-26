@@ -1,4 +1,4 @@
-import axios from 'utils/admin-axios';
+import axios from 'utils/axios';
 import _ from 'lodash';
 
 const getQuestionnaires = payload => {

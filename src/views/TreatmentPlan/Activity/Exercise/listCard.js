@@ -85,7 +85,7 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
 
   return (
     <>
-      { exercises.map(exercise => (
+      {exercises.map(exercise => (
         <div key={exercise.id} className="position-relative">
           <Card className="exercise-card shadow-sm mb-4">
             <div className="top-bar">
@@ -138,12 +138,10 @@ const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercise
                       </div>
                     ) ||
                     (exercise.files[0].fileType === 'video/mp4' &&
-                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}?thumbnail=1`} alt="Exercise"
-                      />
+                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}?thumbnail=1`} alt="Exercise" loading="lazy" />
                     ) ||
                     ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise"
-                      />
+                      <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise" loading="lazy" />
                     )
                   )
                 }

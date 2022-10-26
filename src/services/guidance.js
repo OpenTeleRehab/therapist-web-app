@@ -1,6 +1,7 @@
-import adminaxiosInstance from '../utils/admin-axios';
+import axios from 'utils/axios';
+
 const getGuidances = (lang) => {
-  return adminaxiosInstance.get(`guidance-page?lang=${lang}`)
+  return axios.get(`guidance-page?lang=${lang}`)
     .then(
       res => {
         return res.data;

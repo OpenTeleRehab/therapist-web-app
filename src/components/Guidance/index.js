@@ -11,13 +11,15 @@ const Guidance = () => {
   const languages = useSelector(state => state.language.languages);
   const { profile } = useSelector((state) => state.auth);
   const { guidances } = useSelector(state => state.guidance);
-  const [showGuidance, setShowGuidance] = useState(!profile.show_guidance);
+  const [showGuidance, setShowGuidance] = useState(false);
   const [currentIndex, SetCurrentIndex] = useState(0);
 
   useEffect(() => {
-    dispatch(getGuidances());
-    // eslint-disable-next-line
-  }, []);
+    if (profile && profile.show_guidance === 0) {
+      dispatch(getGuidances());
+      setShowGuidance(true);
+    }
+  }, [profile]);
 
   const language = languages.find(item => item.id === profile.language_id);
   const [formFields, setFormFields] = useState({
