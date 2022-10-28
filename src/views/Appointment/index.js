@@ -2,19 +2,19 @@ import React, { useEffect, useState, useRef } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import allLocales from '@fullcalendar/core/locales-all';
 import { Col, Row, Tabs, Tab } from 'react-bootstrap';
-import List from './Partials/list';
-import { getAppointments } from 'store/appointment/actions';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import _ from 'lodash';
 import 'moment/min/locales';
-import allLocales from '@fullcalendar/core/locales-all';
 import enLocale from 'locales/fullcalendar/en';
 import kmLocale from 'locales/fullcalendar/km';
 import settings from 'settings';
+import { getAppointments } from 'store/appointment/actions';
+import List from './Partials/list';
 import CreateAppointment from './Partials/create';
-import _ from 'lodash';
 import { getLayoutDirection } from '../../utils/layoutDirection';
 import customColorScheme from '../../utils/customColorScheme';
 
@@ -46,7 +46,7 @@ const Appointment = ({ translate }) => {
       };
       dispatch(getAppointments(filter));
     }
-  }, [date, selectedDate, profile, dispatch]);
+  }, [date, selectedDate, profile]);
 
   useEffect(() => {
     if (languages.length && profile) {
@@ -82,7 +82,10 @@ const Appointment = ({ translate }) => {
 
   const handleViewChange = (info) => {
     setSelectedDate(undefined);
-    setDate(moment(info.view.currentStart));
+    const newDate = moment(info.view.currentStart);
+    if (!newDate.isSame(date)) {
+      setDate(newDate);
+    }
   };
 
   const handleDateClick = (info) => {

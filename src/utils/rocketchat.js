@@ -33,6 +33,7 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
       dispatch(connectWebsocket(false));
     }
   });
+
   socket.addEventListener('message', (e) => {
     const response = JSON.parse(e.data);
     const { id, result, error, collection, fields } = response;
