@@ -2,7 +2,7 @@ import axios from 'utils/axios';
 import { getCountryIsoCode } from 'utils/country';
 
 const createUser = payload => {
-  return axios.post('/patient', { params: payload, headers: { country: getCountryIsoCode() } })
+  return axios.post('/patient', payload, { headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
