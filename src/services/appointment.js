@@ -1,4 +1,4 @@
-import axios from 'utils/patient-axios';
+import axios from 'utils/axios';
 import { getCountryIsoCode } from 'utils/country';
 
 const getAppointments = payload => {

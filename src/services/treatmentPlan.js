@@ -1,16 +1,15 @@
 import axios from 'utils/axios';
-import axiosPatient from 'utils/patient-axios';
 import { getCountryIsoCode } from 'utils/country';
 import { TYPE } from '../variables/treatmentPlan';
 
 const createTreatmentPlan = payload => {
-  let httpRequest = axios;
   let config = ['/treatment-plan', payload];
+
   if (payload.type !== TYPE.preset) {
-    httpRequest = axiosPatient;
-    config = ['/treatment-plan', payload, { headers: { country: getCountryIsoCode() } }];
+    config = ['/patient-treatment-plan', payload, { headers: { country: getCountryIsoCode() } }];
   }
-  return httpRequest.post(...config)
+
+  return axios.post(...config)
     .then(
       res => {
         return res.data;
@@ -22,13 +21,13 @@ const createTreatmentPlan = payload => {
 };
 
 const updateTreatmentPlan = (id, payload) => {
-  let httpRequest = axios;
   let config = [`/treatment-plan/${id}`, payload];
+
   if (payload.type !== TYPE.preset) {
-    httpRequest = axiosPatient;
-    config = [`/treatment-plan/${id}`, payload, { headers: { country: getCountryIsoCode() } }];
+    config = [`/patient-treatment-plan/${id}`, payload, { headers: { country: getCountryIsoCode() } }];
   }
-  return httpRequest.put(...config)
+
+  return axios.put(...config)
     .then(
       res => {
         return res.data;
@@ -40,13 +39,13 @@ const updateTreatmentPlan = (id, payload) => {
 };
 
 const getTreatmentPlans = payload => {
-  let httpRequest = axios;
   let config = ['/treatment-plan', { params: payload }];
+
   if (payload.type !== TYPE.preset) {
-    httpRequest = axiosPatient;
-    config = ['/treatment-plan', { params: payload, headers: { country: getCountryIsoCode() } }];
+    config = ['/patient-treatment-plan', { params: payload, headers: { country: getCountryIsoCode() } }];
   }
-  return httpRequest.get(...config)
+
+  return axios.get(...config)
     .then(
       res => {
         return res.data;
@@ -58,13 +57,13 @@ const getTreatmentPlans = payload => {
 };
 
 const getTreatmentPlansDetail = payload => {
-  let httpRequest = axios;
   let config = ['/treatment-plan/get-treatment-plan-detail', { params: payload }];
+
   if (payload.type !== TYPE.preset) {
-    httpRequest = axiosPatient;
-    config = ['/treatment-plan/get-treatment-plan-detail', { params: payload, headers: { country: getCountryIsoCode() } }];
+    config = ['/patient-treatment-plan/get-treatment-plan-detail', { params: payload, headers: { country: getCountryIsoCode() } }];
   }
-  return httpRequest.get(...config)
+
+  return axios.get(...config)
     .then(
       res => {
         return res.data;
@@ -88,7 +87,7 @@ const deleteTreatmentPlan = id => {
 };
 
 const downloadTreatmentPlan = id => {
-  return axiosPatient.get(`/treatment-plan/export/${id}`, { responseType: 'blob' })
+  return axios.get(`/treatment-plan/export/${id}`, { responseType: 'blob' })
     .then(
       res => {
         return res.data;

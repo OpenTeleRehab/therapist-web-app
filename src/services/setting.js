@@ -1,4 +1,4 @@
-import axios from 'utils/admin-axios';
+import axios from 'utils/axios';
 
 const getSettings = payload => {
   return axios.get('/settings', { params: payload })

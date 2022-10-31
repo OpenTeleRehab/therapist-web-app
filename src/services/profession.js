@@ -1,4 +1,4 @@
-import axios from 'utils/admin-axios';
+import axios from 'utils/axios';
 
 const getProfession = (countryId) => {
   const params = { country_id: countryId };

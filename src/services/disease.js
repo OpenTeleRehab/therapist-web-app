@@ -1,4 +1,4 @@
-import axios from 'utils/admin-axios';
+import axios from 'utils/axios';
 
 const getDiseases = payload => {
   return axios.get('/disease', { params: payload })
