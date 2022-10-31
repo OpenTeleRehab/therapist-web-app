@@ -28,9 +28,11 @@ const getQuestionnaire = (id, language) => {
 
 const createQuestionnaire = (payload) => {
   const formData = new FormData();
+
   formData.append('lang', payload.lang);
   formData.append('therapist_id', payload.therapist_id);
   formData.append('data', JSON.stringify(payload));
+
   _.map(payload.questions, (question, index) => {
     if (question.file) {
       formData.append(index, question.file);
@@ -67,18 +69,23 @@ const translateQuestionnaire = (payload) => {
 
 const updateQuestionnaire = (id, payload) => {
   const formData = new FormData();
+  const noChangedFileIds = [];
+
   formData.append('lang', payload.lang);
   formData.append('therapist_id', payload.therapist_id);
   formData.append('data', JSON.stringify(payload));
+
   _.map(payload.questions, (question, index) => {
     if (question.file) {
-      if (question.file.size) {
+      if (question.file.id === undefined) {
         formData.append(index, question.file);
       } else {
-        formData.append('no_changed_files[]', question.id);
+        noChangedFileIds.push(question.id);
       }
     }
   });
+
+  formData.append('no_changed_files', noChangedFileIds.toString());
 
   return axios.post(`/questionnaire/${id}?_method=PUT`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(
