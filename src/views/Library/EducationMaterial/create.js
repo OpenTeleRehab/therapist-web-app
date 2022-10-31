@@ -26,7 +26,6 @@ import { ContextAwareToggle } from 'components/Accordion/ContextAwareToggle';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
-import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 const CreateEducationMaterial = ({ translate }) => {
   const dispatch = useDispatch();
@@ -55,7 +54,6 @@ const CreateEducationMaterial = ({ translate }) => {
   const [fileError, setFileError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [therapistId, setTherapistId] = useState('');
-  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -90,7 +88,6 @@ const CreateEducationMaterial = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
-      setProcessedCategoryTreeData(filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false));
     }
   }, [categoryTreeData]);
 
@@ -304,7 +301,7 @@ const CreateEducationMaterial = ({ translate }) => {
 
             <Accordion className="material-category-wrapper" defaultActiveKey={1}>
               {
-                processedCategoryTreeData.map((category, index) => (
+                categoryTreeData.map((category, index) => (
                   <Card key={index}>
                     <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslate}>
                       {category.label}
