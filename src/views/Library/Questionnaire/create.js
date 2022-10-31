@@ -27,7 +27,6 @@ import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import Dialog from '../../../components/Dialog';
-import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 const CreateQuestionnaire = ({ translate }) => {
   const dispatch = useDispatch();
@@ -57,7 +56,6 @@ const CreateQuestionnaire = ({ translate }) => {
   const [therapistId, setTherapistId] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [isUsed, setIsUsed] = useState(false);
-  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -86,7 +84,6 @@ const CreateQuestionnaire = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
-      setProcessedCategoryTreeData(filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false));
     }
   }, [categoryTreeData]);
 
@@ -322,7 +319,7 @@ const CreateQuestionnaire = ({ translate }) => {
           <Col sm={12} xl={11}>
             <Accordion className="mb-3" defaultActiveKey={1}>
               {
-                processedCategoryTreeData.map((category, index) => (
+                categoryTreeData.map((category, index) => (
                   <Card key={index}>
                     <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslate}>
                       {category.label}

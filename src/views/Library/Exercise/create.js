@@ -42,7 +42,6 @@ import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import { toMB } from '../../../utils/file';
 import settings from '../../../settings';
-import { filterCategoryTreeDataByProperty } from '../../../utils/category';
 
 const CreateExercise = ({ translate }) => {
   const dispatch = useDispatch();
@@ -78,7 +77,6 @@ const CreateExercise = ({ translate }) => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const { categoryTreeData } = useSelector((state) => state.category);
   const [expanded, setExpanded] = useState([]);
-  const [processedCategoryTreeData, setProcessedCategoryTreeData] = useState([]);
 
   useEffect(() => {
     if (languages.length) {
@@ -112,7 +110,6 @@ const CreateExercise = ({ translate }) => {
         rootCategoryStructure[category.value] = [];
       });
       setSelectedCategories(rootCategoryStructure);
-      setProcessedCategoryTreeData(filterCategoryTreeDataByProperty([...categoryTreeData], 'hi_only', false));
     }
   }, [categoryTreeData]);
 
@@ -507,7 +504,7 @@ const CreateExercise = ({ translate }) => {
 
             <Accordion className="mb-3" defaultActiveKey={1}>
               {
-                processedCategoryTreeData.map((category, index) => (
+                categoryTreeData.map((category, index) => (
                   <Card key={index}>
                     <Accordion.Toggle eventKey={index + 1} className="d-flex align-items-center card-header border-0" onKeyPress={(event) => event.key === 'Enter' && event.stopPropagation()} disabled={isTranslate}>
                       {category.label}
