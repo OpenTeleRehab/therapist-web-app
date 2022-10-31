@@ -66,7 +66,7 @@ const ConfigurationProvider = ({ children }) => {
       dispatch(setChatSubscribeIds(subscribeIds));
       chatSocket = initialChatSocket(dispatch, subscribeIds, profile.identity, profile.chat_password);
     }
-  }, [profile, dispatch]);
+  }, [profile]);
 
   useEffect(() => {
     if (profile && !appLoading && translate && !echo) {

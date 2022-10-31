@@ -70,14 +70,14 @@ export const getChatRooms = () => async (dispatch, getState) => {
 
 export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
   const { authToken, authUserId, chatRooms } = getState().rocketchat;
-  const userIds = [];
+  const userNames = [];
   const mapIndex = [];
   chatRooms.forEach((room, idx) => {
-    userIds.push(room.u._id);
+    userNames.push(room.u.username);
     mapIndex[room.u._id] = idx;
   });
-  if (userIds.length) {
-    const data = await Rocketchat.getUserStatus(userIds, authUserId, authToken);
+  if (userNames.length) {
+    const data = await Rocketchat.getUserStatus(userNames, authUserId, authToken);
     if (data.success) {
       data.users.forEach(user => {
         chatRooms[mapIndex[user._id]].u.status = user.status;
@@ -86,7 +86,7 @@ export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
       return true;
     } else {
       dispatch(mutation.getChatUsersStatusFail());
-      dispatch(showErrorNotification('toast_title.error_message', data.message));
+      console.error('Cannot get chat user status', data.error);
       return false;
     }
   }
