@@ -19,7 +19,7 @@ const Guidance = () => {
       dispatch(getGuidances());
       setShowGuidance(true);
     }
-  }, [profile]);
+  }, [profile, dispatch]);
 
   const language = languages.find(item => item.id === profile.language_id);
   const [formFields, setFormFields] = useState({
