@@ -46,7 +46,7 @@ const Appointment = ({ translate }) => {
       };
       dispatch(getAppointments(filter));
     }
-  }, [date, selectedDate, profile]);
+  }, [date, selectedDate, profile, dispatch]);
 
   useEffect(() => {
     if (languages.length && profile) {
