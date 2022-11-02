@@ -23,3 +23,7 @@ export const isValidFileSize = (fileSize, maxFileSize = 0) => {
   }
   return fileSize <= defaultMaxSize;
 };
+
+export const isValidFileMineType = (fileMineType) => {
+  return fileMineType.includes('video') || fileMineType.includes('image');
+};

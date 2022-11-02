@@ -178,7 +178,7 @@ export const postAttachmentMessage = (roomId, attachment) => async (dispatch, ge
     return true;
   } else {
     dispatch(mutation.sendAttachmentMessagesFail());
-    dispatch(showErrorNotification('toast_title.error_message', data.message));
+    dispatch(showErrorNotification('toast_title.error_message', data.error));
     return false;
   }
 };
