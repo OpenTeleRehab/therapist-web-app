@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Button, Form } from 'react-bootstrap';
 import { MdSend } from 'react-icons/md';
 import { ImAttachment } from 'react-icons/im';
-import { toMB, isValidFileSize } from 'utils/file';
+import { toMB, isValidFileSize, isValidFileMineType } from 'utils/file';
 import AttachmentDialog from './AttachmentDialog';
 import { useDispatch } from 'react-redux';
 import { showErrorNotification } from 'store/notification/actions';
@@ -69,11 +69,20 @@ const InputToolbar = (props) => {
   const onAttachmentChangeHandler = (e) => {
     const file = e.target.files[0];
     const fileSize = toMB(file.size).toFixed(2);
+    const fileMineType = file.type;
     const isValidSize = isValidFileSize(fileSize);
+    const isValidMineType = isValidFileMineType(fileMineType);
     if (!isValidSize) {
       dispatch(showErrorNotification(
         'toast_title.error_message',
         props.translate('common.error_message_invalid_file_size', { size: settings.fileMaxUploadSize }))
+      );
+      return false;
+    }
+    if (!isValidMineType) {
+      dispatch(showErrorNotification(
+        'toast_title.error_message',
+        props.translate('common.error_message_invalid_file_type'))
       );
       return false;
     }
