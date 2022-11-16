@@ -19,7 +19,8 @@ axiosInstance.interceptors.request.use(
     let { token } = keycloak;
     config.headers = {
       [HEADER_ACCEPT]: CONTENT_TYPE_JSON,
-      [HEADER_CONTENT_TYPE]: CONTENT_TYPE_JSON
+      [HEADER_CONTENT_TYPE]: CONTENT_TYPE_JSON,
+      ...config.headers
     };
     if (token) {
       try {

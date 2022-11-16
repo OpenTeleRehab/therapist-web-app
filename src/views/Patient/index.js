@@ -23,13 +23,13 @@ import { getChatRooms } from '../../store/rocketchat/actions';
 import customColorScheme from '../../utils/customColorScheme';
 import _ from 'lodash';
 
-let timer = null;
 const Patient = () => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
   const users = useSelector(state => state.user.users);
   const { profile } = useSelector((state) => state.auth);
+  const { countries } = useSelector((state) => state.country);
   const therapist = useSelector(state => state.auth.profile);
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
@@ -79,19 +79,16 @@ const Patient = () => {
   }, [pageSize, searchValue, filters]);
 
   useEffect(() => {
-    if (profile !== undefined) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        dispatch(getUsers({
-          therapist_id: profile.id,
-          filters,
-          search_value: searchValue,
-          page_size: pageSize,
-          page: currentPage + 1
-        }));
-      }, 500);
+    if (profile !== undefined && countries.length) {
+      dispatch(getUsers({
+        therapist_id: profile.id,
+        filters,
+        search_value: searchValue,
+        page_size: pageSize,
+        page: currentPage + 1
+      }));
     }
-  }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
+  }, [currentPage, pageSize, searchValue, filters, dispatch, profile, countries]);
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && therapist.chat_rooms.length && authToken) {

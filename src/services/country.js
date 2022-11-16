@@ -1,4 +1,4 @@
-import axios from 'utils/axios';
+import axios from 'utils/admin-axios';
 
 const getCountries = () => {
   return axios.get('/country')
