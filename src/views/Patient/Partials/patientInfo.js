@@ -64,13 +64,15 @@ const PatientInfo = ({ id, translate }) => {
   });
 
   useEffect(() => {
-    dispatch(getUsers({
-      id: id
-    }));
-  }, [id, dispatch]);
+    if (countries.length) {
+      dispatch(getUsers({
+        id: id
+      }));
+    }
+  }, [dispatch, id, countries]);
 
   useEffect(() => {
-    if (id && users.length) {
+    if (id && users.length && countries.length) {
       const data = users.find(user => user.id === parseInt(id));
       setFormFields({
         name: data.last_name + ' ' + data.first_name || '',
@@ -85,7 +87,7 @@ const PatientInfo = ({ id, translate }) => {
       });
       setIsSecondaryTherapist(data.secondary_therapists.includes(profile.id));
     }
-  }, [id, users, countries, translate, profile]);
+  }, [id, translate, profile, users, countries]);
 
   useEffect(() => {
     if (authToken && therapist && therapist.chat_user_id && therapist.chat_rooms.length && chatRooms.length === 0) {
