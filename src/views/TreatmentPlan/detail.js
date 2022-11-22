@@ -65,7 +65,9 @@ const ViewTreatmentPlan = () => {
   const [presetActivities, setPresetActivities] = useState([]);
 
   useEffect(() => {
-    dispatch(getDiseases({ lang: profile.language_id }));
+    if (profile && profile.language_id) {
+      dispatch(getDiseases({ lang: profile.language_id }));
+    }
   }, [dispatch, profile]);
 
   useEffect(() => {
