@@ -88,11 +88,11 @@ const PatientInfo = ({ id, translate }) => {
   }, [id, users, countries, translate, profile]);
 
   useEffect(() => {
-    if (therapist && therapist.chat_user_id && therapist.chat_rooms.length && authToken) {
+    if (authToken && therapist && therapist.chat_user_id && therapist.chat_rooms.length && chatRooms.length === 0) {
       dispatch(getChatRooms());
     }
     dispatch(setIsOnChatPage(false));
-  }, [authToken, dispatch, therapist]);
+  }, [dispatch, authToken, therapist, chatRooms]);
 
   const handleEdit = (id) => {
     setEditId(id);

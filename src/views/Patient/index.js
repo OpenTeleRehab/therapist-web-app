@@ -91,25 +91,23 @@ const Patient = () => {
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile, countries]);
 
   useEffect(() => {
-    if (therapist && therapist.chat_user_id && therapist.chat_rooms.length && authToken) {
+    if (authToken && therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
       dispatch(getChatRooms());
     }
-  }, [authToken, dispatch, therapist]);
+  }, [dispatch, authToken, therapist]);
 
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
   };
 
-  const totalRoomUnreadMessages = ($roomIds) => {
-    let unread = 0;
-    // eslint-disable-next-line
-    chatRooms.map((chatRoom) => {
-      if ($roomIds.find(r => r === chatRoom.rid)) {
-        unread = chatRoom.unread;
-      }
-    });
+  const totalRoomUnreadMessages = (chatUserId) => {
+    if (chatRooms.length) {
+      const fIndex = chatRooms.findIndex(r => r.rid.includes(chatUserId));
 
-    return unread;
+      return chatRooms[fIndex].unread > 99 ? '99+' : chatRooms[fIndex].unread;
+    }
+
+    return 0;
   };
 
   return (
@@ -149,10 +147,10 @@ const Patient = () => {
                   <sup>{user.total_pain_threshold}</sup>
                 </div>
               )}
-              {totalRoomUnreadMessages(user.chat_rooms) > 0 && (
+              {totalRoomUnreadMessages(user.chat_user_id) > 0 && (
                 <div className="notify-list-item">
                   <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary} />
-                  <sup>{totalRoomUnreadMessages(user.chat_rooms) > 99 ? '99+' : totalRoomUnreadMessages(user.chat_rooms)}</sup>
+                  <sup>{totalRoomUnreadMessages(user.chat_user_id)}</sup>
                 </div>
               )}
             </div>
