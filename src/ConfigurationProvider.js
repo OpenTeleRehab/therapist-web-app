@@ -45,8 +45,9 @@ const ConfigurationProvider = ({ children }) => {
           });
           dispatch(getClinics(res.data.country_id));
           dispatch(getProfessions(res.data.country_id));
+        } else {
+          setAppLoading(false);
         }
-        setAppLoading(false);
       });
       dispatch(getCountries());
       dispatch(getLanguages());
