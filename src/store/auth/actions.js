@@ -27,12 +27,12 @@ export const updateProfile = (id, payload) => async dispatch => {
   const data = await Auth.updateProfile(payload);
   if (data.success) {
     dispatch(mutation.updateProfileSuccess());
-    dispatch(showSuccessNotification('toast_title.update_profile', 'success_message.update_profile_success'));
     dispatch(getTranslations(payload.language_id));
     dispatch(getProfile());
     dispatch(clearFilterQuestionnaires());
     dispatch(clearFilterEducationMaterials());
     dispatch(clearFilterExercises());
+    dispatch(showSuccessNotification('toast_title.update_profile', data.message));
     return true;
   } else {
     dispatch(mutation.updatePasswordFail());
