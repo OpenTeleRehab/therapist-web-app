@@ -298,7 +298,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                 { questionnaires.map(questionnaire => (
                   <Col key={questionnaire.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('questionnaire-' + questionnaire.id).click()}>
-                      <div className="top-bar justify-content-start">
+                      <div className="top-bar justify-content-start align-items-center">
                         <div className="favorite-btn">
                           {questionnaire.is_favorite
                             ? <NonFavoriteAction onClick={() => handleSwitchFavorite(questionnaire.id, 0, CATEGORY_TYPES.QUESTIONNAIRE)} />

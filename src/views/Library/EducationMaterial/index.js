@@ -301,7 +301,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                 { educationMaterials.map(material => (
                   <Col key={material.id} md={6} lg={isShowPreviewList ? 4 : 3}>
                     <Card className="exercise-card shadow-sm mb-4" role="button" tabIndex="0" onKeyPress={(e) => e.key === 'Enter' && document.getElementById('material-' + material.id).click()}>
-                      <div className="top-bar justify-content-start">
+                      <div className="top-bar justify-content-start align-items-center">
                         <div className="favorite-btn">
                           {material.is_favorite
                             ? <NonFavoriteAction onClick={() => handleSwitchFavorite(material.id, 0, CATEGORY_TYPES.MATERIAL)} />
