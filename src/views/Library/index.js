@@ -1,12 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Nav, Button, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Button, Nav, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { BsPlus } from 'react-icons/bs';
 import queryString from 'query-string';
+import { useDispatch, useSelector } from 'react-redux';
+import { Exercise as exerciseService } from 'services/exercise';
+import _ from 'lodash';
+
 import { CATEGORY_TYPES } from 'variables/category';
 import { SYSTEM_TYPES } from 'variables/systemLimit';
-
 import * as ROUTES from 'variables/routes';
 import Exercise from './Exercise';
 import EducationMaterial from './EducationMaterial';
@@ -16,9 +19,6 @@ import { updateFavorite as updateFavoriteEducationMaterial } from 'store/educati
 import { updateFavorite as updateFavoriteExercise } from 'store/exercise/actions';
 import { updateFavorite as updateFavoriteQuestionnaire } from 'store/questionnaire/actions';
 import { getSettings } from 'store/setting/actions';
-import { useDispatch, useSelector } from 'react-redux';
-import { Exercise as exerciseService } from 'services/exercise';
-import _ from 'lodash';
 import PreviewList from './Partials/previewList';
 
 const VIEW_EXERCISE = 'exercise';
@@ -29,7 +29,6 @@ const VIEW_PRESET_TREATMENT = 'preset_treatment';
 const Library = ({ translate }) => {
   const { search } = useLocation();
   const dispatch = useDispatch();
-  const { treatmentPlans } = useSelector(state => state.treatmentPlan);
   const [view, setView] = useState(undefined);
   const [newContentLink, setNewContentLink] = useState(undefined);
   const [maxLibraries, setMaxLibraries] = useState(20);
@@ -59,8 +58,10 @@ const Library = ({ translate }) => {
   }, [search]);
 
   useEffect(() => {
-    dispatch(getSettings());
-  }, [dispatch]);
+    if (systemLimits.length === 0) {
+      dispatch(getSettings());
+    }
+  }, [systemLimits, dispatch]);
 
   useEffect(() => {
     if (systemLimits.length) {
@@ -81,11 +82,11 @@ const Library = ({ translate }) => {
     if (therapistId) {
       exerciseService.countTherapistLibraries(therapistId).then(res => {
         if (res.success) {
-          setAllowCreateContent(res.data < maxLibraries || queryString.parse(search).tab === VIEW_PRESET_TREATMENT);
+          setAllowCreateContent(res.data < maxLibraries);
         }
       });
     }
-  }, [therapistId, view, treatmentPlans, maxLibraries, search]);
+  }, [therapistId, view, maxLibraries]);
 
   useEffect(() => {
     if (selectedExercises.length || selectedMaterials.length || selectedQuestionnaires.length) {
@@ -146,7 +147,7 @@ const Library = ({ translate }) => {
                 <Button
                   as={Link} to={newContentLink}
                 >
-                  <BsPlus size={20} className="mr-1" />
+                  <BsPlus size={20} className="mr-1"/>
                   {translate('common.new_content')}
                 </Button>
               ) : (
@@ -156,7 +157,7 @@ const Library = ({ translate }) => {
                 >
                   <span className="d-inline-block">
                     <Button disabled style={{ pointerEvents: 'none' }}>
-                      <BsPlus size={20} className="mr-1" />
+                      <BsPlus size={20} className="mr-1"/>
                       {translate('common.new_content')}
                     </Button>
                   </span>
@@ -167,7 +168,7 @@ const Library = ({ translate }) => {
         </div>
       </div>
 
-      <div className={`position-relative library-panel ${isShowPreviewList ? 'show' : ''}`}>
+      <div className="position-relative library-panel">
         <Nav variant="tabs" activeKey={view} className="mb-3">
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.LIBRARY} eventKey={VIEW_EXERCISE}>

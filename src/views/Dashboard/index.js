@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Accordion } from 'react-bootstrap';
-import { IoPerson } from 'react-icons/all';
-import PropTypes from 'prop-types';
-import { Pie } from 'react-chartjs-2';
 import { useDispatch, useSelector } from 'react-redux';
-import { getPatients } from '../../store/patient/actions';
-import _ from 'lodash';
-import { AgeInYear } from '../../utils/age';
-import settings from 'settings';
+import { IoPerson } from 'react-icons/all';
 import { FaNotesMedical } from 'react-icons/fa';
+import { Pie } from 'react-chartjs-2';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
+
+import settings from 'settings';
+import { getPatients } from '../../store/patient/actions';
+import { AgeInYear } from '../../utils/age';
 import { ContextAwareToggle } from '../../components/Accordion/ContextAwareToggle';
 import customColorScheme from '../../utils/customColorScheme';
 
