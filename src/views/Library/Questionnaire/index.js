@@ -222,7 +222,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                   type="checkbox"
                   name="favorites_only"
                   label={translate('library.show_favorites_only')}
-                  id="showFavoritesOnly"
+                  id="questionnaire-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
                 <Form.Check
@@ -231,7 +231,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                   name="my_contents_only"
                   className="mt-3"
                   label={translate('library.show_my_contents_only')}
-                  id="showMyContentsOnly"
+                  id="questionnaire-showMyContentsOnly"
                   onChange={handleCheckBoxChange}
                 />
               </Form.Group>
@@ -313,10 +313,10 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                         <Form.Check
                           className="ml-auto"
                           type="checkbox"
-                          id={questionnaire.id}
                           checked={selectedQuestionnaires.includes(questionnaire.id)}
                           onChange={(e) => onSectionChange(e.currentTarget.checked, questionnaire.id)}
                           custom={true}
+                          id={`questionnaire-${questionnaire.id}`}
                           label={`questionnaire-${questionnaire.id}`}
                         />
                       </div>

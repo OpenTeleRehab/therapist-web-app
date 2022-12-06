@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Nav, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, Nav, OverlayTrigger, Tab, Tooltip } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { BsPlus } from 'react-icons/bs';
@@ -169,33 +169,61 @@ const Library = ({ translate }) => {
       </div>
 
       <div className="position-relative library-panel">
-        <Nav variant="tabs" activeKey={view} className="mb-3">
-          <Nav.Item>
-            <Nav.Link as={Link} to={ROUTES.LIBRARY} eventKey={VIEW_EXERCISE}>
-              {translate('library.exercises')}
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link as={Link} to={ROUTES.LIBRARY_EDUCATION} eventKey={VIEW_EDUCATION}>
-              {translate('library.education_materials')}
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link as={Link} to={ROUTES.LIBRARY_QUESTIONNAIRE} eventKey={VIEW_QUESTIONNAIRE}>
-              {translate('library.questionnaires')}
-            </Nav.Link>
-          </Nav.Item>
-          <Nav.Item>
-            <Nav.Link as={Link} to={ROUTES.LIBRARY_PRESET_TREATMENT} eventKey={VIEW_PRESET_TREATMENT}>
-              {translate('library.preset_treatments')}
-            </Nav.Link>
-          </Nav.Item>
-        </Nav>
+        <Tab.Container mountOnEnter activeKey={view}>
+          <Nav variant="tabs" className="mb-3">
+            <Nav.Item>
+              <Nav.Link as={Link} to={ROUTES.LIBRARY} eventKey={VIEW_EXERCISE}>
+                {translate('library.exercises')}
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to={ROUTES.LIBRARY_EDUCATION} eventKey={VIEW_EDUCATION}>
+                {translate('library.education_materials')}
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to={ROUTES.LIBRARY_QUESTIONNAIRE} eventKey={VIEW_QUESTIONNAIRE}>
+                {translate('library.questionnaires')}
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link as={Link} to={ROUTES.LIBRARY_PRESET_TREATMENT} eventKey={VIEW_PRESET_TREATMENT}>
+                {translate('library.preset_treatments')}
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
 
-        { view === VIEW_EXERCISE && <Exercise handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleExercisesChange} selectedExercises={selectedExercises} isShowPreviewList={isShowPreviewList}/> }
-        { view === VIEW_EDUCATION && <EducationMaterial handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleMaterialsChange} selectedMaterials={selectedMaterials} isShowPreviewList={isShowPreviewList}/> }
-        { view === VIEW_QUESTIONNAIRE && <Questionnaire handleSwitchFavorite={handleSwitchFavorite} therapistId={therapistId} allowCreateContent={allowCreateContent} onSectionChange={handleQuestionnairesChange} selectedQuestionnaires={selectedQuestionnaires} isShowPreviewList={isShowPreviewList} /> }
-        { view === VIEW_PRESET_TREATMENT && <PresetTreatment /> }
+          <Tab.Content>
+            <Tab.Pane eventKey={VIEW_EXERCISE}>
+              <Exercise
+                handleSwitchFavorite={handleSwitchFavorite}
+                therapistId={therapistId}
+                allowCreateContent={allowCreateContent} onSectionChange={handleExercisesChange}
+                selectedExercises={selectedExercises} isShowPreviewList={isShowPreviewList}/>
+            </Tab.Pane>
+            <Tab.Pane eventKey={VIEW_EDUCATION}>
+              <EducationMaterial
+                handleSwitchFavorite={handleSwitchFavorite}
+                therapistId={therapistId}
+                allowCreateContent={allowCreateContent}
+                onSectionChange={handleMaterialsChange}
+                selectedMaterials={selectedMaterials}
+                isShowPreviewList={isShowPreviewList}/>
+            </Tab.Pane>
+            <Tab.Pane eventKey={VIEW_QUESTIONNAIRE}>
+              <Questionnaire
+                handleSwitchFavorite={handleSwitchFavorite}
+                therapistId={therapistId}
+                allowCreateContent={allowCreateContent}
+                onSectionChange={handleQuestionnairesChange}
+                selectedQuestionnaires={selectedQuestionnaires}
+                isShowPreviewList={isShowPreviewList}/>
+            </Tab.Pane>
+            <Tab.Pane eventKey={VIEW_PRESET_TREATMENT}>
+              <PresetTreatment/>
+            </Tab.Pane>
+          </Tab.Content>
+        </Tab.Container>
 
         { view !== VIEW_PRESET_TREATMENT &&
           <PreviewList
