@@ -2,26 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-
+import { TiWarning } from 'react-icons/all';
 import { BsPlus, BsChatDotsFill } from 'react-icons/bs';
+import { ProgressBar } from 'react-step-progress-bar';
 import PropTypes from 'prop-types';
-import settings from 'settings';
 import moment from 'moment/moment';
-import * as ROUTES from 'variables/routes';
+import _ from 'lodash';
 
+import * as ROUTES from 'variables/routes';
 import CreatePatient from './create';
 import { getUsers } from 'store/user/actions';
 import CustomTable from 'components/Table';
 import AgeCalculation from 'utils/age';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { getTranslate } from 'react-localize-redux';
-import 'react-step-progress-bar/styles.css';
-import { ProgressBar } from 'react-step-progress-bar';
-import { TiWarning } from 'react-icons/all';
+import settings from 'settings';
 import scssColors from 'scss/custom.scss';
 import { getChatRooms } from '../../store/rocketchat/actions';
 import customColorScheme from '../../utils/customColorScheme';
-import _ from 'lodash';
+import 'react-step-progress-bar/styles.css';
 
 const Patient = () => {
   const dispatch = useDispatch();
@@ -67,13 +66,6 @@ const Patient = () => {
   const [searchValue, setSearchValue] = useState('');
   const [filters, setFilters] = useState([]);
 
-  const handleClose = () => {
-    setEditId('');
-    setShow(false);
-  };
-
-  const handleShow = () => setShow(true);
-
   useEffect(() => {
     setCurrentPage(0);
   }, [pageSize, searchValue, filters]);
@@ -109,6 +101,13 @@ const Patient = () => {
 
     return 0;
   };
+
+  const handleClose = () => {
+    setEditId('');
+    setShow(false);
+  };
+
+  const handleShow = () => setShow(true);
 
   return (
     <>
