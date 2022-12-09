@@ -225,7 +225,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                   type="checkbox"
                   name="favorites_only"
                   label={translate('library.show_favorites_only')}
-                  id="showFavoritesOnly"
+                  id="material-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
                 <Form.Check
@@ -234,7 +234,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                   name="my_contents_only"
                   className="mt-3"
                   label={translate('library.show_my_contents_only')}
-                  id="showMyContentsOnly"
+                  id="material-showMyContentsOnly"
                   onChange={handleCheckBoxChange}
                 />
               </Form.Group>
@@ -316,10 +316,10 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                         <Form.Check
                           className="ml-auto"
                           type="checkbox"
-                          id={material.id}
                           checked={selectedMaterials.includes(material.id)}
                           onChange={(e) => onSectionChange(e.currentTarget.checked, material.id)}
                           custom={true}
+                          id={`material-${material.id}`}
                           label={`material-${material.id}`}
                         />
                       </div>

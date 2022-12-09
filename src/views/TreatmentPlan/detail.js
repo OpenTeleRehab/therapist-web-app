@@ -54,7 +54,6 @@ const ViewTreatmentPlan = () => {
     disease: ''
   });
   const [weeks, setWeeks] = useState(1);
-  const [key, setKey] = useState(TAB.activities);
   const [activities, setActivities] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [readOnly] = useState(true);
@@ -242,32 +241,27 @@ const ViewTreatmentPlan = () => {
           </div>
         )}
       </div>
-      <div className="mt-lg-5">
-        <Tabs
-          id="controlled-tab"
-          activeKey={key}
-          onSelect={(k) => setKey(k)}
-        >
-          <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities_tab')}>
-            <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} />
+
+      <Tabs mountOnEnter className="mt-4">
+        <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities_tab')}>
+          <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} />
+        </Tab>
+        {patientId &&
+          <Tab eventKey={TAB.adherence} title={translate('treatment_plan.adherence_tab')}>
+            <AdherenceTab activities={activities} startDate={treatmentPlansDetail.start_date} endDate={treatmentPlansDetail.end_date}/>
           </Tab>
-          {patientId &&
-            <Tab eventKey={TAB.adherence} title={translate('treatment_plan.adherence_tab')}>
-              <AdherenceTab activities={activities} startDate={treatmentPlansDetail.start_date} endDate={treatmentPlansDetail.end_date}/>
-            </Tab>
-          }
-          {patientId &&
-            <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaires_tab')}>
-              <QuestionnaireTab activities={activities}/>
-            </Tab>
-          }
-          {patientId &&
-            <Tab eventKey={TAB.goal_tracking} title={translate('treatment_plan.goal_tracking_tab')}>
-              <GoalTrackingTab activities={activities}/>
-            </Tab>
-          }
-        </Tabs>
-      </div>
+        }
+        {patientId &&
+          <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaires_tab')}>
+            <QuestionnaireTab activities={activities}/>
+          </Tab>
+        }
+        {patientId &&
+          <Tab eventKey={TAB.goal_tracking} title={translate('treatment_plan.goal_tracking_tab')}>
+            <GoalTrackingTab activities={activities}/>
+          </Tab>
+        }
+      </Tabs>
 
       <Dialog
         show={showDeleteDialog}

@@ -158,7 +158,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
       size="xl"
       scrollable={true}
     >
-      <Tabs transition={false} className="mb-3">
+      <Tabs mountOnEnter className="mb-3">
         <Tab eventKey="exercise" title={translate('activity.exercises')}>
           <Exercise selectedExercises={selectedExercises} onSectionChange={handleExercisesChange} viewExercise={viewExercise} setViewExercise={setViewExercise} setShowPreview={setShowPreview} isOwnCreated={isOwnCreated} oldSelectedExercises={oldSelectedExercises} showPreview={showPreview}/>
         </Tab>

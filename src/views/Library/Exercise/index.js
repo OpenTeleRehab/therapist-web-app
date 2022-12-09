@@ -208,7 +208,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                   type="checkbox"
                   name="favorites_only"
                   label={translate('library.show_favorites_only')}
-                  id="showFavoritesOnly"
+                  id="exercise-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
                 <Form.Check
@@ -217,7 +217,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                   name="my_contents_only"
                   className="mt-3"
                   label={translate('library.show_my_contents_only')}
-                  id="showMyContentsOnly"
+                  id="exercise-showMyContentsOnly"
                   onChange={handleCheckBoxChange}
                 />
               </Form.Group>
@@ -299,10 +299,10 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                         <Form.Check
                           className="ml-auto"
                           type="checkbox"
-                          id={exercise.id}
                           checked={selectedExercises.includes(exercise.id)}
                           onChange={(e) => onSectionChange(e.currentTarget.checked, exercise.id)}
                           custom={true}
+                          id={`exercise-${exercise.id}`}
                           label={`exercise-${exercise.id}`}
                         />
                       </div>
