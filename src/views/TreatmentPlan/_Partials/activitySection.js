@@ -96,7 +96,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
           >
             {translate('common.week')} {i}
           </Button>
-          {i !== 1 && !readOnly && isOwnCreated ? (
+          {i !== 1 && !readOnly && (isOwnCreated || newWeeks.includes(i)) && (
             <Button
               aria-label="Remove week"
               className="btn-circle-sm btn-in-btn btn-circle-primary"
@@ -105,21 +105,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
             >
               <BsX size={12} />
             </Button>
-          ) : (
-            <>
-              {!readOnly && newWeeks.includes(i) &&
-                <Button
-                  aria-label="Remove week"
-                  className="btn-circle-sm btn-in-btn btn-circle-primary"
-                  variant="outline-primary"
-                  onClick={() => handleRemoveWeek(i)}
-                >
-                  <BsX size={16} />
-                </Button>
-              }
-            </>
-          )
-          }
+          )}
         </div>
       );
     }
@@ -187,21 +173,12 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const dayElements = () => {
     const elements = [];
     for (let i = 0; i < 7; i++) {
-      let exercises = null;
-      let materials = null;
-      let questionnaires = null;
       const date = moment(currentWeekStartDate).add(i, 'days');
       const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
       const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
       const materialIds = dayActivity ? dayActivity.materials || [] : [];
       const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
       const customExercises = dayActivity ? dayActivity.customExercises || [] : [];
-      if (readOnly) {
-        const dayActivities = activities.filter(activity => activity.week === currentWeek && activity.day === i + 1);
-        exercises = dayActivities.filter(dayActivity => dayActivity.type === 'exercise');
-        materials = dayActivities.filter(dayActivity => dayActivity.type === 'material');
-        questionnaires = dayActivities.filter(dayActivity => dayActivity.type === 'questionnaire');
-      }
       const isEven = i % 2 === 0;
       let showCopyAndClear = false;
       if (dayActivity && (dayActivity.exercises || dayActivity.materials || dayActivity.questionnaires)) {
@@ -247,9 +224,10 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
                 </Button>
               </div>
             }
-            <ListExerciseCard exerciseIds={exerciseIds} exerciseObjs={exercises} customExercises={customExercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} onSelectionModify={custom => handleExerciseModify(custom, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} isPreset={isPreset} />
-            <ListEducationMaterialCard materialIds={materialIds} materialObjs={materials} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
-            <ListQuestionnaireCard questionnaireIds={questionnaireIds} questionnaireObjs={questionnaires} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={i + 1} showList={true} treatmentPlanId={treatmentPlanId} />
+
+            <ListExerciseCard exerciseIds={exerciseIds} customExercises={customExercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} onSelectionModify={custom => handleExerciseModify(custom, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={i + 1} treatmentPlanId={treatmentPlanId} />
+            <ListEducationMaterialCard materialIds={materialIds} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={i + 1} treatmentPlanId={treatmentPlanId} />
+            <ListQuestionnaireCard questionnaireIds={questionnaireIds} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={i + 1} treatmentPlanId={treatmentPlanId} />
 
             <div className="d-flex justify-content-center">
               {!readOnly && <Button
@@ -287,7 +265,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
         </div>
       </div>
       <div className="d-flex flex-column flex-lg-row mb-3">
-        {!openActivityDialog && dayElements()}
+        {dayElements()}
       </div>
       <Dialog
         show={show}

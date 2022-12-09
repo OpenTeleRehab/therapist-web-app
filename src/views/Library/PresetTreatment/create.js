@@ -5,7 +5,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 import {
   createTreatmentPlan, updateTreatmentPlan,
-  getTreatmentPlans
+  getTreatmentPlansDetail, getPresetTreatmentPlans
 } from 'store/treatmentPlan/actions';
 
 import ActivitySection from 'views/TreatmentPlan/_Partials/activitySection';
@@ -21,23 +21,30 @@ const CreatePresetTreatment = () => {
   const translate = getTranslate(localize);
   const { id } = useParams();
 
-  const { treatmentPlans } = useSelector((state) => state.treatmentPlan);
+  const { profile } = useSelector((state) => state.auth);
+  const { presetTreatmentPlans } = useSelector((state) => state.treatmentPlan);
   const [formFields, setFormFields] = useState({ name: '' });
   const [weeks, setWeeks] = useState(1);
   const [errorName, setErrorName] = useState(false);
   const [activities, setActivities] = useState([]);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [readOnly] = useState(false);
+
+  useEffect(() => {
+    if (id && presetTreatmentPlans.length === 0) {
+      dispatch(getPresetTreatmentPlans({ id, type: 'preset' }));
+    }
+  }, [id, presetTreatmentPlans, dispatch]);
 
   useEffect(() => {
     if (id) {
-      dispatch(getTreatmentPlans({ id, type: 'preset' }));
+      const additionalParams = { type: 'preset' };
+      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
-  }, [id, dispatch]);
+  }, [id, dispatch, profile]);
 
   useEffect(() => {
-    if (id && treatmentPlans.length) {
-      const editingData = treatmentPlans.find(treatmentPlan => treatmentPlan.id === parseInt(id));
+    if (id && presetTreatmentPlans.length) {
+      const editingData = presetTreatmentPlans.find(treatmentPlan => treatmentPlan.id === parseInt(id));
       setFormFields({ name: editingData.name });
       setActivities(editingData.activities || []);
       setWeeks(editingData.total_of_weeks);
@@ -46,7 +53,7 @@ const CreatePresetTreatment = () => {
       setFormFields({ name: '' });
     }
     // eslint-disable-next-line
-  }, [id, treatmentPlans]);
+  }, [id, presetTreatmentPlans]);
 
   const handleChange = e => {
     const { name, value } = e.target;
@@ -162,12 +169,12 @@ const CreatePresetTreatment = () => {
       <hr/>
 
       <ActivitySection
+        isPreset
+        isOwnCreated
         weeks={weeks}
         setWeeks={setWeeks}
         activities={activities}
         setActivities={setActivities}
-        isPreset={true}
-        readOnly={readOnly}
         treatmentPlanId={id}
       />
 

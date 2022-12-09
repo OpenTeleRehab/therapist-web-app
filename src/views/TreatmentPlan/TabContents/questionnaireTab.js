@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
-import PropTypes from 'prop-types';
 import CustomTable from '../../../components/Table';
 import moment from 'moment/moment';
 import settings from '../../../settings';
 import { ViewAction } from 'components/ActionIcons';
 import ViewQuestion from './viewQuestion';
 
-const QuestionnaireTab = ({ activities }) => {
+const QuestionnaireTab = () => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,6 +15,7 @@ const QuestionnaireTab = ({ activities }) => {
   const [questionnaires, setQuestionnaires] = useState([]);
   const [show, setShow] = useState(false);
   const [questionnaire, setQuestionnaire] = useState([]);
+  const { activities } = useSelector((state) => state.treatmentPlan.treatmentPlansDetail);
 
   useEffect(() => {
     if (activities.length) {
@@ -76,9 +76,6 @@ const QuestionnaireTab = ({ activities }) => {
       />
     </div>
   );
-};
-QuestionnaireTab.propTypes = {
-  activities: PropTypes.array
 };
 
 export default QuestionnaireTab;

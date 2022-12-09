@@ -1,20 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 import Exercise from './Exercise';
 import EducationMaterial from './EducationMaterial';
 import Questionnaire from './Questionnaire';
 import PreviewList from './previewList';
 import PresetTreatment from './PresetTreatment';
-import _ from 'lodash';
+import {
+  addExerciseDataPreview,
+  addMaterialDataPreview, addPresetDataPreview,
+  addQuestionnaireDataPreview
+} from '../../../store/treatmentPlan/actions';
 
 const AddActivity = ({ show, handleClose, week, day, activities, setActivities, isPreset, isOwnCreated, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const dispatch = useDispatch();
   const { presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [selectedMaterials, setSelectedMaterials] = useState([]);
@@ -33,9 +39,9 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
 
   useEffect(() => {
     const dayActivity = _.findLast(activities, { week, day });
-    const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
-    const materialIds = dayActivity ? dayActivity.materials || [] : [];
-    const questionnaireIds = dayActivity ? dayActivity.questionnaires || [] : [];
+    const exerciseIds = dayActivity ? [...dayActivity.exercises] || [] : [];
+    const materialIds = dayActivity ? [...dayActivity.materials] || [] : [];
+    const questionnaireIds = dayActivity ? [...dayActivity.questionnaires] || [] : [];
     setSelectedExercises(exerciseIds);
     setSelectedMaterials(materialIds);
     setSelectedQuestionnaires(questionnaireIds);
@@ -53,6 +59,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
     if (checked) {
       selectedExercises.push(id);
       setTotalSelectedActivity(totalSelectedActivity + 1);
+      dispatch(addExerciseDataPreview(id));
     } else {
       _.remove(selectedExercises, n => n === id);
       setTotalSelectedActivity(totalSelectedActivity - 1);
@@ -65,6 +72,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
     if (checked) {
       selectedMaterials.push(id);
       setTotalSelectedActivity(totalSelectedActivity + 1);
+      dispatch(addMaterialDataPreview(id));
     } else {
       _.remove(selectedMaterials, n => n === id);
       setTotalSelectedActivity(totalSelectedActivity - 1);
@@ -77,6 +85,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
     if (checked) {
       selectedQuestionnaires.push(id);
       setTotalSelectedActivity(totalSelectedActivity + 1);
+      dispatch(addQuestionnaireDataPreview(id));
     } else {
       _.remove(selectedQuestionnaires, n => n === id);
       setTotalSelectedActivity(totalSelectedActivity - 1);
@@ -119,6 +128,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
         return a.week === n.week && a.day === n.day;
       });
       setActivities(updatedActivities);
+      dispatch(addPresetDataPreview(presetId));
     } else {
       const newActivity = {
         week,

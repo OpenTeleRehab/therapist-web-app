@@ -20,6 +20,11 @@ import { updateFavorite as updateFavoriteExercise } from 'store/exercise/actions
 import { updateFavorite as updateFavoriteQuestionnaire } from 'store/questionnaire/actions';
 import { getSettings } from 'store/setting/actions';
 import PreviewList from './Partials/previewList';
+import {
+  addExerciseDataPreview,
+  addMaterialDataPreview,
+  addQuestionnaireDataPreview
+} from '../../store/treatmentPlan/actions';
 
 const VIEW_EXERCISE = 'exercise';
 const VIEW_EDUCATION = 'education';
@@ -113,6 +118,7 @@ const Library = ({ translate }) => {
   const handleExercisesChange = (checked, id) => {
     if (checked) {
       selectedExercises.push(id);
+      dispatch(addExerciseDataPreview(id));
     } else {
       _.remove(selectedExercises, n => n === id);
     }
@@ -122,6 +128,7 @@ const Library = ({ translate }) => {
   const handleMaterialsChange = (checked, id) => {
     if (checked) {
       selectedMaterials.push(id);
+      dispatch(addMaterialDataPreview(id));
     } else {
       _.remove(selectedMaterials, n => n === id);
     }
@@ -131,6 +138,7 @@ const Library = ({ translate }) => {
   const handleQuestionnairesChange = (checked, id) => {
     if (checked) {
       selectedQuestionnaires.push(id);
+      dispatch(addQuestionnaireDataPreview(id));
     } else {
       _.remove(selectedQuestionnaires, n => n === id);
     }
@@ -198,8 +206,10 @@ const Library = ({ translate }) => {
               <Exercise
                 handleSwitchFavorite={handleSwitchFavorite}
                 therapistId={therapistId}
-                allowCreateContent={allowCreateContent} onSectionChange={handleExercisesChange}
-                selectedExercises={selectedExercises} isShowPreviewList={isShowPreviewList}/>
+                allowCreateContent={allowCreateContent}
+                onSectionChange={handleExercisesChange}
+                selectedExercises={selectedExercises}
+                isShowPreviewList={isShowPreviewList}/>
             </Tab.Pane>
             <Tab.Pane eventKey={VIEW_EDUCATION}>
               <EducationMaterial

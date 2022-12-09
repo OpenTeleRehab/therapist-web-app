@@ -7,42 +7,27 @@ import {
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
-import { Exercise } from 'services/exercise';
-import { User } from 'services/user';
 import { BsX, BsHeart, BsHeartFill, BsPersonFill } from 'react-icons/bs';
 import ViewExercise from 'views/Library/Exercise/view';
-import _ from 'lodash';
-import { TYPE } from 'variables/activity';
 
-const ListExerciseCard = ({ translate, exerciseIds, exerciseObjs, customExercises, onSelectionRemove, onSelectionModify, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData, showList, treatmentPlanId, isPreset }) => {
+const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelectionRemove, onSelectionModify, readOnly, therapistId, isOwnCreated, treatmentPlanSelectedExercises, day, week, originData }) => {
   const [exercises, setExercises] = useState([]);
   const [exercise, setExercise] = useState([]);
   const [viewExercise, setViewExercise] = useState(false);
   const [treatmentPlanExercises, setTreatmentPlanExercises] = useState([]);
+  const { previewData } = useSelector(state => state.treatmentPlan.treatmentPlansDetail);
 
   useEffect(() => {
-    if (exerciseObjs && exerciseObjs.length > 0) {
-      setExercises(exerciseObjs);
-    } else if (exerciseIds && exerciseIds.length > 0) {
-      if (showList) {
-        User.getActivitiesByIds(exerciseIds, treatmentPlanId, TYPE.exercise, day, week, lang, therapistId, isPreset).then(res => {
-          if (res.data) {
-            setExercises(res.data);
-          }
-        });
-      } else {
-        Exercise.getExercisesByIds(exerciseIds, lang, therapistId).then(res => {
-          if (res.data) {
-            setExercises(res.data);
-          }
-        });
-      }
+    if (exerciseIds && exerciseIds.length && previewData && previewData.exercises) {
+      const data = _.filter(previewData.exercises, o => _.includes(exerciseIds, o.id));
+      setExercises(data);
     } else {
       setExercises([]);
     }
-    // eslint-disable-next-line
-  }, [JSON.stringify(exerciseIds), lang, exerciseObjs, therapistId, day, week, treatmentPlanId, showList]);
+  }, [JSON.stringify(exerciseIds), previewData]);
 
   useEffect(() => {
     if (treatmentPlanSelectedExercises && treatmentPlanSelectedExercises.length > 0) {
@@ -189,16 +174,12 @@ ListExerciseCard.propTypes = {
   onSelectionRemove: PropTypes.func,
   onSelectionModify: PropTypes.func,
   readOnly: PropTypes.bool,
-  lang: PropTypes.any,
   therapistId: PropTypes.number,
   isOwnCreated: PropTypes.bool,
   treatmentPlanSelectedExercises: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
-  week: PropTypes.number,
-  showList: PropTypes.bool,
-  treatmentPlanId: PropTypes.number,
-  isPreset: PropTypes.bool
+  week: PropTypes.number
 };
 
 export default withLocalize(ListExerciseCard);

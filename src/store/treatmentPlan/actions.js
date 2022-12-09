@@ -1,6 +1,7 @@
 import { TreatmentPlan } from 'services/treatmentPlan';
 import { mutation } from './mutations';
 import { saveAs } from 'file-saver';
+import _ from 'lodash';
 import {
   showErrorNotification,
   showSuccessNotification
@@ -26,7 +27,7 @@ export const updateTreatmentPlan = (id, payload) => async dispatch => {
   dispatch(mutation.updateTreatmentPlanRequest());
   const data = await TreatmentPlan.updateTreatmentPlan(id, payload);
   if (data.success) {
-    dispatch(mutation.updateTreatmentPlanSuccess());
+    dispatch(mutation.updateTreatmentPlanSuccess(id, payload));
     dispatch(showSuccessNotification('toast_title.update_treatment_plan', data.message));
     return true;
   } else {
@@ -55,7 +56,7 @@ export const getTreatmentPlansDetail = payload => async dispatch => {
   dispatch(mutation.getTreatmentPlansDetailRequest());
   const data = await TreatmentPlan.getTreatmentPlansDetail(payload);
   if (data.success) {
-    dispatch(mutation.getTreatmentPlansDetailSuccess(data.data, payload));
+    dispatch(mutation.getTreatmentPlansDetailSuccess(data.data));
     return data.info;
   } else {
     dispatch(mutation.getTreatmentPlansDetailFail());
@@ -103,5 +104,68 @@ export const downloadTreatmentPlan = id => async (dispatch) => {
     dispatch(mutation.downloadTreatmentPlanFail());
     dispatch(showErrorNotification('toast_title.error_message', res.message));
     return false;
+  }
+};
+
+export const addExerciseDataPreview = (id) => (dispatch, getState) => {
+  const exercise = _.find(getState().exercise.exercises, { id });
+  const { previewData } = getState().treatmentPlan.treatmentPlansDetail;
+  const indexOfData = _.findIndex(previewData.exercises, { id });
+
+  if (indexOfData === -1 && exercise) {
+    const newPreviewData = {
+      ...previewData,
+      exercises: [...previewData.exercises, exercise]
+    };
+
+    dispatch(mutation.addDataPreview(newPreviewData));
+  }
+};
+
+export const addMaterialDataPreview = (id) => (dispatch, getState) => {
+  const material = _.find(getState().educationMaterial.educationMaterials, { id });
+  const { previewData } = getState().treatmentPlan.treatmentPlansDetail;
+  const indexOfData = _.findIndex(previewData.materials, { id });
+
+  if (indexOfData === -1 && material) {
+    const newPreviewData = {
+      ...previewData,
+      materials: [...previewData.materials, material]
+    };
+
+    dispatch(mutation.addDataPreview(newPreviewData));
+  }
+};
+
+export const addQuestionnaireDataPreview = (id) => (dispatch, getState) => {
+  const questionnaire = _.find(getState().questionnaire.questionnaires, { id });
+  const { previewData } = getState().treatmentPlan.treatmentPlansDetail;
+  const indexOfData = _.findIndex(previewData.questionnaires, { id });
+
+  if (indexOfData === -1 && questionnaire) {
+    const newPreviewData = {
+      ...previewData,
+      questionnaires: [...previewData.questionnaires, questionnaire]
+    };
+
+    dispatch(mutation.addDataPreview(newPreviewData));
+  }
+};
+
+export const addPresetDataPreview = (id) => async (dispatch, getState) => {
+  const data = await TreatmentPlan.getTreatmentPlansDetail({ id, type: 'preset' });
+  if (data.success) {
+    const { previewData: presetPreviewData } = data.data;
+    const { previewData } = getState().treatmentPlan.treatmentPlansDetail;
+
+    const newPreviewData = {
+      exercises: _.unionBy(previewData.exercises, presetPreviewData.exercises, 'id'),
+      materials: _.unionBy(previewData.materials, presetPreviewData.materials, 'id'),
+      questionnaires: _.unionBy(previewData.questionnaires, presetPreviewData.questionnaires, 'id')
+    };
+
+    dispatch(mutation.addDataPreview(newPreviewData));
+  } else {
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };

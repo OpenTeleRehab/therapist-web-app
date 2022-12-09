@@ -1180,10 +1180,10 @@
     "@devexpress/dx-core" "2.7.5"
     prop-types "^15.7.2"
 
-"@devexpress/dx-react-grid-bootstrap4@^4.0.0":
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid-bootstrap4/-/dx-react-grid-bootstrap4-4.0.0.tgz#0b0924c734fbaa970a37eaf658de319df1d4be67"
-  integrity sha512-6elR29mQbToglx9Ac1lwWF1TRLfHEyl51aXYubcr2rBYg3Gj+IqWe7eaIaO7bxNtqEvcfRdmV8PjU9ZXQOXy8w==
+"@devexpress/dx-react-grid-bootstrap4@^2.7.3":
+  version "2.7.6"
+  resolved "https://registry.yarnpkg.com/@devexpress/dx-react-grid-bootstrap4/-/dx-react-grid-bootstrap4-2.7.6.tgz#eced6498f737ff74a592cf014c916aae037af183"
+  integrity sha512-8yGY9uRIoOl3E5p5AfJtCglc12jaBqOQ9KeU5wV1PFF7tpN6dLf3nFvOY5C+WE+O0QMvooUUBs0fKac8iJS8lA==
   dependencies:
     clsx "^1.0.4"
     prop-types "^15.7.2"

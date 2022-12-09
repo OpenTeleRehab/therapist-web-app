@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import CustomTable from 'components/Table';
-import { getTreatmentPlans } from 'store/treatmentPlan/actions';
+import { getPresetTreatmentPlans } from 'store/treatmentPlan/actions';
 import * as ROUTES from 'variables/routes';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
@@ -15,7 +15,7 @@ const PresetTreatment = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
-  const { treatmentPlans } = useSelector(state => state.treatmentPlan);
+  const { presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
   const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [pageSize, setPageSize] = useState(60);
@@ -32,7 +32,7 @@ const PresetTreatment = ({ translate }) => {
     if (profile !== undefined) {
       clearTimeout(timer);
       timer = setTimeout(() => {
-        dispatch(getTreatmentPlans({
+        dispatch(getPresetTreatmentPlans({
           filters,
           type: 'preset',
           search_value: searchValue,
@@ -59,7 +59,7 @@ const PresetTreatment = ({ translate }) => {
         filters={filters}
         columns={columns}
         onRowClick={handleRowClick}
-        rows={treatmentPlans.map(treatmentPlan => {
+        rows={presetTreatmentPlans.map(treatmentPlan => {
           const numberOfWeeks = treatmentPlan.total_of_weeks;
           return {
             id: treatmentPlan.id,
