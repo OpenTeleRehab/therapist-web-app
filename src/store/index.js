@@ -30,6 +30,7 @@ import { disease } from 'store/disease/reducers';
 import { termAndCondition } from 'store/termAndCondition/reducers';
 import { privacyPolicy } from 'store/privacyPolicy/reducers';
 import { colorScheme } from 'store/colorScheme/reducers';
+import { assistiveTechnology } from 'store/assistiveTechnology/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -56,7 +57,8 @@ export const rootReducer = {
   disease,
   privacyPolicy,
   termAndCondition,
-  colorScheme
+  colorScheme,
+  assistiveTechnology
 };
 
 const devTool =

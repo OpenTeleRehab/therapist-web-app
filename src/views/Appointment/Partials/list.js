@@ -16,12 +16,16 @@ import {
   deleteAppointment,
   updateAppointmentStatus
 } from 'store/appointment/actions';
-import { APPOINTMENT_STATUS } from '../../../variables/appointment';
+import {
+  APPOINTMENT_NOTE,
+  APPOINTMENT_STATUS
+} from '../../../variables/appointment';
 import scssColors from 'scss/custom.scss';
 import {
   showSuccessNotification
 } from '../../../store/notification/actions';
 import { BsPersonFill } from 'react-icons/bs';
+import { RiChatFollowUpLine } from 'react-icons/ri';
 
 const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const dispatch = useDispatch();
@@ -145,7 +149,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
 
                   return (
                     <div className="mx-3 mb-2 pr-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
-                      <div className="p-3 text-white" style={{ backgroundColor: _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color }}>
+                      <div className="p-3 text-white" style={{ backgroundColor: appointment.note === APPOINTMENT_NOTE.AT_FOLLOW_UP ? scssColors.secondary : _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color }}>
                         <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
@@ -158,9 +162,16 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
                       <div className="p-3 ml-auto">
                         {appointment.created_by_therapist && (
                           <>
-                            <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
+                            {appointment.note !== APPOINTMENT_NOTE.AT_FOLLOW_UP && (
+                              <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
+                            )}
                             <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
-                            <div className="appointment-own-icon"><BsPersonFill size={20} color={_.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color}/></div>
+                            <div className="appointment-own-icon">
+                              {appointment.note === APPOINTMENT_NOTE.AT_FOLLOW_UP && (
+                                <RiChatFollowUpLine size={20} color={_.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color} />
+                              )}
+                              <BsPersonFill size={20} color={_.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color} />
+                            </div>
                           </>
                         )}
                         {!appointment.created_by_therapist && (
