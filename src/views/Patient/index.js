@@ -26,7 +26,7 @@ const Patient = () => {
   const dispatch = useDispatch();
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState('');
-  const users = useSelector(state => state.user.users);
+  const { users, loading } = useSelector(state => state.user);
   const { profile } = useSelector((state) => state.auth);
   const { countries } = useSelector((state) => state.country);
   const therapist = useSelector(state => state.auth.profile);
@@ -122,6 +122,7 @@ const Patient = () => {
         {show && <CreatePatient handleClose={handleClose} show={show} editId={editId} />}
       </div>
       <CustomTable
+        loading={loading}
         pageSize={pageSize}
         setPageSize={setPageSize}
         currentPage={currentPage}

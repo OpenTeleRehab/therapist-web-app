@@ -16,7 +16,7 @@ const TreatmentHistory = () => {
   const translate = getTranslate(localize);
   const history = useHistory();
   const { patientId } = useParams();
-  const treatmentPlans = useSelector(state => state.treatmentPlan.treatmentPlans);
+  const { treatmentPlans, loading } = useSelector(state => state.treatmentPlan);
 
   const columns = [
     { name: 'name', title: translate('common.treatment_name') },
@@ -79,6 +79,7 @@ const TreatmentHistory = () => {
       </div>
       <div className="mt-3">
         <CustomTable
+          loading={loading}
           pageSize={pageSize}
           setPageSize={setPageSize}
           currentPage={currentPage}

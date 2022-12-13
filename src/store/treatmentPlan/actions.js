@@ -6,7 +6,6 @@ import {
   showErrorNotification,
   showSuccessNotification
 } from 'store/notification/actions';
-import { showSpinner } from 'store/spinnerOverlay/actions';
 
 // Actions
 export const createTreatmentPlan = payload => async (dispatch) => {
@@ -39,15 +38,12 @@ export const updateTreatmentPlan = (id, payload) => async dispatch => {
 
 export const getTreatmentPlans = payload => async dispatch => {
   dispatch(mutation.getTreatmentPlansRequest());
-  dispatch(showSpinner(true));
   const data = await TreatmentPlan.getTreatmentPlans(payload);
   if (data.success) {
     dispatch(mutation.getTreatmentPlansSuccess(data.data, payload));
-    dispatch(showSpinner(false));
     return data.info;
   } else {
     dispatch(mutation.getTreatmentPlansFail());
-    dispatch(showSpinner(false));
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
@@ -80,15 +76,12 @@ export const deleteTreatmentPlans = id => async (dispatch, getState) => {
 
 export const getPresetTreatmentPlans = payload => async dispatch => {
   dispatch(mutation.getPresetTreatmentPlansRequest());
-  dispatch(showSpinner(true));
   const data = await TreatmentPlan.getTreatmentPlans(payload);
   if (data.success) {
     dispatch(mutation.getPresetTreatmentPlansSuccess(data.data, payload));
-    dispatch(showSpinner(false));
     return data.info;
   } else {
     dispatch(mutation.getPresetTreatmentPlansFail());
-    dispatch(showSpinner(false));
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
