@@ -217,7 +217,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                               </Form.Group>
                               { question.file &&
                                 <div className="mb-2 w-50 d-flex justify-content-between">
-                                  <img src={readImage(question.file)} alt="..." className="img-thumbnail"/>
+                                  <img src={readImage(question.file)} alt="..." className="img-thumbnail" loading="lazy"/>
                                   {enableButtons(question) &&
                                     <div className="ml-3">
                                       <Button

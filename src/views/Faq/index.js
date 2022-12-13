@@ -24,7 +24,7 @@ const FaqPage = () => {
         <div className="page-wrapper">
           {faqPage.file ? (
             <div className="position-relative">
-              <img src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${faqPage.file_id}`} alt="banner" className="image-size"/>
+              <img src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${faqPage.file_id}`} alt="banner" className="image-size" loading="lazy"/>
               <div className="p-3 position-absolute title-wrapper">
                 {faqPage.title}
               </div>

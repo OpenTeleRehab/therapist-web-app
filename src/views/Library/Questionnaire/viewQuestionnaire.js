@@ -40,7 +40,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
             <Accordion.Collapse eventKey={index + 1}>
               <Card.Body>
                 { question.file &&
-                  <img src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${question.file.id}`} alt="..." className="img-thumbnail"/>
+                  <img src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${question.file.id}`} alt="..." className="img-thumbnail" loading="lazy"/>
                 }
                 <div className="mb-2 mt-2">
                   {question.title}

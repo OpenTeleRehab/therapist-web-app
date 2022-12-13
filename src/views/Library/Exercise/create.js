@@ -379,7 +379,7 @@ const CreateExercise = ({ translate }) => {
                   }
 
                   { (mediaUpload.fileType !== 'audio/mpeg' && mediaUpload.fileType !== 'video/mp4') &&
-                    <img src={mediaUpload.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${mediaUpload.id}`} alt="..." className="w-100 img-thumbnail"/>
+                    <img src={mediaUpload.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${mediaUpload.id}`} alt="..." className="w-100 img-thumbnail" loading="lazy"/>
                   }
 
                   { mediaUpload.fileType === 'video/mp4' &&

@@ -288,7 +288,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                       <div id={`view-questionnaire-${questionnaire.id}`} className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
                         <div className="card-img bg-light">
                           <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                            <img src={'/images/questionnaire.svg'} alt='questionnaire' />
+                            <img src={'/images/questionnaire.svg'} alt='questionnaire' loading="lazy"/>
                             <p>{translate('activity.questionnaire').toUpperCase()}</p>
                           </div>
                         </div>
