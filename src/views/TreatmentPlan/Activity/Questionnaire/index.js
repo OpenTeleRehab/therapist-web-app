@@ -37,7 +37,6 @@ import _ from 'lodash';
 import scssColors from '../../../../scss/custom.scss';
 import Select from 'react-select';
 
-let timer = null;
 const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, viewQuestionnaire, setViewQuestionnaire, setShowPreview, isOwnCreated, oldSelectedQuestionnaires, showPreview }) => {
   const dispatch = useDispatch();
   const { loading, questionnaires, filters, totalCount } = useSelector(state => state.questionnaire);
@@ -92,17 +91,14 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
       serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
     });
 
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getQuestionnaires({
-        filter: formFields,
-        categories: serializedSelectedCats,
-        lang: language,
-        page_size: pageSize,
-        page: currentPage,
-        therapist_id: therapistId
-      }));
-    }, 500);
+    dispatch(getQuestionnaires({
+      filter: formFields,
+      categories: serializedSelectedCats,
+      lang: language,
+      page_size: pageSize,
+      page: currentPage,
+      therapist_id: therapistId
+    }));
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
@@ -340,7 +336,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
               />
             </>
           )}
-          { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
           { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire}/> }
         </Col>
       </Row>

@@ -10,3 +10,10 @@
 	justify-content: center;
 	z-index: 10000;
 }
+
+
+.loading-spinner {
+	position: absolute;
+	top: calc(50%);
+	left: calc(50% - 20px);
+}

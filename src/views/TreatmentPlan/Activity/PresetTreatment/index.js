@@ -9,7 +9,6 @@ import Dialog from '../../../../components/Dialog';
 import ViewTreatmentPlan from './detail';
 import { Form } from 'react-bootstrap';
 
-let timer = null;
 const PresetTreatment = ({ translate, presetId, onSectionChange, setViewPreset, viewPreset }) => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
@@ -34,16 +33,13 @@ const PresetTreatment = ({ translate, presetId, onSectionChange, setViewPreset, 
 
   useEffect(() => {
     if (profile !== undefined) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        dispatch(getPresetTreatmentPlans({
-          filters,
-          type: 'preset',
-          search_value: searchValue,
-          page_size: pageSize,
-          page: currentPage + 1
-        }));
-      }, 500);
+      dispatch(getPresetTreatmentPlans({
+        filters,
+        type: 'preset',
+        search_value: searchValue,
+        page_size: pageSize,
+        page: currentPage + 1
+      }));
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 

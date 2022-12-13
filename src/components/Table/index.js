@@ -97,7 +97,7 @@ const CustomTable = ({
         {rightButton}
         <PagingPanel pageSizes={pageSizes} />
       </Grid>
-      {loading && <Spinner animation="border" variant="primary" className="table-spinner"/>}
+      {loading && <Spinner animation="border" variant="primary" className="loading-spinner"/>}
     </div>
   );
 };

@@ -36,7 +36,6 @@ import _ from 'lodash';
 import Select from 'react-select';
 import scssColors from 'scss/custom.scss';
 
-let timer = null;
 const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExercise, viewExercise, setShowPreview, isOwnCreated, oldSelectedExercises, showPreview }) => {
   const dispatch = useDispatch();
   const { loading, exercises, filters, totalCount } = useSelector(state => state.exercise);
@@ -91,17 +90,14 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
       serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
     });
 
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getExercises({
-        lang: language,
-        filter: formFields,
-        categories: serializedSelectedCats,
-        page_size: pageSize,
-        page: currentPage,
-        therapist_id: therapistId
-      }));
-    }, 500);
+    dispatch(getExercises({
+      lang: language,
+      filter: formFields,
+      categories: serializedSelectedCats,
+      page_size: pageSize,
+      page: currentPage,
+      therapist_id: therapistId
+    }));
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
@@ -356,7 +352,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
               />
             </>
           )}
-          { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
           { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} exercise={exercise} /> }
         </Col>
       </Row>

@@ -1,14 +1,27 @@
+import { isCancel } from 'axios';
 import axios from 'utils/axios';
 import _ from 'lodash';
 
 const getEducationMaterials = payload => {
-  return axios.get('/education-material', { params: payload })
+  if (window.abortController !== undefined) {
+    window.abortController.abort();
+  }
+
+  window.abortController = new AbortController();
+
+  return axios.get('/education-material', {
+    params: payload,
+    signal: window.abortController.signal
+  })
     .then(
       res => {
         return res.data;
       }
     )
     .catch((e) => {
+      if (isCancel(e)) {
+        return e;
+      }
       return e.response.data;
     });
 };
