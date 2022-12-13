@@ -21,6 +21,7 @@ import {
 } from '@devexpress/dx-react-grid-bootstrap4';
 import PropTypes from 'prop-types';
 import { getTranslate } from 'react-localize-redux';
+import Spinner from 'react-bootstrap/Spinner';
 
 import Toolbar from 'components/Table/Toolbar';
 import SearchInput from 'components/Table/SearchPanel/Input';
@@ -38,7 +39,7 @@ const FixedColumnCell = (props) => <TableFixedColumns.Cell {...props} showLeftDi
 const CustomTable = ({
   rows, columns, columnExtensions, pageSize, setPageSize, currentPage,
   setCurrentPage, totalCount, setSearchValue, setFilters, onRowClick, hover, filters,
-  rightButton, hideSearchFilter, remotePaging, defaultSoringColumns, defaultHiddenColumnNames
+  rightButton, hideSearchFilter, remotePaging, defaultSoringColumns, defaultHiddenColumnNames, loading
 }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -63,38 +64,41 @@ const CustomTable = ({
   };
 
   return (
-    <Grid
-      rows={rows}
-      columns={columns}>
-      <SearchState onValueChange={setSearchValue} />
-      <FilteringState filters={filters} defaultFilters={[]} onFiltersChange={setFilters} columnExtensions={filteringStateColumnExtensions} />
-      <PagingState
-        currentPage={currentPage}
-        onCurrentPageChange={setCurrentPage}
-        pageSize={pageSize}
-        onPageSizeChange={handlePageSizeChange}
-      />
-      <SortingState
-        defaultSorting={defaultSoringColumns}
-      />
-      <IntegratedSorting />
-      {remotePaging ? <CustomPaging totalCount={totalCount} /> : <IntegratedPaging />}
-      {onRowClick
-        ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} className={hover} tabIndex={0} />} />
-        : <Table columnExtensions={tableColumnExtensions} />
-      }
-      <TableHeaderRow />
-      {showFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
-      <TableFixedColumns rightColumns={rightColumns} cellComponent={FixedColumnCell} />
-      <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} defaultHiddenColumnNames={defaultHiddenColumnNames} />
+    <div className="position-relative">
+      <Grid
+        rows={rows}
+        columns={columns}>
+        <SearchState onValueChange={setSearchValue} />
+        <FilteringState filters={filters} defaultFilters={[]} onFiltersChange={setFilters} columnExtensions={filteringStateColumnExtensions} />
+        <PagingState
+          currentPage={currentPage}
+          onCurrentPageChange={setCurrentPage}
+          pageSize={pageSize}
+          onPageSizeChange={handlePageSizeChange}
+        />
+        <SortingState
+          defaultSorting={defaultSoringColumns}
+        />
+        <IntegratedSorting />
+        {remotePaging ? <CustomPaging totalCount={totalCount} /> : <IntegratedPaging />}
+        {onRowClick
+          ? <Table columnExtensions={tableColumnExtensions} rowComponent={props => <TableRow {...props} handleClick={onRowClick} className={hover} tabIndex={0} />} />
+          : <Table columnExtensions={tableColumnExtensions} />
+        }
+        <TableHeaderRow />
+        {showFilter && <TableFilterRow rowComponent={FilterRow} cellComponent={FilterCells} messages={{ filterPlaceholder: translate('common.search.placeholder') }} />}
+        <TableFixedColumns rightColumns={rightColumns} cellComponent={FixedColumnCell} />
+        <TableColumnVisibility columnExtensions={tableColumnVisibilityColumnExtensions} defaultHiddenColumnNames={defaultHiddenColumnNames} />
 
-      <Toolbar />
-      {!hideSearchFilter && <SearchPanel inputComponent={SearchInput} /> }
-      {!hideSearchFilter && <FilterToggle onToggle={toggleFilter} showFilter={showFilter} /> }
-      {!hideSearchFilter && <ColumnChooser toggleButtonComponent={ToggleButton} /> }
-      {rightButton}
-      <PagingPanel pageSizes={pageSizes} />
-    </Grid>
+        <Toolbar />
+        {!hideSearchFilter && <SearchPanel inputComponent={SearchInput} /> }
+        {!hideSearchFilter && <FilterToggle onToggle={toggleFilter} showFilter={showFilter} /> }
+        {!hideSearchFilter && <ColumnChooser toggleButtonComponent={ToggleButton} /> }
+        {rightButton}
+        <PagingPanel pageSizes={pageSizes} />
+      </Grid>
+      {loading && <Spinner animation="border" variant="primary" className="table-spinner"/>}
+    </div>
   );
 };
 
@@ -116,12 +120,14 @@ CustomTable.propTypes = {
   hideSearchFilter: PropTypes.bool,
   remotePaging: PropTypes.bool,
   defaultSoringColumns: PropTypes.array,
-  defaultHiddenColumnNames: PropTypes.array
+  defaultHiddenColumnNames: PropTypes.array,
+  loading: PropTypes.bool
 };
 
 CustomTable.defaultProps = {
   columnExtensions: [],
-  remotePaging: true
+  remotePaging: true,
+  loading: false
 };
 
 export default CustomTable;

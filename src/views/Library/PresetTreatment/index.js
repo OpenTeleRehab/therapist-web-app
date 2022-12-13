@@ -15,7 +15,7 @@ const PresetTreatment = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
-  const { presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
+  const { presetTreatmentPlans, loading } = useSelector(state => state.treatmentPlan);
   const { colorScheme } = useSelector(state => state.colorScheme);
 
   const [pageSize, setPageSize] = useState(60);
@@ -50,6 +50,7 @@ const PresetTreatment = ({ translate }) => {
   return (
     <>
       <CustomTable
+        loading={loading}
         pageSize={pageSize}
         setPageSize={setPageSize}
         currentPage={currentPage}

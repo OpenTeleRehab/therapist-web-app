@@ -1,15 +1,40 @@
-import { initialState } from './states';
+export const initialState = {
+  treatmentPlans: [],
+  treatmentPlansDetail: {
+    previewData: {
+      exercises: [],
+      materials: [],
+      questionnaires: []
+    }
+  },
+  presetTreatmentPlans: [],
+  loading: false
+};
 
 export const treatmentPlan = (state = initialState, action) => {
   switch (action.type) {
+    case 'GET_TREATMENT_PLANS_REQUEST':
+    case 'GET_PRESET_TREATMENT_PLANS_REQUEST': {
+      return Object.assign({}, state, {
+        loading: true
+      });
+    }
     case 'GET_TREATMENT_PLANS_SUCCESS': {
       return Object.assign({}, state, {
-        treatmentPlans: action.data
+        treatmentPlans: action.data,
+        loading: false
       });
     }
     case 'GET_PRESET_TREATMENT_PLANS_SUCCESS': {
       return Object.assign({}, state, {
-        presetTreatmentPlans: action.data
+        presetTreatmentPlans: action.data,
+        loading: false
+      });
+    }
+    case 'GET_TREATMENT_PLANS_FAIL':
+    case 'GET_PRESET_TREATMENT_PLANS_FAIL': {
+      return Object.assign({}, state, {
+        loading: false
       });
     }
     case 'GET_TREATMENT_PLANS_DETAIL_SUCCESS': {
