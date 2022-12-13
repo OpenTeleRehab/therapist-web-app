@@ -17,6 +17,19 @@ export const treatmentPlan = (state = initialState, action) => {
         treatmentPlansDetail: action.data
       });
     }
+    case 'UPDATE_TREATMENT_PLAN_SUCCESS': {
+      const { id, data } = action;
+      const treatmentPlans = state.treatmentPlans.map(t => t.id === parseInt(id) ? { ...t, ...data } : t);
+      return Object.assign({}, state, { treatmentPlans });
+    }
+    case 'ADD_DATA_PREVIEW': {
+      return Object.assign({}, state, {
+        treatmentPlansDetail: {
+          ...state.treatmentPlansDetail,
+          previewData: action.data
+        }
+      });
+    }
     default:
       return state;
   }

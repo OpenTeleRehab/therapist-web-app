@@ -7,7 +7,7 @@ import { getTranslate } from 'react-localize-redux';
 import settings from 'settings';
 import {
   createTreatmentPlan, updateTreatmentPlan,
-  getTreatmentPlans
+  getTreatmentPlans, getTreatmentPlansDetail
 } from 'store/treatmentPlan/actions';
 import moment from 'moment';
 
@@ -78,11 +78,18 @@ const CreateTreatmentPlan = () => {
   }, [dispatch, profile]);
 
   useEffect(() => {
-    if (id) {
+    if (id && treatmentPlans.length === 0) {
       const additionalParams = patientId ? {} : { type: 'preset' };
       dispatch(getTreatmentPlans({ id, ...additionalParams }));
     }
-  }, [id, patientId, dispatch]);
+  }, [id, patientId, treatmentPlans, dispatch]);
+
+  useEffect(() => {
+    if (id) {
+      const additionalParams = patientId ? {} : { type: 'preset' };
+      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
+    }
+  }, [id, patientId, profile, dispatch]);
 
   useEffect(() => {
     if (!patientId && profile) {
@@ -126,9 +133,9 @@ const CreateTreatmentPlan = () => {
       setEditingTreatmentPlan(editingData);
       setStartDate(moment(editingData.start_date, settings.date_format));
       setGoals(editingData.goals || []);
-      setActivities(editingData.activities || []);
       setWeeks(editingData.total_of_weeks);
       setIsOwnCreated(editingData.created_by === profile.id);
+      setActivities(_.cloneDeep(editingData.activities) || []);
       setOriginData(_.cloneDeep(editingData.activities) || []);
       setOriginGoals(_.cloneDeep(editingData.goals || []));
       setTreatmentPlanId(editingData.id);

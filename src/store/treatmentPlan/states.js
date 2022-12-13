@@ -1,5 +1,11 @@
 export const initialState = {
   treatmentPlans: [],
-  treatmentPlansDetail: {},
+  treatmentPlansDetail: {
+    previewData: {
+      exercises: [],
+      materials: [],
+      questionnaires: []
+    }
+  },
   presetTreatmentPlans: []
 };

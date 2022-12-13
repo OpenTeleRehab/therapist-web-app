@@ -1,23 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getTranslate } from 'react-localize-redux';
-import { useSelector, useDispatch } from 'react-redux';
-import { useParams, Link, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import { BiEdit } from 'react-icons/bi';
 import { FaDownload } from 'react-icons/fa';
-import {
-  Button,
-  Dropdown, DropdownButton,
-  OverlayTrigger,
-  Tab,
-  Tabs,
-  Tooltip
-} from 'react-bootstrap';
+import { Button, Dropdown, DropdownButton, OverlayTrigger, Tab, Tabs, Tooltip } from 'react-bootstrap';
 import moment from 'moment/moment';
-import * as ROUTES from 'variables/routes';
+import _ from 'lodash';
 
+import * as ROUTES from 'variables/routes';
 import PatientInfo from 'views/Patient/Partials/patientInfo';
 import {
-  deleteTreatmentPlans, downloadTreatmentPlan,
+  deleteTreatmentPlans,
+  downloadTreatmentPlan, getPresetTreatmentPlans,
+  getTreatmentPlans,
   getTreatmentPlansDetail
 } from '../../store/treatmentPlan/actions';
 import settings from 'settings';
@@ -26,23 +22,21 @@ import EllipsisText from 'react-ellipsis-text';
 import QuestionnaireTab from './TabContents/questionnaireTab';
 import ActivitySection from './_Partials/activitySection';
 import AdherenceTab from './TabContents/adherenceTab';
-import _ from 'lodash';
-import { renderStatusBadge, getDisease } from '../../utils/treatmentPlan';
+import { getDisease, renderStatusBadge } from '../../utils/treatmentPlan';
 import GoalTrackingTab from './TabContents/goalTrakingTab';
 import Dialog from 'components/Dialog';
 import { getDiseases } from 'store/disease/actions';
 import AssignPatient from '../Library/PresetTreatment/assignPatient';
-import { TYPE } from '../../variables/activity';
 
 const ViewTreatmentPlan = () => {
   const history = useHistory();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
-  const { profile } = useSelector((state) => state.auth);
-
-  const treatmentPlansDetail = useSelector((state) => state.treatmentPlan.treatmentPlansDetail);
   const { id, patientId } = useParams();
+  const { profile } = useSelector((state) => state.auth);
+  const { treatmentPlans, presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
+  const [treatmentPlansDetail, setTreatmentPlansDetail] = useState({});
   const [formFields, setFormFields] = useState({
     name: '',
     description: '',
@@ -61,7 +55,6 @@ const ViewTreatmentPlan = () => {
   const [downloading, setDownloading] = useState(false);
   const diseases = useSelector((state) => state.disease.diseases);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
-  const [presetActivities, setPresetActivities] = useState([]);
 
   useEffect(() => {
     if (profile && profile.language_id) {
@@ -75,6 +68,24 @@ const ViewTreatmentPlan = () => {
       dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
   }, [id, patientId, dispatch, profile]);
+
+  useEffect(() => {
+    if (id && patientId) {
+      if (treatmentPlans.length) {
+        const treatmentPlan = _.find(treatmentPlans, { id: parseInt(id) }) || {};
+        setTreatmentPlansDetail(treatmentPlan);
+      } else {
+        dispatch(getTreatmentPlans({ id }));
+      }
+    } else if (id) {
+      if (presetTreatmentPlans.length) {
+        const treatmentPlan = _.find(presetTreatmentPlans, { id: parseInt(id) }) || {};
+        setTreatmentPlansDetail(treatmentPlan);
+      } else {
+        dispatch(getPresetTreatmentPlans({ id, type: 'preset' }));
+      }
+    }
+  }, [id, patientId, dispatch, treatmentPlans, presetTreatmentPlans]);
 
   useEffect(() => {
     if (id && !_.isEmpty(treatmentPlansDetail)) {
@@ -92,33 +103,6 @@ const ViewTreatmentPlan = () => {
       setStartDate(moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format));
     }
   }, [id, treatmentPlansDetail, diseases]);
-
-  useEffect(() => {
-    const groupActivitiesByWeek = _.groupBy(activities, function (item) {
-      return item.week;
-    });
-    const data = [];
-    _.forEach(groupActivitiesByWeek, (activityByWeek) => {
-      const activityData = [];
-      const groupActivitiesByDay = _.groupBy(activityByWeek, function (item) {
-        return item.day;
-      });
-      _.forEach(groupActivitiesByDay, (activityByDay) => {
-        const customExercises = activityByDay.filter(d => d.custom === true);
-        const custom = [];
-        const activity = activityByDay.find(d => d.day);
-        const exercises = activityByDay.filter(d => d.type === TYPE.exercise).map(obj => obj.activity_id);
-        const materials = activityByDay.filter(d => d.type === TYPE.material).map(obj => obj.activity_id);
-        const questionnaires = activityByDay.filter(d => d.type === TYPE.questionnaire).map(obj => obj.activity_id);
-        _.forEach(customExercises, (customExercise) => {
-          custom.push({ sets: customExercise.sets, reps: customExercise.reps, additional_information: customExercise.additional_information, id: customExercise.activity_id });
-        });
-        activityData.push({ day: activity.day, week: activity.week, exercises: exercises, materials: materials, questionnaires: questionnaires, customExercises: custom });
-      });
-      data.push(...activityData);
-    });
-    setPresetActivities(data);
-  }, [activities]);
 
   const handleDelete = () => {
     setShowDeleteDialog(true);
@@ -157,7 +141,7 @@ const ViewTreatmentPlan = () => {
     <>
       {patientId && (
         <div className="top-content mb-4">
-          <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')} />
+          <PatientInfo id={patientId} translate={translate} breadcrumb={translate('treatment_plan.patient_detail')}/>
         </div>
       )}
       <div>
@@ -182,7 +166,7 @@ const ViewTreatmentPlan = () => {
                 onClick={handleDownload}
                 disabled={downloading}
               >
-                <FaDownload size={14} className="mr-1" />
+                <FaDownload size={14} className="mr-1"/>
                 {translate('common.download')}
               </Button>
               <Button
@@ -191,7 +175,7 @@ const ViewTreatmentPlan = () => {
                 as={Button}
                 onClick={handleOnClick}
               >
-                <BiEdit className="mr-1" />
+                <BiEdit className="mr-1"/>
                 {translate('treatment_plan.edit')}
               </Button>
             </>
@@ -229,10 +213,10 @@ const ViewTreatmentPlan = () => {
             <span className="mr-4">
               <strong>{translate('common.description')}:</strong>&nbsp;
               <OverlayTrigger
-                overlay={<Tooltip id="button-tooltip-2">{ formFields.description }</Tooltip>}
+                overlay={<Tooltip id="button-tooltip-2">{formFields.description}</Tooltip>}
               >
                 <span className="card-title">
-                  <EllipsisText text={formFields.description} length={settings.noteMaxLength} />
+                  <EllipsisText text={formFields.description} length={settings.noteMaxLength}/>
                 </span>
               </OverlayTrigger>
             </span>
@@ -244,21 +228,21 @@ const ViewTreatmentPlan = () => {
 
       <Tabs mountOnEnter className="mt-4">
         <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities_tab')}>
-          <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} />
+          <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} treatmentPlanId={id}/>
         </Tab>
         {patientId &&
           <Tab eventKey={TAB.adherence} title={translate('treatment_plan.adherence_tab')}>
-            <AdherenceTab activities={activities} startDate={treatmentPlansDetail.start_date} endDate={treatmentPlansDetail.end_date}/>
+            <AdherenceTab startDate={treatmentPlansDetail.start_date} endDate={treatmentPlansDetail.end_date}/>
           </Tab>
         }
         {patientId &&
           <Tab eventKey={TAB.questionnaires} title={translate('treatment_plan.questionnaires_tab')}>
-            <QuestionnaireTab activities={activities}/>
+            <QuestionnaireTab/>
           </Tab>
         }
         {patientId &&
           <Tab eventKey={TAB.goal_tracking} title={translate('treatment_plan.goal_tracking_tab')}>
-            <GoalTrackingTab activities={activities}/>
+            <GoalTrackingTab/>
           </Tab>
         }
       </Tabs>
@@ -274,12 +258,12 @@ const ViewTreatmentPlan = () => {
         <p>{translate('common.delete_confirmation_message')}</p>
       </Dialog>
 
-      { showAssignDialog && (
+      {showAssignDialog && (
         <AssignPatient
           handleClose={handleCloseAssignDialog}
           show={showAssignDialog}
           weeks={weeks}
-          activities={presetActivities}
+          activities={activities}
         />
       )}
     </>

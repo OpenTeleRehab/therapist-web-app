@@ -7,52 +7,36 @@ import {
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
-import { MdDescription } from 'react-icons/md';
-
 import {
   BsX,
   BsHeart,
   BsHeartFill,
   BsPersonFill
 } from 'react-icons/bs';
-
-import { EducationMaterial } from 'services/educationMaterial';
+import { MdDescription } from 'react-icons/md';
 import { useSelector } from 'react-redux';
-import ViewEducationMaterial from './viewEducationMaterial';
 import _ from 'lodash';
-import { User } from 'services/user';
-import { MATERIAL_TYPE, TYPE } from 'variables/activity';
 
-const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedMaterials, originData, day, week, showList, treatmentPlanId }) => {
+import ViewEducationMaterial from './viewEducationMaterial';
+import { MATERIAL_TYPE } from 'variables/activity';
+
+const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readOnly, therapistId, isOwnCreated, treatmentPlanSelectedMaterials, originData, day, week }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [materials, setMaterials] = useState([]);
   const [viewMaterial, setViewMaterial] = useState(false);
   const [material, setMaterial] = useState([]);
   const [treatmentPlanMaterials, setTreatmentPlanMaterials] = useState([]);
+  const { previewData } = useSelector(state => state.treatmentPlan.treatmentPlansDetail);
 
   useEffect(() => {
-    if (materialObjs && materialObjs.length > 0) {
-      setMaterials(materialObjs);
-    } else if (materialIds && materialIds.length > 0) {
-      if (showList) {
-        User.getActivitiesByIds(materialIds, treatmentPlanId, TYPE.material, day, week, lang, therapistId).then(res => {
-          if (res.data) {
-            setMaterials(res.data);
-          }
-        });
-      } else {
-        EducationMaterial.getEducationMaterialsByIds(materialIds, lang, therapistId).then(res => {
-          if (res.data) {
-            setMaterials(res.data);
-          }
-        });
-      }
+    if (materialIds && materialIds.length && previewData && previewData.materials) {
+      const data = _.filter(previewData.materials, o => _.includes(materialIds, o.id));
+      setMaterials(data);
     } else {
       setMaterials([]);
     }
-    // eslint-disable-next-line
-  }, [JSON.stringify(materialIds), lang, materialObjs, therapistId, day, week, showList, treatmentPlanId]);
+  }, [JSON.stringify(materialIds), previewData]);
 
   useEffect(() => {
     if (treatmentPlanSelectedMaterials && treatmentPlanSelectedMaterials.length > 0) {
@@ -171,18 +155,14 @@ const ListEducationMaterialCard = ({ materialIds, materialObjs, onSelectionRemov
 
 ListEducationMaterialCard.propTypes = {
   materialIds: PropTypes.array,
-  materialObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
-  lang: PropTypes.any,
   therapistId: PropTypes.number,
   isOwnCreated: PropTypes.bool,
   treatmentPlanSelectedMaterials: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
-  week: PropTypes.number,
-  showList: PropTypes.bool,
-  treatmentPlanId: PropTypes.number
+  week: PropTypes.number
 };
 
 export default withLocalize(ListEducationMaterialCard);

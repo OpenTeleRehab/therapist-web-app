@@ -14,8 +14,10 @@ const updateTreatmentPlanRequest = () => ({
   type: 'UPDATE_TREATMENT_PLAN_REQUEST'
 });
 
-const updateTreatmentPlanSuccess = () => ({
-  type: 'UPDATE_TREATMENT_PLAN_SUCCESS'
+const updateTreatmentPlanSuccess = (id, data) => ({
+  type: 'UPDATE_TREATMENT_PLAN_SUCCESS',
+  id,
+  data
 });
 
 const updateTreatmentPlanFail = () => ({
@@ -86,6 +88,11 @@ const downloadTreatmentPlanFail = () => ({
   type: 'DOWNLOAD_TREATMENT_PLAN_FAIL'
 });
 
+const addDataPreview = (data) => ({
+  type: 'ADD_DATA_PREVIEW',
+  data
+});
+
 export const mutation = {
   createTreatmentPlanRequest,
   createTreatmentPlanSuccess,
@@ -107,5 +114,6 @@ export const mutation = {
   getPresetTreatmentPlansFail,
   downloadTreatmentPlanRequest,
   downloadTreatmentPlanSuccess,
-  downloadTreatmentPlanFail
+  downloadTreatmentPlanFail,
+  addDataPreview
 };

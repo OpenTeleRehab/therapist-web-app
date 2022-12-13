@@ -7,45 +7,29 @@ import {
   OverlayTrigger,
   Tooltip
 } from 'react-bootstrap';
+import _ from 'lodash';
 
-import { Questionnaire } from 'services/questionnaire';
 import { useSelector } from 'react-redux';
 import { BsX, BsHeartFill, BsHeart, BsPersonFill } from 'react-icons/bs';
 import ViewQuestionnaire from './viewQuestionnaire';
-import _ from 'lodash';
-import { User } from 'services/user';
-import { TYPE } from 'variables/activity';
 
-const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectionRemove, readOnly, lang, therapistId, isOwnCreated, treatmentPlanSelectedQuestionnaires, day, week, originData, showList, treatmentPlanId }) => {
+const ListQuestionnaireCard = ({ questionnaireIds, onSelectionRemove, readOnly, therapistId, isOwnCreated, treatmentPlanSelectedQuestionnaires, day, week, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [questionnaires, setQuestionnaires] = useState([]);
   const [questionnaire, setQuestionnaire] = useState([]);
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [treatmentPlanQuestionnaires, setTreatmentPlanQuestionnaires] = useState([]);
+  const { previewData } = useSelector(state => state.treatmentPlan.treatmentPlansDetail);
 
   useEffect(() => {
-    if (questionnaireObjs && questionnaireObjs.length > 0) {
-      setQuestionnaires(questionnaireObjs);
-    } else if (questionnaireIds && questionnaireIds.length > 0) {
-      if (showList) {
-        User.getActivitiesByIds(questionnaireIds, treatmentPlanId, TYPE.questionnaire, day, week, lang, therapistId).then(res => {
-          if (res.data) {
-            setQuestionnaires(res.data);
-          }
-        });
-      } else {
-        Questionnaire.getQuestionnairesByIds(questionnaireIds, lang, therapistId).then(res => {
-          if (res.data) {
-            setQuestionnaires(res.data);
-          }
-        });
-      }
+    if (questionnaireIds && questionnaireIds.length && previewData && previewData.questionnaires) {
+      const data = _.filter(previewData.questionnaires, o => _.includes(questionnaireIds, o.id));
+      setQuestionnaires(data);
     } else {
       setQuestionnaires([]);
     }
-    // eslint-disable-next-line
-  }, [JSON.stringify(questionnaireIds), lang, questionnaireObjs, therapistId, day, week, showList, treatmentPlanId]);
+  }, [JSON.stringify(questionnaireIds), previewData]);
 
   useEffect(() => {
     if (treatmentPlanSelectedQuestionnaires && treatmentPlanSelectedQuestionnaires.length > 0) {
@@ -156,18 +140,14 @@ const ListQuestionnaireCard = ({ questionnaireIds, questionnaireObjs, onSelectio
 
 ListQuestionnaireCard.propTypes = {
   questionnaireIds: PropTypes.array,
-  questionnaireObjs: PropTypes.array,
   onSelectionRemove: PropTypes.func,
   readOnly: PropTypes.bool,
-  lang: PropTypes.any,
   therapistId: PropTypes.number,
   isOwnCreated: PropTypes.bool,
   treatmentPlanSelectedQuestionnaires: PropTypes.array,
   originData: PropTypes.array,
   day: PropTypes.number,
-  week: PropTypes.number,
-  showList: PropTypes.bool,
-  treatmentPlanId: PropTypes.number
+  week: PropTypes.number
 };
 
 export default withLocalize(ListQuestionnaireCard);
