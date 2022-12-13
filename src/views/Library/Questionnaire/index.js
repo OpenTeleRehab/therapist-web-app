@@ -44,7 +44,6 @@ import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
 
-let timer = null;
 const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedQuestionnaires, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -88,17 +87,14 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
       serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
     });
 
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getQuestionnaires({
-        filter: formFields,
-        categories: serializedSelectedCats,
-        lang: language,
-        page_size: pageSize,
-        page: currentPage,
-        therapist_id: therapistId
-      }));
-    }, 500);
+    dispatch(getQuestionnaires({
+      filter: formFields,
+      categories: serializedSelectedCats,
+      lang: language,
+      page_size: pageSize,
+      page: currentPage,
+      therapist_id: therapistId
+    }));
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   useEffect(() => {
@@ -378,7 +374,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
               />
             </>
           )}
-          { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
           { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
         </Col>
       </Row>

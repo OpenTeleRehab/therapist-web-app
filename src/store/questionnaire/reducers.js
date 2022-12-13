@@ -2,11 +2,22 @@ import { initialState } from './states';
 
 export const questionnaire = (state = initialState, action) => {
   switch (action.type) {
+    case 'GET_QUESTIONNAIRES_REQUEST': {
+      return Object.assign({}, state, {
+        loading: true
+      });
+    }
     case 'GET_QUESTIONNAIRES_SUCCESS': {
       return Object.assign({}, state, {
         questionnaires: action.data,
         filters: action.filters,
-        totalCount: action.info.total_count
+        totalCount: action.info.total_count,
+        loading: false
+      });
+    }
+    case 'GET_QUESTIONNAIRES_FAIL': {
+      return Object.assign({}, state, {
+        loading: true
       });
     }
     case 'GET_QUESTIONNAIRE_SUCCESS': {

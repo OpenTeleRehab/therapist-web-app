@@ -1,3 +1,4 @@
+import { isCancel } from 'axios';
 import axios from 'utils/axios';
 import { getCountryIsoCode } from 'utils/country';
 import { TYPE } from '../variables/treatmentPlan';
@@ -39,10 +40,22 @@ const updateTreatmentPlan = (id, payload) => {
 };
 
 const getTreatmentPlans = payload => {
-  let config = ['/treatment-plan', { params: payload }];
+  if (window.abortController !== undefined) {
+    window.abortController.abort();
+  }
+
+  window.abortController = new AbortController();
+
+  let config = ['/treatment-plan', { params: payload, signal: window.abortController.signal }];
 
   if (payload.type !== TYPE.preset) {
-    config = ['/patient-treatment-plan', { params: payload, headers: { country: getCountryIsoCode() } }];
+    config = ['/patient-treatment-plan', {
+      params: payload,
+      signal: window.abortController.signal,
+      headers: {
+        country: getCountryIsoCode()
+      }
+    }];
   }
 
   return axios.get(...config)
@@ -52,6 +65,9 @@ const getTreatmentPlans = payload => {
       }
     )
     .catch((e) => {
+      if (isCancel(e)) {
+        return e;
+      }
       return e.response.data;
     });
 };

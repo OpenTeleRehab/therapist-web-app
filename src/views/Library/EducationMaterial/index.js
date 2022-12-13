@@ -46,7 +46,6 @@ import { MATERIAL_TYPE } from '../../../variables/activity';
 import customColorScheme from '../../../utils/customColorScheme';
 import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
 
-let timer = null;
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -90,17 +89,14 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
       serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
     });
 
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getEducationMaterials({
-        filter: formFields,
-        page_size: pageSize,
-        categories: serializedSelectedCats,
-        therapist_id: therapistId,
-        lang: language,
-        page: currentPage
-      }));
-    }, 500);
+    dispatch(getEducationMaterials({
+      filter: formFields,
+      page_size: pageSize,
+      categories: serializedSelectedCats,
+      therapist_id: therapistId,
+      lang: language,
+      page: currentPage
+    }));
   }, [language, formFields, selectedCategories, therapistId, currentPage, pageSize, dispatch]);
 
   useEffect(() => {
@@ -389,7 +385,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
               />
             </>
           )}
-          { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
           { viewEducationMaterial && <ViewEducationMaterial showView={viewEducationMaterial} handleViewClose={handleViewEducationMaterialClose} educationMaterial={educationMaterial} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
         </Col>
       </Row>

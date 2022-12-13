@@ -9,7 +9,6 @@ import CreateButton from 'views/Patient/Partials/createButton';
 import { renderStatusBadge } from 'utils/treatmentPlan';
 import { Button } from 'react-bootstrap/esm/index';
 
-let timer = null;
 const TreatmentHistory = () => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
@@ -40,20 +39,17 @@ const TreatmentHistory = () => {
 
   useEffect(() => {
     if (patientId) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        dispatch(getTreatmentPlans({
-          patient_id: patientId,
-          search_value: searchValue,
-          filters: filters,
-          page_size: pageSize,
-          page: currentPage + 1
-        })).then(result => {
-          if (result) {
-            setTotalCount(result.total_count);
-          }
-        });
-      }, 500);
+      dispatch(getTreatmentPlans({
+        patient_id: patientId,
+        search_value: searchValue,
+        filters: filters,
+        page_size: pageSize,
+        page: currentPage + 1
+      })).then(result => {
+        if (result) {
+          setTotalCount(result.total_count);
+        }
+      });
     }
   }, [currentPage, pageSize, searchValue, filters, patientId, dispatch]);
 

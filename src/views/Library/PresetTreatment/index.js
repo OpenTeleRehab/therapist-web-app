@@ -3,14 +3,13 @@ import PropTypes from 'prop-types';
 import { withLocalize } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import _ from 'lodash';
 
 import CustomTable from 'components/Table';
 import { getPresetTreatmentPlans } from 'store/treatmentPlan/actions';
 import * as ROUTES from 'variables/routes';
 import customColorScheme from '../../../utils/customColorScheme';
-import _ from 'lodash';
 
-let timer = null;
 const PresetTreatment = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -30,16 +29,13 @@ const PresetTreatment = ({ translate }) => {
 
   useEffect(() => {
     if (profile !== undefined) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        dispatch(getPresetTreatmentPlans({
-          filters,
-          type: 'preset',
-          search_value: searchValue,
-          page_size: pageSize,
-          page: currentPage + 1
-        }));
-      }, 500);
+      dispatch(getPresetTreatmentPlans({
+        filters,
+        type: 'preset',
+        search_value: searchValue,
+        page_size: pageSize,
+        page: currentPage + 1
+      }));
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile]);
 

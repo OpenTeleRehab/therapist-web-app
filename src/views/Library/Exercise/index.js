@@ -31,7 +31,6 @@ import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
 import { TranslateAction } from '../../../components/ActionIcons/TranslateAction';
 
-let timer = null;
 const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedExercises, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
@@ -75,17 +74,14 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
     Object.keys(selectedCategories).forEach(function (key) {
       serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
     });
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getExercises({
-        lang: language,
-        filter: formFields,
-        categories: serializedSelectedCats,
-        page_size: pageSize,
-        page: currentPage,
-        therapist_id: therapistId
-      }));
-    }, 500);
+    dispatch(getExercises({
+      lang: language,
+      filter: formFields,
+      categories: serializedSelectedCats,
+      page_size: pageSize,
+      page: currentPage,
+      therapist_id: therapistId
+    }));
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   useEffect(() => {
@@ -382,7 +378,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
             </>
           )}
 
-          { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
         </Col>
       </Row>
       {previewExercise && <ViewExercise showView handleViewClose={handleViewClose} exercise={previewExercise} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}

@@ -39,7 +39,6 @@ import Select from 'react-select';
 import scssColors from '../../../../scss/custom.scss';
 import { MATERIAL_TYPE } from '../../../../variables/activity';
 
-let timer = null;
 const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, viewEducationMaterial, setViewEducationMaterial, setShowPreview, isOwnCreated, oldSelectedMaterials, showPreview }) => {
   const dispatch = useDispatch();
   const { loading, educationMaterials, filters, totalCount } = useSelector(state => state.educationMaterial);
@@ -94,17 +93,14 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
       serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
     });
 
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      dispatch(getEducationMaterials({
-        filter: formFields,
-        categories: serializedSelectedCats,
-        page_size: pageSize,
-        lang: language,
-        page: currentPage,
-        therapist_id: therapistId
-      }));
-    }, 500);
+    dispatch(getEducationMaterials({
+      filter: formFields,
+      categories: serializedSelectedCats,
+      page_size: pageSize,
+      lang: language,
+      page: currentPage,
+      therapist_id: therapistId
+    }));
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
@@ -350,7 +346,7 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
               />
             </>
           )}
-          { loading && <Spinner className="loading-icon" animation="border" variant="primary" /> }
+          { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
           { viewEducationMaterial && <ViewEducationMaterial showView={viewEducationMaterial} handleViewClose={handleViewEducationMaterialClose} educationMaterial={educationMaterial} />}
         </Col>
       </Row>
