@@ -33,7 +33,9 @@ const ToastNotification = () => {
         </strong>
       </Toast.Header>
       <Toast.Body>
-        {typeof messageNode === 'object' ? messageNode : translate(messageNode, messageParams)}
+        {typeof messageNode === 'object'
+          ? messageNode
+          : translate(messageNode || 'error_message.server_error', messageParams)}
       </Toast.Body>
     </Toast>
   );

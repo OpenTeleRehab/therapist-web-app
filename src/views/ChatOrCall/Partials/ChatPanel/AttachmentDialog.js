@@ -27,7 +27,7 @@ const AttachmentDialog = (
             <source src={attachment.url} type="video/mp4" />
           </video>
         ) : (
-          <img src={attachment.url} alt="" className="w-100 img-thumbnail mb-1" />
+          <img src={attachment.url} alt="" className="w-100 img-thumbnail mb-1" loading="lazy"/>
         )}
       </div>
       <Form onSubmit={onConfirm}>

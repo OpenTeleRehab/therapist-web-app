@@ -36,7 +36,7 @@ const ViewEducationMaterial = ({ showView, handleViewClose, educationMaterial, h
                     }
 
                     { (educationMaterial.file.fileType !== 'audio/mpeg' && educationMaterial.file.fileType !== 'video/mp4' && educationMaterial.file.fileType !== 'application/pdf') &&
-                    <img src={educationMaterial.file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`} alt="..." className="w-100 img-thumbnail"/>
+                    <img src={educationMaterial.file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${educationMaterial.file.id}`} alt="..." className="w-100 img-thumbnail" loading="lazy"/>
                     }
 
                     { educationMaterial.file.fileType === 'video/mp4' &&
