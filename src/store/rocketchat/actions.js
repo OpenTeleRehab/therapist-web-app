@@ -33,7 +33,8 @@ export const getChatRooms = () => async (dispatch, getState) => {
     therapist_id: profile.id,
     enabled: 1,
     page_size: 999999,
-    page: 1
+    page: 1,
+    disableAbortController: true
   };
   const data = await User.getUsers(payload);
   if (data.success) {

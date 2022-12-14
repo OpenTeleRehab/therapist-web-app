@@ -28,7 +28,10 @@ const updateUser = (id, payload) => {
 
 const getUsers = payload => {
   if (window.userAbortController !== undefined) {
-    window.userAbortController.abort();
+    // TODO: remove condition after refactor getChatRooms action
+    if (!payload.disableAbortController) {
+      window.userAbortController.abort();
+    }
   }
 
   window.userAbortController = new AbortController();
