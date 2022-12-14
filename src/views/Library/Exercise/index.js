@@ -70,36 +70,27 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
   }, [filters, profile]);
 
   useEffect(() => {
-    let serializedSelectedCats = [];
-    Object.keys(selectedCategories).forEach(function (key) {
-      serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
-    });
-    dispatch(getExercises({
-      lang: language,
-      filter: formFields,
-      categories: serializedSelectedCats,
-      page_size: pageSize,
-      page: currentPage,
-      therapist_id: therapistId
-    }));
+    if (language !== undefined) {
+      let serializedSelectedCats = [];
+      Object.keys(selectedCategories).forEach(function (key) {
+        serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
+      });
+      dispatch(getExercises({
+        lang: language,
+        filter: formFields,
+        categories: serializedSelectedCats,
+        page_size: pageSize,
+        page: currentPage,
+        therapist_id: therapistId
+      }));
+    }
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   useEffect(() => {
     if (language !== undefined) {
-      dispatch(
-        getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.EXERCISE, lang: language }));
     }
   }, [language, dispatch]);
-
-  useEffect(() => {
-    if (categoryTreeData.length) {
-      const rootCategoryStructure = {};
-      categoryTreeData.forEach(category => {
-        rootCategoryStructure[category.value] = [];
-      });
-      setSelectedCategories(rootCategoryStructure);
-    }
-  }, [categoryTreeData]);
 
   const handleSetSelectedCategories = (parent, checked) => {
     setSelectedCategories({ ...selectedCategories, [parent]: checked.map(item => parseInt(item)) });

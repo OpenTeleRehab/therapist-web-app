@@ -82,16 +82,6 @@ const CreateEducationMaterial = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (categoryTreeData.length) {
-      const rootCategoryStructure = {};
-      categoryTreeData.forEach(category => {
-        rootCategoryStructure[category.value] = [];
-      });
-      setSelectedCategories(rootCategoryStructure);
-    }
-  }, [categoryTreeData]);
-
-  useEffect(() => {
     if (id && educationMaterial.id) {
       setFormFields({
         title: isCopy ? `${educationMaterial.title} (${translate('common.copy')})` : educationMaterial.title

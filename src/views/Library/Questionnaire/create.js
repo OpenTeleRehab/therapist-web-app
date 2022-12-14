@@ -78,16 +78,6 @@ const CreateQuestionnaire = ({ translate }) => {
   }, [id, language, dispatch]);
 
   useEffect(() => {
-    if (categoryTreeData.length) {
-      const rootCategoryStructure = {};
-      categoryTreeData.forEach(category => {
-        rootCategoryStructure[category.value] = [];
-      });
-      setSelectedCategories(rootCategoryStructure);
-    }
-  }, [categoryTreeData]);
-
-  useEffect(() => {
     if (id && questionnaire.id) {
       setFormFields({
         title: isCopy ? `${questionnaire.title} (${translate('common.copy')})` : questionnaire.title,

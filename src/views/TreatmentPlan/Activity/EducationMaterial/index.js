@@ -52,55 +52,45 @@ const EducationMaterial = ({ translate, selectedMaterials, onSectionChange, view
   });
 
   const languages = useSelector(state => state.language.languages);
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState(undefined);
   const { profile } = useSelector((state) => state.auth);
   const [educationMaterial, setEducationMaterial] = useState([]);
-  const [therapistId, setTherapistId] = useState('');
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [expanded, setExpanded] = useState([]);
+  const therapistId = profile ? profile.id : '';
 
   useEffect(() => {
     if (filters && filters.lang) {
       setLanguage(filters.lang);
     } else if (profile && profile.language_id) {
       setLanguage(profile.language_id);
+    } else {
+      setLanguage('');
     }
   }, [filters, profile]);
 
   useEffect(() => {
-    if (profile !== undefined) {
-      setTherapistId(profile.id);
+    if (language !== undefined) {
+      dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }, CATEGORY_TYPES.MATERIAL));
     }
-  }, [profile]);
-
-  useEffect(() => {
-    dispatch(getCategoryTreeData({ type: CATEGORY_TYPES.MATERIAL, lang: language }, CATEGORY_TYPES.MATERIAL));
   }, [language, dispatch]);
 
   useEffect(() => {
-    if (educationMaterialCategoryTreeData.length) {
-      const rootCategoryStructure = {};
-      educationMaterialCategoryTreeData.forEach(category => {
-        rootCategoryStructure[category.value] = [];
+    if (language !== undefined) {
+      let serializedSelectedCats = [];
+      Object.keys(selectedCategories).forEach(function (key) {
+        serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
       });
-      setSelectedCategories(rootCategoryStructure);
+
+      dispatch(getEducationMaterials({
+        filter: formFields,
+        categories: serializedSelectedCats,
+        page_size: pageSize,
+        lang: language,
+        page: currentPage,
+        therapist_id: therapistId
+      }));
     }
-  }, [educationMaterialCategoryTreeData]);
-
-  useEffect(() => {
-    let serializedSelectedCats = [];
-    Object.keys(selectedCategories).forEach(function (key) {
-      serializedSelectedCats = _.union(serializedSelectedCats, selectedCategories[key]);
-    });
-
-    dispatch(getEducationMaterials({
-      filter: formFields,
-      categories: serializedSelectedCats,
-      page_size: pageSize,
-      lang: language,
-      page: currentPage,
-      therapist_id: therapistId
-    }));
   }, [language, formFields, selectedCategories, currentPage, pageSize, dispatch, therapistId]);
 
   const handleChange = e => {
