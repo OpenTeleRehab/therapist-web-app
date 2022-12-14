@@ -104,16 +104,6 @@ const CreateExercise = ({ translate }) => {
   }, [language, dispatch]);
 
   useEffect(() => {
-    if (categoryTreeData.length) {
-      const rootCategoryStructure = {};
-      categoryTreeData.forEach(category => {
-        rootCategoryStructure[category.value] = [];
-      });
-      setSelectedCategories(rootCategoryStructure);
-    }
-  }, [categoryTreeData]);
-
-  useEffect(() => {
     if (id && language) {
       dispatch(getExercise(id, language));
     }
