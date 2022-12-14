@@ -3,15 +3,15 @@ import axios from 'utils/axios';
 import _ from 'lodash';
 
 const getExercises = payload => {
-  if (window.abortController !== undefined) {
-    window.abortController.abort();
+  if (window.exerciseAbortController !== undefined) {
+    window.exerciseAbortController.abort();
   }
 
-  window.abortController = new AbortController();
+  window.exerciseAbortController = new AbortController();
 
   return axios.get('/exercise', {
     params: payload,
-    signal: window.abortController.signal
+    signal: window.exerciseAbortController.signal
   })
     .then(
       res => {

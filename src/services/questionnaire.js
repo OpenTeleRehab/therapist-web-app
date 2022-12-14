@@ -3,15 +3,15 @@ import axios from 'utils/axios';
 import _ from 'lodash';
 
 const getQuestionnaires = payload => {
-  if (window.abortController !== undefined) {
-    window.abortController.abort();
+  if (window.questionnaireAbortController !== undefined) {
+    window.questionnaireAbortController.abort();
   }
 
-  window.abortController = new AbortController();
+  window.questionnaireAbortController = new AbortController();
 
   return axios.get('/questionnaire', {
     params: payload,
-    signal: window.abortController.signal
+    signal: window.questionnaireAbortController.signal
   })
     .then(
       res => {

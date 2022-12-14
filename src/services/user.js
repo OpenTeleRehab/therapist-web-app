@@ -1,3 +1,4 @@
+import { isCancel } from 'axios';
 import axios from 'utils/axios';
 import { getCountryIsoCode } from 'utils/country';
 
@@ -26,13 +27,26 @@ const updateUser = (id, payload) => {
 };
 
 const getUsers = payload => {
-  return axios.get('/patient', { params: payload, headers: { country: getCountryIsoCode() } })
+  if (window.userAbortController !== undefined) {
+    window.userAbortController.abort();
+  }
+
+  window.userAbortController = new AbortController();
+
+  return axios.get('/patient', {
+    params: payload,
+    signal: window.userAbortController.signal,
+    headers: { country: getCountryIsoCode() }
+  })
     .then(
       res => {
         return res.data;
       }
     )
     .catch((e) => {
+      if (isCancel(e)) {
+        return e;
+      }
       return e.response.data;
     });
 };
