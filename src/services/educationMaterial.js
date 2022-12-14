@@ -3,15 +3,15 @@ import axios from 'utils/axios';
 import _ from 'lodash';
 
 const getEducationMaterials = payload => {
-  if (window.abortController !== undefined) {
-    window.abortController.abort();
+  if (window.materialAbortController !== undefined) {
+    window.materialAbortController.abort();
   }
 
-  window.abortController = new AbortController();
+  window.materialAbortController = new AbortController();
 
   return axios.get('/education-material', {
     params: payload,
-    signal: window.abortController.signal
+    signal: window.materialAbortController.signal
   })
     .then(
       res => {

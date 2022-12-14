@@ -40,18 +40,18 @@ const updateTreatmentPlan = (id, payload) => {
 };
 
 const getTreatmentPlans = payload => {
-  if (window.abortController !== undefined) {
-    window.abortController.abort();
+  if (window.tpAbortController !== undefined) {
+    window.tpAbortController.abort();
   }
 
-  window.abortController = new AbortController();
+  window.tpAbortController = new AbortController();
 
-  let config = ['/treatment-plan', { params: payload, signal: window.abortController.signal }];
+  let config = ['/treatment-plan', { params: payload, signal: window.tpAbortController.signal }];
 
   if (payload.type !== TYPE.preset) {
     config = ['/patient-treatment-plan', {
       params: payload,
-      signal: window.abortController.signal,
+      signal: window.tpAbortController.signal,
       headers: {
         country: getCountryIsoCode()
       }
