@@ -22,6 +22,10 @@ const InputToolbar = (props) => {
   const [showDialog, setShowDialog] = useState(false);
 
   useEffect(() => {
+    setText(props.defaultValue || '');
+  }, [props.defaultValue]);
+
+  useEffect(() => {
     if (textAreaRef && textAreaRef.current) {
       setParentHeight(textAreaRef.current.scrollHeight);
       setTextAreaHeight(textAreaRef.current.scrollHeight);
@@ -36,6 +40,9 @@ const InputToolbar = (props) => {
     }
     const value = e.target.value.trimLeft();
     setText(value);
+    if (props.onInputChanged) {
+      props.onInputChanged(value);
+    }
     const { scrollHeight } = textAreaRef.current;
     if (value === '') {
       setParentHeight(INPUT_MIN_HEIGHT);
@@ -117,7 +124,7 @@ const InputToolbar = (props) => {
   return (
     <>
       <Form.Group className="d-flex align-items-end chat-input-toolbar" style={{ minHeight: parentHeight }}>
-        <div className="position-relative chat-composer">
+        <div className={`position-relative ${props.showAttachment ? 'chat-composer' : 'w-100'}`}>
           <Form.Control
             name="chatText"
             value={text}
@@ -136,19 +143,21 @@ const InputToolbar = (props) => {
             </Button>
           )}
         </div>
-        <Button as={Button} variant="light" className="chat-add-attachment-btn position-relative p-0" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()}>
-          <input
-            type="file"
-            name="attachments"
-            className="position-absolute upload-btn"
-            accept="video/*, image/*"
-            onChange={(e) => onAttachmentChangeHandler(e)}
-            aria-label="Attachment"
-            id="file"
-          />
-          <ImAttachment size={20} color="#858585" />
-          <span className="d-none d-md-block">{props.translate('common.attach_file')}</span>
-        </Button>
+        {props.showAttachment && (
+          <Button as={Button} variant="light" className="chat-add-attachment-btn position-relative p-0" onKeyPress={(event) => event.key === 'Enter' && document.getElementById('file').click()}>
+            <input
+              type="file"
+              name="attachments"
+              className="position-absolute upload-btn"
+              accept="video/*, image/*"
+              onChange={(e) => onAttachmentChangeHandler(e)}
+              aria-label="Attachment"
+              id="file"
+            />
+            <ImAttachment size={20} color="#858585" />
+            <span className="d-none d-md-block">{props.translate('common.attach_file')}</span>
+          </Button>
+        )}
       </Form.Group>
       {showDialog && (
         <AttachmentDialog
@@ -164,10 +173,17 @@ const InputToolbar = (props) => {
   );
 };
 
+InputToolbar.defaultProps = {
+  showAttachment: true
+};
+
 InputToolbar.propTypes = {
   translate: PropTypes.func,
   onSend: PropTypes.func,
-  onInputSizeChanged: PropTypes.func
+  onInputSizeChanged: PropTypes.func,
+  onInputChanged: PropTypes.func,
+  showAttachment: PropTypes.bool,
+  defaultValue: PropTypes.string
 };
 
 export default InputToolbar;
