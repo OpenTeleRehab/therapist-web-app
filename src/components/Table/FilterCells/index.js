@@ -9,6 +9,9 @@ import DateOfBirthFilterCell from 'components/Table/FilterCells/DateOfBirthFilte
 import NumberFilterCell from './NumberFilterCell';
 import TherapistTypeFilterCell from './TherapistTypeFilterCell';
 import NextAppointmentFilterCell from './NextAppointmentFilterCell';
+import ProvisionDateFilterCell from './ProvisionDateFilterCell';
+import FollowUpDateFilterCell from './FollowUpDateFilterCell';
+import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -28,6 +31,12 @@ const FilterCell = (props) => {
     return <TherapistTypeFilterCell {...props} />;
   } else if (column.name === 'next_appointment') {
     return <NextAppointmentFilterCell {...props} />;
+  } else if (column.name === 'provision_date') {
+    return <ProvisionDateFilterCell {...props} />;
+  } else if (column.name === 'follow_up_date') {
+    return <FollowUpDateFilterCell {...props} />;
+  } else if (column.name === 'assistive_name') {
+    return <AssistiveTechnologyFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };

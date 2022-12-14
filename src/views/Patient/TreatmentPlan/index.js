@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 import CustomTable from 'components/Table';
 import { getTreatmentPlans } from 'store/treatmentPlan/actions';
 import * as ROUTES from 'variables/routes';
 import CreateButton from 'views/Patient/Partials/createButton';
 import { renderStatusBadge } from 'utils/treatmentPlan';
-import { Button } from 'react-bootstrap/esm/index';
+import BackButton from '../Partials/backButton';
 
 const TreatmentHistory = () => {
   const dispatch = useDispatch();
@@ -63,14 +63,7 @@ const TreatmentHistory = () => {
         <h5>
           {translate('treatment_plan.treatment_history')}
         </h5>
-        <Button
-          className="ml-auto"
-          variant="outline-primary"
-          as={Link}
-          to={ROUTES.PATIENT}
-        >
-          &lt; {translate('patient.back_to_list')}
-        </Button>
+        <BackButton />
         <CreateButton />
       </div>
       <div className="mt-3">

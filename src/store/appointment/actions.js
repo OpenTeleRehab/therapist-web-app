@@ -77,18 +77,3 @@ export const deleteAppointment = (id, filter) => async (dispatch) => {
     return false;
   }
 };
-
-export const deleteAppointmentRequest = (id, filter) => async (dispatch) => {
-  dispatch(mutation.deleteAppointmentRequestRequest());
-  const data = await Appointment.deleteAppointment(id);
-  if (data.success) {
-    dispatch(mutation.deleteAppointmentRequestSuccess());
-    dispatch(getAppointments(filter));
-    dispatch(showSuccessNotification('toast_title.delete_appointment', data.message));
-    return true;
-  } else {
-    dispatch(mutation.deleteAppointmentRequestFail());
-    dispatch(showErrorNotification('toast_title.delete_appointment', data.message));
-    return false;
-  }
-};
