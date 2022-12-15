@@ -61,15 +61,15 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
 
   return (
     <>
-      {exerciseIds.map(exerciseId => {
-        const exercise = previewData && previewData.exercises ? _.find(previewData.exercises, { id: exerciseId }) : undefined;
+      {exerciseIds.map(id => {
+        const exercise = previewData && previewData.exercises ? _.find(previewData.exercises, { id }) : undefined;
 
         if (!exercise) {
-          return <CardPlaceholder/>;
+          return <CardPlaceholder key={id}/>;
         }
 
         return (
-          <div key={exercise.id} className="position-relative">
+          <div key={id} className="position-relative">
             <Card className="exercise-card shadow-sm mb-4">
               <div className="top-bar">
                 <div className="favorite-btn btn-link">

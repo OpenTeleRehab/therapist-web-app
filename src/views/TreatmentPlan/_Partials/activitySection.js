@@ -225,9 +225,9 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
               </div>
             }
 
-            <ListExerciseCard exerciseIds={exerciseIds} customExercises={customExercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} onSelectionModify={custom => handleExerciseModify(custom, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={i + 1} treatmentPlanId={treatmentPlanId} />
-            <ListEducationMaterialCard materialIds={materialIds} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={i + 1} treatmentPlanId={treatmentPlanId} />
-            <ListQuestionnaireCard questionnaireIds={questionnaireIds} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={i + 1} treatmentPlanId={treatmentPlanId} />
+            <ListExerciseCard exerciseIds={exerciseIds} customExercises={customExercises} onSelectionRemove={id => handleExerciseRemove(id, dayActivity)} onSelectionModify={custom => handleExerciseModify(custom, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedExercises={treatmentPlanSelectedExercises} week={currentWeek} day={i + 1}/>
+            <ListEducationMaterialCard materialIds={materialIds} onSelectionRemove={id => handleMaterialRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedMaterials={treatmentPlanSelectedMaterials} week={currentWeek} day={i + 1}/>
+            <ListQuestionnaireCard questionnaireIds={questionnaireIds} onSelectionRemove={id => handleQuestionnaireRemove(id, dayActivity)} readOnly={readOnly} lang={lang} therapistId={therapistId} isOwnCreated={isOwnCreated} treatmentPlanSelectedQuestionnaires={treatmentPlanSelectedQuestionnaires} week={currentWeek} day={i + 1}/>
 
             <div className="d-flex justify-content-center">
               {!readOnly && <Button

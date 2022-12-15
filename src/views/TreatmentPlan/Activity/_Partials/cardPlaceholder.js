@@ -11,8 +11,7 @@ const CardPlaceholder = () => {
         </div>
       </div>
       <div className="card-container">
-        <div className="card-img bg-light">
-        </div>
+        <div className="card-img bg-light"></div>
         <Card.Body className="d-flex flex-column justify-content-between">
           <Card.Title>
             <h5 className="card-title placeholder-glow">

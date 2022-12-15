@@ -228,7 +228,7 @@ const ViewTreatmentPlan = () => {
 
       <Tabs mountOnEnter className="mt-4">
         <Tab eventKey={TAB.activities} title={translate('treatment_plan.activities_tab')}>
-          <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} treatmentPlanId={id}/>
+          <ActivitySection weeks={weeks} setWeeks={setWeeks} startDate={startDate} activities={activities} readOnly={readOnly} treatmentPlanId={parseInt(id)}/>
         </Tab>
         {patientId &&
           <Tab eventKey={TAB.adherence} title={translate('treatment_plan.adherence_tab')}>

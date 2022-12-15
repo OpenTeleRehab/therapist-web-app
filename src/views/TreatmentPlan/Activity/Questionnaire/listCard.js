@@ -44,15 +44,15 @@ const ListQuestionnaireCard = ({ questionnaireIds, onSelectionRemove, readOnly, 
 
   return (
     <>
-      {questionnaireIds.map(exerciseId => {
-        const questionnaire = previewData && previewData.questionnaires ? _.find(previewData.questionnaires, { id: exerciseId }) : undefined;
+      {questionnaireIds.map(id => {
+        const questionnaire = previewData && previewData.questionnaires ? _.find(previewData.questionnaires, { id }) : undefined;
 
         if (!questionnaire) {
-          return <CardPlaceholder/>;
+          return <CardPlaceholder key={id}/>;
         }
 
         return (
-          <div key={questionnaire.id} className="position-relative">
+          <div key={id} className="position-relative">
             <Card className="exercise-card material-card shadow-sm mb-4">
               <div className="top-bar">
                 <div className="favorite-btn btn-link">
