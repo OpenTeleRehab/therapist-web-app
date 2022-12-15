@@ -12,24 +12,15 @@ import _ from 'lodash';
 import { useSelector } from 'react-redux';
 import { BsX, BsHeartFill, BsHeart, BsPersonFill } from 'react-icons/bs';
 import ViewQuestionnaire from './viewQuestionnaire';
+import CardPlaceholder from '../_Partials/cardPlaceholder';
 
 const ListQuestionnaireCard = ({ questionnaireIds, onSelectionRemove, readOnly, therapistId, isOwnCreated, treatmentPlanSelectedQuestionnaires, day, week, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
-  const [questionnaires, setQuestionnaires] = useState([]);
   const [questionnaire, setQuestionnaire] = useState([]);
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [treatmentPlanQuestionnaires, setTreatmentPlanQuestionnaires] = useState([]);
   const { previewData } = useSelector(state => state.treatmentPlan.treatmentPlansDetail);
-
-  useEffect(() => {
-    if (questionnaireIds && questionnaireIds.length && previewData && previewData.questionnaires) {
-      const data = _.filter(previewData.questionnaires, o => _.includes(questionnaireIds, o.id));
-      setQuestionnaires(data);
-    } else {
-      setQuestionnaires([]);
-    }
-  }, [JSON.stringify(questionnaireIds), previewData]);
 
   useEffect(() => {
     if (treatmentPlanSelectedQuestionnaires && treatmentPlanSelectedQuestionnaires.length > 0) {
@@ -53,31 +44,27 @@ const ListQuestionnaireCard = ({ questionnaireIds, onSelectionRemove, readOnly, 
 
   return (
     <>
-      { questionnaires.map(questionnaire => (
-        <div key={questionnaire.id} className="position-relative">
-          <Card className="exercise-card material-card shadow-sm mb-4">
-            <div className="top-bar">
-              <div className="favorite-btn btn-link">
-                {questionnaire.is_favorite
-                  ? <BsHeartFill size={20} />
-                  : <BsHeart size={20} />
-                }
-              </div>
-              {
-                (onSelectionRemove) && (
-                  <div className="card-remove-btn-wrapper">
-                    {isOwnCreated && !readOnly ? (
-                      <Button
-                        aria-label="Remove questionnaire"
-                        className="btn-circle-sm"
-                        variant="outline-primary"
-                        onClick={() => onSelectionRemove(questionnaire.id)}
-                      >
-                        <BsX size={14} />
-                      </Button>
-                    ) : (
-                      <>
-                        {(!treatmentPlanQuestionnaires.includes(questionnaire.id) || questionnaire.created_by === therapistId) && !readOnly &&
+      {questionnaireIds.map(exerciseId => {
+        const questionnaire = previewData && previewData.questionnaires ? _.find(previewData.questionnaires, { id: exerciseId }) : undefined;
+
+        if (!questionnaire) {
+          return <CardPlaceholder/>;
+        }
+
+        return (
+          <div key={questionnaire.id} className="position-relative">
+            <Card className="exercise-card material-card shadow-sm mb-4">
+              <div className="top-bar">
+                <div className="favorite-btn btn-link">
+                  {questionnaire.is_favorite
+                    ? <BsHeartFill size={20} />
+                    : <BsHeart size={20} />
+                  }
+                </div>
+                {
+                  (onSelectionRemove) && (
+                    <div className="card-remove-btn-wrapper">
+                      {isOwnCreated && !readOnly ? (
                         <Button
                           aria-label="Remove questionnaire"
                           className="btn-circle-sm"
@@ -86,53 +73,65 @@ const ListQuestionnaireCard = ({ questionnaireIds, onSelectionRemove, readOnly, 
                         >
                           <BsX size={14} />
                         </Button>
-                        }
-                      </>
-                    )
-                    }
-                  </div>
-                )
-              }
-            </div>
-            <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
-              <div className="card-img bg-light">
-                <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
-                  <img src={'/images/questionnaire.svg'} alt='questionnaire' loading="lazy"/>
-                  <p>{translate('activity.questionnaire').toUpperCase()}</p>
-                </div>
-              </div>
-              <Card.Body className="d-flex flex-column justify-content-between">
-                <Card.Title>
-                  {
-                    questionnaire.title.length <= 50
-                      ? <h5 className="card-title">
-                        {therapistId === questionnaire.therapist_id && (
-                          <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
-                        )}
-                        { questionnaire.title }
-                      </h5>
-                      : (
-                        <OverlayTrigger
-                          overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
-                        >
-                          <h5 className="card-title">
-                            {therapistId === questionnaire.therapist_id && (
-                              <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
-                            )}
-                            { questionnaire.title }
-                          </h5>
-                        </OverlayTrigger>
+                      ) : (
+                        <>
+                          {(!treatmentPlanQuestionnaires.includes(questionnaire.id) || questionnaire.created_by === therapistId) && !readOnly &&
+                                      <Button
+                                        aria-label="Remove questionnaire"
+                                        className="btn-circle-sm"
+                                        variant="outline-primary"
+                                        onClick={() => onSelectionRemove(questionnaire.id)}
+                                      >
+                                        <BsX size={14} />
+                                      </Button>
+                          }
+                        </>
                       )
-                  }
-                </Card.Title>
-                <Card.Text>
-                  <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
-                </Card.Text>
-              </Card.Body>
-            </div>
-          </Card>
-        </div>
-      ))}
+                      }
+                    </div>
+                  )
+                }
+              </div>
+              <div className="card-container" onClick={() => handleViewQuestionnaire(questionnaire)}>
+                <div className="card-img bg-light">
+                  <div className="w-100 h-100 px-2 py-4 text-center questionnaire-header">
+                    <img src={'/images/questionnaire.svg'} alt='questionnaire' loading="lazy"/>
+                    <p>{translate('activity.questionnaire').toUpperCase()}</p>
+                  </div>
+                </div>
+                <Card.Body className="d-flex flex-column justify-content-between">
+                  <Card.Title>
+                    {
+                      questionnaire.title.length <= 50
+                        ? <h5 className="card-title">
+                          {therapistId === questionnaire.therapist_id && (
+                            <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                          )}
+                          { questionnaire.title }
+                        </h5>
+                        : (
+                          <OverlayTrigger
+                            overlay={<Tooltip id="button-tooltip-2">{ questionnaire.title }</Tooltip>}
+                          >
+                            <h5 className="card-title">
+                              {therapistId === questionnaire.therapist_id && (
+                                <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
+                              )}
+                              { questionnaire.title }
+                            </h5>
+                          </OverlayTrigger>
+                        )
+                    }
+                  </Card.Title>
+                  <Card.Text>
+                    <b>{questionnaire.questions.length}</b> {translate('activity.questionnaire.questions')}
+                  </Card.Text>
+                </Card.Body>
+              </div>
+            </Card>
+          </div>
+        );
+      })}
       { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} questionnaire={questionnaire} handleClose={handleViewQuestionnaireClose}/> }
     </>
   );
