@@ -51,15 +51,15 @@ const ListEducationMaterialCard = ({ materialIds, onSelectionRemove, readOnly, t
 
   return (
     <>
-      {materialIds.map(exerciseId => {
-        const material = previewData && previewData.materials ? _.find(previewData.materials, { id: exerciseId }) : undefined;
+      {materialIds.map(id => {
+        const material = previewData && previewData.materials ? _.find(previewData.materials, { id }) : undefined;
 
         if (!material) {
-          return <CardPlaceholder/>;
+          return <CardPlaceholder key={id}/>;
         }
 
         return (
-          <div key={material.id} className="position-relative">
+          <div key={id} className="position-relative">
             <Card className="exercise-card material-card shadow-sm mb-4">
               <div className="top-bar">
                 <div className="favorite-btn btn-link">
