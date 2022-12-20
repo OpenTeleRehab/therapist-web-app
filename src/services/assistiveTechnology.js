@@ -3,7 +3,7 @@ import axios from 'utils/axios';
 import { getCountryIsoCode } from 'utils/country';
 
 const getAssistiveTechnologies = payload => {
-  return axios.get('/assistive-technologies', {
+  return axios.get('/assistive-technologies/list/get-all', {
     params: payload
   }).then(
     res => {
