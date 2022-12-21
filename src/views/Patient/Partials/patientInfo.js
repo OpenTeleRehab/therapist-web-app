@@ -12,7 +12,7 @@ import {
 } from 'react-bootstrap';
 
 import { BsFillChatSquareFill } from 'react-icons/bs';
-import { FaPhoneAlt } from 'react-icons/fa';
+import { FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import CustomPhoneNumber from 'utils/phoneNumber';
 
 import EllipsisText from 'react-ellipsis-text';
@@ -35,6 +35,7 @@ import { generateHash } from '../../../utils/general';
 import { CALL_STATUS } from '../../../variables/rocketchat';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
+import Message from '../message';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -50,8 +51,10 @@ const PatientInfo = ({ id, translate }) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [disabledConfirmButton, setDisabledConfirmButton] = useState(false);
   const [isSecondaryTherapist, setIsSecondaryTherapist] = useState(false);
+  const [showMessageDialog, setShowMessageDialog] = useState(false);
   const history = useHistory();
   const chatSocket = useContext(RocketchatContext);
+  const [phone, setPhone] = useState('');
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -74,6 +77,7 @@ const PatientInfo = ({ id, translate }) => {
   useEffect(() => {
     if (id && users.length && countries.length) {
       const data = users.find(user => user.id === parseInt(id));
+      setPhone(data.phone);
       setFormFields({
         name: data.last_name + ' ' + data.first_name || '',
         id: data.id || '',
@@ -192,6 +196,14 @@ const PatientInfo = ({ id, translate }) => {
           aria-label="Call"
           variant="link"
           className="mr-2 btn-circle-lg btn-light-blue"
+          onClick={() => setShowMessageDialog(true)}
+        >
+          <FaEnvelope size={20} />
+        </Button>
+        <Button
+          aria-label="Call"
+          variant="link"
+          className="mr-2 btn-circle-lg btn-light-blue"
           onClick={() => handleSelectRoomToCall()}
         >
           <FaPhoneAlt size={20} />
@@ -254,6 +266,7 @@ const PatientInfo = ({ id, translate }) => {
       >
         <p>{translate('patient.delete_confirmation_message')}</p>
       </Dialog>
+      {showMessageDialog && <Message patientId={id} phone={phone} show={showMessageDialog} handleClose={() => setShowMessageDialog(false)} />}
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );

@@ -1,0 +1,13 @@
+import { initialState } from './states';
+
+export const message = (state = initialState, action) => {
+  switch (action.type) {
+    case 'GET_MESSAGES_SUCCESS': {
+      return Object.assign({}, state, {
+        messages: action.data
+      });
+    }
+    default:
+      return state;
+  }
+};
