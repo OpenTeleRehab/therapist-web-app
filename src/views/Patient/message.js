@@ -64,8 +64,8 @@ const Message = ({ show, handleClose, patientId, phone }) => {
       show={show}
       title={translate('patient.message')}
       onCancel={handleClose}
-      onConfirm={handleSaveDraft}
-      confirmLabel={translate('patient.message.save.draft')}
+      onCopy={handleSaveDraft}
+      copyLabel={translate('patient.message.save.draft')}
     >
       <div className="chat-message-list" style={{ height: '50vh' }}>
         {messages.length > 0 && (
@@ -116,6 +116,7 @@ const Message = ({ show, handleClose, patientId, phone }) => {
         onInputChanged={setMessage}
         translate={translate}
         showAttachment={false}
+        maxLength={160}
       />
     </Dialog>
   );

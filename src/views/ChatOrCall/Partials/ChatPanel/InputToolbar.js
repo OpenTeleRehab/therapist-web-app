@@ -136,6 +136,7 @@ const InputToolbar = (props) => {
             placeholder={props.translate('placeholder.type.message')}
             style={{ height: textAreaHeight }}
             aria-label="Chat text"
+            maxLength={props.maxLength || ''}
           />
           {text.length > 0 && (
             <Button variant="" className="chat-send-btn p-0" onClick={() => onSendHandler()}>
@@ -183,7 +184,8 @@ InputToolbar.propTypes = {
   onInputSizeChanged: PropTypes.func,
   onInputChanged: PropTypes.func,
   showAttachment: PropTypes.bool,
-  defaultValue: PropTypes.string
+  defaultValue: PropTypes.string,
+  maxLength: PropTypes.number
 };
 
 export default InputToolbar;
