@@ -266,7 +266,7 @@ const AssistiveTechnologyHistory = () => {
 
   const handleRemove = () => {
     if (deleteId) {
-      dispatch(deletePatientAssistiveTechnology(deleteId)).then(result => {
+      dispatch(deletePatientAssistiveTechnology(deleteId, patientId)).then(result => {
         if (result) {
           handleClose();
         }

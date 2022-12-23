@@ -42,7 +42,7 @@ export const createPatientAssistiveTechnology = payload => async (dispatch) => {
   const data = await AssistiveTechnology.createPatientAssistiveTechnology(payload);
   if (data.success) {
     dispatch(mutation.createPatientAssistiveTechnologySuccess());
-    dispatch(getPatientAssistiveTechnologies());
+    dispatch(getPatientAssistiveTechnologies({ patient_id: payload.patientId }));
     dispatch(showSuccessNotification('toast_title.new_assistive_technology', data.message));
     dispatch(showSpinner(false));
     return true;
@@ -59,7 +59,7 @@ export const updatePatientAssistiveTechnology = (id, payload) => async (dispatch
   const data = await AssistiveTechnology.updatePatientAssistiveTechnology(id, payload);
   if (data.success) {
     dispatch(mutation.updatePatientAssistiveTechnologySuccess());
-    dispatch(getPatientAssistiveTechnologies());
+    dispatch(getPatientAssistiveTechnologies({ patient_id: payload.patientId }));
     dispatch(showSuccessNotification('toast_title.edit_assistive_technology', data.message));
     return true;
   } else {
@@ -69,12 +69,12 @@ export const updatePatientAssistiveTechnology = (id, payload) => async (dispatch
   }
 };
 
-export const deletePatientAssistiveTechnology = (id) => async (dispatch) => {
+export const deletePatientAssistiveTechnology = (id, patientId) => async (dispatch) => {
   dispatch(mutation.deletePatientAssistiveTechnologiesRequest());
   const data = await AssistiveTechnology.deletePatientAssistiveTechnology(id);
   if (data.success) {
     dispatch(mutation.deletePatientAssistiveTechnologiesSuccess());
-    dispatch(getPatientAssistiveTechnologies());
+    dispatch(getPatientAssistiveTechnologies({ patient_id: patientId }));
     dispatch(showSuccessNotification('toast_title.delete_assistive_technology', data.message));
     return true;
   } else {
