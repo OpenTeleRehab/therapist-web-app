@@ -78,7 +78,7 @@ const Participant = ({ participant, showAvatar = false }) => {
 };
 
 Participant.propTypes = {
-  participant: PropTypes.Object,
+  participant: PropTypes.object,
   isMuted: PropTypes.bool,
   showAvatar: PropTypes.bool
 };
