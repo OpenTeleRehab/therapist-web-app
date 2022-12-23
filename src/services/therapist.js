@@ -49,8 +49,22 @@ const getPatientByPhoneNumber = (phone, patientId) => {
     });
 };
 
+const getCallAccessToken = (roomName) => {
+  const params = { room_id: roomName };
+  return axios.get('therapist/get-call-access-token', { params })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Therapist = {
   getTherapistsByClinic,
   deleteTherapistChatRoomById,
-  getPatientByPhoneNumber
+  getPatientByPhoneNumber,
+  getCallAccessToken
 };

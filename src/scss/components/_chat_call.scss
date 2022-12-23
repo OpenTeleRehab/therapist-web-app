@@ -81,8 +81,9 @@
   &-message {
     &-panel {
       background-color: theme-color('light');
+      overflow: hidden;
       @include media-breakpoint-up(md) {
-        height: calc(100vh - 4.5rem);
+        height: calc(100vh - 4.40rem);
       }
     }
     &-header {
@@ -220,6 +221,7 @@
 }
 
 .calling {
+  background-color: $dark;
   position: relative;
   height: calc(100vh - 61px);
   width: 100%;
@@ -257,14 +259,59 @@
         li {
           color: $white;
           padding: 0 5px;
-          .btn-video-call,
-          .btn-end-call {
-            border-radius: 50%;
-            height: 46px;
-            width: 46px;
+          .btn {
+            &-video-call,
+            &-muted-call,
+            &-end-call {
+              border-radius: 50%;
+              height: 46px;
+              width: 46px;
+            }
           }
         }
       }
+    }
+  }
+  .room {
+    height: 100%;
+    width: 100%;
+    .participant {
+      &-name {
+        font-size: 18px;
+        font-weight: 600;
+        position: absolute;
+        left: 45px;
+        top: 7px;
+        margin: 0;
+      }
+      &-avatar {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+    }
+    .local,
+    .remote {
+      background-color: $dark;
+      .participant,
+      video {
+        height: 100%;
+        width: 100%;
+      }
+    }
+    .local {
+      border: 2px solid $primary;
+      border-radius: 6px;
+      position: absolute;
+      bottom: 35px;
+      left: 45px;
+      width: 210px;
+      height: 160px;
+    }
+    .remote {
+      height: 100%;
+      width: 100%;
     }
   }
 }
