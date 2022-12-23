@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { getTranslate, Translate } from 'react-localize-redux';
 import { FaNotesMedical } from 'react-icons/fa';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Col, Form } from 'react-bootstrap';
 import Select from 'react-select';
 import moment from 'moment/moment';
 import _ from 'lodash';
@@ -45,6 +45,8 @@ const AssistiveTechnologyHistory = () => {
     { name: 'action', title: translate('common.action') }
   ];
 
+  const defaultHiddenColumnNames = ['follow_up_date'];
+
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
@@ -54,17 +56,24 @@ const AssistiveTechnologyHistory = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [show, setShow] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+  const [formattedFrom, setFormattedFrom] = useState('');
+  const [formattedTo, setFormattedTo] = useState('');
 
   const [errorAssistiveTechnology, setErrorAssistiveTechnology] = useState(false);
   const [errorProvisionDate, setErrorProvisionDate] = useState(false);
   const [errorFollowUpDate, setErrorFollowUpDate] = useState(false);
+  const [errorFrom, setErrorFrom] = useState(false);
+  const [errorTo, setErrorTo] = useState(false);
 
   const [formFields, setFormFields] = useState({
     patientId: parseInt(patientId),
     therapistId: parseInt(profile.id),
     assistiveTechnologyId: '',
     provisionDate: '',
-    followUpDate: ''
+    followUpDate: '',
+    showFollowUpAppointment: false
   });
 
   const validateDate = (current) => {
@@ -101,18 +110,40 @@ const AssistiveTechnologyHistory = () => {
     }
   }, [currentPage, pageSize, searchValue, filters, patientId, dispatch]);
 
+  useEffect(() => {
+    if (moment(from, settings.date_format + ' hh:mm A', true).isValid()) {
+      setFormattedFrom(moment(from).format('hh:mm A'));
+    } else {
+      setFormattedFrom('');
+    }
+  }, [from]);
+
+  useEffect(() => {
+    if (moment(to, settings.date_format + ' hh:mm A', true).isValid()) {
+      setFormattedTo(moment(to).format('hh:mm A'));
+    } else {
+      setFormattedTo('');
+    }
+  }, [to]);
+
   const handleAddAssistiveTechnology = () => {
     setShow(true);
   };
 
   const handleEdit = (row) => {
+    const patientAssistiveTechnology = patientAssistiveTechnologies.find(patientAssistive => patientAssistive.id === row.id);
     setEditId(row.id);
     setFormFields({
       ...formFields,
       assistiveTechnologyId: row.assistive_technology_id,
       provisionDate: row.provision_date,
+      showFollowUpAppointment: row.follow_up_date,
       followUpDate: row.follow_up_date
     });
+    if (patientAssistiveTechnology.appointment) {
+      setFrom(moment.utc(patientAssistiveTechnology.appointment.start_date).local());
+      setTo(moment.utc(patientAssistiveTechnology.appointment.end_date).local());
+    }
     setShow(true);
   };
 
@@ -130,12 +161,25 @@ const AssistiveTechnologyHistory = () => {
       ...formFields,
       assistiveTechnologyId: '',
       provisionDate: '',
-      followUpDate: ''
+      followUpDate: '',
+      showFollowUpAppointment: false
     });
+    setFrom('');
+    setTo('');
+  };
+
+  const handleCheck = e => {
+    const { name, checked } = e.target;
+    setFormFields({ ...formFields, [name]: checked });
   };
 
   const handleConfirm = () => {
     let canSave = true;
+
+    const now = moment().locale('en').format('YYYY-MM-DD HH:mm:ss');
+    const formattedDate = moment(formFields.followUpDate, 'DD/MM/YYYY').format(settings.date_format);
+    const fromTimeThen = moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
+    const toTimeThen = moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
 
     if (formFields.assistiveTechnologyId === '') {
       canSave = false;
@@ -151,11 +195,27 @@ const AssistiveTechnologyHistory = () => {
       setErrorProvisionDate(false);
     }
 
-    if (formFields.followUpDate === '') {
-      canSave = false;
-      setErrorFollowUpDate(true);
-    } else {
-      setErrorFollowUpDate(false);
+    if (formFields.showFollowUpAppointment) {
+      if (formFields.followUpDate === '') {
+        canSave = false;
+        setErrorFollowUpDate(true);
+      } else {
+        setErrorFollowUpDate(false);
+      }
+
+      if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').isValid() || !moment(now).isBefore(fromTimeThen)) {
+        canSave = false;
+        setErrorFrom(true);
+      } else {
+        setErrorFrom(false);
+      }
+
+      if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').isBefore(moment(formattedFrom, 'hh:mm A')) || !moment(now).isBefore(toTimeThen)) {
+        canSave = false;
+        setErrorTo(true);
+      } else {
+        setErrorTo(false);
+      }
     }
 
     if (canSave) {
@@ -180,10 +240,13 @@ const AssistiveTechnologyHistory = () => {
   };
 
   const handleSubmit = () => {
+    const formattedFollowUpDate = moment(formFields.followUpDate, 'DD/MM/YYYY').format(settings.date_format);
     const data = {
       ...formFields,
       provisionDate: moment(formFields.provisionDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-      followUpDate: moment(formFields.followUpDate, 'DD/MM/YYYY').format('YYYY-MM-DD')
+      followUpDate: formFields.followUpDate ? moment(formFields.followUpDate, 'DD/MM/YYYY').format('YYYY-MM-DD') : '',
+      appointmentFrom: formFields.followUpDate ? moment(formattedFollowUpDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss') : '',
+      appointmentTo: formFields.followUpDate ? moment(formattedFollowUpDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss') : ''
     };
 
     if (editId) {
@@ -253,6 +316,7 @@ const AssistiveTechnologyHistory = () => {
             filters={filters}
             columns={columns}
             columnExtensions={columnExtensions}
+            defaultHiddenColumnNames={defaultHiddenColumnNames}
             rows={patientAssistiveTechnologies.map(item => {
               const action = (
                 <>
@@ -290,7 +354,7 @@ const AssistiveTechnologyHistory = () => {
                 classNamePrefix="filter"
                 value={assistiveTechnologies && assistiveTechnologies.length && assistiveTechnologies.filter(option => option.id === formFields.assistiveTechnologyId)}
                 getOptionLabel={option => option.name}
-                options={assistiveTechnologies}
+                options={assistiveTechnologies && assistiveTechnologies.length && assistiveTechnologies.filter(assistive => assistive.deleted_at === null)}
                 onChange={(e) => setFormFields({ ...formFields, assistiveTechnologyId: e.id })}
                 styles={customSelectStyles}
                 aria-label="Assistive Technology"
@@ -330,33 +394,106 @@ const AssistiveTechnologyHistory = () => {
               )}
             </Form.Group>
 
-            <Form.Group controlId="groupFollowUpDate">
-              <label htmlFor="follow-up-date">
-                {translate('common.follow_up_date')}
-              </label>
-              <span className="text-dark ml-1">*</span>
-              <Datetime
-                className={errorFollowUpDate && 'is-invalid'}
-                inputProps={{
-                  id: 'follow-up-date',
-                  name: 'date',
-                  autoComplete: 'off',
-                  className: errorFollowUpDate ? 'form-control is-invalid' : 'form-control',
-                  placeholder: translate('placeholder.follow_up_date')
-                }}
-                dateFormat={settings.date_format}
-                timeFormat={false}
-                isValidDate={validateDate}
-                closeOnSelect={true}
-                value={formFields.followUpDate}
-                onChange={(value) => setFormFields({ ...formFields, followUpDate: value })}
+            <Form.Group controlId="formShowFollowUpAppointment">
+              <Form.Check
+                name="showFollowUpAppointment"
+                onChange={handleCheck}
+                value={true}
+                checked={formFields.showFollowUpAppointment}
+                label={translate('patient.assistive_technology.create_follow_up_appointment')}
+                disabled={editId}
               />
-              {errorFollowUpDate && (
-                <Form.Control.Feedback type="invalid">
-                  {translate('error.follow_up_date')}
-                </Form.Control.Feedback>
-              )}
             </Form.Group>
+
+            {formFields.showFollowUpAppointment && (
+              <>
+                <Form.Group controlId="groupFollowUpDate">
+                  <label htmlFor="follow-up-date">
+                    {translate('common.follow_up_date')}
+                  </label>
+                  <span className="text-dark ml-1">*</span>
+                  <Datetime
+                    className={errorFollowUpDate && 'is-invalid'}
+                    inputProps={{
+                      id: 'follow-up-date',
+                      name: 'date',
+                      autoComplete: 'off',
+                      className: errorFollowUpDate ? 'form-control is-invalid' : 'form-control',
+                      placeholder: translate('placeholder.follow_up_date')
+                    }}
+                    dateFormat={settings.date_format}
+                    timeFormat={false}
+                    isValidDate={validateDate}
+                    closeOnSelect={true}
+                    value={formFields.followUpDate}
+                    onChange={(value) => setFormFields({ ...formFields, followUpDate: value })}
+                  />
+                  {errorFollowUpDate && (
+                    <Form.Control.Feedback type="invalid">
+                      {translate('error.follow_up_date')}
+                    </Form.Control.Feedback>
+                  )}
+                </Form.Group>
+                <Form.Group controlId="groupTime">
+                  <Form.Row>
+                    <Col>
+                      <label htmlFor="time-from">{translate('appointment.from')}</label>
+                      <span className="text-dark ml-1">*</span>
+                      <Datetime
+                        inputProps={{
+                          id: 'time-from',
+                          name: 'from',
+                          autoComplete: 'off',
+                          className: errorFrom ? 'form-control is-invalid' : 'form-control',
+                          placeholder: translate('placeholder.time')
+                        }}
+                        timeConstraints={{ minutes: { step: 15 } }}
+                        initialViewMode="time"
+                        value={formattedFrom}
+                        onChange={(value) => {
+                          setFrom(value);
+                          if (typeof value === 'object') {
+                            setTo(_.cloneDeep(value).add(15, 'minutes'));
+                          }
+                        }}
+                        dateFormat={false}
+                        timeFormat={'h:mm A'}
+                      />
+                      {errorFrom && (
+                        <Form.Control.Feedback type="invalid" className="d-block">
+                          {translate('error_message.appointment_from')}
+                        </Form.Control.Feedback>
+                      )}
+                    </Col>
+                    <Col>
+                      <label htmlFor="time-to">{translate('appointment.to')}</label>
+                      <span className="text-dark ml-1">*</span>
+                      <Datetime
+                        inputProps={{
+                          id: 'time-to',
+                          name: 'to',
+                          autoComplete: 'off',
+                          className: errorTo ? 'form-control is-invalid' : 'form-control',
+                          placeholder: translate('placeholder.time'),
+                          disabled: typeof from !== 'object'
+                        }}
+                        timeConstraints={{ minutes: { step: 15 } }}
+                        initialViewMode="time"
+                        value={formattedTo}
+                        onChange={(value) => setTo(value)}
+                        dateFormat={false}
+                        timeFormat={'h:mm A'}
+                      />
+                      {errorTo && (
+                        <Form.Control.Feedback type="invalid" className="d-block">
+                          {translate('error_message.appointment_to')}
+                        </Form.Control.Feedback>
+                      )}
+                    </Col>
+                  </Form.Row>
+                </Form.Group>
+              </>
+            )}
           </Form>
         </Dialog>
 

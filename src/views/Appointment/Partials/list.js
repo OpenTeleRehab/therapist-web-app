@@ -17,15 +17,15 @@ import {
   updateAppointmentStatus
 } from 'store/appointment/actions';
 import {
-  APPOINTMENT_NOTE,
   APPOINTMENT_STATUS
-} from '../../../variables/appointment';
+} from 'variables/appointment';
 import scssColors from 'scss/custom.scss';
 import {
   showSuccessNotification
-} from '../../../store/notification/actions';
+} from 'store/notification/actions';
 import { BsPersonFill } from 'react-icons/bs';
-import { RiChatFollowUpLine } from 'react-icons/ri';
+import EllipsisText from 'react-ellipsis-text';
+import { getAssistiveTechnologyName } from 'utils/assistiveTechnology';
 
 const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const dispatch = useDispatch();
@@ -123,6 +123,30 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
     setShowRejectDialog(true);
   };
 
+  const renderAppointmentNote = (appointment) => {
+    if (appointment.assistive_technology) {
+      const followUpText = translate('appointment.at_follow_up', { name: getAssistiveTechnologyName(appointment.assistive_technology.assistive_technology_id) });
+      if (appointment.note) {
+        return (
+          <span>
+            {followUpText + ' : '}
+            <EllipsisText text={appointment.note} length={settings.noteMaxLength - followUpText.length} />
+          </span>
+        );
+      } else {
+        return (
+          <span>{ followUpText }</span>
+        );
+      }
+    } else {
+      return (
+        <>
+          {appointment.note && (<EllipsisText text={appointment.note} length={settings.noteMaxLength} />)}
+        </>
+      );
+    }
+  };
+
   return (
     <>
       {
@@ -149,27 +173,25 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
 
                   return (
                     <div className="mx-3 mb-2 pr-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
-                      <div className="p-3 text-white" style={{ backgroundColor: appointment.note === APPOINTMENT_NOTE.AT_FOLLOW_UP ? scssColors.secondary : _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color }}>
+                      <div className="p-3 text-white" style={{ backgroundColor: _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color }}>
                         <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
-                      <div className="p-3">
+                      <div className={appointment.assistive_technology || appointment.note ? 'px-3 pt-2 pb-1' : 'p-3'}>
                         <div style={additionTextStyle}>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</div>
-                        <div className="mt-3 status-text mr-3" style={statusTextStyle}>
+                        <div className="mt-2">
+                          {renderAppointmentNote(appointment)}
+                        </div>
+                        <div className="mt-2 status-text mr-3" style={statusTextStyle}>
                           {translate(statusText)}
                         </div>
                       </div>
                       <div className="p-3 ml-auto">
                         {appointment.created_by_therapist && (
                           <>
-                            {appointment.note !== APPOINTMENT_NOTE.AT_FOLLOW_UP && (
-                              <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
-                            )}
+                            <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
                             <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
                             <div className="appointment-own-icon">
-                              {appointment.note === APPOINTMENT_NOTE.AT_FOLLOW_UP && (
-                                <RiChatFollowUpLine size={20} color={_.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color} />
-                              )}
                               <BsPersonFill size={20} color={_.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color} />
                             </div>
                           </>

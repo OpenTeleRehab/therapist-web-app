@@ -17,6 +17,7 @@ import List from './Partials/list';
 import CreateAppointment from './Partials/create';
 import { getLayoutDirection } from '../../utils/layoutDirection';
 import customColorScheme from '../../utils/customColorScheme';
+import { getAssistiveTechnologies } from 'store/assistiveTechnology/actions';
 
 const calendarLocales = [...allLocales, enLocale, kmLocale];
 
@@ -79,6 +80,10 @@ const Appointment = ({ translate }) => {
       setEvents(approvedAppointments);
     }
   }, [appointments, translate]);
+
+  useEffect(() => {
+    dispatch(getAssistiveTechnologies({ lang: profile.language_id }));
+  }, [profile, dispatch]);
 
   const handleViewChange = (info) => {
     setSelectedDate(undefined);

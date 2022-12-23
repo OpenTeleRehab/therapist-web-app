@@ -7,7 +7,7 @@ export const getAssistiveTechnologyName = (id) => {
   if (assistiveTechnologies) {
     const assistiveTechnology = _.find(assistiveTechnologies, { id: id });
 
-    return assistiveTechnology.name;
+    return assistiveTechnology && assistiveTechnology.name;
   }
 
   return null;
