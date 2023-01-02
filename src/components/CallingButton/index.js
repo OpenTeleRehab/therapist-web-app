@@ -4,23 +4,18 @@ import PropTypes from 'prop-types';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Translate } from 'react-localize-redux';
 import { VscWarning } from 'react-icons/all';
+import _ from 'lodash';
 const CallingButton = ({ isVideo, children, ...props }) => {
-  const [supportedDevice, setSupportedDevice] = useState(true);
+  const [supportedDevice, setSupportedDevice] = useState(undefined);
 
   useEffect(() => {
-    if (isVideo) {
-      navigator.mediaDevices.getUserMedia({
-        video: true
-      }).catch(() => {
-        setSupportedDevice(false);
+    const checking = isVideo ? 'videoinput' : 'audioinput';
+
+    navigator.mediaDevices.enumerateDevices()
+      .then((devices) => {
+        const foundDevice = _.findIndex(devices, d => d.kind === checking && d.label !== '') !== -1;
+        setSupportedDevice(foundDevice);
       });
-    } else {
-      navigator.mediaDevices.getUserMedia({
-        audio: true
-      }).catch(() => {
-        setSupportedDevice(false);
-      });
-    }
   }, [isVideo]);
 
   const callingBtn = (
@@ -29,7 +24,7 @@ const CallingButton = ({ isVideo, children, ...props }) => {
     </Button>
   );
 
-  if (isSupported && supportedDevice) {
+  if ((isSupported && supportedDevice) || supportedDevice === undefined) {
     return callingBtn;
   }
 
