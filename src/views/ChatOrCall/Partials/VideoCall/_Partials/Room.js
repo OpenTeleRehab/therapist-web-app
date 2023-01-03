@@ -62,8 +62,11 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioO
   }, [roomName, token]);
 
   const toggleVideo = async () => {
-    const toggleVideoOn = !isVideoOn;
+    if (room === undefined) {
+      return;
+    }
 
+    const toggleVideoOn = !isVideoOn;
     if (toggleVideoOn) {
       const videoTrack = await createLocalVideoTrack();
       await room.localParticipant.publishTrack(videoTrack);
@@ -78,8 +81,11 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioO
   };
 
   const toggleAudio = async () => {
-    const toggleAudioOn = !isAudioOn;
+    if (room === undefined) {
+      return;
+    }
 
+    const toggleAudioOn = !isAudioOn;
     if (toggleAudioOn) {
       const audioTrack = await createLocalAudioTrack();
       await room.localParticipant.publishTrack(audioTrack);

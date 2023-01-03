@@ -66,7 +66,7 @@ const Participant = ({ participant, isVideoOn, isAudioOn }) => {
 
   return (
     <div className="participant">
-      {isVideoOn === false && (
+      {(videoTracks.length === 0) && (
         <div className="participant-avatar">
           <FaUserCircle size={50} color="white" />
         </div>
