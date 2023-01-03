@@ -10,7 +10,7 @@ import {
 } from 'react-icons/all';
 import CallingButton from '../../../../../components/CallingButton';
 
-const CallingControls = ({ isVideoOn, setIsVideoOn, isMuted, setIsMuted, onMissCall }) => {
+const CallingControls = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, onMissCall }) => {
   return (
     <div className="incoming-options mt-auto w-100">
       <ul className="d-flex justify-content-center">
@@ -21,8 +21,8 @@ const CallingControls = ({ isVideoOn, setIsVideoOn, isMuted, setIsMuted, onMissC
           </CallingButton>
         </li>
         <li>
-          <Button variant="light" className="btn-muted-call text-dark" onClick={() => setIsMuted(!isMuted)}>
-            {isMuted ? (<IoMicOff size={20}/>) : (<IoMicOutline size={20}/>)}
+          <Button variant="light" className="btn-muted-call text-dark" onClick={() => setIsAudioOn(!isAudioOn)}>
+            {isAudioOn ? (<IoMicOutline size={20}/>) : (<IoMicOff size={20}/>)}
           </Button>
         </li>
         <li>
@@ -37,9 +37,9 @@ const CallingControls = ({ isVideoOn, setIsVideoOn, isMuted, setIsMuted, onMissC
 
 CallingControls.propTypes = {
   isVideoOn: PropTypes.bool,
-  isMuted: PropTypes.bool,
+  isAudioOn: PropTypes.bool,
   setIsVideoOn: PropTypes.func,
-  setIsMuted: PropTypes.func,
+  setIsAudioOn: PropTypes.func,
   onMissCall: PropTypes.func
 };
 

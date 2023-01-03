@@ -1,17 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { connect } from 'twilio-video';
+import { connect, createLocalVideoTrack, createLocalAudioTrack } from 'twilio-video';
 import PropTypes from 'prop-types';
 import Participant from './Participant';
 import CallingScreen from './CallingScreen';
 import CallingControls from './CallingControls';
 import { showErrorNotification } from '../../../../../store/notification/actions';
 
-const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isMuted, setIsMuted, onMissCall, onEndCall }) => {
+const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, onMissCall, onEndCall }) => {
   const dispatch = useDispatch();
   const [room, setRoom] = useState();
   const [participant, setParticipant] = useState();
-  const [showLocalAvatar, setShowLocalAvatar] = useState(!isVideoOn);
   const isActive = useRef(true);
 
   useEffect(() => {
@@ -26,8 +25,8 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isMuted, setIsMuted, o
 
     connect(token, {
       name: roomName,
-      video: true,
-      audio: true,
+      video: isVideoOn,
+      audio: isAudioOn,
       networkQuality: { local: 3, remote: 3 }
     }).then(room => {
       if (!isActive.current && room && room.localParticipant.state === 'connected') {
@@ -62,35 +61,45 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isMuted, setIsMuted, o
     };
   }, [roomName, token]);
 
-  useEffect(() => {
-    room && room.localParticipant.videoTracks.forEach(publication => {
-      if (isVideoOn) {
-        publication.track.enable();
-        setShowLocalAvatar(false);
-      } else {
-        publication.track.disable();
-        setShowLocalAvatar(true);
-      }
-    });
-  }, [isVideoOn, room]);
+  const toggleVideo = async () => {
+    const toggleVideoOn = !isVideoOn;
 
-  useEffect(() => {
-    room && room.localParticipant.audioTracks.forEach(publication => {
-      if (isMuted) {
-        publication.track.disable();
-      } else {
-        publication.track.enable();
-      }
-    });
-  }, [isMuted, room]);
+    if (toggleVideoOn) {
+      const videoTrack = await createLocalVideoTrack();
+      await room.localParticipant.publishTrack(videoTrack);
+    } else {
+      room.localParticipant.videoTracks.forEach(publication => {
+        publication.track.stop();
+        room.localParticipant.unpublishTrack(publication.track);
+      });
+    }
+
+    setIsVideoOn(toggleVideoOn);
+  };
+
+  const toggleAudio = async () => {
+    const toggleAudioOn = !isAudioOn;
+
+    if (toggleAudioOn) {
+      const audioTrack = await createLocalAudioTrack();
+      await room.localParticipant.publishTrack(audioTrack);
+    } else {
+      room.localParticipant.audioTracks.forEach(publication => {
+        publication.track.stop();
+        room.localParticipant.unpublishTrack(publication.track);
+      });
+    }
+
+    setIsAudioOn(toggleAudioOn);
+  };
 
   if (!participant) {
     return (
       <CallingScreen
         isVideoOn={isVideoOn}
-        setIsVideoOn={setIsVideoOn}
-        isMuted={isMuted}
-        setIsMuted={setIsMuted}
+        setIsVideoOn={toggleVideo}
+        isAudioOn={isAudioOn}
+        setIsAudioOn={toggleAudio}
         onMissCall={onMissCall}
       />
     );
@@ -104,15 +113,15 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isMuted, setIsMuted, o
       </div>
 
       <div className="local">
-        <Participant participant={room.localParticipant} showAvatar={showLocalAvatar} />
+        <Participant participant={room.localParticipant} isVideoOn={isVideoOn} isAudioOn={isAudioOn} />
       </div>
 
       <div className="fixed-bottom">
         <CallingControls
           isVideoOn={isVideoOn}
-          setIsVideoOn={setIsVideoOn}
-          isMuted={isMuted}
-          setIsMuted={setIsMuted}
+          setIsVideoOn={toggleVideo}
+          isAudioOn={isAudioOn}
+          setIsAudioOn={toggleAudio}
           onMissCall={onMissCall}/>
       </div>
     </div>
@@ -123,9 +132,9 @@ Room.propTypes = {
   roomName: PropTypes.string,
   token: PropTypes.string,
   isVideoOn: PropTypes.bool,
-  isMuted: PropTypes.bool,
+  isAudioOn: PropTypes.bool,
   setIsVideoOn: PropTypes.func,
-  setIsMuted: PropTypes.func,
+  setIsAudioOn: PropTypes.func,
   onMissCall: PropTypes.func,
   onEndCall: PropTypes.func
 };

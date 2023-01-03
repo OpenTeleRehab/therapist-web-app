@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/all';
 
-const Participant = ({ participant, showAvatar = false }) => {
+const Participant = ({ participant, isVideoOn, isAudioOn }) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
 
@@ -42,7 +42,7 @@ const Participant = ({ participant, showAvatar = false }) => {
       setAudioTracks([]);
       participant.removeAllListeners();
     };
-  }, [participant]);
+  }, [participant, isVideoOn, isAudioOn]);
 
   useEffect(() => {
     const videoTrack = videoTracks[0];
@@ -66,7 +66,7 @@ const Participant = ({ participant, showAvatar = false }) => {
 
   return (
     <div className="participant">
-      {showAvatar && (
+      {isVideoOn === false && (
         <div className="participant-avatar">
           <FaUserCircle size={50} color="white" />
         </div>
@@ -79,8 +79,8 @@ const Participant = ({ participant, showAvatar = false }) => {
 
 Participant.propTypes = {
   participant: PropTypes.object,
-  isMuted: PropTypes.bool,
-  showAvatar: PropTypes.bool
+  isAudioOn: PropTypes.bool,
+  isVideoOn: PropTypes.bool
 };
 
 export default Participant;

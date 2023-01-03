@@ -7,7 +7,7 @@ import CallingScreen from './_Partials/CallingScreen';
 
 const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator }) => {
   const [isVideoOn, setIsVideoOn] = useState(isVideoCall);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isAudioOn, setIsAudioOn] = useState(true);
   const [token, setToken] = useState('');
 
   useEffect(() => {
@@ -35,8 +35,8 @@ const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator }) => {
           roomName={roomName}
           isVideoOn={isVideoOn}
           setIsVideoOn={setIsVideoOn}
-          isMuted={isMuted}
-          setIsMuted={setIsMuted}
+          isAudioOn={isAudioOn}
+          setIsAudioOn={setIsAudioOn}
           onMissCall={onMissCall}
           onEndCall={onEndCall}
         />
@@ -44,8 +44,8 @@ const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator }) => {
         <CallingScreen
           isVideoOn={isVideoOn}
           setIsVideoOn={setIsVideoOn}
-          isMuted={isMuted}
-          setIsMuted={setIsMuted}
+          isAudioOn={isAudioOn}
+          setIsAudioOn={setIsAudioOn}
           onMissCall={onMissCall}
         />
       )}
