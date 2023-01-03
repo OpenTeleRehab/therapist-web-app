@@ -229,6 +229,7 @@
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 99;
     &:focus {
       box-shadow: none;
     }
@@ -283,12 +284,7 @@
         left: 45px;
         top: 7px;
         margin: 0;
-      }
-      &-avatar {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        z-index: 99;
       }
     }
     .local,
@@ -296,6 +292,7 @@
       background-color: $dark;
       .participant,
       video {
+        background-color: $black;
         height: 100%;
         width: 100%;
       }
@@ -308,10 +305,29 @@
       left: 45px;
       width: 210px;
       height: 160px;
+      .participant {
+        &-avatar {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        }
+      }
     }
     .remote {
       height: 100%;
       width: 100%;
+      .participant {
+        &-avatar {
+          background-color: $dark;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          position: absolute;
+          height: 100%;
+          width: 100%;
+        }
+      }
     }
   }
 }

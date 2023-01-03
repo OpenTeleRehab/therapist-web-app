@@ -4,7 +4,7 @@ import useTranslate from 'hooks/useTranslate';
 import { useSelector } from 'react-redux';
 import CallingControls from './CallingControls';
 
-const CallingScreen = ({ isVideoOn, setIsVideoOn, isMuted, setIsMuted, onMissCall }) => {
+const CallingScreen = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, onMissCall }) => {
   const translate = useTranslate();
   const { selectedRoom } = useSelector(state => state.rocketchat);
 
@@ -21,8 +21,8 @@ const CallingScreen = ({ isVideoOn, setIsVideoOn, isMuted, setIsMuted, onMissCal
         <CallingControls
           isVideoOn={isVideoOn}
           setIsVideoOn={setIsVideoOn}
-          isMuted={isMuted}
-          setIsMuted={setIsMuted}
+          isAudioOn={isAudioOn}
+          setIsAudioOn={setIsAudioOn}
           onMissCall={onMissCall}/>
       </div>
     </div>
@@ -31,9 +31,9 @@ const CallingScreen = ({ isVideoOn, setIsVideoOn, isMuted, setIsMuted, onMissCal
 
 CallingScreen.propTypes = {
   isVideoOn: PropTypes.bool,
-  isMuted: PropTypes.bool,
+  isAudioOn: PropTypes.bool,
   setIsVideoOn: PropTypes.func,
-  setIsMuted: PropTypes.func,
+  setIsAudioOn: PropTypes.func,
   onMissCall: PropTypes.func
 };
 
