@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { connect } from 'twilio-video';
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isMuted, setIsMuted, o
   const [room, setRoom] = useState();
   const [participant, setParticipant] = useState();
   const [showLocalAvatar, setShowLocalAvatar] = useState(!isVideoOn);
+  const isActive = useRef(true);
 
   useEffect(() => {
     const participantConnected = participant => {
@@ -29,6 +30,11 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isMuted, setIsMuted, o
       audio: true,
       networkQuality: { local: 3, remote: 3 }
     }).then(room => {
+      if (!isActive.current && room && room.localParticipant.state === 'connected') {
+        room.disconnect();
+        return;
+      }
+
       setRoom(room);
       room.on('participantConnected', participantConnected);
       room.on('participantDisconnected', participantDisconnected);
@@ -41,6 +47,7 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isMuted, setIsMuted, o
     });
 
     return () => {
+      isActive.current = false;
       setRoom(currentRoom => {
         if (currentRoom && currentRoom.localParticipant.state === 'connected') {
           currentRoom.localParticipant.tracks.forEach(function (trackPublication) {
