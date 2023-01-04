@@ -12,3 +12,13 @@ export const getAssistiveTechnologyName = (id) => {
 
   return null;
 };
+
+export const getAssistiveTechnologyIds = (name) => {
+  const { assistiveTechnologies } = store.getState().assistiveTechnology;
+
+  if (assistiveTechnologies && name) {
+    const assistiveTechnologiesByName = _.filter(assistiveTechnologies, at => at.name.includes(name));
+    const ids = _.map(assistiveTechnologiesByName, 'id');
+    return ids.length > 0 ? ids : [0];
+  }
+};

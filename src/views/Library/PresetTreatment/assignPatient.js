@@ -40,7 +40,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
   useEffect(() => {
     const yesterday = moment().subtract(1, 'day');
     if (moment(startDate, settings.date_format, true).isValid() && startDate.isAfter(yesterday)) {
-      const date = moment(startDate).format(settings.date_format);
+      const date = moment(startDate).locale('en').format(settings.date_format);
       setFormFields({ ...formFields, start_date: date });
     } else {
       setFormFields({ ...formFields, start_date: '' });
@@ -50,7 +50,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
 
   useEffect(() => {
     if (formFields.start_date) {
-      setFormFields({ ...formFields, end_date: moment(formFields.start_date, settings.date_format).add(weeks, 'weeks').subtract(1, 'days').format(settings.date_format) });
+      setFormFields({ ...formFields, end_date: moment(formFields.start_date, settings.date_format).add(weeks, 'weeks').subtract(1, 'days').locale('en').format(settings.date_format) });
     } else {
       setFormFields({ ...formFields, end_date: '' });
     }

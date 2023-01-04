@@ -101,7 +101,7 @@ const CreateTreatmentPlan = () => {
     if (!isPast()) {
       const yesterday = moment().subtract(1, 'day');
       if (moment(startDate, settings.date_format, true).isValid() && startDate.isAfter(yesterday)) {
-        const date = moment(startDate).format(settings.date_format);
+        const date = moment(startDate).locale('en').format(settings.date_format);
         setFormFields({ ...formFields, start_date: date });
       } else {
         setFormFields({ ...formFields, start_date: '' });
@@ -126,7 +126,7 @@ const CreateTreatmentPlan = () => {
         name: editingData.name,
         description: editingData.description,
         patient_id: editingData.patient_id,
-        start_date: moment(editingData.start_date, settings.date_format).format(settings.date_format),
+        start_date: moment(editingData.start_date, settings.date_format).locale('en').format(settings.date_format),
         end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format),
         disease_id: editingData.disease_id
       });

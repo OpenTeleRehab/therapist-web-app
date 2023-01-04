@@ -136,7 +136,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     if (formFields.clinic_id) {
       if (dob) {
         if (moment(dob, settings.date_format, true).isValid() && dob.isBefore(moment())) {
-          const date = moment(dob).format(settings.date_format);
+          const date = moment(dob).locale('en').format(settings.date_format);
           const age = AgeCalculation(dob, translate);
           setErrorInvalidDob(false);
           setFormFields({ ...formFields, date_of_birth: date, age: age });

@@ -5,6 +5,7 @@ import { getTranslate, Translate } from 'react-localize-redux';
 import { FaNotesMedical } from 'react-icons/fa';
 import { Button, Col, Form } from 'react-bootstrap';
 import Select from 'react-select';
+import TimeKeeper from 'react-timekeeper';
 import moment from 'moment/moment';
 import _ from 'lodash';
 
@@ -19,7 +20,10 @@ import {
   DeleteAction,
   EditAction
 } from '../../../components/ActionIcons';
-import { getAssistiveTechnologyName } from '../../../utils/assistiveTechnology';
+import {
+  getAssistiveTechnologyIds,
+  getAssistiveTechnologyName
+} from '../../../utils/assistiveTechnology';
 import Datetime from '../../../components/DateTime';
 import CustomTable from 'components/Table';
 import Dialog from 'components/Dialog';
@@ -31,6 +35,7 @@ const AssistiveTechnologyHistory = () => {
   const { patientId } = useParams();
   const dispatch = useDispatch();
   const { profile } = useSelector(state => state.auth);
+  const { languages } = useSelector(state => state.language);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const {
@@ -56,10 +61,19 @@ const AssistiveTechnologyHistory = () => {
   const [deleteId, setDeleteId] = useState(null);
   const [show, setShow] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showFollowUpAppointment, setShowFollowUpAppointment] = useState(false);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [formattedFrom, setFormattedFrom] = useState('');
   const [formattedTo, setFormattedTo] = useState('');
+  const [followUpDate, setFollowUpDate] = useState('');
+  const [provisionDate, setProvisionDate] = useState('');
+  const [formattedProvisionDate, setFormattedProvisionDate] = useState('');
+  const [formattedFollowUpDate, setFormattedFollowUpDate] = useState('');
+  const [showFromTime, setShowFromTime] = useState(false);
+  const [showToTime, setShowToTime] = useState(false);
+  const [userLocale, setUserLocale] = useState('en-us');
+  const [timeTo, setTimeTo] = useState('12:00 am');
 
   const [errorAssistiveTechnology, setErrorAssistiveTechnology] = useState(false);
   const [errorProvisionDate, setErrorProvisionDate] = useState(false);
@@ -70,10 +84,7 @@ const AssistiveTechnologyHistory = () => {
   const [formFields, setFormFields] = useState({
     patientId: parseInt(patientId),
     therapistId: parseInt(profile.id),
-    assistiveTechnologyId: '',
-    provisionDate: '',
-    followUpDate: '',
-    showFollowUpAppointment: false
+    assistiveTechnologyId: ''
   });
 
   const validateDate = (current) => {
@@ -98,7 +109,7 @@ const AssistiveTechnologyHistory = () => {
     if (patientId) {
       dispatch(getPatientAssistiveTechnologies({
         patient_id: parseInt(patientId),
-        search_value: searchValue,
+        search_value: getAssistiveTechnologyIds(searchValue),
         filters: filters,
         page_size: pageSize,
         page: currentPage + 1
@@ -111,20 +122,109 @@ const AssistiveTechnologyHistory = () => {
   }, [currentPage, pageSize, searchValue, filters, patientId, dispatch]);
 
   useEffect(() => {
-    if (moment(from, settings.date_format + ' hh:mm A', true).isValid()) {
-      setFormattedFrom(moment(from).format('hh:mm A'));
+    if (languages.length && profile) {
+      const language = languages.find(lang => lang.id === profile.language_id);
+      if (language) {
+        setUserLocale(language.code);
+      }
+    }
+  }, [languages, profile]);
+
+  useEffect(() => {
+    if (moment(provisionDate, settings.date_format, true).isValid()) {
+      setFormattedProvisionDate(moment(provisionDate).locale(userLocale));
+    } else {
+      setFormattedProvisionDate('');
+    }
+  }, [provisionDate, userLocale]);
+
+  useEffect(() => {
+    if (moment(followUpDate, settings.date_format, true).isValid()) {
+      setFormattedFollowUpDate(moment(followUpDate).locale(userLocale));
+    } else {
+      setFormattedFollowUpDate('');
+    }
+  }, [followUpDate, userLocale]);
+
+  useEffect(() => {
+    if (from.isValid) {
+      // set locale to en before convert
+      moment.locale('en');
+
+      setFormattedTo(moment(from.formatted12, 'hh:mm a').locale(userLocale).add(15, 'minutes').format('hh:mm A'));
+      const formatted = from.formatted12 ? moment(from.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A') : moment(from).locale(userLocale).format('hh:mm A');
+      setFormattedFrom(formatted);
+
+      // set locale back after convert
+      moment.locale(userLocale);
     } else {
       setFormattedFrom('');
     }
-  }, [from]);
+  }, [from, userLocale]);
 
   useEffect(() => {
-    if (moment(to, settings.date_format + ' hh:mm A', true).isValid()) {
-      setFormattedTo(moment(to).format('hh:mm A'));
+    if (to.isValid) {
+      // set locale to en before convert
+      moment.locale('en');
+      setTimeTo(to.formatted12 ? to.formatted12 : moment(to, 'hh:mm A').locale('en').format('hh:mm a'));
+
+      const formatted = to.formatted12 ? moment(to.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A') : moment(to).locale(userLocale).format('hh:mm A');
+      setFormattedTo(formatted);
+
+      // set locale back after convert
+      moment.locale(userLocale);
     } else {
       setFormattedTo('');
     }
-  }, [to]);
+  }, [to, userLocale]);
+
+  useEffect(() => {
+    // Translate meridiem button of picker base on language when click
+    const topMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+    const amButton = document.querySelector('[data-testid="meridiem_am"]');
+    const pmButton = document.querySelector('[data-testid="meridiem_pm"]');
+
+    if (topMeridiemButton && amButton && pmButton) {
+      topMeridiemButton.addEventListener('click', function () {
+        setTimeout(() => {
+          // set moment locale to en before convert
+          moment.locale('en');
+          const newTopMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+          newTopMeridiemButton.innerHTML = moment(`12:00 ${newTopMeridiemButton.innerHTML}`, 'hh:mm a').locale(userLocale).format('A');
+        }, [0]);
+      });
+
+      amButton.addEventListener('click', function () {
+        setTimeout(() => {
+          moment.locale('en');
+          const newTopMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+          newTopMeridiemButton.innerHTML = moment('12:00 AM', 'hh:mm A').locale(userLocale).format('A');
+        }, [0]);
+      });
+
+      pmButton.addEventListener('click', function () {
+        setTimeout(() => {
+          moment.locale('en');
+          const newTopMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+          newTopMeridiemButton.innerHTML = moment('12:00 PM', 'hh:mm A').locale(userLocale).format('A');
+        }, [0]);
+      });
+    }
+  }, [showFromTime, showToTime, userLocale]);
+
+  useEffect(() => {
+    // set moment locale to en before convert
+    moment.locale('en');
+    const amButton = document.querySelector('[data-testid="meridiem_am"]');
+    const pmButton = document.querySelector('[data-testid="meridiem_pm"]');
+    const topMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+    if (amButton && pmButton && topMeridiemButton) {
+      // Translate meridiem button of picker base on language
+      topMeridiemButton.innerHTML = moment(timeTo, 'hh:mm a').locale(userLocale).format('A');
+      amButton.innerHTML = moment('12:00 AM', 'hh:mm A').locale(userLocale).format('A');
+      pmButton.innerHTML = moment('12:00 PM', 'hh:mm A').locale(userLocale).format('A');
+    }
+  }, [showFromTime, showToTime, userLocale, timeTo]);
 
   const handleAddAssistiveTechnology = () => {
     setShow(true);
@@ -135,11 +235,12 @@ const AssistiveTechnologyHistory = () => {
     setEditId(row.id);
     setFormFields({
       ...formFields,
-      assistiveTechnologyId: row.assistive_technology_id,
-      provisionDate: row.provision_date,
-      showFollowUpAppointment: row.follow_up_date,
-      followUpDate: row.follow_up_date
+      assistiveTechnologyId: row.assistive_technology_id
     });
+    setShowFollowUpAppointment(row.follow_up_date);
+    setProvisionDate(moment(row.provision_date, 'DD/MM/YYYY'));
+    setFollowUpDate(row.follow_up_date ? moment(row.follow_up_date, 'DD/MM/YYYY') : '');
+
     if (patientAssistiveTechnology.appointment) {
       setFrom(moment.utc(patientAssistiveTechnology.appointment.start_date).local());
       setTo(moment.utc(patientAssistiveTechnology.appointment.end_date).local());
@@ -159,25 +260,28 @@ const AssistiveTechnologyHistory = () => {
     setShowConfirm(false);
     setFormFields({
       ...formFields,
-      assistiveTechnologyId: '',
-      provisionDate: '',
-      followUpDate: '',
-      showFollowUpAppointment: false
+      assistiveTechnologyId: ''
     });
     setFrom('');
     setTo('');
+    setProvisionDate('');
+    setFollowUpDate('');
+    setShowToTime(false);
+    setShowFromTime(false);
+    setShowFollowUpAppointment(false);
+    setTimeTo('12:00 am');
   };
 
   const handleCheck = e => {
-    const { name, checked } = e.target;
-    setFormFields({ ...formFields, [name]: checked });
+    setShowFollowUpAppointment(e.target.checked);
   };
 
   const handleConfirm = () => {
     let canSave = true;
+    moment.locale(userLocale);
 
     const now = moment().locale('en').format('YYYY-MM-DD HH:mm:ss');
-    const formattedDate = moment(formFields.followUpDate, 'DD/MM/YYYY').format(settings.date_format);
+    const formattedDate = moment(followUpDate).format(settings.date_format);
     const fromTimeThen = moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
     const toTimeThen = moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
 
@@ -188,15 +292,15 @@ const AssistiveTechnologyHistory = () => {
       setErrorAssistiveTechnology(false);
     }
 
-    if (formFields.provisionDate === '') {
+    if (formattedProvisionDate === '' || !moment(formattedProvisionDate, settings.date_format).locale('en').isValid()) {
       canSave = false;
       setErrorProvisionDate(true);
     } else {
       setErrorProvisionDate(false);
     }
 
-    if (formFields.showFollowUpAppointment) {
-      if (formFields.followUpDate === '') {
+    if (showFollowUpAppointment) {
+      if (formattedFollowUpDate === '' || !moment(formattedFollowUpDate, settings.date_format).locale('en').isValid()) {
         canSave = false;
         setErrorFollowUpDate(true);
       } else {
@@ -240,13 +344,13 @@ const AssistiveTechnologyHistory = () => {
   };
 
   const handleSubmit = () => {
-    const formattedFollowUpDate = moment(formFields.followUpDate, 'DD/MM/YYYY').format(settings.date_format);
+    const formattedDate = moment(followUpDate, 'DD/MM/YYYY').format(settings.date_format);
     const data = {
       ...formFields,
-      provisionDate: moment(formFields.provisionDate, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-      followUpDate: formFields.followUpDate ? moment(formFields.followUpDate, 'DD/MM/YYYY').format('YYYY-MM-DD') : '',
-      appointmentFrom: formFields.followUpDate ? moment(formattedFollowUpDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss') : '',
-      appointmentTo: formFields.followUpDate ? moment(formattedFollowUpDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss') : ''
+      provisionDate: moment(provisionDate, 'DD/MM/YYYY').locale('en').format('YYYY-MM-DD'),
+      followUpDate: followUpDate ? moment(followUpDate, 'DD/MM/YYYY').locale('en').format('YYYY-MM-DD') : '',
+      appointmentFrom: followUpDate ? moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss') : '',
+      appointmentTo: followUpDate ? moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss') : ''
     };
 
     if (editId) {
@@ -279,6 +383,12 @@ const AssistiveTechnologyHistory = () => {
       e.preventDefault();
       handleConfirm();
     }
+  };
+
+  const handleFromChange = (value) => {
+    moment.locale('en');
+    setTimeTo(moment(value.formatted12, 'hh:mm a').locale('en').add(15, 'minutes').format('hh:mm a'));
+    setFrom(value);
   };
 
   const customSelectStyles = {
@@ -384,8 +494,8 @@ const AssistiveTechnologyHistory = () => {
                 timeFormat={false}
                 isValidDate={validateDate}
                 closeOnSelect={true}
-                value={formFields.provisionDate}
-                onChange={(value) => setFormFields({ ...formFields, provisionDate: value })}
+                value={formattedProvisionDate}
+                onChange={(value) => setProvisionDate(value)}
               />
               {errorProvisionDate && (
                 <Form.Control.Feedback type="invalid">
@@ -399,13 +509,13 @@ const AssistiveTechnologyHistory = () => {
                 name="showFollowUpAppointment"
                 onChange={handleCheck}
                 value={true}
-                checked={formFields.showFollowUpAppointment}
+                checked={showFollowUpAppointment}
                 label={translate('patient.assistive_technology.create_follow_up_appointment')}
                 disabled={editId}
               />
             </Form.Group>
 
-            {formFields.showFollowUpAppointment && (
+            {showFollowUpAppointment && (
               <>
                 <Form.Group controlId="groupFollowUpDate">
                   <label htmlFor="follow-up-date">
@@ -425,8 +535,8 @@ const AssistiveTechnologyHistory = () => {
                     timeFormat={false}
                     isValidDate={validateDate}
                     closeOnSelect={true}
-                    value={formFields.followUpDate}
-                    onChange={(value) => setFormFields({ ...formFields, followUpDate: value })}
+                    value={formattedFollowUpDate}
+                    onChange={(value) => setFollowUpDate(value)}
                   />
                   {errorFollowUpDate && (
                     <Form.Control.Feedback type="invalid">
@@ -439,56 +549,69 @@ const AssistiveTechnologyHistory = () => {
                     <Col>
                       <label htmlFor="time-from">{translate('appointment.from')}</label>
                       <span className="text-dark ml-1">*</span>
-                      <Datetime
-                        inputProps={{
-                          id: 'time-from',
-                          name: 'from',
-                          autoComplete: 'off',
-                          className: errorFrom ? 'form-control is-invalid' : 'form-control',
-                          placeholder: translate('placeholder.time')
-                        }}
-                        timeConstraints={{ minutes: { step: 15 } }}
-                        initialViewMode="time"
-                        value={formattedFrom}
-                        onChange={(value) => {
-                          setFrom(value);
-                          if (typeof value === 'object') {
-                            setTo(_.cloneDeep(value).add(15, 'minutes'));
-                          }
-                        }}
-                        dateFormat={false}
-                        timeFormat={'h:mm A'}
+                      <Form.Control
+                        type="text"
+                        name="from"
+                        defaultValue={formattedFrom}
+                        placeholder={translate('placeholder.time')}
+                        onClick={() => [setShowFromTime(true), setShowToTime(false)]}
                       />
                       {errorFrom && (
                         <Form.Control.Feedback type="invalid" className="d-block">
                           {translate('error_message.appointment_from')}
                         </Form.Control.Feedback>
                       )}
+                      {showFromTime &&
+                        <TimeKeeper
+                          time={from.formatted12 ? from.formatted12 : from ? moment(from).locale('en-us').format('hh:mm a') : '12:00 am'}
+                          onChange={(value) => handleFromChange(value)}
+                          onDoneClick={() => setShowFromTime(false)}
+                          switchToMinuteOnHourSelect
+                          closeOnMinuteSelect
+                          doneButton={() => (
+                            <div
+                              className="text-center pt-2 pb-2"
+                              onClick={() => setShowFromTime(false)}
+                            >
+                              {translate('common.close')}
+                            </div>
+                          )}
+                        />
+                      }
                     </Col>
                     <Col>
                       <label htmlFor="time-to">{translate('appointment.to')}</label>
                       <span className="text-dark ml-1">*</span>
-                      <Datetime
-                        inputProps={{
-                          id: 'time-to',
-                          name: 'to',
-                          autoComplete: 'off',
-                          className: errorTo ? 'form-control is-invalid' : 'form-control',
-                          placeholder: translate('placeholder.time'),
-                          disabled: typeof from !== 'object'
-                        }}
-                        timeConstraints={{ minutes: { step: 15 } }}
-                        initialViewMode="time"
-                        value={formattedTo}
-                        onChange={(value) => setTo(value)}
-                        dateFormat={false}
-                        timeFormat={'h:mm A'}
+                      <Form.Control
+                        type="text"
+                        name="to"
+                        defaultValue={formattedTo}
+                        placeholder={translate('placeholder.time')}
+                        onClick={() => [setShowToTime(true), setShowFromTime(false)]}
+                        disabled={typeof from !== 'object'}
                       />
                       {errorTo && (
                         <Form.Control.Feedback type="invalid" className="d-block">
                           {translate('error_message.appointment_to')}
                         </Form.Control.Feedback>
                       )}
+                      {showToTime &&
+                        <TimeKeeper
+                          time={timeTo}
+                          onChange={(value) => setTo(value)}
+                          onDoneClick={() => setShowToTime(false)}
+                          switchToMinuteOnHourSelect
+                          closeOnMinuteSelect
+                          doneButton={() => (
+                            <div
+                              className="text-center pt-2 pb-2"
+                              onClick={() => setShowToTime(false)}
+                            >
+                              {translate('common.close')}
+                            </div>
+                          )}
+                        />
+                      }
                     </Col>
                   </Form.Row>
                 </Form.Group>

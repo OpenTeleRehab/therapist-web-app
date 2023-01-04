@@ -83,7 +83,7 @@ const PatientInfo = ({ id, translate }) => {
         name: data.last_name + ' ' + data.first_name || '',
         id: data.id || '',
         phone: CustomPhoneNumber(data.dial_code, data.phone) || '',
-        date_of_birth: moment(data.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) || '',
+        date_of_birth: moment(data.date_of_birth, 'YYYY-MM-DD').locale('en').format(settings.date_format) || '',
         country: getCountryName(data.country_id, countries),
         note: data.note || '',
         age: AgeCalculation(data.date_of_birth, translate) || '',
