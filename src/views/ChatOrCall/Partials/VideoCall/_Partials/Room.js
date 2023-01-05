@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Participant from './Participant';
 import CallingScreen from './CallingScreen';
 import CallingControls from './CallingControls';
+import LocalParticipant from './LocalParticipant';
 import { showErrorNotification } from '../../../../../store/notification/actions';
 
 const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, onMissCall, onEndCall }) => {
@@ -119,7 +120,7 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioO
       </div>
 
       <div className="local">
-        <Participant participant={room.localParticipant} isVideoOn={isVideoOn} isAudioOn={isAudioOn} />
+        <LocalParticipant participant={room.localParticipant} isVideoOn={isVideoOn} isAudioOn={isAudioOn} />
       </div>
 
       <div className="fixed-bottom">

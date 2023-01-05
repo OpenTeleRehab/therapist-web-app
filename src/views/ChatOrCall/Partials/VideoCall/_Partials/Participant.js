@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/all';
 
-const Participant = ({ participant, isVideoOn, isAudioOn }) => {
+const Participant = ({ participant }) => {
   const [videoTracks, setVideoTracks] = useState([]);
   const [audioTracks, setAudioTracks] = useState([]);
 
@@ -20,17 +20,17 @@ const Participant = ({ participant, isVideoOn, isAudioOn }) => {
 
     const trackSubscribed = (track) => {
       if (track.kind === 'video') {
-        setVideoTracks((videoTracks) => [...videoTracks, track]);
+        setVideoTracks(() => [track]);
       } else if (track.kind === 'audio') {
-        setAudioTracks((audioTracks) => [...audioTracks, track]);
+        setAudioTracks(() => [track]);
       }
     };
 
     const trackUnsubscribed = (track) => {
       if (track.kind === 'video') {
-        setVideoTracks((videoTracks) => videoTracks.filter((v) => v !== track));
+        setVideoTracks([]);
       } else if (track.kind === 'audio') {
-        setAudioTracks((audioTracks) => audioTracks.filter((a) => a !== track));
+        setAudioTracks([]);
       }
     };
 
@@ -42,7 +42,7 @@ const Participant = ({ participant, isVideoOn, isAudioOn }) => {
       setAudioTracks([]);
       participant.removeAllListeners();
     };
-  }, [participant, isVideoOn, isAudioOn]);
+  }, [participant]);
 
   useEffect(() => {
     const videoTrack = videoTracks[0];
@@ -66,7 +66,7 @@ const Participant = ({ participant, isVideoOn, isAudioOn }) => {
 
   return (
     <div className="participant">
-      {(videoTracks.length === 0) && (
+      {!videoTracks.length && (
         <div className="participant-avatar">
           <FaUserCircle size={50} color="white" />
         </div>
@@ -78,9 +78,7 @@ const Participant = ({ participant, isVideoOn, isAudioOn }) => {
 };
 
 Participant.propTypes = {
-  participant: PropTypes.object,
-  isAudioOn: PropTypes.bool,
-  isVideoOn: PropTypes.bool
+  participant: PropTypes.object
 };
 
 export default Participant;
