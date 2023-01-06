@@ -12,6 +12,7 @@ import {
   sendPodcastNotification
 } from 'store/rocketchat/actions';
 import { generateHash } from 'utils/general';
+import CallingButton from '../../../../components/CallingButton';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
 const ChatPanel = (
@@ -105,12 +106,12 @@ const ChatPanel = (
               {userStatus(selectedRoom, 'md')}
             </h4>
             <div className="d-flex justify-content-end">
-              <Button variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => handleCall(false)} aria-label="Audio call">
+              <CallingButton variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => handleCall(false)} aria-label="Audio call">
                 <IoCallOutline size={18} color="#333333" />
-              </Button>
-              <Button variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => handleCall(true)} aria-label="Video call">
+              </CallingButton>
+              <CallingButton isVideo variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => handleCall(true)} aria-label="Video call">
                 <IoVideocamOutline size={18} color="#333333" />
-              </Button>
+              </CallingButton>
             </div>
           </div>
           <Message

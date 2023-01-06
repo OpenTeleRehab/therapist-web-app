@@ -10,6 +10,7 @@ import {
 import { showErrorNotification } from 'store/notification/actions';
 import { USER_STATUS } from 'variables/rocketchat';
 import { getUniqueId, getMessage } from './general';
+import { Rocketchat } from '../services/roketchat';
 
 export const initialChatSocket = (dispatch, subscribeIds, username, password) => {
   let authUserId = '';
@@ -45,21 +46,16 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
     } else if (resMessage === 'connected') {
       // connection success => login
       dispatch(connectWebsocket(true));
-      const options = {
-        msg: 'method',
-        method: 'login',
-        id: loginId,
-        params: [
-          {
-            user: { username },
-            password: {
-              digest: password,
-              algorithm: 'sha-256'
-            }
-          }
-        ]
-      };
-      socket.send(JSON.stringify(options));
+      Rocketchat.login(username, { digest: password, algorithm: 'sha-256' })
+        .then(({ data }) => {
+          const options = {
+            msg: 'method',
+            method: 'login',
+            id: loginId,
+            params: [{ resume: data.authToken }]
+          };
+          socket.send(JSON.stringify(options));
+        });
     } else if (resMessage === 'result') {
       if (error !== undefined) {
         dispatch(showErrorNotification('toast_title.error_message', `Websocket: ${error.reason}`));

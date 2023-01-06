@@ -60,10 +60,17 @@ const ChatOrCall = ({ translate }) => {
           const message = {
             _id: videoCall._id,
             rid: selectedRoom.rid,
-            msg: isVideoCall ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED
+            msg: isVideoCall
+              ? CALL_STATUS.VIDEO_MISSED
+              : CALL_STATUS.AUDIO_MISSED
           };
           updateMessage(chatSocket, message, therapist.id);
         }, CALL_WAITING_TIMEOUT);
+        setIsNoSidebar(true);
+      } else if ([CALL_STATUS.ACCEPTED].includes(videoCall.status)) {
+        if (callTimeout.current) {
+          clearTimeout(callTimeout.current);
+        }
         setIsNoSidebar(true);
       } else {
         if (callTimeout.current) {
@@ -201,17 +208,14 @@ const ChatOrCall = ({ translate }) => {
             <>
               <Col lg={9} md={8} sm={12} className={`d-md-flex flex-column px-0 chat-message-panel ${hideChatPanel ? 'd-none' : 'd-flex'}`}>
                 <div className="calling">
-                  <Button variant="" className="sidebar-toggle text-white d-none d-md-block" onClick={() => setIsNoSidebar(!isNoSidebar)}>
+                  <Button disabled variant="" className="sidebar-toggle text-white d-none d-md-block" onClick={() => setIsNoSidebar(!isNoSidebar)}>
                     <BsList size={22} color="#FFFFFF" />
                   </Button>
                   <VideoCall
                     roomName={selectedRoom.rid}
-                    displayName={therapist.first_name + ' ' + therapist.last_name}
                     isVideoCall={isVideoCall}
                     onUpdateMessage={handleUpdateMessage}
                     indicator={videoCall}
-                    callingText={translate('video_call_starting')}
-                    recipient={selectedRoom.name}
                   />
                 </div>
               </Col>

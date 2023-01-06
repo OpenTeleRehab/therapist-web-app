@@ -10,6 +10,18 @@ const createInstance = (userId, authToken) => {
   });
 };
 
+const login = (user, password) => {
+  const instance = createInstance(undefined, undefined);
+  return instance.post('login', { user, password })
+    .then(
+      res => {
+        return res.data;
+      }
+    ).catch(e => {
+      return e.response.data;
+    });
+};
+
 const getUserStatus = (userNames, authUserId, authToken) => {
   const instance = createInstance(authUserId, authToken);
   const fields = JSON.stringify({ status: 1 });
@@ -64,6 +76,7 @@ const sendAttachmentMessage = (roomId, authUserId, authToken, attachment) => {
 };
 
 export const Rocketchat = {
+  login,
   getUserStatus,
   getLastMessages,
   getMessageCounters,

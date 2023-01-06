@@ -36,6 +36,7 @@ import { CALL_STATUS } from '../../../variables/rocketchat';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
 import Message from '../message';
+import CallingButton from '../../../components/CallingButton';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -200,14 +201,14 @@ const PatientInfo = ({ id, translate }) => {
         >
           <FaEnvelope size={20} />
         </Button>
-        <Button
+        <CallingButton
           aria-label="Call"
           variant="link"
           className="mr-2 btn-circle-lg btn-light-blue"
           onClick={() => handleSelectRoomToCall()}
         >
           <FaPhoneAlt size={20} />
-        </Button>
+        </CallingButton>
         <Button
           aria-label="Chat"
           variant="link"
