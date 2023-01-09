@@ -196,7 +196,7 @@ const PatientInfo = ({ id, translate }) => {
         <Button
           aria-label="Call"
           variant="link"
-          className="mr-2 btn-circle-lg btn-light-blue"
+          className="mr-2 btn-circle-lg btn-light-blue d-none"
           onClick={() => setShowMessageDialog(true)}
         >
           <FaEnvelope size={20} />
