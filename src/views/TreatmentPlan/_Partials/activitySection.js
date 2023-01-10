@@ -173,7 +173,7 @@ const ActivitySection = ({ weeks, setWeeks, startDate, activities, setActivities
   const dayElements = () => {
     const elements = [];
     for (let i = 0; i < 7; i++) {
-      const date = moment(currentWeekStartDate).add(i, 'days');
+      const date = moment(currentWeekStartDate).add(i, 'days').locale('en');
       const dayActivity = _.findLast(activities, { week: currentWeek, day: i + 1 });
       const exerciseIds = dayActivity ? dayActivity.exercises || [] : [];
       const materialIds = dayActivity ? dayActivity.materials || [] : [];

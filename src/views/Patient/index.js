@@ -161,7 +161,7 @@ const Patient = () => {
             last_name: user.last_name,
             first_name: user.first_name,
             email: user.email,
-            date_of_birth: user.date_of_birth !== null ? moment(user.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
+            date_of_birth: user.date_of_birth !== null ? moment(user.date_of_birth, 'YYYY-MM-DD').locale('en').format(settings.date_format) : '',
             age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
             ongoing_treatment_plan: user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0].name : user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
             treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),

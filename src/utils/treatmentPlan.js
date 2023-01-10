@@ -33,7 +33,7 @@ export const getLastActivityDate = (startDate, activities) => {
     const lastActivity = rawActivities[rawActivities.length - 1];
     const remainingDay = 7 - lastActivity.day;
     const day = (lastActivity.week * 7) - remainingDay - 1;
-    return moment(startDate, settings.date_format).add(day, 'days').format(settings.date_format);
+    return moment(startDate, settings.date_format).add(day, 'days').locale('en').format(settings.date_format);
   }
 
   return startDate;

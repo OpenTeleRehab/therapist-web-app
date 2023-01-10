@@ -35,6 +35,7 @@ const Appointment = ({ translate }) => {
   const [show, setShow] = useState(false);
   const [editId, setEditId] = useState(null);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
+  const [userLocale, setUserLocale] = useState('en-us');
 
   useEffect(() => {
     if (date && profile) {
@@ -55,6 +56,7 @@ const Appointment = ({ translate }) => {
       if (language) {
         setLocale(language.code);
         moment.locale(language.code);
+        setUserLocale(language.code);
       } else {
         setLocale('en-us');
         moment.locale('en-us');
@@ -115,6 +117,7 @@ const Appointment = ({ translate }) => {
   };
 
   const handleClose = () => {
+    moment.locale(userLocale);
     setEditId('');
     setSelectedPatientId('');
     setShow(false);
@@ -147,6 +150,7 @@ const Appointment = ({ translate }) => {
               text: translate('appointment.add_appointment'),
               click: function () {
                 setShow(true);
+                moment.locale(userLocale);
               }
             }
           }}
@@ -162,6 +166,7 @@ const Appointment = ({ translate }) => {
             editId={editId}
             selectedDate={selectedDate}
             selectedPatientId={selectedPatientId}
+            userLocale={userLocale}
           />
         }
       </Col>

@@ -4,16 +4,16 @@ import Dialog from 'components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import { Form, Col } from 'react-bootstrap';
-import _ from 'lodash';
 import { getUsers } from '../../../store/user/actions';
 import Datetime from 'components/DateTime';
 import moment from 'moment';
 import settings from 'settings';
 import { createAppointment, updateAppointment } from 'store/appointment/actions';
 import Select from 'react-select';
+import TimeKeeper from 'react-timekeeper';
 import scssColors from '../../../scss/custom.scss';
 
-const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedDate }) => {
+const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedDate, userLocale }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const { profile } = useSelector((state) => state.auth);
@@ -28,6 +28,10 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   const [formattedDate, setFormattedDate] = useState('');
   const [formattedFrom, setFormattedFrom] = useState('');
   const [formattedTo, setFormattedTo] = useState('');
+  const [showFromTime, setShowFromTime] = useState(false);
+  const [showToTime, setShowToTime] = useState(false);
+  const [timeTo, setTimeTo] = useState('12:00 am');
+
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
@@ -74,7 +78,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   useEffect(() => {
     const yesterday = moment().subtract(1, 'day');
     if (moment(date, settings.date_format, true).isValid() && date.isAfter(yesterday)) {
-      setFormattedDate(moment(date).format(settings.date_format));
+      setFormattedDate(moment(date));
     } else {
       setFormattedDate('');
     }
@@ -82,29 +86,91 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   }, [date]);
 
   useEffect(() => {
-    if (moment(from, settings.date_format + ' hh:mm A', true).isValid()) {
-      setFormattedFrom(moment(from).format('hh:mm A'));
+    if (from.isValid) {
+      // set moment locale to en before convert
+      moment.locale('en');
+      setFormattedTo(moment(from.formatted12, 'hh:mm a').locale(userLocale).add(15, 'minutes').format('hh:mm A'));
+      const formatted = from.formatted12 ? moment(from.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A') : moment(from).locale(userLocale).format('hh:mm A');
+      setFormattedFrom(formatted);
+      // set moment locale back after convert
+      moment.locale(userLocale);
     } else {
       setFormattedFrom('');
     }
     // eslint-disable-next-line
-  }, [from]);
+  }, [from, userLocale]);
 
   useEffect(() => {
-    if (moment(to, settings.date_format + ' hh:mm A', true).isValid()) {
-      setFormattedTo(moment(to).format('hh:mm A'));
+    if (to.isValid) {
+      // set moment locale to en before convert
+      moment.locale('en');
+      setTimeTo(to.formatted12 ? to.formatted12 : moment(to, 'hh:mm A').locale('en').format('hh:mm a'));
+
+      const formatted = to.formatted12 ? moment(to.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A') : moment(to).locale(userLocale).format('hh:mm A');
+      setFormattedTo(formatted);
+      // set moment locale back after convert
+      moment.locale(userLocale);
     } else {
       setFormattedTo('');
     }
     // eslint-disable-next-line
-  }, [to]);
+  }, [to, userLocale]);
+
+  useEffect(() => {
+    // Translate meridiem button of picker base on language when click
+    const topMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+    const amButton = document.querySelector('[data-testid="meridiem_am"]');
+    const pmButton = document.querySelector('[data-testid="meridiem_pm"]');
+
+    if (topMeridiemButton && amButton && pmButton) {
+      topMeridiemButton.addEventListener('click', function () {
+        setTimeout(() => {
+          // set moment locale to en before convert
+          moment.locale('en');
+          const newTopMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+          newTopMeridiemButton.innerHTML = moment(`12:00 ${newTopMeridiemButton.innerHTML}`, 'hh:mm a').locale(userLocale).format('A');
+        }, [0]);
+      });
+
+      amButton.addEventListener('click', function () {
+        setTimeout(() => {
+          moment.locale('en');
+          const newTopMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+          newTopMeridiemButton.innerHTML = moment('12:00 AM', 'hh:mm A').locale(userLocale).format('A');
+        }, [0]);
+      });
+
+      pmButton.addEventListener('click', function () {
+        setTimeout(() => {
+          moment.locale('en');
+          const newTopMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+          newTopMeridiemButton.innerHTML = moment('12:00 PM', 'hh:mm A').locale(userLocale).format('A');
+        }, [0]);
+      });
+    }
+  }, [showFromTime, showToTime, userLocale]);
+
+  useEffect(() => {
+    // set moment locale to en before convert
+    moment.locale('en');
+    const amButton = document.querySelector('[data-testid="meridiem_am"]');
+    const pmButton = document.querySelector('[data-testid="meridiem_pm"]');
+    const topMeridiemButton = document.querySelector('[data-testid="topbar_meridiem"]');
+    if (amButton && pmButton && topMeridiemButton) {
+      // Translate meridiem button of picker base on language
+      topMeridiemButton.innerHTML = moment(timeTo, 'hh:mm a').locale(userLocale).format('A');
+      amButton.innerHTML = moment('12:00 AM', 'hh:mm A').locale(userLocale).format('A');
+      pmButton.innerHTML = moment('12:00 PM', 'hh:mm A').locale(userLocale).format('A');
+    }
+  }, [showFromTime, showToTime, userLocale, timeTo]);
 
   const handleConfirm = () => {
     let canSave = true;
+    moment.locale(userLocale);
 
     const now = moment().locale('en').format('YYYY-MM-DD HH:mm:ss');
-    const fromTimeThen = moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
-    const toTimeThen = moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
+    const fromTimeThen = moment(moment(date).format(settings.date_format) + ' ' + formattedFrom, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
+    const toTimeThen = moment(moment(date).format(settings.date_format) + ' ' + formattedTo, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
 
     if (!patientId) {
       canSave = false;
@@ -113,21 +179,21 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
       setErrorPatient(false);
     }
 
-    if (formattedDate === '' || !moment(formattedDate, settings.date_format).isValid()) {
+    if (formattedDate === '' || !moment(formattedDate, settings.date_format).locale('en').isValid()) {
       canSave = false;
       setErrorDate(true);
     } else {
       setErrorDate(false);
     }
 
-    if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').isValid() || !moment(now).isBefore(fromTimeThen)) {
+    if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').locale('en').isValid() || !moment(now).isBefore(fromTimeThen)) {
       canSave = false;
       setErrorFrom(true);
     } else {
       setErrorFrom(false);
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').isValid() || formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').isBefore(moment(formattedFrom, 'hh:mm A')) || !moment(now).isBefore(toTimeThen)) {
+    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').locale('en').isValid() || formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').locale('en').isBefore(moment(formattedFrom, 'hh:mm A').locale('en')) || !moment(now).isBefore(toTimeThen)) {
       canSave = false;
       setErrorTo(true);
     } else {
@@ -138,8 +204,8 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
       const data = {
         patient_id: patientId,
         therapist_id: profile.id,
-        from: moment(formattedDate + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-        to: moment(formattedDate + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+        from: moment(moment(date).format(settings.date_format) + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+        to: moment(moment(date).format(settings.date_format) + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         note
       };
 
@@ -185,6 +251,17 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
       e.preventDefault();
       handleConfirm();
     }
+  };
+
+  const handleFromClick = () => {
+    setShowFromTime(true);
+    setShowToTime(false);
+  };
+
+  const handleFromChange = (value) => {
+    moment.locale('en');
+    setFrom(value);
+    setTimeTo(moment(value.formatted12, 'hh:mm a').locale('en').add(15, 'minutes').format('hh:mm a'));
   };
 
   return (
@@ -246,56 +323,69 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
             <Col>
               <label htmlFor="time-from">{translate('appointment.from')}</label>
               <span className="text-dark ml-1">*</span>
-              <Datetime
-                inputProps={{
-                  id: 'time-from',
-                  name: 'from',
-                  autoComplete: 'off',
-                  className: errorFrom ? 'form-control is-invalid' : 'form-control',
-                  placeholder: translate('placeholder.time')
-                }}
-                timeConstraints={{ minutes: { step: 15 } }}
-                initialViewMode="time"
-                value={formattedFrom}
-                onChange={(value) => {
-                  setFrom(value);
-                  if (typeof value === 'object') {
-                    setTo(_.cloneDeep(value).add(15, 'minutes'));
-                  }
-                }}
-                dateFormat={false}
-                timeFormat={'h:mm A'}
+              <Form.Control
+                type="text"
+                name="from"
+                defaultValue={formattedFrom}
+                placeholder={translate('placeholder.time')}
+                onClick={handleFromClick}
               />
               {errorFrom && (
                 <Form.Control.Feedback type="invalid" className="d-block">
                   {translate('error_message.appointment_from')}
                 </Form.Control.Feedback>
               )}
+              {showFromTime &&
+                <TimeKeeper
+                  time={from.formatted12 ? from.formatted12 : from ? moment(from).locale('en-us').format('hh:mm a') : '12:00 am'}
+                  onChange={(value) => handleFromChange(value)}
+                  onDoneClick={() => setShowFromTime(false)}
+                  switchToMinuteOnHourSelect
+                  closeOnMinuteSelect
+                  doneButton={() => (
+                    <div
+                      className="text-center pt-2 pb-2"
+                      onClick={() => setShowFromTime(false)}
+                    >
+                      {translate('common.close')}
+                    </div>
+                  )}
+                />
+              }
             </Col>
             <Col>
               <label htmlFor="time-to">{translate('appointment.to')}</label>
               <span className="text-dark ml-1">*</span>
-              <Datetime
-                inputProps={{
-                  id: 'time-to',
-                  name: 'to',
-                  autoComplete: 'off',
-                  className: errorTo ? 'form-control is-invalid' : 'form-control',
-                  placeholder: translate('placeholder.time'),
-                  disabled: typeof from !== 'object'
-                }}
-                timeConstraints={{ minutes: { step: 15 } }}
-                initialViewMode="time"
-                value={formattedTo}
-                onChange={(value) => setTo(value)}
-                dateFormat={false}
-                timeFormat={'h:mm A'}
+              <Form.Control
+                type="text"
+                name="to"
+                defaultValue={formattedTo}
+                placeholder={translate('placeholder.time')}
+                onClick={() => [setShowToTime(true), setShowFromTime(false)]}
+                disabled={typeof from !== 'object'}
               />
               {errorTo && (
                 <Form.Control.Feedback type="invalid" className="d-block">
                   {translate('error_message.appointment_to')}
                 </Form.Control.Feedback>
               )}
+              {showToTime &&
+                <TimeKeeper
+                  time={timeTo}
+                  onChange={(value) => setTo(value)}
+                  onDoneClick={() => setShowToTime(false)}
+                  switchToMinuteOnHourSelect
+                  closeOnMinuteSelect
+                  doneButton={() => (
+                    <div
+                      className="text-center pt-2 pb-2"
+                      onClick={() => setShowToTime(false)}
+                    >
+                      {translate('common.close')}
+                    </div>
+                  )}
+                />
+              }
             </Col>
           </Form.Row>
         </Form.Group>
@@ -321,7 +411,8 @@ CreatePatient.propTypes = {
   handleClose: PropTypes.func,
   selectedPatientId: PropTypes.number,
   editId: PropTypes.number,
-  selectedDate: PropTypes.string
+  selectedDate: PropTypes.string,
+  userLocale: PropTypes.string
 };
 
 export default CreatePatient;
