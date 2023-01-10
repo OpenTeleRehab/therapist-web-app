@@ -4,18 +4,29 @@ import PropTypes from 'prop-types';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Translate } from 'react-localize-redux';
 import { VscWarning } from 'react-icons/all';
-import _ from 'lodash';
 const CallingButton = ({ isVideo, children, ...props }) => {
   const [supportedDevice, setSupportedDevice] = useState(undefined);
 
   useEffect(() => {
-    const checking = isVideo ? 'videoinput' : 'audioinput';
-
-    navigator.mediaDevices.enumerateDevices()
-      .then((devices) => {
-        const foundDevice = _.findIndex(devices, d => d.kind === checking && d.label !== '') !== -1;
-        setSupportedDevice(foundDevice);
+    if (isVideo) {
+      navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+        setSupportedDevice(true);
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }).catch(() => {
+        setSupportedDevice(false);
       });
+    } else {
+      navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+        setSupportedDevice(true);
+        stream.getTracks().forEach(track => {
+          track.stop();
+        });
+      }).catch(() => {
+        setSupportedDevice(false);
+      });
+    }
   }, [isVideo]);
 
   const callingBtn = (
