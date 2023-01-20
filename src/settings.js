@@ -1,3 +1,5 @@
+const acceptImageTypes = 'image/gif, image/jpeg, image/jpg, image/png';
+
 const settings = {
   date_format: 'DD/MM/YYYY',
   textMaxLength: 255,
@@ -11,7 +13,14 @@ const settings = {
   },
   noteMaxLength: 50,
   educationMaterial: {
-    maxFileSize: 100 // MB
+    maxFileSize: 100, // MB
+    acceptFileTypes: `audio/*, video/*, .pdf, ${acceptImageTypes}`
+  },
+  exercise: {
+    acceptFileTypes: `audio/*, video/*, ${acceptImageTypes}`
+  },
+  question: {
+    acceptImageTypes: acceptImageTypes
   },
   maxAge: 80,
   minAge: 0,

@@ -235,7 +235,14 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                               {enableButtons(question) &&
                                 <div className="btn btn-sm text-primary position-relative overflow-hidden" tabIndex="0" role="button" onKeyPress={(event) => handleFileUpload(event, index)} >
                                   <BsUpload size={15}/> {translate('question.media_upload')}
-                                  <input type="file" id={`file${index}`} name="file" className="position-absolute upload-btn" onChange={e => handleFileChange(e, index)} accept="image/*" aria-label="Upload"/>
+                                  <input
+                                    type="file"
+                                    id={`file${index}`}
+                                    name="file"
+                                    className="position-absolute upload-btn"
+                                    onChange={e => handleFileChange(e, index)}
+                                    accept={settings.question.acceptImageTypes}
+                                    aria-label="Upload"/>
                                 </div>
                               }
                             </Col>
