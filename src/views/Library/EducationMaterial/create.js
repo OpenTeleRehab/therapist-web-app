@@ -258,7 +258,7 @@ const CreateEducationMaterial = ({ translate }) => {
                   name='file'
                   onChange={handleFileChange}
                   isInvalid={fileError}
-                  accept="audio/*, video/*, image/*, .pdf"
+                  accept={settings.educationMaterial.acceptFileTypes}
                   aria-label="File"
                   id="file"
                   onKeyPress={(event) => handleFileUpload(event)}
