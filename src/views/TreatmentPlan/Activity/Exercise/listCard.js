@@ -113,19 +113,15 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
                 <div className="card-img bg-light">
                   {
                     exercise.files.length > 0 && (
-                      (exercise.files[0].fileType === 'audio/mpeg' &&
-                                <div className="w-100">
-                                  <audio controls className="w-100">
-                                    <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
-                                  </audio>
-                                </div>
-                      ) ||
-                            (exercise.files[0].fileType === 'video/mp4' &&
-                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}?thumbnail=1`} alt="Exercise" loading="lazy" />
-                            ) ||
-                            ((exercise.files[0].fileType !== 'audio/mpeg' && exercise.files[0].fileType !== 'video/mp4') &&
-                                <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} alt="Exercise" loading="lazy" />
-                            )
+                      exercise.files[0].fileType === 'audio/mpeg' ? (
+                        <div className="w-100">
+                          <audio controls className="w-100">
+                            <source src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}`} type="audio/ogg" />
+                          </audio>
+                        </div>
+                      ) : (
+                        <img className="img-fluid mx-auto d-block" src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${exercise.files[0].id}?thumbnail=1`} alt="Exercise" loading="lazy" />
+                      )
                     )
                   }
                 </div>
