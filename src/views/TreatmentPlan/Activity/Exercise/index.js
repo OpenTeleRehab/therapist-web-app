@@ -204,7 +204,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
                       <Accordion.Collapse eventKey={category.value}>
                         <Card.Body>
                           <CheckboxTree
-                            nodes={category.children}
+                            nodes={category.children || []}
                             checked={selectedCategories[category.value] ? selectedCategories[category.value] : []}
                             expanded={expanded}
                             onCheck={checked => handleSetSelectedCategories(category.value, checked)}
