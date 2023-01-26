@@ -14,6 +14,17 @@ const getMessages = (payload) => {
     });
 };
 
+const getTherapistMessage = () => {
+  return axios.get('/message/get-therapist-message').then(
+    res => {
+      return res.data;
+    }
+  )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const sendMessages = (payload) => {
   return axios.post('/message', payload).then(
     res => {
@@ -27,5 +38,6 @@ const sendMessages = (payload) => {
 
 export const Message = {
   getMessages,
-  sendMessages
+  sendMessages,
+  getTherapistMessage
 };

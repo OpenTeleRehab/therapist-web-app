@@ -11,6 +11,19 @@ const getMessagesFail = () => ({
   type: 'GET_MESSAGES_FAIL'
 });
 
+const getTherapistMessagesRequest = () => ({
+  type: 'GET_THERAPIST_MESSAGES_REQUEST'
+});
+
+const getTherapistMessagesSuccess = (data) => ({
+  type: 'GET_THERAPIST_MESSAGE_SUCCESS',
+  data
+});
+
+const getTherapistMessagesFail = () => ({
+  type: 'GET_THERAPIST_MESSAGE_FAIL'
+});
+
 const sendMessagesRequest = () => ({
   type: 'SEND_MESSAGES_REQUEST'
 });
@@ -30,5 +43,8 @@ export const mutation = {
   getMessagesSuccess,
   sendMessagesRequest,
   sendMessagesSuccess,
-  sendMessagesFail
+  sendMessagesFail,
+  getTherapistMessagesRequest,
+  getTherapistMessagesSuccess,
+  getTherapistMessagesFail
 };

@@ -79,3 +79,20 @@
 		}
 	}
 }
+
+.chat-message {
+	.btn {
+		&-with {
+			&-warning {
+				position: initial;
+				.badge {
+					top: 20px;
+					right: -10px;
+				}
+				.chat-send-btn {
+					cursor: pointer;
+				}
+			}
+		}
+	}
+}

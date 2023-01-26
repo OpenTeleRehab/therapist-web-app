@@ -15,12 +15,25 @@ export const getMessages = (payload) => async dispatch => {
   }
 };
 
+export const getTherapistMessage = () => async dispatch => {
+  dispatch(mutation.getTherapistMessagesRequest());
+  const data = await Message.getTherapistMessage();
+  if (data.success) {
+    dispatch(mutation.getTherapistMessagesSuccess(data.data));
+    return data.data;
+  } else {
+    dispatch(mutation.getTherapistMessagesFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};
+
 export const sendMessages = (payload) => async dispatch => {
   dispatch(mutation.sendMessagesRequest());
   const data = await Message.sendMessages(payload);
   if (data.success) {
     dispatch(getMessages({ patient_id: payload.patient_id }));
     dispatch(mutation.sendMessagesSuccess(data.data));
+    return data;
   } else {
     dispatch(mutation.sendMessagesFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));
