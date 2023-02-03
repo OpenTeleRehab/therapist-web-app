@@ -20,6 +20,9 @@ import EllipsisText from 'react-ellipsis-text';
 import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
 import { activateDeactivateAccount, getUsers, deleteAccount } from 'store/user/actions';
+import {
+  getOrganizationTherapistAndMaxSms
+} from 'store/organization/actions';
 import CreatePatient from 'views/Patient/create';
 import Dialog from 'components/Dialog';
 import {
@@ -37,6 +40,10 @@ import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
 import Message from '../message';
 import CallingButton from '../../../components/CallingButton';
+import SmsButton from '../../../components/SmsButton';
+import {
+  getTherapistMessage
+} from '../../../store/message/actions';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -56,6 +63,9 @@ const PatientInfo = ({ id, translate }) => {
   const history = useHistory();
   const chatSocket = useContext(RocketchatContext);
   const [phone, setPhone] = useState('');
+  const [maxSms, setMaxSms] = useState(2);
+  const [reachMaxSms, setReachMaxSms] = useState(false);
+  const [isOngoingTreatment, setIsOngoingTreatment] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -91,8 +101,34 @@ const PatientInfo = ({ id, translate }) => {
         enabled: data.enabled
       });
       setIsSecondaryTherapist(data.secondary_therapists.includes(profile.id));
+      if (data.ongoingTreatmentPlan.length > 0) {
+        setIsOngoingTreatment(true);
+      } else {
+        setIsOngoingTreatment(false);
+      }
     }
-  }, [id, translate, profile, users, countries]);
+  }, [id, translate, profile, users, countries, isOngoingTreatment]);
+
+  useEffect(() => {
+    if (therapist) {
+      dispatch(
+        getOrganizationTherapistAndMaxSms(process.env.REACT_APP_SITE_TITLE))
+        .then(r => {
+          if (r) {
+            setMaxSms(r.max_sms_per_week);
+            dispatch(getTherapistMessage()).then(result => {
+              if (result) {
+                if (result >= r.max_sms_per_week) {
+                  setReachMaxSms(true);
+                } else {
+                  setReachMaxSms(false);
+                }
+              }
+            });
+          }
+        });
+    }
+  }, [therapist]);
 
   useEffect(() => {
     if (authToken && therapist && therapist.chat_user_id && therapist.chat_rooms.length && chatRooms.length === 0) {
@@ -190,17 +226,31 @@ const PatientInfo = ({ id, translate }) => {
     }
   };
 
+  const handleCheckMaxSms = () => {
+    dispatch(getTherapistMessage()).then(rs => {
+      if (rs) {
+        if (rs >= maxSms) {
+          setReachMaxSms(true);
+        } else {
+          setReachMaxSms(false);
+        }
+      }
+    });
+  };
+
   return (
     <>
       <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right mt-3">
-        <Button
+        <SmsButton
+          reachMaxSms={reachMaxSms}
+          maxSms={maxSms}
           aria-label="Call"
           variant="link"
-          className="mr-2 btn-circle-lg btn-light-blue d-none"
+          className="mr-2 btn-circle-lg btn-light-blue"
           onClick={() => setShowMessageDialog(true)}
         >
           <FaEnvelope size={20} />
-        </Button>
+        </SmsButton>
         <CallingButton
           aria-label="Call"
           variant="link"
@@ -267,7 +317,8 @@ const PatientInfo = ({ id, translate }) => {
       >
         <p>{translate('patient.delete_confirmation_message')}</p>
       </Dialog>
-      {showMessageDialog && <Message patientId={id} phone={phone} show={showMessageDialog} handleClose={() => setShowMessageDialog(false)} />}
+      {showMessageDialog && <Message patientId={id} phone={phone} show={showMessageDialog} handleClose={() => setShowMessageDialog(false) } handleCheckMaxSms={handleCheckMaxSms} reachMaxSms={reachMaxSms}
+        isOngoingTreatment={isOngoingTreatment} />}
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );

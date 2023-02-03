@@ -7,6 +7,11 @@ export const message = (state = initialState, action) => {
         messages: action.data
       });
     }
+    case 'GET_THERAPIST_MESSAGE_SUCCESS': {
+      return Object.assign({}, state, {
+        messages: action.data
+      });
+    }
     default:
       return state;
   }

@@ -14,7 +14,7 @@ import {
   sendMessages
 } from '../../store/message/actions';
 
-const Message = ({ show, handleClose, patientId, phone }) => {
+const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reachMaxSms, isOngoingTreatment }) => {
   const messageEndRef = useRef(null);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -30,9 +30,11 @@ const Message = ({ show, handleClose, patientId, phone }) => {
   }, [patientId]);
 
   useEffect(() => {
-    const item = messages.find(message => message.draft);
-    setDraft(item ? item.message : '');
-    scrollToBottom();
+    if (messages.length > 0) {
+      const item = messages.find(message => message.draft);
+      setDraft(item ? item.message : '');
+      scrollToBottom();
+    }
     // eslint-disable-next-line
   }, [messages]);
 
@@ -51,7 +53,11 @@ const Message = ({ show, handleClose, patientId, phone }) => {
   };
 
   const handleSendMessage = (message) => {
-    dispatch(sendMessages({ message, phone, patient_id: patientId }));
+    dispatch(sendMessages({ message, phone, patient_id: patientId })).then(result => {
+      if (result.success) {
+        handleCheckMaxSms();
+      }
+    });
   };
 
   const handleSaveDraft = () => {
@@ -110,6 +116,9 @@ const Message = ({ show, handleClose, patientId, phone }) => {
         <div ref={messageEndRef} />
       </div>
       <InputToolbar
+        isOngoingTreatment={isOngoingTreatment}
+        reachMaxSms={reachMaxSms}
+        isSms={true}
         defaultValue={draft}
         onSend={handleSendMessage}
         onInputSizeChanged={() => {}}
@@ -124,7 +133,10 @@ const Message = ({ show, handleClose, patientId, phone }) => {
 
 Message.propTypes = {
   show: PropTypes.bool,
+  reachMaxSms: PropTypes.bool,
+  isOngoingTreatment: PropTypes.bool,
   handleClose: PropTypes.func,
+  handleCheckMaxSms: PropTypes.func,
   patientId: PropTypes.string,
   phone: PropTypes.string
 };

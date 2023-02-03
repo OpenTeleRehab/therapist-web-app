@@ -32,6 +32,7 @@ import { privacyPolicy } from 'store/privacyPolicy/reducers';
 import { colorScheme } from 'store/colorScheme/reducers';
 import { assistiveTechnology } from 'store/assistiveTechnology/reducers';
 import { message } from 'store/message/reducers';
+import { organization } from 'store/organization/reducers';
 export const rootReducer = {
   localize: localizeReducer,
   user,
@@ -59,7 +60,8 @@ export const rootReducer = {
   termAndCondition,
   colorScheme,
   assistiveTechnology,
-  message
+  message,
+  organization
 };
 
 const devTool =

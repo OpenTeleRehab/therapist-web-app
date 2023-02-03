@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { MdSend } from 'react-icons/md';
-import { ImAttachment } from 'react-icons/im';
+import { ImAttachment, ImInfo } from 'react-icons/im';
 import { toMB, isValidFileSize, isValidFileMineType } from 'utils/file';
 import AttachmentDialog from './AttachmentDialog';
 import { useDispatch } from 'react-redux';
 import { showErrorNotification } from 'store/notification/actions';
 import settings from 'settings';
+import { VscWarning } from 'react-icons/all';
 
 const INPUT_MIN_HEIGHT = 50;
 
@@ -20,6 +21,7 @@ const InputToolbar = (props) => {
   const [text, setText] = useState('');
   const [attachment, setAttachment] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [isNonGSM, setIsNonGSM] = useState(false);
 
   useEffect(() => {
     setText(props.defaultValue || '');
@@ -63,6 +65,20 @@ const InputToolbar = (props) => {
     const { key, shiftKey } = e.nativeEvent;
     if (!shiftKey && key === 'Enter' && e.target.value !== '') {
       setEnterKeyIsPressed(true);
+    }
+  };
+
+  const onKeyUpHandler = (e) => {
+    if (text.length > 0 && props.isSms) {
+      var regexp = new RegExp("^[A-Za-z0-9 \\r\\n@£$¥èéùìòÇØøÅå\u0394_\u03A6\u0393\u039B\u03A9\u03A0\u03A8\u03A3\u0398\u039EÆæßÉ!\"#$%&'()*+,\\-./:;<=>?¡ÄÖÑÜ§¿äöñüà^{}\\\\\\[~\\]|\u20AC]*$");
+      if (regexp.test(text)) {
+        setIsNonGSM(false);
+      } else {
+        setText(text.slice(0, 70));
+        setIsNonGSM(true);
+      }
+    } else {
+      setIsNonGSM(false);
     }
   };
 
@@ -123,7 +139,7 @@ const InputToolbar = (props) => {
 
   return (
     <>
-      <Form.Group className="d-flex align-items-end chat-input-toolbar" style={{ minHeight: parentHeight }}>
+      <Form.Group className={`d-flex align-items-end chat-input-toolbar ${props.isSms ? 'chat-message' : ''}`} style={{ minHeight: parentHeight }}>
         <div className={`position-relative ${props.showAttachment ? 'chat-composer' : 'w-100'}`}>
           <Form.Control
             name="chatText"
@@ -131,6 +147,7 @@ const InputToolbar = (props) => {
             ref={textAreaRef}
             as="textarea"
             rows={1}
+            onKeyUp={(e) => onKeyUpHandler(e)}
             onChange={(e) => onChangeHandler(e)}
             onKeyPress={(e) => onKeyPressHandler(e)}
             placeholder={props.translate('placeholder.type.message')}
@@ -139,9 +156,20 @@ const InputToolbar = (props) => {
             maxLength={props.maxLength || ''}
           />
           {text.length > 0 && (
-            <Button variant="" className="chat-send-btn p-0" onClick={() => onSendHandler()}>
-              <MdSend size={22} color="#0077C8" />
-            </Button>
+            isNonGSM
+              ? <div className="btn-toolbar d-flex float-right">
+                <OverlayTrigger placement="bottom" overlay={<Tooltip id="btn-tooltip">{props.translate('error.nongsm')}</Tooltip>}>
+                  <span className="d-inline-block btn-with-warning">
+                    <Button variant="" className="chat-send-btn p-0" onClick={() => onSendHandler()} disabled="disabled">
+                      <MdSend size={22} color="#0077C8" />
+                      <span className="badge rounded-pill bg-warning"><VscWarning size={10} /></span>
+                    </Button>
+                  </span>
+                </OverlayTrigger>
+              </div>
+              : <Button variant="" className="chat-send-btn p-0" onClick={() => onSendHandler()} disabled={props.isSms && (props.reachMaxSms || !props.isOngoingTreatment)}>
+                <MdSend size={22} color="#0077C8" />
+              </Button>
           )}
         </div>
         {props.showAttachment && (
@@ -160,6 +188,11 @@ const InputToolbar = (props) => {
           </Button>
         )}
       </Form.Group>
+      {props.isSms && (
+        <Form.Text className="text-muted form-text mt-2 d-flex">
+          <ImInfo size={40} /><span className="ml-2 mt-2">{props.translate('therapist.sms.usage')}</span>
+        </Form.Text>
+      )}
       {showDialog && (
         <AttachmentDialog
           translate={props.translate}
@@ -185,7 +218,10 @@ InputToolbar.propTypes = {
   onInputChanged: PropTypes.func,
   showAttachment: PropTypes.bool,
   defaultValue: PropTypes.string,
-  maxLength: PropTypes.number
+  maxLength: PropTypes.number,
+  isSms: PropTypes.bool,
+  reachMaxSms: PropTypes.bool,
+  isOngoingTreatment: PropTypes.bool
 };
 
 export default InputToolbar;
