@@ -2,7 +2,6 @@ import React from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { Translate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
-
 const Dialog = (props) => {
   const {
     show,

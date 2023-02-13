@@ -8,20 +8,22 @@ import settings from '../../settings';
 import MessageText from '../ChatOrCall/Partials/ChatPanel/Type/MessageText';
 import { GiCheckMark } from 'react-icons/gi';
 import { TiRefresh } from 'react-icons/ti';
-import InputToolbar from '../ChatOrCall/Partials/ChatPanel/InputToolbar';
+import SmsToolbar from '../ChatOrCall/Partials/ChatPanel/SmsToolbar';
 import {
   getMessages,
   sendMessages
 } from '../../store/message/actions';
 
-const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reachMaxSms, isOngoingTreatment }) => {
+const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reachMaxSms, isOngoingTreatment, smsAlertTemplate }) => {
   const messageEndRef = useRef(null);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
   const { messages } = useSelector((state) => state.message);
   const [message, setMessage] = useState('');
-  const [draft, setDraft] = useState('');
+  const [time, setTime] = useState('');
+  const [date, setDate] = useState('');
+  const [isSent, setIsSent] = useState(false);
 
   useEffect(() => {
     if (patientId) {
@@ -31,8 +33,6 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
 
   useEffect(() => {
     if (messages.length > 0) {
-      const item = messages.find(message => message.draft);
-      setDraft(item ? item.message : '');
       scrollToBottom();
     }
     // eslint-disable-next-line
@@ -52,35 +52,31 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
     return currentCreatedAt.isSame(previousCreatedAt, 'day');
   };
 
-  const handleSendMessage = (message) => {
+  const handleSendSms = () => {
     dispatch(sendMessages({ message, phone, patient_id: patientId })).then(result => {
       if (result.success) {
         handleCheckMaxSms();
+        setIsSent(true);
+      } else {
+        setIsSent(false);
       }
     });
-  };
-
-  const handleSaveDraft = () => {
-    dispatch(sendMessages({ message, phone, patient_id: patientId, draft: true }));
-    handleClose();
   };
 
   return (
     <Dialog
       show={show}
-      title={translate('patient.message')}
+      title={translate('patient.sms')}
       onCancel={handleClose}
-      onCopy={handleSaveDraft}
-      copyLabel={translate('patient.message.save.draft')}
+      disabledConfirmButton={reachMaxSms || !isOngoingTreatment || date === '' || time === '' || isSent}
+      onConfirm={handleSendSms}
+      confirmLabel={translate('patient.message.send')}
     >
       <div className="chat-message-list" style={{ height: '50vh' }}>
         {messages.length > 0 && (
           messages.map((item, index) => {
             // eslint-disable-next-line
-            const { message, sentAt, created_at, draft } = item;
-            if (draft) {
-              return;
-            }
+            const { message, sentAt, created_at } = item;
 
             let isSameDay = false;
             if (index > 0) {
@@ -115,17 +111,14 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
         )}
         <div ref={messageEndRef} />
       </div>
-      <InputToolbar
-        isOngoingTreatment={isOngoingTreatment}
-        reachMaxSms={reachMaxSms}
-        isSms={true}
-        defaultValue={draft}
-        onSend={handleSendMessage}
-        onInputSizeChanged={() => {}}
+      <SmsToolbar
+        smsAlertTemplate={smsAlertTemplate}
         onInputChanged={setMessage}
+        onDateChanged={setDate}
+        onTimeChanged={setTime}
+        onSentChanged={setIsSent}
         translate={translate}
-        showAttachment={false}
-        maxLength={160}
+        isSent={isSent}
       />
     </Dialog>
   );
@@ -138,7 +131,8 @@ Message.propTypes = {
   handleClose: PropTypes.func,
   handleCheckMaxSms: PropTypes.func,
   patientId: PropTypes.string,
-  phone: PropTypes.string
+  phone: PropTypes.string,
+  smsAlertTemplate: PropTypes.object
 };
 
 export default Message;
