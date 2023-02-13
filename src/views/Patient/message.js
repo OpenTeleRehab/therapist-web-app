@@ -14,7 +14,7 @@ import {
   sendMessages
 } from '../../store/message/actions';
 
-const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reachMaxSms, isOngoingTreatment, smsAlertTemplate }) => {
+const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reachMaxSms, isOngoingTreatment }) => {
   const messageEndRef = useRef(null);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -112,7 +112,6 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
         <div ref={messageEndRef} />
       </div>
       <SmsToolbar
-        smsAlertTemplate={smsAlertTemplate}
         onInputChanged={setMessage}
         onDateChanged={setDate}
         onTimeChanged={setTime}
