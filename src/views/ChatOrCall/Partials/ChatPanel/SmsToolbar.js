@@ -28,8 +28,8 @@ const SmsToolbar = (props) => {
   const [sent, setSent] = useState(false);
 
   useEffect(() => {
-    setText(props.smsAlertTemplate.value || '');
-  }, [props.smsAlertTemplate]);
+    setText(props.translate('sms.reminder.alert') || '');
+  }, [props.translate('sms.reminder.alert')]);
 
   useEffect(() => {
     if (textAreaRef && textAreaRef.current) {
@@ -149,6 +149,7 @@ const SmsToolbar = (props) => {
 
       const strDate = text.includes('dd/mm/yyyy');
       if (strDate) {
+        console.log(1);
         setText(text.replace('dd/mm/yyyy', selectedDate));
       }
 
@@ -271,7 +272,6 @@ const SmsToolbar = (props) => {
 
 SmsToolbar.propTypes = {
   translate: PropTypes.func,
-  smsAlertTemplate: PropTypes.object,
   onDateChanged: PropTypes.func,
   onTimeChanged: PropTypes.func,
   onInputChanged: PropTypes.func,

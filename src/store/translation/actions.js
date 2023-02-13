@@ -22,15 +22,3 @@ export const getTranslations = (lang) => async (dispatch) => {
     dispatch(showErrorNotification('toast_title.error_message', res.message));
   }
 };
-
-export const getReminderSmsAlert = (lang, key) => async (dispatch) => {
-  dispatch(mutation.getTranslationsRequest());
-  const res = await Translation.getTranslationAlertSms(lang, key);
-  if (res && res.data) {
-    dispatch(mutation.getReminderSmsAlertSuccess());
-    return res.data;
-  } else {
-    dispatch(mutation.getReminderSmsAlertFail());
-    dispatch(showErrorNotification('toast_title.error_message', res.message));
-  }
-};

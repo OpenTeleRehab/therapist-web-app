@@ -44,9 +44,6 @@ import SmsButton from '../../../components/SmsButton';
 import {
   getTherapistMessage
 } from '../../../store/message/actions';
-import {
-  getReminderSmsAlert
-} from '../../../store/translation/actions';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -69,7 +66,6 @@ const PatientInfo = ({ id, translate }) => {
   const [maxSms, setMaxSms] = useState(2);
   const [reachMaxSms, setReachMaxSms] = useState(false);
   const [isOngoingTreatment, setIsOngoingTreatment] = useState(false);
-  const [smsAlertTemplate, setSmsAlertTemplate] = useState();
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -131,14 +127,6 @@ const PatientInfo = ({ id, translate }) => {
             });
           }
         });
-    }
-  }, [therapist]);
-
-  useEffect(() => {
-    if (therapist) {
-      dispatch(getReminderSmsAlert(therapist.lang, 'sms.reminder.alert')).then(res => {
-        setSmsAlertTemplate(res);
-      });
     }
   }, [therapist]);
 
@@ -329,7 +317,7 @@ const PatientInfo = ({ id, translate }) => {
         <p>{translate('patient.delete_confirmation_message')}</p>
       </Dialog>
       {showMessageDialog && <Message patientId={id} phone={phone} show={showMessageDialog} handleClose={() => setShowMessageDialog(false) } handleCheckMaxSms={handleCheckMaxSms} reachMaxSms={reachMaxSms}
-        isOngoingTreatment={isOngoingTreatment} smsAlertTemplate={smsAlertTemplate} />}
+        isOngoingTreatment={isOngoingTreatment} />}
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
