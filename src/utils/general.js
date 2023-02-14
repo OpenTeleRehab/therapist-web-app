@@ -58,3 +58,8 @@ export const getMessage = (message, authUserId = '', authToken = '') => {
     isVideoCall: msg !== '' && msg.includes('jitsi_call')
   };
 };
+
+export const isGSM7 = (text) => {
+  const regexp = new RegExp("^[A-Za-z0-9 \\r\\n@£$¥èéùìòÇØøÅå\u0394_\u03A6\u0393\u039B\u03A9\u03A0\u03A8\u03A3\u0398\u039EÆæßÉ!\"#$%&'()*+,\\-./:;<=>?¡ÄÖÑÜ§¿äöñüà^{}\\\\\\[~\\]|\u20AC]*$");
+  return regexp.test(text);
+};

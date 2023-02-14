@@ -2,6 +2,7 @@ const acceptImageTypes = 'image/gif, image/jpeg, image/jpg, image/png';
 
 const settings = {
   date_format: 'DD/MM/YYYY',
+  time_format: 'HH:MM',
   textMaxLength: 255,
   fileMaxUploadSize: 100, // MB
   genders: {
