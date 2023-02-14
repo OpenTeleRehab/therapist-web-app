@@ -112,7 +112,7 @@ const PatientInfo = ({ id, translate }) => {
   useEffect(() => {
     if (therapist) {
       dispatch(
-        getOrganizationTherapistAndMaxSms(process.env.REACT_APP_SITE_TITLE))
+        getOrganizationTherapistAndMaxSms(process.env.REACT_APP_NAME))
         .then(r => {
           if (r) {
             setMaxSms(r.max_sms_per_week);
