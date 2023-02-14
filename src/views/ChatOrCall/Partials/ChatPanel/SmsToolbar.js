@@ -7,11 +7,17 @@ import moment from 'moment/moment';
 import TimeKeeper from 'react-timekeeper';
 import { useSelector } from 'react-redux';
 import { ImInfo } from 'react-icons/im';
+import { getTranslate } from 'react-localize-redux';
+import { isGSM7 } from 'utils/general';
+import { TEXT_MAX_LENGTH } from 'variables/sms';
+import _ from 'lodash';
 
-const INPUT_MIN_HEIGHT = 50;
+const INPUT_MIN_HEIGHT = 70;
 
 const SmsToolbar = (props) => {
   const textAreaRef = useRef(null);
+  const localize = useSelector((state) => state.localize);
+  const translate = getTranslate(localize);
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector((state) => state.auth);
   const [parentHeight, setParentHeight] = useState(INPUT_MIN_HEIGHT);
@@ -26,10 +32,6 @@ const SmsToolbar = (props) => {
   const [date, setDate] = useState('');
   const [userLocale, setUserLocale] = useState('en-us');
   const [sent, setSent] = useState(false);
-
-  useEffect(() => {
-    setText(props.translate('sms.reminder.alert') || '');
-  }, [props.translate('sms.reminder.alert')]);
 
   useEffect(() => {
     if (textAreaRef && textAreaRef.current) {
@@ -53,7 +55,8 @@ const SmsToolbar = (props) => {
   useEffect(() => {
     const yesterday = moment().subtract(1, 'day');
     if (moment(date, settings.date_format, true).isValid() && date.isAfter(yesterday)) {
-      setFormattedDate(moment(date));
+      const formatDate = _.cloneDeep(date);
+      setFormattedDate(formatDate.locale(userLocale).format(settings.date_format));
     } else {
       setFormattedDate('');
     }
@@ -64,8 +67,31 @@ const SmsToolbar = (props) => {
     if (time.isValid) {
       // set moment locale to en before convert
       moment.locale('en');
-      const formatted = time.formatted12 ? moment(time.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A') : moment(time).locale(userLocale).format('hh:mm A');
+      const formatted = moment(time.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A');
       setFormattedTime(formatted);
+
+      const now = moment().locale('en').format('YYYY-MM-DD HH:mm:ss');
+      const fromTimeThen = moment(moment(date).format(settings.date_format) + ' ' + moment(time.formatted12, 'hh:mm a').format('hh:mm A'), settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
+
+      if (time.formatted12 !== '' && moment(time.formatted12, 'hh:mm a').locale('en').isValid() && !moment(fromTimeThen).isBefore(now)) {
+        if (props.onTimeChanged) {
+          props.onTimeChanged(time.formatted12);
+        }
+
+        if (props.isSent) {
+          setSent(false);
+        }
+
+        if (props.onSentChanged) {
+          props.onSentChanged(sent);
+        }
+        setErrorTime(false);
+      } else {
+        if (props.onTimeChanged) {
+          props.onTimeChanged('');
+        }
+        setErrorTime(true);
+      }
       // set moment locale back after convert
       moment.locale(userLocale);
     } else {
@@ -85,6 +111,31 @@ const SmsToolbar = (props) => {
     }
   }, [props.isSent]);
 
+  useEffect(() => {
+    if (formattedDate || formattedTime) {
+      const smsText = translate('sms.reminder.alert', { date: formattedDate || settings.date_format, time: formattedTime || settings.time_format });
+      setText(checkGSM(smsText));
+      props.onInputChanged(checkGSM(smsText));
+    } else {
+      const smsText = translate('sms.reminder.alert', { date: settings.date_format, time: settings.time_format });
+      setText(checkGSM(smsText));
+    }
+  }, [formattedDate, formattedTime]);
+
+  const checkGSM = (smsText) => {
+    let newSmsText = smsText;
+    if (isGSM7(smsText)) {
+      if (smsText.length > TEXT_MAX_LENGTH.GSM_7) {
+        newSmsText = smsText.substring(0, TEXT_MAX_LENGTH.GSM_7);
+      }
+    } else {
+      if (smsText.length > TEXT_MAX_LENGTH.NON_GSM) {
+        newSmsText = smsText.substring(0, TEXT_MAX_LENGTH.NON_GSM);
+      }
+    }
+    return newSmsText;
+  };
+
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
@@ -96,76 +147,25 @@ const SmsToolbar = (props) => {
 
   const handleTimeChange = (value) => {
     setTime(value || '');
-
-    const formatted = moment(value.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A');
-    const now = moment().locale('en').format('YYYY-MM-DD HH:mm:ss');
-    const fromTimeThen = moment(moment(date).format(settings.date_format) + ' ' + formatted, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
-
-    if (value !== '' && moment(value.formatted12, 'hh:mm a').locale('en').isValid() && !moment(fromTimeThen).isBefore(now)) {
-      const strTime = text.includes('HH:MM A');
-      if (strTime) {
-        setText(text.replace('HH:MM A', value.formatted12));
-      }
-
-      var reg = /((1[0-2]|0?[1-9]):([0-5][0-9]) ?([AaPp][Mm]))/;
-      if (text.match(reg)) {
-        setText(text.replace(reg, value.formatted12));
-      }
-
-      if (props.onInputChanged) {
-        props.onInputChanged(text);
-      }
-
-      if (props.onTimeChanged) {
-        props.onTimeChanged(value.formatted12);
-      }
-
-      if (props.isSent) {
-        setSent(false);
-      }
-
-      if (props.onSentChanged) {
-        props.onSentChanged(sent);
-      }
-      setErrorTime(false);
-    } else {
-      setErrorTime(true);
-    }
   };
 
   const handleDateChange = (value) => {
     const yesterday = moment().subtract(1, 'day');
-    const currentDate = moment().local('en').format('DD/MM/YYYY');
+    const currentDate = moment().local('en').format(settings.date_format);
 
     if (moment(value, settings.date_format, true).isValid() && value.isAfter(yesterday)) {
       setDate(value);
-      setFormattedDate(moment(date));
 
-      const selectedDate = value.format('DD/MM/YYYY');
+      const selectedDate = value.format(settings.date_format);
       if (currentDate < selectedDate) {
         setErrorTime(false);
         setTime('');
       }
 
-      const strDate = text.includes('dd/mm/yyyy');
-      if (strDate) {
-        console.log(1);
-        setText(text.replace('dd/mm/yyyy', selectedDate));
-      }
-
-      const reg = /(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d/;
-      const d = value.format('DD/MM/YYYY');
-      if (text.match(reg) && d.match(reg)) {
-        setText(text.replace(reg, d));
-      }
       setErrorDate(false);
 
-      if (props.onInputChanged) {
-        props.onInputChanged(text);
-      }
-
       if (props.onDateChanged) {
-        props.onDateChanged(d);
+        props.onDateChanged(value.format(settings.date_format));
       }
 
       if (props.isSent) {
@@ -176,7 +176,6 @@ const SmsToolbar = (props) => {
         props.onSentChanged(sent);
       }
     } else {
-      setFormattedDate('');
       setErrorDate(true);
       if (props.onDateChanged) {
         props.onDateChanged('');
@@ -201,7 +200,7 @@ const SmsToolbar = (props) => {
           <Form.Group controlId="groupDateTime" className="mt-2">
             <Form.Row>
               <Col>
-                <label htmlFor="appointment-date">{props.translate('appointment.date')}</label>
+                <label htmlFor="appointment-date">{translate('appointment.date')}</label>
                 <span className="text-dark ml-1">*</span>
                 <Datetime
                   inputProps={{
@@ -209,32 +208,31 @@ const SmsToolbar = (props) => {
                     name: 'date',
                     autoComplete: 'off',
                     className: errorDate ? 'form-control is-invalid' : 'form-control',
-                    placeholder: props.translate('placeholder.date')
+                    placeholder: translate('placeholder.date')
                   }}
                   dateFormat={settings.date_format}
                   timeFormat={false}
                   closeOnSelect={true}
-                  value={formattedDate}
-                  format="DD/MM/YYYY"
+                  value={date ? moment(date).locale(userLocale).format(settings.date_format) : ''}
                   onChange={(value) => handleDateChange(value)}
                   isValidDate={ validateDate }
                 />
                 {errorDate && (
                   <Form.Control.Feedback type="invalid" className="d-block">
-                    {props.translate('error_message.appointment_date')}
+                    {translate('error_message.appointment_date')}
                   </Form.Control.Feedback>
                 )}
               </Col>
               <Col>
-                <label htmlFor="time-from">{props.translate('common.time')}</label>
+                <label htmlFor="time-from">{translate('common.time')}</label>
                 <span className="text-dark ml-1">*</span>
                 <Form.Control
                   type="text"
                   name="from"
                   defaultValue={formattedTime}
-                  placeholder={props.translate('placeholder.time')}
+                  placeholder={translate('placeholder.time')}
                   onClick={handleTimeClick}
-                  disabled={typeof formattedDate !== 'object'}
+                  disabled={typeof date !== 'object'}
                 />
                 {showTime &&
                     <TimeKeeper
@@ -248,14 +246,14 @@ const SmsToolbar = (props) => {
                           className="text-center pt-2 pb-2"
                           onClick={() => setShowTime(false)}
                         >
-                          {props.translate('common.close')}
+                          {translate('common.close')}
                         </div>
                       )}
                     />
                 }
                 {errorTime && (
                   <Form.Control.Feedback type="invalid" className="d-block">
-                    {props.translate('error_message.appointment_from')}
+                    {translate('error_message.appointment_from')}
                   </Form.Control.Feedback>
                 )}
               </Col>
@@ -264,14 +262,13 @@ const SmsToolbar = (props) => {
         </div>
       </Form.Group>
       <Form.Text className="text-muted form-text mt-2 d-flex">
-        <ImInfo size={20} /><span className="ml-2">{props.translate('therapist.sms.usage')}</span>
+        <ImInfo size={20} /><span className="ml-2">{translate('therapist.sms.usage')}</span>
       </Form.Text>
     </>
   );
 };
 
 SmsToolbar.propTypes = {
-  translate: PropTypes.func,
   onDateChanged: PropTypes.func,
   onTimeChanged: PropTypes.func,
   onInputChanged: PropTypes.func,

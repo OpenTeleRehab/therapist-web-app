@@ -116,7 +116,6 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
         onDateChanged={setDate}
         onTimeChanged={setTime}
         onSentChanged={setIsSent}
-        translate={translate}
         isSent={isSent}
       />
     </Dialog>
