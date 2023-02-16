@@ -14,7 +14,7 @@ import {
   sendMessages
 } from '../../store/message/actions';
 
-const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reachMaxSms, isOngoingTreatment }) => {
+const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reachMaxSms }) => {
   const messageEndRef = useRef(null);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -68,7 +68,7 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
       show={show}
       title={translate('patient.sms')}
       onCancel={handleClose}
-      disabledConfirmButton={reachMaxSms || !isOngoingTreatment || date === '' || time === '' || isSent}
+      disabledConfirmButton={reachMaxSms || date === '' || time === '' || isSent}
       onConfirm={handleSendSms}
       confirmLabel={translate('patient.message.send')}
     >
@@ -125,7 +125,6 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
 Message.propTypes = {
   show: PropTypes.bool,
   reachMaxSms: PropTypes.bool,
-  isOngoingTreatment: PropTypes.bool,
   handleClose: PropTypes.func,
   handleCheckMaxSms: PropTypes.func,
   patientId: PropTypes.string,

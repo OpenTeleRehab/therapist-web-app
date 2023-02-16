@@ -65,7 +65,6 @@ const PatientInfo = ({ id, translate }) => {
   const [phone, setPhone] = useState('');
   const [maxSms, setMaxSms] = useState(2);
   const [reachMaxSms, setReachMaxSms] = useState(false);
-  const [isOngoingTreatment, setIsOngoingTreatment] = useState(false);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -101,13 +100,8 @@ const PatientInfo = ({ id, translate }) => {
         enabled: data.enabled
       });
       setIsSecondaryTherapist(data.secondary_therapists.includes(profile.id));
-      if (data.ongoingTreatmentPlan.length > 0) {
-        setIsOngoingTreatment(true);
-      } else {
-        setIsOngoingTreatment(false);
-      }
     }
-  }, [id, translate, profile, users, countries, isOngoingTreatment]);
+  }, [id, translate, profile, users, countries]);
 
   useEffect(() => {
     if (therapist) {
@@ -316,8 +310,7 @@ const PatientInfo = ({ id, translate }) => {
       >
         <p>{translate('patient.delete_confirmation_message')}</p>
       </Dialog>
-      {showMessageDialog && <Message patientId={id} phone={phone} show={showMessageDialog} handleClose={() => setShowMessageDialog(false) } handleCheckMaxSms={handleCheckMaxSms} reachMaxSms={reachMaxSms}
-        isOngoingTreatment={isOngoingTreatment} />}
+      {showMessageDialog && <Message patientId={id} phone={phone} show={showMessageDialog} handleClose={() => setShowMessageDialog(false) } handleCheckMaxSms={handleCheckMaxSms} reachMaxSms={reachMaxSms} />}
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </>
   );
