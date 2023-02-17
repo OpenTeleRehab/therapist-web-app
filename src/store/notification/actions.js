@@ -19,17 +19,15 @@ export const showSuccessNotification = (title, message, messageParams) => dispat
 };
 
 export function showErrorNotification (title, message, messageParams = {}) {
-  // Don't show notification with cancel the request
-  if (message === 'canceled') {
-    return false;
-  }
-
   return (dispatch) => {
     // ensure it is closed the previous notification
     dispatch(closeNotification);
 
-    dispatch(mutation.setColor('danger'));
-    dispatch(mutation.setNotificationMessage(title, message, messageParams));
-    dispatch(openNotification());
+    // If a request is canceled, no notification is displayed
+    if (message !== 'canceled') {
+      dispatch(mutation.setColor('danger'));
+      dispatch(mutation.setNotificationMessage(title, message, messageParams));
+      dispatch(openNotification());
+    }
   };
 }
