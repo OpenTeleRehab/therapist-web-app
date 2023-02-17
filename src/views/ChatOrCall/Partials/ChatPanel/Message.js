@@ -21,7 +21,7 @@ const Message = ({ translate, messages, currentUser, msgOuterHeight }) => {
   useEffect(() => {
     scrollToBottom();
     // eslint-disable-next-line
-  }, [messages]);
+  }, [[...messages]]);
 
   const scrollToBottom = () => {
     setTimeout(() => {
