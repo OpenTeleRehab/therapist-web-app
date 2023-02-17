@@ -9,7 +9,7 @@ export const message = (state = initialState, action) => {
     }
     case 'GET_THERAPIST_MESSAGE_SUCCESS': {
       return Object.assign({}, state, {
-        messages: action.data
+        totalMessages: action.data
       });
     }
     default:
