@@ -1,3 +1,4 @@
 export const initialState = {
-  messages: []
+  messages: [],
+  totalMessages: []
 };
