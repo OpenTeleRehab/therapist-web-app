@@ -96,7 +96,9 @@ const Patient = () => {
     if (chatRooms.length) {
       const fIndex = chatRooms.findIndex(r => r.rid.includes(chatUserId));
 
-      return chatRooms[fIndex].unread > 99 ? '99+' : chatRooms[fIndex].unread;
+      if (fIndex && chatRooms[fIndex] && chatRooms[fIndex].unread) {
+        return chatRooms[fIndex].unread > 99 ? '99+' : chatRooms[fIndex].unread;
+      }
     }
 
     return 0;
