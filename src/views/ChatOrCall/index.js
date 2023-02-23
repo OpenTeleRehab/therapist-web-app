@@ -42,8 +42,6 @@ const ChatOrCall = ({ translate }) => {
           setTimeout(() => {
             dispatch(getCurrentChatUsersStatus());
           }, 1000);
-          // TODO get unread messages in each room
-          // https://developer.rocket.chat/api/realtime-api/method-calls/get-subscriptions
         }
       });
     }

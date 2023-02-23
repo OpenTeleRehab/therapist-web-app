@@ -92,18 +92,6 @@ const Patient = () => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
   };
 
-  const totalRoomUnreadMessages = (chatUserId) => {
-    if (chatRooms.length) {
-      const fIndex = chatRooms.findIndex(r => r.rid.includes(chatUserId));
-
-      if (fIndex && chatRooms[fIndex] && chatRooms[fIndex].unread) {
-        return chatRooms[fIndex].unread > 99 ? '99+' : chatRooms[fIndex].unread;
-      }
-    }
-
-    return 0;
-  };
-
   const handleClose = () => {
     setEditId('');
     setShow(false);
@@ -138,6 +126,10 @@ const Patient = () => {
         onRowClick={handleRowClick}
         hover="hover-primary"
         rows={users.map(user => {
+          // Unread messages count
+          const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
+          const unread = room ? room.unread : 0;
+
           const notification = (
             <div className="notify-lists d-flex align-items-center">
               <div className="notify-list-item mr-2">
@@ -149,10 +141,10 @@ const Patient = () => {
                   <sup>{user.total_pain_threshold}</sup>
                 </div>
               )}
-              {totalRoomUnreadMessages(user.chat_user_id) > 0 && (
+              {unread > 0 && (
                 <div className="notify-list-item">
                   <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary} />
-                  <sup>{totalRoomUnreadMessages(user.chat_user_id)}</sup>
+                  <sup>{unread > 99 ? '99+' : unread}</sup>
                 </div>
               )}
             </div>
