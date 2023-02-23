@@ -50,11 +50,11 @@ const getLastMessages = (chatRooms, authUserId, authToken) => {
     });
 };
 
-const getMessageCounters = async (roomId, authUserId, authToken) => {
+const getSubscriptions = async (authUserId, authToken) => {
   const instance = createInstance(authUserId, authToken);
-  return instance.get(`/im.counters?roomId=${roomId}`)
+  return instance.get('subscriptions.get')
     .then(res => {
-      return res.data.unreads === null ? 0 : res.data.unreads;
+      return res.data.update;
     }).catch(e => {
       return e.response.data;
     });
@@ -79,6 +79,6 @@ export const Rocketchat = {
   login,
   getUserStatus,
   getLastMessages,
-  getMessageCounters,
+  getSubscriptions,
   sendAttachmentMessage
 };

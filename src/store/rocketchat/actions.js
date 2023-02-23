@@ -37,18 +37,20 @@ export const getChatRooms = () => async (dispatch, getState) => {
     disableAbortController: true
   };
   const data = await User.getUsers(payload);
+  const subscriptions = await Rocketchat.getSubscriptions(authUserId, authToken);
+
   if (data.success) {
     const chatRooms = [];
-    const roomIds = profile.chat_rooms;
-    for (const user of data.data) {
-      if (user.chat_user_id) {
-        const fIndex = roomIds.findIndex(r => r.includes(user.chat_user_id));
 
-        if (fIndex > -1) {
+    for (const user of data.data) {
+      if (user.chat_user_id && subscriptions.length) {
+        const subscription = subscriptions.find(room => room.rid.includes(user.chat_user_id));
+
+        if (subscription) {
           chatRooms.push({
-            rid: roomIds[fIndex],
+            rid: subscription.rid,
             name: `${user.last_name} ${user.first_name}`,
-            unread: await Rocketchat.getMessageCounters(roomIds[fIndex], authUserId, authToken),
+            unread: subscription.unread,
             u: {
               _id: user.chat_user_id,
               username: user.identity,
