@@ -26,7 +26,7 @@ import {
 import CreatePatient from 'views/Patient/create';
 import Dialog from 'components/Dialog';
 import {
-  getChatRooms, selectRoom, setIsOnChatPage
+  getChatRooms, selectRoom, setIsOnChatPage, sendPodcastNotification
 } from '../../../store/rocketchat/actions';
 import { loadMessagesInRoom, sendNewMessage } from '../../../utils/rocketchat';
 import { markMessagesAsRead } from '../../../utils/chat';
@@ -200,15 +200,30 @@ const PatientInfo = ({ id, translate }) => {
     if (id && users.length) {
       const patient = users.find(user => user.id === parseInt(id));
       const findIndex = chatRooms.findIndex(r => r.u._id === patient.chat_user_id);
+      const _id = generateHash();
+      const rid = chatRooms[findIndex].rid;
+      const identity = chatRooms[findIndex].u.username;
+      const title = therapist.first_name + ' ' + therapist.last_name;
+      const msg = CALL_STATUS.AUDIO_STARTED;
 
       if (findIndex !== -1 && patient.enabled) {
         const newMessage = {
-          _id: generateHash(),
-          rid: chatRooms[findIndex].rid,
-          msg: CALL_STATUS.AUDIO_STARTED
+          _id,
+          rid,
+          msg
         };
+        const notification = {
+          _id,
+          rid,
+          identity,
+          title,
+          body: msg,
+          translatable: false
+        };
+
         sendNewMessage(chatSocket, newMessage, therapist.id);
         dispatch(selectRoom(chatRooms[findIndex]));
+        dispatch(sendPodcastNotification(notification));
         loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
         setTimeout(() => {
           markMessagesAsRead(chatSocket, chatRooms[findIndex].rid, therapist.id);
