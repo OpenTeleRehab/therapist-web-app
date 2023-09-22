@@ -22,7 +22,8 @@ const getPatientAssistiveTechnologies = payload => {
 
   return axios.get('/patient-assistive-technologies', {
     params: payload,
-    signal: window.abortController.signal
+    signal: window.abortController.signal,
+    headers: { country: getCountryIsoCode() }
   }).then(
     res => {
       return res.data;
