@@ -19,6 +19,7 @@ import { getTranslate } from 'react-localize-redux';
 import settings from 'settings';
 import scssColors from 'scss/custom.scss';
 import { getChatRooms } from '../../store/rocketchat/actions';
+import { getTherapistsByClinic } from 'store/therapist/actions';
 import customColorScheme from '../../utils/customColorScheme';
 import 'react-step-progress-bar/styles.css';
 
@@ -29,6 +30,7 @@ const Patient = () => {
   const { users, loading } = useSelector(state => state.user);
   const { profile } = useSelector((state) => state.auth);
   const { countries } = useSelector((state) => state.country);
+  const { therapistsByClinic } = useSelector(state => state.therapist);
   const therapist = useSelector(state => state.auth.profile);
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
@@ -39,8 +41,8 @@ const Patient = () => {
 
   const columns = [
     { name: 'identity', title: translate('common.id') },
-    { name: 'last_name', title: translate('common.last_name') },
-    { name: 'first_name', title: translate('common.first_name') },
+    { name: 'last_name', title: translate('common.last_name'), width: 50 },
+    { name: 'first_name', title: translate('common.first_name'), width: 50 },
     { name: 'date_of_birth', title: translate('common.date_of_birth') },
     { name: 'age', title: translate('common.age') },
     { name: 'ongoing_treatment_plan', title: translate('common.ongoing_treatment_plan') },
@@ -51,14 +53,18 @@ const Patient = () => {
   ];
 
   const defaultHiddenColumnNames = [
-    'age', 'ongoing_treatment_plan', 'ongoing_treatment_status', 'next_appointment'
+    'age',
+    'ongoing_treatment_plan',
+    'ongoing_treatment_status',
+    'next_appointment'
   ];
 
   const columnExtensions = [
     { columnName: 'last_name', wordWrapEnabled: true },
     { columnName: 'first_name', wordWrapEnabled: true },
     { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
-    { columnName: 'treatment_status', wordWrapEnabled: true }
+    { columnName: 'treatment_status', wordWrapEnabled: true },
+    { columnName: 'secondary_therapist', wordWrapEnabled: true }
   ];
 
   const [pageSize, setPageSize] = useState(60);
@@ -79,6 +85,7 @@ const Patient = () => {
         page_size: pageSize,
         page: currentPage + 1
       }));
+      dispatch(getTherapistsByClinic(profile.clinic_id));
     }
   }, [currentPage, pageSize, searchValue, filters, dispatch, profile, countries]);
 
@@ -87,6 +94,38 @@ const Patient = () => {
       dispatch(getChatRooms());
     }
   }, [dispatch, authToken, therapist]);
+
+  const getSecondaryTherapist = (user) => {
+    let primaryTherapistHTML = '';
+    let secondaryTherapistHTML = '';
+
+    const primaryTherapist = therapistsByClinic.find(item => item.id === user.therapist_id);
+    const secondaryTherapists = _.filter(therapistsByClinic, therapist => _.includes(user.secondary_therapists, therapist.id));
+
+    if (primaryTherapist) {
+      if (primaryTherapist.id === profile.id) {
+        primaryTherapistHTML = `<b>${primaryTherapist.first_name} ${primaryTherapist.last_name}</b>`;
+      } else {
+        primaryTherapistHTML = `${primaryTherapist.first_name} ${primaryTherapist.last_name}`;
+      }
+    }
+
+    if (secondaryTherapists.length) {
+      const therapists = [];
+
+      secondaryTherapists.forEach(therapist => {
+        if (therapist.id === profile.id) {
+          therapists.push(`<b>${therapist.first_name} ${therapist.last_name}</b>`);
+        } else {
+          therapists.push(`${therapist.first_name} ${therapist.last_name}`);
+        }
+      });
+
+      secondaryTherapistHTML = therapists.join(', ');
+    }
+
+    return primaryTherapistHTML + '/' + secondaryTherapistHTML;
+  };
 
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
@@ -160,7 +199,7 @@ const Patient = () => {
             ongoing_treatment_plan: user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0].name : user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
             treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),
             next_appointment: user.upcoming_appointment ? moment.utc(user.upcoming_appointment.start_date).local().format(settings.date_format + ' hh:mm A') : '',
-            secondary_therapist: user.is_secondary_therapist ? translate('common.secondary_therapist.label') : translate('common.primary_therapist.label'),
+            secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
             notification
           };
         })}
