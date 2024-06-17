@@ -3,3 +3,17 @@
 		@include button-variant($value, $value);
 	}
 }
+
+.fc {
+	&-daygrid {
+		&-day {
+			&.fc {
+				&-day {
+					&:hover {
+						background-color: lighten($primary, 55%);
+					}
+				}
+			}
+		}
+	}
+}
