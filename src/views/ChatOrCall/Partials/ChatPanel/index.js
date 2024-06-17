@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Button } from 'react-bootstrap';
 import Message from './Message';
@@ -13,6 +13,8 @@ import {
 } from 'store/rocketchat/actions';
 import { generateHash } from 'utils/general';
 import CallingButton from '../../../../components/CallingButton';
+import RocketchatContext from '../../../../context/RocketchatContext';
+import { markMessagesAsRead } from '../../../../utils/chat';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
 const ChatPanel = (
@@ -28,6 +30,7 @@ const ChatPanel = (
     onSendMessage
   }) => {
   const dispatch = useDispatch();
+  const chatSocket = useContext(RocketchatContext);
   const therapist = useSelector(state => state.auth.profile);
   const [msgOuterHeight, setMsgOuterHeight] = useState(MIN_MSG_OUTER_HEIGHT);
   const [allMessages, setAllMessages] = useState(messages);
@@ -35,6 +38,14 @@ const ChatPanel = (
   useEffect(() => {
     setAllMessages(messages);
   }, [messages]);
+
+  useEffect(() => {
+    if (selectedRoom && therapist) {
+      setTimeout(() => {
+        markMessagesAsRead(chatSocket, selectedRoom.rid, therapist.id);
+      }, 1000);
+    }
+  }, [selectedRoom]);
 
   const handleInputSizeChanged = (changedHeight) => {
     if (changedHeight < 0) {

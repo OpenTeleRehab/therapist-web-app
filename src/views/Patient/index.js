@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
@@ -18,10 +18,14 @@ import { renderStatusBadge } from 'utils/treatmentPlan';
 import { getTranslate } from 'react-localize-redux';
 import settings from 'settings';
 import scssColors from 'scss/custom.scss';
-import { getChatRooms } from '../../store/rocketchat/actions';
+import { getChatRooms, selectRoom } from '../../store/rocketchat/actions';
 import { getTherapistsByClinic } from 'store/therapist/actions';
 import customColorScheme from '../../utils/customColorScheme';
 import 'react-step-progress-bar/styles.css';
+import { ViewAction } from '../../components/ActionIcons';
+import { loadMessagesInRoom } from '../../utils/rocketchat';
+import { showErrorNotification } from '../../store/notification/actions';
+import RocketchatContext from '../../context/RocketchatContext';
 
 const Patient = () => {
   const dispatch = useDispatch();
@@ -35,6 +39,7 @@ const Patient = () => {
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const chatSocket = useContext(RocketchatContext);
 
   const translate = getTranslate(localize);
   const history = useHistory();
@@ -49,7 +54,8 @@ const Patient = () => {
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
-    { name: 'notification', title: translate('common.notification') }
+    { name: 'notification', title: translate('common.notification') },
+    { name: 'action', title: translate('common.action') }
   ];
 
   const defaultHiddenColumnNames = [
@@ -131,6 +137,18 @@ const Patient = () => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
   };
 
+  const handleSelectRoomToCall = (patient) => {
+    const findIndex = chatRooms.findIndex(r => r.u._id === patient.chat_user_id);
+
+    if (findIndex !== -1 && patient.enabled) {
+      dispatch(selectRoom(chatRooms[findIndex]));
+      loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
+      history.push(ROUTES.CHAT_OR_CALL);
+    } else {
+      dispatch(showErrorNotification('chat_or_call', 'error_message.chat_nonactivated'));
+    }
+  };
+
   const handleClose = () => {
     setEditId('');
     setShow(false);
@@ -162,8 +180,6 @@ const Patient = () => {
         columns={columns}
         columnExtensions={columnExtensions}
         defaultHiddenColumnNames={defaultHiddenColumnNames}
-        onRowClick={handleRowClick}
-        hover="hover-primary"
         rows={users.map(user => {
           // Unread messages count
           const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
@@ -182,8 +198,10 @@ const Patient = () => {
               )}
               {unread > 0 && (
                 <div className="notify-list-item">
-                  <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary} />
-                  <sup>{unread > 99 ? '99+' : unread}</sup>
+                  <Button className="text-decoration-none" onClick={() => handleSelectRoomToCall(user)} variant="link">
+                    <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary} />
+                    <sup>{unread > 99 ? '99+' : unread}</sup>
+                  </Button>
                 </div>
               )}
             </div>
@@ -200,7 +218,8 @@ const Patient = () => {
             treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),
             next_appointment: user.upcoming_appointment ? moment.utc(user.upcoming_appointment.start_date).local().format(settings.date_format + ' hh:mm A') : '',
             secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
-            notification
+            notification,
+            action: <ViewAction className="ml-1" onClick={() => handleRowClick(user)} />
           };
         })}
       />

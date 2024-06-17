@@ -7,16 +7,16 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import {
   Tooltip,
-  OverlayTrigger
-  , Dropdown, DropdownButton, Button
+  OverlayTrigger,
+  Dropdown,
+  DropdownButton,
+  Button
 } from 'react-bootstrap';
 
 import { BsFillChatSquareFill } from 'react-icons/bs';
 import { FaPhoneAlt, FaEnvelope } from 'react-icons/fa';
 import CustomPhoneNumber from 'utils/phoneNumber';
-
 import EllipsisText from 'react-ellipsis-text';
-
 import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
 import { activateDeactivateAccount, getUsers, deleteAccount } from 'store/user/actions';
@@ -26,7 +26,10 @@ import {
 import CreatePatient from 'views/Patient/create';
 import Dialog from 'components/Dialog';
 import {
-  getChatRooms, selectRoom, setIsOnChatPage, sendPodcastNotification
+  getChatRooms,
+  selectRoom,
+  setIsOnChatPage,
+  sendPodcastNotification
 } from '../../../store/rocketchat/actions';
 import { loadMessagesInRoom, sendNewMessage } from '../../../utils/rocketchat';
 import { markMessagesAsRead } from '../../../utils/chat';
@@ -186,9 +189,6 @@ const PatientInfo = ({ id, translate }) => {
       if (findIndex !== -1 && patient.enabled) {
         dispatch(selectRoom(chatRooms[findIndex]));
         loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
-        setTimeout(() => {
-          markMessagesAsRead(chatSocket, chatRooms[findIndex].rid, therapist.id);
-        }, 1000);
         history.push(ROUTES.CHAT_OR_CALL);
       } else {
         dispatch(showErrorNotification('chat_or_call', 'error_message.chat_nonactivated'));
