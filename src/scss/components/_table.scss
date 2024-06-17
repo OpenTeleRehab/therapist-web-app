@@ -1,4 +1,9 @@
 .table {
+	th,
+	td {
+		vertical-align: middle;
+	}
+
 	.hover-primary {
 		&:hover {
 			background-color: $secondary;
