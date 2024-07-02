@@ -22,7 +22,6 @@ import { getChatRooms, selectRoom } from '../../store/rocketchat/actions';
 import { getTherapistsByClinic } from 'store/therapist/actions';
 import customColorScheme from '../../utils/customColorScheme';
 import 'react-step-progress-bar/styles.css';
-import { ViewAction } from '../../components/ActionIcons';
 import { loadMessagesInRoom } from '../../utils/rocketchat';
 import { showErrorNotification } from '../../store/notification/actions';
 import RocketchatContext from '../../context/RocketchatContext';
@@ -54,8 +53,7 @@ const Patient = () => {
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
-    { name: 'notification', title: translate('common.notification') },
-    { name: 'action', title: translate('common.action') }
+    { name: 'notification', title: translate('common.notification') }
   ];
 
   const defaultHiddenColumnNames = [
@@ -137,7 +135,9 @@ const Patient = () => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
   };
 
-  const handleSelectRoomToCall = (patient) => {
+  const handleSelectRoomToCall = (event, patient) => {
+    event.stopPropagation();
+
     const findIndex = chatRooms.findIndex(r => r.u._id === patient.chat_user_id);
 
     if (findIndex !== -1 && patient.enabled) {
@@ -180,6 +180,8 @@ const Patient = () => {
         columns={columns}
         columnExtensions={columnExtensions}
         defaultHiddenColumnNames={defaultHiddenColumnNames}
+        onRowClick={handleRowClick}
+        hover="hover-primary"
         rows={users.map(user => {
           // Unread messages count
           const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
@@ -198,7 +200,7 @@ const Patient = () => {
               )}
               {unread > 0 && (
                 <div className="notify-list-item">
-                  <Button className="text-decoration-none" onClick={() => handleSelectRoomToCall(user)} variant="link">
+                  <Button className="text-decoration-none" onClick={(event) => handleSelectRoomToCall(event, user)} variant="link">
                     <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary} />
                     <sup>{unread > 99 ? '99+' : unread}</sup>
                   </Button>
@@ -218,8 +220,7 @@ const Patient = () => {
             treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),
             next_appointment: user.upcoming_appointment ? moment.utc(user.upcoming_appointment.start_date).local().format(settings.date_format + ' hh:mm A') : '',
             secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
-            notification,
-            action: <ViewAction className="ml-1" onClick={() => handleRowClick(user)} />
+            notification
           };
         })}
       />
