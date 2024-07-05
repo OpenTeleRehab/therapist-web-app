@@ -31,10 +31,10 @@ export const createTransfer = (payload) => async (dispatch) => {
   }
 };
 
-export const acceptTransfer = (patientId) => async (dispatch) => {
+export const acceptTransfer = (payload) => async (dispatch) => {
   dispatch(mutation.acceptTransferRequest());
   dispatch(showSpinner(true));
-  const data = await Transfer.acceptTransfer(patientId);
+  const data = await Transfer.acceptTransfer(payload);
   if (data.success) {
     dispatch(mutation.acceptTransferSuccess());
     dispatch(getTransfers());
