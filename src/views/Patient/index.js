@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Button } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { Badge, Button } from 'react-bootstrap';
+import { Link, useHistory } from 'react-router-dom';
 import { TiWarning } from 'react-icons/all';
 import { BsPlus, BsChatDotsFill } from 'react-icons/bs';
+import { BiTransfer } from 'react-icons/bi';
 import { ProgressBar } from 'react-step-progress-bar';
 import PropTypes from 'prop-types';
 import moment from 'moment/moment';
@@ -25,6 +26,7 @@ import 'react-step-progress-bar/styles.css';
 import { loadMessagesInRoom } from '../../utils/rocketchat';
 import { showErrorNotification } from '../../store/notification/actions';
 import RocketchatContext from '../../context/RocketchatContext';
+import { getTransfers } from '../../store/transfer/actions';
 
 const Patient = () => {
   const dispatch = useDispatch();
@@ -34,14 +36,16 @@ const Patient = () => {
   const { profile } = useSelector((state) => state.auth);
   const { countries } = useSelector((state) => state.country);
   const { therapistsByClinic } = useSelector(state => state.therapist);
+  const { transfers } = useSelector(state => state.transfer);
   const therapist = useSelector(state => state.auth.profile);
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
   const { colorScheme } = useSelector(state => state.colorScheme);
-  const chatSocket = useContext(RocketchatContext);
 
+  const chatSocket = useContext(RocketchatContext);
   const translate = getTranslate(localize);
   const history = useHistory();
+  const receiveTransfers = transfers.filter(item => item.to_therapist_id === profile.id);
 
   const columns = [
     { name: 'identity', title: translate('common.id') },
@@ -53,7 +57,8 @@ const Patient = () => {
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
-    { name: 'notification', title: translate('common.notification') }
+    { name: 'notification', title: translate('common.notification') },
+    { name: 'transfer', title: translate('common.transfer') }
   ];
 
   const defaultHiddenColumnNames = [
@@ -68,7 +73,8 @@ const Patient = () => {
     { columnName: 'first_name', wordWrapEnabled: true },
     { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
     { columnName: 'treatment_status', wordWrapEnabled: true },
-    { columnName: 'secondary_therapist', wordWrapEnabled: true }
+    { columnName: 'secondary_therapist', wordWrapEnabled: true },
+    { columnName: 'transfer', wordWrapEnabled: true, width: 150 }
   ];
 
   const [pageSize, setPageSize] = useState(60);
@@ -98,6 +104,10 @@ const Patient = () => {
       dispatch(getChatRooms());
     }
   }, [dispatch, authToken, therapist]);
+
+  useEffect(() => {
+    dispatch(getTransfers());
+  }, [dispatch]);
 
   const getSecondaryTherapist = (user) => {
     let primaryTherapistHTML = '';
@@ -158,15 +168,19 @@ const Patient = () => {
 
   return (
     <>
-      <div className="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mb-3">
-        <div>&nbsp;</div>
-        <div className="btn-toolbar mb-2 mb-md-0">
-          <Button variant="primary" onClick={handleShow}>
-            <BsPlus className="mr-1" />
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h1 className="mb-0">{translate('patient.list')}</h1>
+        <div className="btn-toolbar gap-3">
+          <Link className="btn btn-outline-primary" to={ROUTES.PATIENT_TRANSFER_LIST}>
+            <BiTransfer className="mr-1" /> {translate('transfer.list')}
+            {receiveTransfers.length > 0 && <Badge className="ml-1" variant="danger">{ receiveTransfers.length }</Badge>}
+          </Link>
+          <Button className="ml-3" variant="primary" onClick={handleShow}>
+            <BsPlus className="mr-1"/>
             {translate('patient.new')}
           </Button>
         </div>
-        {show && <CreatePatient handleClose={handleClose} show={show} editId={editId} />}
+        {show && <CreatePatient handleClose={handleClose} show={show} editId={editId}/>}
       </div>
       <CustomTable
         loading={loading}
@@ -183,7 +197,7 @@ const Patient = () => {
         onRowClick={handleRowClick}
         hover="hover-primary"
         rows={users.map(user => {
-          // Unread messages count
+          const transfer = transfers.find(item => item.patient_id === user.id);
           const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
           const unread = room ? room.unread : 0;
 
@@ -208,6 +222,7 @@ const Patient = () => {
               )}
             </div>
           );
+
           return {
             id: user.id,
             identity: user.identity,
@@ -220,7 +235,8 @@ const Patient = () => {
             treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),
             next_appointment: user.upcoming_appointment ? moment.utc(user.upcoming_appointment.start_date).local().format(settings.date_format + ' hh:mm A') : '',
             secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
-            notification
+            notification,
+            transfer: transfer && transfer.from_therapist_id === therapist.id && <Badge pill variant="warning">{translate(`transfer.status.${transfer.status}`)}</Badge>
           };
         })}
       />

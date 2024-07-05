@@ -47,6 +47,7 @@ import SmsButton from '../../../components/SmsButton';
 import {
   getTherapistMessage
 } from '../../../store/message/actions';
+import TransferPatient from '../transfer';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -58,6 +59,7 @@ const PatientInfo = ({ id, translate }) => {
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [editId, setEditId] = useState('');
   const [show, setShow] = useState(false);
+  const [showTransferDialog, setShowTransferDialog] = useState(false);
   const [showActivateDeactivateDialog, setShowActivateDeactivateDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [disabledConfirmButton, setDisabledConfirmButton] = useState(false);
@@ -137,6 +139,10 @@ const PatientInfo = ({ id, translate }) => {
   const handleEdit = (id) => {
     setEditId(id);
     setShow(true);
+  };
+
+  const handleTransfer = () => {
+    setShowTransferDialog(true);
   };
 
   const handleClose = () => {
@@ -246,6 +252,7 @@ const PatientInfo = ({ id, translate }) => {
       }
     });
   };
+
   return (
     <>
       <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right mt-3">
@@ -276,11 +283,12 @@ const PatientInfo = ({ id, translate }) => {
           <BsFillChatSquareFill size={20} />
         </Button>
         {!isSecondaryTherapist &&
-        <DropdownButton alignRight variant="primary" title={translate('common.action')} className="mr-3">
-          <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
-          <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
-          <Dropdown.Item disabled={formFields.enabled} onClick={handleDeleteAccount}>{translate('patient.delete_account')}</Dropdown.Item>
-        </DropdownButton>
+          <DropdownButton alignRight variant="primary" title={translate('common.action')} className="mr-3">
+            <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleTransfer()}>{translate('common.transfer')}</Dropdown.Item>
+            <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
+            <Dropdown.Item onClick={handleDeleteAccount} disabled={formFields.enabled}>{translate('patient.delete_account')}</Dropdown.Item>
+          </DropdownButton>
         }
       </div>
       <div className="p-3">
@@ -302,7 +310,10 @@ const PatientInfo = ({ id, translate }) => {
           </span>
         </div>
       </div>
+
       {show && <CreatePatient handleClose={handleClose} show={show} editId={editId} />}
+      {showTransferDialog && <TransferPatient show={showTransferDialog} patientId={parseInt(id)} therapist={therapist} handleClose={() => setShowTransferDialog(false)} />}
+
       <Dialog
         show={showActivateDeactivateDialog}
         title={translate('patient.activate_deactivate_confirmation_title')}

@@ -7,6 +7,7 @@ import PrivateRoute from 'routes/privateRoute';
 
 import DashboardPage from 'views/Dashboard';
 import Patient from 'views/Patient';
+import Transfer from 'views/Patient/Transfer';
 import Library from 'views/Library';
 import Appointment from 'views/Appointment';
 import Profile from 'views/Profile';
@@ -40,6 +41,13 @@ const routes = [
     title: 'patient',
     path: ROUTES.PATIENT,
     component: Patient,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'patient.transfer',
+    path: ROUTES.PATIENT_TRANSFER_LIST,
+    component: Transfer,
     exact: true,
     type: PRIVATE
   },
