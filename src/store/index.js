@@ -33,6 +33,7 @@ import { colorScheme } from 'store/colorScheme/reducers';
 import { assistiveTechnology } from 'store/assistiveTechnology/reducers';
 import { message } from 'store/message/reducers';
 import { organization } from 'store/organization/reducers';
+import { transfer } from 'store/transfer/reducers';
 export const rootReducer = {
   localize: localizeReducer,
   user,
@@ -61,7 +62,8 @@ export const rootReducer = {
   colorScheme,
   assistiveTechnology,
   message,
-  organization
+  organization,
+  transfer
 };
 
 const devTool =

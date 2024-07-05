@@ -11,8 +11,24 @@ const getPatientsFail = () => ({
   type: 'GET_PATIENTS_FAIL'
 });
 
+const getTransferPatientRequest = () => ({
+  type: 'GET_TRANSFER_PATIENT_REQUEST'
+});
+
+const getTransferPatientSuccess = (data) => ({
+  type: 'GET_TRANSFER_PATIENT_SUCCESS',
+  data
+});
+
+const getTransferPatientFail = () => ({
+  type: 'GET_TRANSFER_PATIENT_FAIL'
+});
+
 export const mutation = {
   getPatientsRequest,
   getPatientsSuccess,
-  getPatientsFail
+  getPatientsFail,
+  getTransferPatientRequest,
+  getTransferPatientSuccess,
+  getTransferPatientFail
 };
