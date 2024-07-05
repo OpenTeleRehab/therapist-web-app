@@ -25,8 +25,8 @@ const createTransfer = payload => {
     });
 };
 
-const acceptTransfer = patientId => {
-  return axios.get(`/transfer/accept/${patientId}`, { headers: { country: getCountryIsoCode() } })
+const acceptTransfer = payload => {
+  return axios.get('/transfer/accept', { params: payload, headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
