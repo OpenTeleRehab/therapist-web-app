@@ -47,6 +47,18 @@ const declineTransferFail = () => ({
   type: 'DECLINE_TRANSFER_FAIL'
 });
 
+const deleteTransferRequest = () => ({
+  type: 'DELETE_TRANSFER_REQUEST'
+});
+
+const deleteTransferSuccess = () => ({
+  type: 'DELETE_TRANSFER_SUCCESS'
+});
+
+const deleteTransferFail = () => ({
+  type: 'DELETE_TRANSFER_FAIL'
+});
+
 export const mutation = {
   getTransfersRequest,
   getTransfersSuccess,
@@ -59,5 +71,8 @@ export const mutation = {
   acceptTransferFail,
   declineTransferRequest,
   declineTransferSuccess,
-  declineTransferFail
+  declineTransferFail,
+  deleteTransferRequest,
+  deleteTransferSuccess,
+  deleteTransferFail
 };

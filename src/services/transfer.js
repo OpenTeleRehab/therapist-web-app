@@ -49,9 +49,22 @@ const declineTransfer = patientId => {
     });
 };
 
+const deleteTransfer = id => {
+  return axios.delete(`/transfer/${id}`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Transfer = {
   getTransfers,
   createTransfer,
   acceptTransfer,
-  declineTransfer
+  declineTransfer,
+  deleteTransfer
 };

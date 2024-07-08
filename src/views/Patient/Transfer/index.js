@@ -94,7 +94,7 @@ const Transfer = () => {
               <Button
                 className="mr-1 mb-1"
                 aria-label="Accept"
-                variant="success"
+                variant="primary"
                 size="sm"
                 onClick={() => handleAcceptTransfer(patient)}
               >

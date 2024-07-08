@@ -42,6 +42,7 @@ const TransferPatient = ({ show, patientId, handleClose }) => {
     patient_id: patientId,
     clinic_id: profile.clinic_id,
     from_therapist_id: profile.id,
+    therapist_type: 'lead',
     to_therapist_id: ''
   });
 

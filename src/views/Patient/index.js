@@ -197,7 +197,7 @@ const Patient = () => {
         onRowClick={handleRowClick}
         hover="hover-primary"
         rows={users.map(user => {
-          const transfer = transfers.find(item => item.patient_id === user.id);
+          const transfer = transfers.find(item => item.patient_id === user.id && item.therapist_type === 'lead');
           const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
           const unread = room ? room.unread : 0;
 
