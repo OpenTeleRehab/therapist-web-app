@@ -66,3 +66,21 @@ export const declineTransfer = (patientId) => async (dispatch) => {
     return false;
   }
 };
+
+export const deleteTransfer = (id) => async (dispatch) => {
+  dispatch(mutation.deleteTransferRequest());
+  dispatch(showSpinner(true));
+  const data = await Transfer.deleteTransfer(id);
+  if (data.success) {
+    dispatch(mutation.deleteTransferSuccess());
+    dispatch(getTransfers());
+    dispatch(showSuccessNotification('toast_title.delete_transfer', data.message));
+    dispatch(showSpinner(false));
+    return true;
+  } else {
+    dispatch(mutation.deleteTransferFail());
+    dispatch(showErrorNotification('toast_title.delete_transfer', data.message));
+    dispatch(showSpinner(false));
+    return false;
+  }
+};

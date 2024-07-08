@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Col, Form } from 'react-bootstrap';
+import { Badge, Button, Col, Form } from 'react-bootstrap';
+import { BsX } from 'react-icons/bs';
 import Dialog from 'components/Dialog';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
@@ -16,6 +17,7 @@ import Select from 'react-select';
 import { createUser, updateUser } from 'store/user/actions';
 import { getProfile } from 'store/auth/actions';
 import { getTherapistsByClinic } from 'store/therapist/actions';
+import { deleteTransfer, getTransfers } from '../../store/transfer/actions';
 import { Therapist as therapistService } from 'services/therapist';
 import { User as patientService } from 'services/user';
 
@@ -36,6 +38,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const therapistsByClinic = useSelector(state => state.therapist.therapistsByClinic);
   const clinics = useSelector(state => state.clinic.clinics);
   const { profile } = useSelector((state) => state.auth);
+  const { transfers } = useSelector(state => state.transfer);
   const definedCountries = useSelector(state => state.country.definedCountries);
 
   const [errorCountry, setErrorCountry] = useState(false);
@@ -78,6 +81,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   useEffect(() => {
     if (profile !== undefined) {
       dispatch(getTherapistsByClinic(profile.clinic_id));
+      dispatch(getTransfers());
     }
   }, [dispatch, profile]);
 
@@ -200,6 +204,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
 
   const validateDate = (current) => {
     return current.isBefore(moment());
+  };
+
+  const handleRemovePendingSecondaryTherapist = (id) => {
+    dispatch(deleteTransfer(id));
   };
 
   const handleSingleSelectChange = (key, value) => {
@@ -447,8 +455,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         <Form.Group controlId="secondary-therapist">
           <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
           <Select
-            value={options.filter(obj => selectedTherapists.includes(obj.value))}
             isMulti
+            value={options.filter(obj => selectedTherapists.includes(obj.value))}
             options={options}
             placeholder={translate('placeholder.therapist')}
             className="basic-multi-select"
@@ -457,6 +465,33 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             isClearable
             aria-label="Secondary therapist"
           />
+
+          {transfers.length > 0 && (
+            <>
+              <p className="mt-2 mb-2"><strong>{translate('transfer.pending_accept_decline')}</strong></p>
+              {transfers.map(item => {
+                return (
+                  <Badge className="mr-1 mb-1" key={item.id} pill variant="primary" style={{ display: 'inline-flex', alignItems: 'center' }}>
+                    {item.to_therapist.first_name} {item.to_therapist.last_name}
+                    <Button
+                      className="close ml-1"
+                      onClick={() => handleRemovePendingSecondaryTherapist(item.id)}
+                      style={{
+                        backgroundColor: 'white',
+                        borderRadius: '50%',
+                        display: 'grid',
+                        placeItems: 'center',
+                        width: 24,
+                        height: 24
+                      }}
+                    >
+                      <BsX size={16} />
+                    </Button>
+                  </Badge>
+                );
+              })}
+            </>
+          )}
         </Form.Group>
         <Form.Group controlId="formNote">
           <Form.Label>{translate('common.note')}</Form.Label>
