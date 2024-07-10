@@ -45,7 +45,7 @@ const Patient = () => {
   const chatSocket = useContext(RocketchatContext);
   const translate = getTranslate(localize);
   const history = useHistory();
-  const receiveTransfers = transfers.filter(item => item.to_therapist_id === profile.id);
+  const pendingTransfers = transfers.filter(item => item.to_therapist_id === profile.id && item.status === 'invited');
 
   const columns = [
     { name: 'identity', title: translate('common.id') },
@@ -173,7 +173,7 @@ const Patient = () => {
         <div className="btn-toolbar gap-3">
           <Link className="btn btn-outline-primary" to={ROUTES.PATIENT_TRANSFER_LIST}>
             <BiTransfer className="mr-1" /> {translate('transfer.list')}
-            {receiveTransfers.length > 0 && <Badge className="ml-1" variant="danger">{ receiveTransfers.length }</Badge>}
+            {pendingTransfers.length > 0 && <Badge className="ml-1" variant="danger">{ pendingTransfers.length }</Badge>}
           </Link>
           <Button className="ml-3" variant="primary" onClick={handleShow}>
             <BsPlus className="mr-1"/>
