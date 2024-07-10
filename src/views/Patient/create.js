@@ -53,7 +53,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [selectedTherapists, setSelectedTherapists] = useState([]);
   const [originalSecondaryTherapists, setOriginalSecondaryTherapists] = useState([]);
   const [patientChatUserId, setPatientChatUserId] = useState('');
+
   const chatSocket = useContext(RocketchatContext);
+  const pendingTransfers = transfers.filter(item => item.patient_id === editId && item.therapist_type === 'supplementary') || [];
 
   const [formFields, setFormFields] = useState({
     first_name: '',
@@ -466,10 +468,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             aria-label="Secondary therapist"
           />
 
-          {transfers.length > 0 && (
+          {pendingTransfers.length > 0 && (
             <>
               <p className="mt-2 mb-2"><strong>{translate('transfer.pending_accept_decline')}</strong></p>
-              {transfers.map(item => {
+              {pendingTransfers.map(item => {
                 return (
                   <Badge className="mr-1 mb-1" key={item.id} pill variant="primary" style={{ display: 'inline-flex', alignItems: 'center' }}>
                     {item.to_therapist.first_name} {item.to_therapist.last_name}
