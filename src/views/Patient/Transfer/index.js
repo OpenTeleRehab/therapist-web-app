@@ -87,7 +87,7 @@ const Transfer = () => {
         hideSearchFilter
         columns={columns}
         columnExtensions={columnExtensions}
-        rows={transfers.map(transfer => {
+        rows={transfers.filter(transfer => transfer.therapist_type === 'invited').map(transfer => {
           const patient = patients.find(item => item.id === transfer.patient_id);
 
           const renderTransfer = (
