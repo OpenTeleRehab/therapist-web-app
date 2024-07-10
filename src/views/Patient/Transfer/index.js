@@ -55,8 +55,9 @@ const Transfer = () => {
     }
   }, [dispatch, transfers]);
 
-  const handleAcceptTransfer = (patient) => {
+  const handleAcceptTransfer = (transferId, patient) => {
     dispatch(acceptTransfer({
+      transfer_id: transferId,
       patient_id: patient.id,
       patient_chat_user_id: patient.chat_user_id,
       chat_rooms: patient.chat_rooms
@@ -64,8 +65,8 @@ const Transfer = () => {
     dispatch(getTransfers());
   };
 
-  const handleDeclineTransfer = (patient) => {
-    dispatch(declineTransfer(patient.id));
+  const handleDeclineTransfer = (transferId) => {
+    dispatch(declineTransfer(transferId));
     dispatch(getTransfers());
   };
 
@@ -86,8 +87,8 @@ const Transfer = () => {
         hideSearchFilter
         columns={columns}
         columnExtensions={columnExtensions}
-        rows={patients.map(patient => {
-          const transfer = transfers.find(item => item.patient_id === patient.id);
+        rows={transfers.map(transfer => {
+          const patient = patients.find(item => item.id === transfer.patient_id);
 
           const renderTransfer = (
             <>
@@ -96,7 +97,7 @@ const Transfer = () => {
                 aria-label="Accept"
                 variant="primary"
                 size="sm"
-                onClick={() => handleAcceptTransfer(patient)}
+                onClick={() => handleAcceptTransfer(transfer.id, patient)}
               >
                 <BsCheck size={18} /> {translate('transfer.status.accept')}
               </Button>
@@ -105,7 +106,7 @@ const Transfer = () => {
                 aria-label="Reject"
                 variant="danger"
                 size="sm"
-                onClick={() => handleDeclineTransfer(patient)}
+                onClick={() => handleDeclineTransfer(transfer.id)}
               >
                 <BsX size={18} /> {translate('transfer.status.decline')}
               </Button>
@@ -113,10 +114,10 @@ const Transfer = () => {
           );
 
           return {
-            identity: patient.identity,
-            last_name: patient.last_name,
-            first_name: patient.first_name,
-            date_of_birth: patient.date_of_birth ? moment(patient.date_of_birth, 'YYYY-MM-DD').locale('en').format(settings.date_format) : '',
+            identity: patient && patient.identity,
+            last_name: patient && patient.last_name,
+            first_name: patient && patient.first_name,
+            date_of_birth: patient && patient.date_of_birth ? moment(patient.date_of_birth, 'YYYY-MM-DD').locale('en').format(settings.date_format) : '',
             secondary_therapist: transfer && transfer.therapist_type === 'lead' ? translate('common.primary_therapist.label') : translate('common.secondary_therapist.label'),
             transfer_from: transfer && transfer.from_therapist && `${transfer.from_therapist.first_name} ${transfer.from_therapist.last_name}`,
             action: renderTransfer

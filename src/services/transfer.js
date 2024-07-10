@@ -26,7 +26,7 @@ const createTransfer = payload => {
 };
 
 const acceptTransfer = payload => {
-  return axios.get('/transfer/accept', { params: payload, headers: { country: getCountryIsoCode() } })
+  return axios.get(`/transfer/accept/${payload.transfer_id}`, { params: payload, headers: { country: getCountryIsoCode() } })
     .then(
       res => {
         return res.data;
@@ -37,8 +37,8 @@ const acceptTransfer = payload => {
     });
 };
 
-const declineTransfer = patientId => {
-  return axios.get(`/transfer/decline/${patientId}`)
+const declineTransfer = transferId => {
+  return axios.get(`/transfer/decline/${transferId}`)
     .then(
       res => {
         return res.data;
@@ -49,8 +49,8 @@ const declineTransfer = patientId => {
     });
 };
 
-const deleteTransfer = id => {
-  return axios.delete(`/transfer/${id}`)
+const deleteTransfer = transferId => {
+  return axios.delete(`/transfer/${transferId}`)
     .then(
       res => {
         return res.data;

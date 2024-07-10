@@ -25,7 +25,7 @@ export const createTransfer = (payload) => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.createTransferFail());
-    dispatch(showErrorNotification('toast_title.new_transfer', data.message));
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
     dispatch(showSpinner(false));
     return false;
   }
@@ -43,16 +43,16 @@ export const acceptTransfer = (payload) => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.acceptTransferFail());
-    dispatch(showErrorNotification('toast_title.accept_transfer', data.message));
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
     dispatch(showSpinner(false));
     return false;
   }
 };
 
-export const declineTransfer = (patientId) => async (dispatch) => {
+export const declineTransfer = (transferId) => async (dispatch) => {
   dispatch(mutation.declineTransferRequest());
   dispatch(showSpinner(true));
-  const data = await Transfer.declineTransfer(patientId);
+  const data = await Transfer.declineTransfer(transferId);
   if (data.success) {
     dispatch(mutation.declineTransferSuccess());
     dispatch(getTransfers());
@@ -61,7 +61,7 @@ export const declineTransfer = (patientId) => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.declineTransferFail());
-    dispatch(showErrorNotification('toast_title.decline_transfer', data.message));
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
     dispatch(showSpinner(false));
     return false;
   }
@@ -79,7 +79,7 @@ export const deleteTransfer = (id) => async (dispatch) => {
     return true;
   } else {
     dispatch(mutation.deleteTransferFail());
-    dispatch(showErrorNotification('toast_title.delete_transfer', data.message));
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
     dispatch(showSpinner(false));
     return false;
   }
