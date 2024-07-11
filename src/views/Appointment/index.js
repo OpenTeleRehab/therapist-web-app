@@ -3,7 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import allLocales from '@fullcalendar/core/locales-all';
-import { Col, Row, Tabs, Tab } from 'react-bootstrap';
+import { Col, Row, Tab, Nav, Badge } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -171,11 +171,32 @@ const Appointment = ({ translate }) => {
         }
       </Col>
       <Col sm={12} xl={5}>
-        <Tabs defaultActiveKey="list" id="uncontrolled-tab-example">
-          <Tab eventKey="list" title={translate('appointment.appointment_list')}>
-            <List handleEdit={handleEdit} selectedDate={selectedDate} date={date} />
-          </Tab>
-        </Tabs>
+        <Tab.Container defaultActiveKey="list">
+          <Nav variant="tabs" className="mb-3">
+            <Nav.Item>
+              <Nav.Link eventKey="list">
+                {translate('appointment.appointment_list')}
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link eventKey="new">
+                {translate('appointment.new_requested')}
+                <Badge className="ml-1" variant="danger">
+                  { appointments.newAppointments ? appointments.newAppointments.length : 0 }
+                </Badge>
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
+
+          <Tab.Content>
+            <Tab.Pane eventKey="list">
+              <List handleEdit={handleEdit} appointments={appointments.approves} selectedDate={selectedDate} date={date} />
+            </Tab.Pane>
+            <Tab.Pane eventKey="new">
+              <List handleEdit={handleEdit} appointments={appointments.newAppointments} selectedDate={selectedDate} date={date} />
+            </Tab.Pane>
+          </Tab.Content>
+        </Tab.Container>
       </Col>
       { !_.isEmpty(colorScheme) && customColorScheme(colorScheme) }
     </Row>
