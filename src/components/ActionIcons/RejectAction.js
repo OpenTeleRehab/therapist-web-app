@@ -6,7 +6,7 @@ import { FaCalendarTimes } from 'react-icons/fa';
 
 export const RejectAction = ({ className, ...rest }) => (
   <OverlayTrigger
-    overlay={<Tooltip><Translate id="common.reject" /></Tooltip>}
+    overlay={<Tooltip><Translate id="common.decline" /></Tooltip>}
   >
     <Button aria-label="Reject" variant="link" className={`text-danger p-0 ${className}`} {...rest}>
       <FaCalendarTimes size={25} />

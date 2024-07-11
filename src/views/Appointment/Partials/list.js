@@ -168,7 +168,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
                   ) {
                     additionTextStyle = { textDecorationLine: 'line-through' };
                     statusTextStyle = { color: scssColors.orange };
-                    statusText = 'appointment.status.cancel';
+                    statusText = 'appointment.status.decline';
                   }
 
                   return (
