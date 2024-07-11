@@ -14,6 +14,7 @@ const Navigation = ({ translate }) => {
   const chatSocket = useContext(RocketchatContext);
   const { profile } = useSelector((state) => state.auth);
   const { chatRooms, isChatConnected, subscribeIds } = useSelector((state) => state.rocketchat);
+  const { appointments } = useSelector((state) => state.appointment);
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
@@ -35,13 +36,30 @@ const Navigation = ({ translate }) => {
     unreadMessage += room.unread;
   });
 
-  // dynamic classes base on unread
-  let navClasses = '';
-  let badgeClasses = '';
+  // dynamic classes base on unread and appointments
+  let navClassesUnread = '';
+  let badgeClassesUnread = '';
+  let navClassesAppointments = '';
+  let badgeClassesAppointments = '';
+
+  const getBadgeClass = (quantities) => {
+    const digit = quantities.toString().length;
+    return {
+      navClasses: digit === 3 ? ' has-badge lg' : digit === 2 ? ' has-badge md' : ' has-badge',
+      badgeClasses: digit === 3 ? ' lg' : digit === 2 ? ' md' : ''
+    };
+  };
+
   if (unreadMessage > 0) {
-    const digit = unreadMessage.toString().length;
-    navClasses = digit === 3 ? ' has-badge lg' : digit === 2 ? ' has-badge md' : ' has-badge';
-    badgeClasses = digit === 3 ? ' lg' : digit === 2 ? ' md' : '';
+    const unread = getBadgeClass(unreadMessage);
+    navClassesUnread = unread.navClasses;
+    badgeClassesUnread = unread.badgeClasses;
+  }
+
+  if (appointments.upcomingAppointments > 0) {
+    const upcomings = getBadgeClass(appointments.upcomingAppointments);
+    navClassesAppointments = upcomings.navClasses;
+    badgeClassesAppointments = upcomings.badgeClasses;
   }
 
   return (
@@ -87,19 +105,24 @@ const Navigation = ({ translate }) => {
           <NavLink
             to={ROUTES.APPOINTMENT}
             key='nav-appointment'
-            className="d-flex align-items-center nav-link"
+            className={`d-flex align-items-center nav-link${navClassesAppointments}`}
           >
             {translate('appointment')}
+            {appointments.upcomingAppointments > 0 && (
+              <Badge variant="danger" className={`circle text-light d-md-block${badgeClassesAppointments}`}>
+                {appointments.upcomingAppointments}
+              </Badge>
+            )}
           </NavLink>
           {profile && profile.chat_user_id && (
             <NavLink
               to={ROUTES.CHAT_OR_CALL}
               key="nav-chat-or-call"
-              className={`d-flex align-items-center nav-link${navClasses}`}
+              className={`d-flex align-items-center nav-link${navClassesUnread}`}
             >
               {translate('chat_or_call')}
               {unreadMessage > 0 && (
-                <Badge variant="danger" className={`circle text-light d-md-block${badgeClasses}`}>
+                <Badge variant="danger" className={`circle text-light d-md-block${badgeClassesUnread}`}>
                   {unreadMessage}
                 </Badge>
               )}
