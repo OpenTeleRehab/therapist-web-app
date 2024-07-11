@@ -27,12 +27,11 @@ import { BsPersonFill } from 'react-icons/bs';
 import EllipsisText from 'react-ellipsis-text';
 import { getAssistiveTechnologyName } from 'utils/assistiveTechnology';
 
-const AppointmentList = ({ handleEdit, selectedDate, date }) => {
+const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   const dispatch = useDispatch();
   const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
-  const { appointments } = useSelector((state) => state.appointment);
   const { colorScheme } = useSelector(state => state.colorScheme);
   const [approvedAppointments, setApprovedAppointments] = useState([]);
   const [id, setId] = useState('');
@@ -41,8 +40,8 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
   const [showRejectDialog, setShowRejectDialog] = useState(false);
 
   useEffect(() => {
-    if (appointments.approves) {
-      const groupedData = _.chain(appointments.approves)
+    if (appointments) {
+      const groupedData = _.chain(appointments)
         .groupBy((item) => moment.utc(item.start_date).local().format('dddd, MMMM DD YYYY'))
         .map((value, key) => ({ date: key, approves: value }))
         .value();
@@ -149,7 +148,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
 
   return (
     <>
-      {
+      {approvedAppointments.length ? (
         approvedAppointments.map((group, index) => {
           return (
             <div key={index}>
@@ -211,7 +210,11 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
             </div>
           );
         })
-      }
+      ) : (
+        <div className="my-3">
+          <p>{translate('common.no_appointment')}</p>
+        </div>
+      )}
       <Dialog
         show={showDeleteDialog}
         title={translate('appointment.delete.title')}
@@ -248,6 +251,7 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
 
 AppointmentList.propTypes = {
   handleEdit: PropType.func,
+  appointments: PropType.array,
   selectedDate: PropType.object,
   date: PropType.object
 };
