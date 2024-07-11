@@ -5,7 +5,7 @@ export const TC = '/term-condition';
 export const PP = '/privacy-policy';
 export const PROFILE_PASSWORD = '/profile#password';
 export const PATIENT = '/patient';
-export const PATIENT_TRANSFER_LIST = PATIENT + '/transfers';
+export const PATIENT_TRANSFER = PATIENT + '?tab=transfer';
 
 export const LIBRARY = '/library';
 export const EXERCISE_CREATE = LIBRARY + '/exercise/create';

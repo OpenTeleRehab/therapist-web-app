@@ -46,7 +46,7 @@ const routes = [
   },
   {
     title: 'patient.transfer',
-    path: ROUTES.PATIENT_TRANSFER_LIST,
+    path: ROUTES.PATIENT_TRANSFER,
     component: Transfer,
     exact: true,
     type: PRIVATE
