@@ -191,9 +191,6 @@ const AppointmentList = ({ handleEdit, selectedDate, date }) => {
                           <>
                             <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
                             <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
-                            <div className="appointment-own-icon">
-                              <BsPersonFill size={20} color={_.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color} />
-                            </div>
                           </>
                         )}
                         {!appointment.created_by_therapist && (
