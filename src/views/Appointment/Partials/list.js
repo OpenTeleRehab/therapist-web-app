@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  AcceptAction,
-  RejectAction,
-  DeleteAction,
-  EditAction
-} from 'components/ActionIcons';
+import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { BiEdit } from 'react-icons/bi';
+import { FaTrashAlt, FaCalendarCheck, FaCalendarTimes } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import moment from 'moment';
 import { getTranslate } from 'react-localize-redux';
@@ -187,14 +184,22 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                       <div className="p-3 ml-auto">
                         {appointment.created_by_therapist && (
                           <>
-                            <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local()) || appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED} />
-                            <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
+                          <Button aria-label="Edit" className="font-weight-bold pr-3 pl-3" onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local()) || appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED}>
+                            <BiEdit className="mr-1" size={20} /><span>{translate('common.edit')}</span>
+                          </Button>
+                          <Button aria-label="Delete" className="font-weight-bold ml-1 btn-danger" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) }>
+                            <FaTrashAlt size={15} className="mr-1" /><span>{translate('common.delete')}</span>
+                          </Button>
                           </>
                         )}
                         {!appointment.created_by_therapist && (
                           <>
-                            <AcceptAction className="ml-auto" onClick={() => handleAccept(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())} />
-                            <RejectAction className="ml-1" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />
+                            <Button aria-label="Accept" className="ml-auto font-weight-bold pr-3 pl-3" onClick={() => handleAccept(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())}>
+                              <FaCalendarCheck size={20} /> <span>{translate('common.accept')}</span>
+                            </Button>
+                            <Button aria-label="Reject" className="font-weight-bold ml-1 btn-danger pr-3 pl-3" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())}>
+                              <FaCalendarTimes size={20} /> <span>{translate('common.decline')}</span>
+                            </Button>
                           </>
                         )}
                       </div>
