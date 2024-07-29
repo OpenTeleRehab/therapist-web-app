@@ -23,7 +23,6 @@ import scssColors from 'scss/custom.scss';
 import {
   showSuccessNotification
 } from 'store/notification/actions';
-import { BsPersonFill } from 'react-icons/bs';
 import EllipsisText from 'react-ellipsis-text';
 import { getAssistiveTechnologyName } from 'utils/assistiveTechnology';
 
@@ -188,14 +187,14 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                       <div className="p-3 ml-auto">
                         {appointment.created_by_therapist && (
                           <>
-                            <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local())} />
+                            <EditAction onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local()) || appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED} />
                             <DeleteAction className="ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
                           </>
                         )}
                         {!appointment.created_by_therapist && (
                           <>
-                            <AcceptAction className="ml-auto" onClick={() => handleAccept(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.ACCEPTED} />
-                            <RejectAction className="ml-1" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED} />
+                            <AcceptAction className="ml-auto" onClick={() => handleAccept(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())} />
+                            <RejectAction className="ml-1" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />
                           </>
                         )}
                       </div>
