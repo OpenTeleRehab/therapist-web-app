@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Badge, Button, Col, Form } from 'react-bootstrap';
-import { BsX } from 'react-icons/bs';
+import { Col, Form } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
+import Chip from '../../components/Chip';
 import { useSelector, useDispatch } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import Datetime from 'components/DateTime';
@@ -473,23 +473,12 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               <p className="mt-2 mb-2"><strong>{translate('transfer.pending_accept_decline')}</strong></p>
               {pendingTransfers.map(item => {
                 return (
-                  <Badge className="mr-1 mb-1" key={item.id} pill variant="primary" style={{ display: 'inline-flex', alignItems: 'center' }}>
-                    {item.to_therapist.first_name} {item.to_therapist.last_name}
-                    <Button
-                      className="close ml-1"
-                      onClick={() => handleRemovePendingSecondaryTherapist(item.id)}
-                      style={{
-                        backgroundColor: 'white',
-                        borderRadius: '50%',
-                        display: 'grid',
-                        placeItems: 'center',
-                        width: 24,
-                        height: 24
-                      }}
-                    >
-                      <BsX size={16} />
-                    </Button>
-                  </Badge>
+                  <Chip
+                    key={item.id}
+                    variant={item.status === 'invited' ? 'primary' : 'danger'}
+                    label={`${item.to_therapist.first_name} ${item.to_therapist.last_name}`}
+                    onDelete={() => handleRemovePendingSecondaryTherapist(item.id)}
+                  />
                 );
               })}
             </>

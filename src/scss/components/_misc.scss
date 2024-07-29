@@ -45,6 +45,23 @@ body {
 	}
 }
 
+.chip {
+	align-items: center;
+	display: inline-flex;
+	margin-right: 0.25rem;
+	margin-bottom: 0.25rem;
+	gap: 0.5rem;
+
+	&-clear {
+		background-color: $light !important;
+		border-radius: 50%;
+		display: grid;
+		place-items: center;
+		width: 1.5rem;
+		height: 1.5rem;
+	}
+}
+
 // additional-field
 .additional-field {
   .remove-btn-container {
