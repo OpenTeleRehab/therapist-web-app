@@ -18,11 +18,18 @@ import CreateAppointment from './Partials/create';
 import { getLayoutDirection } from '../../utils/layoutDirection';
 import customColorScheme from '../../utils/customColorScheme';
 import { getAssistiveTechnologies } from 'store/assistiveTechnology/actions';
+import Chip from '../../components/Chip';
+import { useHistory, useLocation } from 'react-router-dom';
+import queryString from 'query-string';
+import { getPatient } from '../../store/patient/actions';
+import * as ROUTES from '../../variables/routes';
 
 const calendarLocales = [...allLocales, enLocale, kmLocale];
 
 const Appointment = ({ translate }) => {
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { search } = useLocation();
   const { appointments } = useSelector((state) => state.appointment);
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector((state) => state.auth);
@@ -36,6 +43,19 @@ const Appointment = ({ translate }) => {
   const [editId, setEditId] = useState(null);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [userLocale, setUserLocale] = useState('en-us');
+  const [patient, setPatient] = useState(undefined);
+
+  const patientId = queryString.parse(search).patient_id;
+
+  useEffect(() => {
+    if (patientId) {
+      dispatch(getPatient(patientId)).then(patient => {
+        setPatient(patient);
+      });
+    } else {
+      setPatient(undefined);
+    }
+  }, [patientId]);
 
   useEffect(() => {
     if (date && profile) {
@@ -46,9 +66,14 @@ const Appointment = ({ translate }) => {
         selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
         therapist_id: profile.id
       };
+
+      if (patientId) {
+        filter.patient_id = parseInt(patientId);
+      }
+
       dispatch(getAppointments(filter));
     }
-  }, [date, selectedDate, profile, dispatch]);
+  }, [dispatch, date, selectedDate, profile, patientId]);
 
   useEffect(() => {
     if (languages.length && profile) {
@@ -182,11 +207,15 @@ const Appointment = ({ translate }) => {
               <Nav.Link eventKey="new">
                 {translate('appointment.new_requested')}
                 <Badge className="ml-1" variant="danger">
-                  { appointments.newAppointments ? appointments.newAppointments.length : 0 }
+                  {appointments.newAppointments ? appointments.newAppointments.length : 0}
                 </Badge>
               </Nav.Link>
             </Nav.Item>
           </Nav>
+
+          {patient && (
+            <Chip label={`${patient.first_name} ${patient.last_name}`} onDelete={() => history.push(ROUTES.APPOINTMENT)} />
+          )}
 
           <Tab.Content>
             <Tab.Pane eventKey="list">

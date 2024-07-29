@@ -23,7 +23,6 @@ import scssColors from 'scss/custom.scss';
 import {
   showSuccessNotification
 } from 'store/notification/actions';
-import { BsPersonFill } from 'react-icons/bs';
 import EllipsisText from 'react-ellipsis-text';
 import { getAssistiveTechnologyName } from 'utils/assistiveTechnology';
 
@@ -171,7 +170,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                   }
 
                   return (
-                    <div className="mx-3 mb-2 pr-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
+                    <div className="mb-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
                       <div className="p-3 text-white" style={{ backgroundColor: _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color }}>
                         <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>

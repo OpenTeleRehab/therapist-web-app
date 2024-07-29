@@ -4,6 +4,7 @@ import { Badge, Button, Nav, Tab } from 'react-bootstrap';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { TiWarning } from 'react-icons/all';
 import { BsPlus, BsChatDotsFill } from 'react-icons/bs';
+import { RiCalendar2Line } from 'react-icons/ri';
 import { ProgressBar } from 'react-step-progress-bar';
 import PropTypes from 'prop-types';
 import moment from 'moment/moment';
@@ -26,6 +27,7 @@ import { loadMessagesInRoom } from '../../utils/rocketchat';
 import { showErrorNotification } from '../../store/notification/actions';
 import RocketchatContext from '../../context/RocketchatContext';
 import { getTransfers } from '../../store/transfer/actions';
+import { getNextAppointment } from '../../utils/appointment';
 import queryString from 'query-string';
 import Transfer from './Transfer';
 
@@ -173,6 +175,12 @@ const Patient = () => {
     }
   };
 
+  const handleNavigateAppointment = (event, patient) => {
+    event.stopPropagation();
+
+    history.push(`${ROUTES.APPOINTMENT}?patient_id=${patient.id}`);
+  };
+
   const handleClose = () => {
     setEditId('');
     setShow(false);
@@ -225,11 +233,12 @@ const Patient = () => {
                 const transfer = transfers.find(item => item.patient_id === user.id && item.therapist_type === 'lead');
                 const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
                 const unread = room ? room.unread : 0;
+                const appointments = user.appointments.filter(appointment => appointment.created_by_therapist === false);
 
                 const notification = (
                   <div className="notify-lists d-flex align-items-center">
                     <div className="notify-list-item mr-2">
-                      <ProgressBar width={75} percent={user.completed_percent || 0} />
+                      <ProgressBar width={75} percent={user.completed_percent || 0}/>
                     </div>
                     {user.total_pain_threshold > 0 && (
                       <div className="notify-list-item mr-2">
@@ -238,10 +247,18 @@ const Patient = () => {
                       </div>
                     )}
                     {unread > 0 && (
-                      <div className="notify-list-item">
-                        <Button className="text-decoration-none" onClick={(event) => handleSelectRoomToCall(event, user)} variant="link">
-                          <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary} />
+                      <div className="notify-list-item mr-2">
+                        <Button className="text-decoration-none p-0" onClick={(event) => handleSelectRoomToCall(event, user)} variant="link">
+                          <BsChatDotsFill className="chat-icon mr-1" size={20} color={scssColors.primary}/>
                           <sup>{unread > 99 ? '99+' : unread}</sup>
+                        </Button>
+                      </div>
+                    )}
+                    {appointments.length > 0 && (
+                      <div className="notify-list-item">
+                        <Button className="text-decoration-none p-0" onClick={(event) => handleNavigateAppointment(event, user)} variant="link">
+                          <RiCalendar2Line className="chat-icon mr-1" size={20} color={scssColors.primary}/>
+                          <sup>{appointments.length > 99 ? '99+' : appointments.length}</sup>
                         </Button>
                       </div>
                     )}
@@ -258,7 +275,7 @@ const Patient = () => {
                   age: user.date_of_birth !== null ? AgeCalculation(user.date_of_birth, translate) : '',
                   ongoing_treatment_plan: user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0].name : user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
                   treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),
-                  next_appointment: user.upcoming_appointment ? moment.utc(user.upcoming_appointment.start_date).local().format(settings.date_format + ' hh:mm A') : '',
+                  next_appointment: getNextAppointment(user.next_appointment),
                   secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
                   notification,
                   transfer: transfer && transfer.from_therapist_id === therapist.id && <Badge pill variant="warning">{translate(`transfer.status.${transfer.status}`)}</Badge>

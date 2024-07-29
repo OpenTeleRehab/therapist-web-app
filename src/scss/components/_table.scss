@@ -10,8 +10,14 @@
 			color: $white;
 
 			.notify-list-item {
-				.chat-icon {
-					color: $white !important;
+				.btn {
+					&-link {
+						color: $white !important;
+
+						svg {
+							color: $white !important;
+						}
+					}
 				}
 			}
 		}

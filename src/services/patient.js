@@ -13,6 +13,18 @@ const getPatients = payload => {
     });
 };
 
+const getPatient = id => {
+  return axios.get(`/patient/id/${id}`, { headers: { country: getCountryIsoCode() } })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 const getPatientsByIds = payload => {
   return axios.get('/patient/list/by-ids', { params: payload, headers: { country: getCountryIsoCode() } })
     .then(
@@ -27,5 +39,6 @@ const getPatientsByIds = payload => {
 
 export const Patient = {
   getPatients,
+  getPatient,
   getPatientsByIds
 };
