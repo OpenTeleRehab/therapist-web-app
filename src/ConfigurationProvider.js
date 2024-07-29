@@ -23,6 +23,8 @@ import Echo from 'laravel-echo';
 // eslint-disable-next-line
 import Pusher from 'pusher-js';
 import { getTranslate } from 'react-localize-redux';
+import moment from 'moment';
+import { getAppointments } from 'store/appointment/actions';
 
 let chatSocket = null;
 let echo = null;
@@ -52,8 +54,17 @@ const ConfigurationProvider = ({ children }) => {
       dispatch(getCountries());
       dispatch(getLanguages());
       dispatch(getColorScheme());
+
+      if (profile) {
+        const filter = {
+          now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+          date: moment().locale('en').format(settings.date_format),
+          therapist_id: profile.id
+        };
+        dispatch(getAppointments(filter));
+      }
     }
-  }, [appLoading, dispatch]);
+  }, [appLoading, dispatch, profile]);
 
   useEffect(() => {
     if (profile && profile.chat_user_id) {
