@@ -187,7 +187,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                         {appointment.created_by_therapist && (
                           <>
                             <Button aria-label="Edit" className="font-weight-bold pr-3 pl-3" onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local()) || appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED}>
-                              <BiEdit className="mr-1" size={20} /><span>{translate('common.edit')}</span>
+                              <BiEdit className="mr-1" size={15} /><span>{translate('common.edit')}</span>
                             </Button>
                             <TrashAction className="font-weight-bold ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
                           </>
@@ -195,7 +195,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                         {!appointment.created_by_therapist && (
                           <>
                             <Button aria-label="Accept" className="ml-auto font-weight-bold pr-3 pl-3" onClick={() => handleAccept(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())}>
-                              <FaCalendarCheck size={20} /> <span>{translate('common.accept')}</span>
+                              <FaCalendarCheck size={15} /> <span>{translate('common.accept')}</span>
                             </Button>
                             <RejectAction className="ml-1 pr-3 pl-3 font-weight-bold" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />
                           </>

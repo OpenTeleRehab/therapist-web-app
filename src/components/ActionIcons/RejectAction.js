@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import { FaCalendarTimes } from 'react-icons/fa';
 
 export const RejectAction = ({ className, ...rest }) => (
-  <Button aria-label="Reject" className={`btn-danger ${className}`} {...rest}>
-    <FaCalendarTimes size={20} /> <span><Translate id="common.decline" /></span>
+  <Button aria-label="Reject" variant="danger" className={`${className}`} {...rest}>
+    <FaCalendarTimes size={15} /> <span className="mt-2" ><Translate id="common.decline" /></span>
   </Button>
 );
 
