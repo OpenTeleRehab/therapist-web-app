@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { FaTrashAlt } from 'react-icons/fa';
 
 export const TrashAction = ({ className, ...rest }) => (
-  <Button aria-label="Delete" className={`btn-danger ${className}`} {...rest}>
+  <Button aria-label="Delete" variant="danger" className={`${className}`} {...rest}>
     <FaTrashAlt size={15} className="mr-1" /><span><Translate id="common.delete" /></span>
   </Button>
 );
