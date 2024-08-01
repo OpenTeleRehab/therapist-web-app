@@ -216,13 +216,13 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
       )}
       <Dialog
         show={showDeleteDialog}
-        title={translate('appointment.delete.title')}
+        title={translate('appointment.cancel.title')}
         cancelLabel={translate('common.no')}
         onCancel={handleDialogClose}
         confirmLabel={translate('common.yes')}
         onConfirm={handleDeleteDialogConfirm}
       >
-        <p>{translate('appointment.delete.content')}</p>
+        <p>{translate('appointment.cancel.content')}</p>
       </Dialog>
       <Dialog
         show={showAcceptDialog}

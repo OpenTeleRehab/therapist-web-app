@@ -69,11 +69,11 @@ export const deleteAppointment = (id, filter) => async (dispatch) => {
   if (data.success) {
     dispatch(mutation.deleteAppointmentSuccess());
     dispatch(getAppointments(filter));
-    dispatch(showSuccessNotification('toast_title.delete_appointment', data.message));
+    dispatch(showSuccessNotification('toast_title.cancel_appointment', data.message));
     return true;
   } else {
     dispatch(mutation.deleteAppointmentFail());
-    dispatch(showErrorNotification('toast_title.delete_appointment', data.message));
+    dispatch(showErrorNotification('toast_title.cancel_appointment', data.message));
     return false;
   }
 };
