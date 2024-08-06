@@ -95,7 +95,7 @@ const Patient = () => {
   }, [pageSize, searchValue, filters]);
 
   useEffect(() => {
-    if (profile !== undefined && countries.length) {
+    if (profile !== undefined && countries.length && search === '') {
       dispatch(getUsers({
         therapist_id: profile.id,
         filters,
@@ -105,7 +105,7 @@ const Patient = () => {
       }));
       dispatch(getTherapistsByClinic(profile.clinic_id));
     }
-  }, [currentPage, pageSize, searchValue, filters, dispatch, profile, countries]);
+  }, [search, currentPage, pageSize, searchValue, filters, dispatch, profile, countries]);
 
   useEffect(() => {
     if (authToken && therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
