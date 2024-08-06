@@ -169,7 +169,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                   }
 
                   return (
-                    <div className="mb-2 d-flex border border-light rounded overflow-hidden" key={appointment.id}>
+                    <div key={appointment.id} className={appointment.therapist_status === 'invited' ? 'mb-2 d-flex border rounded overflow-hidden border-primary bg-info' : 'mb-2 d-flex border rounded overflow-hidden border-light'}>
                       <div className="p-3 text-white" style={{ backgroundColor: _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color }}>
                         <div>{moment.utc(appointment.start_date).local().format('hh:mm A')}</div>
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
