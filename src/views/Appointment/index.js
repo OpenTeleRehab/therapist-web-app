@@ -12,7 +12,7 @@ import 'moment/min/locales';
 import enLocale from 'locales/fullcalendar/en';
 import kmLocale from 'locales/fullcalendar/km';
 import settings from 'settings';
-import { getAppointments } from 'store/appointment/actions';
+import { getAppointments, updateAppointmentUnread } from 'store/appointment/actions';
 import List from './Partials/list';
 import CreateAppointment from './Partials/create';
 import { getLayoutDirection } from '../../utils/layoutDirection';
@@ -71,7 +71,15 @@ const Appointment = ({ translate }) => {
         filter.patient_id = parseInt(patientId);
       }
 
-      dispatch(getAppointments(filter));
+      if (appointments && appointments.unreadAppointments.length > 0) {
+        dispatch(updateAppointmentUnread(_.map(appointments.unreadAppointments, 'id'))).then(result => {
+          if (result) {
+            dispatch(getAppointments(filter));
+          }
+        });
+      } else {
+        dispatch(getAppointments(filter));
+      }
     }
   }, [dispatch, date, selectedDate, profile, patientId]);
 

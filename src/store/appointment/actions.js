@@ -63,6 +63,18 @@ export const updateAppointmentStatus = (id, payload, filter) => async (dispatch)
   }
 };
 
+export const updateAppointmentUnread = (payload) => async (dispatch) => {
+  dispatch(mutation.updateAppointmentUnreadRequest());
+  const data = await Appointment.updateAppointmentUnread(payload);
+  if (data.success) {
+    dispatch(mutation.updateAppointmentUnreadSuccess());
+    return true;
+  } else {
+    dispatch(mutation.updateAppointmentUnreadFail());
+    return false;
+  }
+};
+
 export const deleteAppointment = (id, filter) => async (dispatch) => {
   dispatch(mutation.deleteAppointmentRequest());
   const data = await Appointment.deleteAppointment(id);

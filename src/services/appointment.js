@@ -61,10 +61,23 @@ const deleteAppointment = id => {
     });
 };
 
+const updateAppointmentUnread = payload => {
+  return axios.put('/appointment/update-as-read', payload, { headers: { country: getCountryIsoCode() } })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Appointment = {
   getAppointments,
   createAppointment,
   updateAppointment,
   updateAppointmentStatus,
-  deleteAppointment
+  deleteAppointment,
+  updateAppointmentUnread
 };
