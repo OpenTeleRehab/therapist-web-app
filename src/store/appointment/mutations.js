@@ -47,6 +47,18 @@ const updateAppointmentStatusFail = () => ({
   type: 'UPDATE_APPOINTMENT_STATUS_FAIL'
 });
 
+const updateAppointmentUnreadRequest = () => ({
+  type: 'UPDATE_APPOINTMENT_UNREAD_REQUEST'
+});
+
+const updateAppointmentUnreadSuccess = () => ({
+  type: 'UPDATE_APPOINTMENT_UNREAD_SUCCESS'
+});
+
+const updateAppointmentUnreadFail = () => ({
+  type: 'UPDATE_APPOINTMENT_UNREAD_FAIL'
+});
+
 const deleteAppointmentRequest = () => ({
   type: 'DELETE_APPOINTMENT_REQUEST'
 });
@@ -85,6 +97,9 @@ export const mutation = {
   updateAppointmentStatusRequest,
   updateAppointmentStatusSuccess,
   updateAppointmentStatusFail,
+  updateAppointmentUnreadRequest,
+  updateAppointmentUnreadSuccess,
+  updateAppointmentUnreadFail,
   deleteAppointmentRequest,
   deleteAppointmentSuccess,
   deleteAppointmentFail,

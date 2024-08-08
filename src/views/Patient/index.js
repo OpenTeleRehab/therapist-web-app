@@ -30,6 +30,7 @@ import { getTransfers } from '../../store/transfer/actions';
 import { getNextAppointment } from '../../utils/appointment';
 import queryString from 'query-string';
 import Transfer from './Transfer';
+import { APPOINTMENT_STATUS } from 'variables/appointment';
 
 const VIEW_PATIENT = 'patient';
 const VIEW_TRANSFER = 'transfer';
@@ -233,7 +234,7 @@ const Patient = () => {
                 const transfer = transfers.find(item => item.patient_id === user.id && item.therapist_type === 'lead');
                 const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
                 const unread = room ? room.unread : 0;
-                const appointments = user.appointments.filter(appointment => appointment.created_by_therapist === false);
+                const appointments = user.appointments.filter(appointment => appointment.created_by_therapist === false && appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED);
 
                 const notification = (
                   <div className="notify-lists d-flex align-items-center">
