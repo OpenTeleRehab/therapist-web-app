@@ -50,6 +50,7 @@ const Patient = () => {
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const { appointments } = useSelector((state) => state.appointment);
 
   const chatSocket = useContext(RocketchatContext);
   const translate = getTranslate(localize);
@@ -234,7 +235,8 @@ const Patient = () => {
                 const transfer = transfers.find(item => item.patient_id === user.id && item.therapist_type === 'lead');
                 const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
                 const unread = room ? room.unread : 0;
-                const appointments = user.appointments.filter(appointment => appointment.created_by_therapist === false && appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED);
+                const userAppointments = user.appointments.filter(appointment => appointment.created_by_therapist === false && appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED);
+                const unreadAppointments = _.filter(appointments.unreadAppointments, item => item.patient_id === user.id);
 
                 const notification = (
                   <div className="notify-lists d-flex align-items-center">
@@ -255,11 +257,11 @@ const Patient = () => {
                         </Button>
                       </div>
                     )}
-                    {appointments.length > 0 && (
+                    {(userAppointments.length > 0 || unreadAppointments.length > 0) && (
                       <div className="notify-list-item">
                         <Button className="text-decoration-none p-0" onClick={(event) => handleNavigateAppointment(event, user)} variant="link">
                           <RiCalendar2Line className="chat-icon mr-1" size={20} color={scssColors.primary}/>
-                          <sup>{appointments.length > 99 ? '99+' : appointments.length}</sup>
+                          <sup>{userAppointments.length + unreadAppointments.length > 99 ? '99+' : userAppointments.length + unreadAppointments.length}</sup>
                         </Button>
                       </div>
                     )}

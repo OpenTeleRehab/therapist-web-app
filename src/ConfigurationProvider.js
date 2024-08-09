@@ -47,6 +47,11 @@ const ConfigurationProvider = ({ children }) => {
           });
           dispatch(getClinics(res.data.country_id));
           dispatch(getProfessions(res.data.country_id));
+          dispatch(getAppointments({
+            now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+            date: moment().locale('en').format(settings.date_format),
+            therapist_id: res.data.id
+          }));
         } else {
           setAppLoading(false);
         }
@@ -54,17 +59,8 @@ const ConfigurationProvider = ({ children }) => {
       dispatch(getCountries());
       dispatch(getLanguages());
       dispatch(getColorScheme());
-
-      if (profile) {
-        const filter = {
-          now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-          date: moment().locale('en').format(settings.date_format),
-          therapist_id: profile.id
-        };
-        dispatch(getAppointments(filter));
-      }
     }
-  }, [appLoading, dispatch, profile]);
+  }, [appLoading, dispatch]);
 
   useEffect(() => {
     if (profile && profile.chat_user_id) {

@@ -71,17 +71,25 @@ const Appointment = ({ translate }) => {
         filter.patient_id = parseInt(patientId);
       }
 
-      if (appointments && appointments.unreadAppointments.length > 0) {
-        dispatch(updateAppointmentUnread(_.map(appointments.unreadAppointments, 'id'))).then(result => {
-          if (result) {
-            dispatch(getAppointments(filter));
-          }
-        });
-      } else {
-        dispatch(getAppointments(filter));
-      }
+      dispatch(getAppointments(filter));
     }
   }, [dispatch, date, selectedDate, profile, patientId]);
+
+  useEffect(() => {
+    if (date && profile) {
+      if (!Array.isArray(appointments) && appointments && appointments.unreadAppointments.length) {
+        dispatch(updateAppointmentUnread(_.map(appointments.unreadAppointments, 'id'))).then(result => {
+          if (result) {
+            dispatch(getAppointments({
+              now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+              date: moment(date).locale('en').format(settings.date_format),
+              therapist_id: profile.id
+            }));
+          }
+        });
+      }
+    }
+  }, [dispatch, date, profile, appointments]);
 
   useEffect(() => {
     if (languages.length && profile) {
