@@ -13,7 +13,8 @@ import settings from 'settings';
 import Dialog from 'components/Dialog';
 import {
   deleteAppointment,
-  updateAppointmentStatus
+  updateAppointmentStatus,
+  getAppointments
 } from 'store/appointment/actions';
 import {
   APPOINTMENT_STATUS
@@ -36,6 +37,13 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const filter = {
+    now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+    date: moment(date).locale('en').format(settings.date_format),
+    selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+    selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
+    therapist_id: profile.id
+  };
 
   useEffect(() => {
     if (appointments) {
@@ -60,13 +68,6 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   };
 
   const handleDeleteDialogConfirm = () => {
-    const filter = {
-      now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-      date: moment(date).locale('en').format(settings.date_format),
-      selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-      selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-      therapist_id: profile.id
-    };
     dispatch(deleteAppointment(id, filter)).then(result => {
       if (result) {
         handleDialogClose();
@@ -75,13 +76,6 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   };
 
   const handleAcceptDialogConfirm = () => {
-    const filter = {
-      now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-      date: moment(date).locale('en').format(settings.date_format),
-      selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-      selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-      therapist_id: profile.id
-    };
     dispatch(updateAppointmentStatus(id, { status: APPOINTMENT_STATUS.ACCEPTED }, filter)).then(result => {
       if (result) {
         dispatch(showSuccessNotification('toast_title.accept_appointment', 'success_message.appointment_accept'));
@@ -91,13 +85,6 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   };
 
   const handleRejectDialogConfirm = () => {
-    const filter = {
-      now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-      date: moment(date).locale('en').format(settings.date_format),
-      selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-      selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-      therapist_id: profile.id
-    };
     dispatch(updateAppointmentStatus(id, { status: APPOINTMENT_STATUS.REJECTED }, filter)).then(result => {
       if (result) {
         dispatch(showSuccessNotification('toast_title.reject_appointment', 'success_message.appointment_reject'));
@@ -113,11 +100,13 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   const handleAccept = (id) => {
     setId(id);
     setShowAcceptDialog(true);
+    dispatch(getAppointments(filter));
   };
 
   const handleReject = (id) => {
     setId(id);
     setShowRejectDialog(true);
+    dispatch(getAppointments(filter));
   };
 
   const renderAppointmentNote = (appointment) => {
