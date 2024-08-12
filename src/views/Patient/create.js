@@ -14,7 +14,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import Select from 'react-select';
 
-import { createUser, updateUser } from 'store/user/actions';
+import { createUser, updateUser, getUsers } from 'store/user/actions';
 import { getProfile } from 'store/auth/actions';
 import { getTherapistsByClinic } from 'store/therapist/actions';
 import { deleteTransfer, getTransfers } from '../../store/transfer/actions';
@@ -53,9 +53,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [selectedTherapists, setSelectedTherapists] = useState([]);
   const [originalSecondaryTherapists, setOriginalSecondaryTherapists] = useState([]);
   const [patientChatUserId, setPatientChatUserId] = useState('');
+  const [pendingTransfers, setPendingTransfers] = useState([]);
 
   const chatSocket = useContext(RocketchatContext);
-  const pendingTransfers = transfers.filter(item => item.patient_id === editId && item.therapist_type === 'supplementary') || [];
 
   const [formFields, setFormFields] = useState({
     first_name: '',
@@ -78,7 +78,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       resetData();
     }
     // eslint-disable-next-line
-  }, [show]);
+    dispatch(getUsers({ therapist_id: profile.id, page_size: 999 }));
+  }, [show, profile]);
 
   useEffect(() => {
     if (profile !== undefined) {
@@ -86,6 +87,15 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       dispatch(getTransfers());
     }
   }, [dispatch, profile]);
+
+  useEffect(() => {
+    const arr = [];
+    const filteredTransfers = transfers.filter(item => item.patient_id === editId && item.therapist_type === 'supplementary') || [];
+    if (filteredTransfers.length) {
+      _.forEach(filteredTransfers, x => arr.push({ id: x.id, therapist_id: x.to_therapist_id, status: x.status, first_name: x.to_therapist.first_name, last_name: x.to_therapist.last_name }));
+    }
+    setPendingTransfers(arr);
+  }, [transfers, editId]);
 
   if (therapistsByClinic.length && profile !== undefined) {
     therapistsByClinic.forEach(function (therapist, index) {
@@ -98,7 +108,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const options = [];
   if (therapistsByClinic.length) {
     therapistsByClinic.forEach(function (therapist, index) {
-      options.push({ value: therapist.id, label: therapist.first_name + ' ' + therapist.last_name });
+      if (!_.some(pendingTransfers, x => x.therapist_id === therapist.id && x.status === 'invited')) {
+        options.push({ value: therapist.id, label: therapist.first_name + ' ' + therapist.last_name });
+      }
     });
   }
 
@@ -208,8 +220,14 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     return current.isBefore(moment());
   };
 
-  const handleRemovePendingSecondaryTherapist = (id) => {
-    dispatch(deleteTransfer(id));
+  const handleRemovePendingSecondaryTherapist = (id, therapistId) => {
+    setSelectedTherapists(selectedTherapists => _.filter(selectedTherapists, x => x !== therapistId));
+
+    if (id) {
+      dispatch(deleteTransfer(id));
+    } else {
+      setPendingTransfers(pendingTransfers => _.filter(pendingTransfers, x => x.therapist_id !== therapistId));
+    }
   };
 
   const handleSingleSelectChange = (key, value) => {
@@ -217,7 +235,29 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   };
 
   const handleMultipleSelectChange = e => {
+    const transformE = [];
+    const priority = { invited: 1, declined: 2 };
+
+    if (Array.isArray(e)) {
+      const filteredE = e.length ? _.filter(therapistsByClinic, item => e.find(x => x.value === item.id).value === item.id) : [];
+
+      if (filteredE.length) {
+        _.forEach(filteredE, x => transformE.push({ therapist_id: x.id, status: 'invited', first_name: x.first_name, last_name: x.last_name }));
+        _.forEach(pendingTransfers, p => {
+          if ('id' in p) {
+            // eslint-disable-next-line no-return-assign
+            _.forEach(transformE, t => t.therapist_id === p.therapist_id ? t.id = p.id : t);
+          }
+        });
+      }
+    }
+
     setSelectedTherapists(Array.isArray(e) ? e.map(x => x.value) : []);
+    setPendingTransfers(pendingTransfers => _.chain([...pendingTransfers, ...transformE])
+      .sortBy(t => priority[t.status])
+      .uniqBy('therapist_id')
+      .value()
+    );
   };
 
   const handleConfirm = () => {
@@ -474,10 +514,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               {pendingTransfers.map(item => {
                 return (
                   <Chip
-                    key={item.id}
+                    key={item.therapist_id}
                     variant={item.status === 'invited' ? 'primary' : 'danger'}
-                    label={`${item.to_therapist.first_name} ${item.to_therapist.last_name}`}
-                    onDelete={() => handleRemovePendingSecondaryTherapist(item.id)}
+                    label={`${item.first_name} ${item.last_name}`}
+                    onDelete={() => handleRemovePendingSecondaryTherapist(item.id, item.therapist_id)}
                   />
                 );
               })}
