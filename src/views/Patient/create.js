@@ -40,6 +40,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const { profile } = useSelector((state) => state.auth);
   const { transfers } = useSelector(state => state.transfer);
   const definedCountries = useSelector(state => state.country.definedCountries);
+  const { languages } = useSelector(state => state.language);
 
   const [errorCountry, setErrorCountry] = useState(false);
   const [errorClinic, setErrorClinic] = useState(false);
@@ -54,6 +55,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [originalSecondaryTherapists, setOriginalSecondaryTherapists] = useState([]);
   const [patientChatUserId, setPatientChatUserId] = useState('');
   const [pendingTransfers, setPendingTransfers] = useState([]);
+  const [locale, setLocale] = useState('en-us');
 
   const chatSocket = useContext(RocketchatContext);
 
@@ -72,6 +74,17 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     therapist_identity: ''
   });
   const [dob, setDob] = useState('');
+
+  useEffect(() => {
+    if (languages.length && profile) {
+      const language = languages.find(lang => lang.id === profile.language_id);
+      if (language) {
+        setLocale(language.code);
+      } else {
+        setLocale('en-us');
+      }
+    }
+  }, [languages, profile]);
 
   useEffect(() => {
     if (!show) {
@@ -426,7 +439,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             <Select
               classNamePrefix="filter"
               value={settings.genders.options.filter(option => option.value === formFields.gender)}
-              getOptionLabel={option => option.text}
+              getOptionLabel={option => translate('common.' + option.value)}
               options={settings.genders.options}
               placeholder={translate('placeholder.gender')}
               className={errorGender ? 'is-invalid' : ''}
@@ -453,6 +466,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               value={dob}
               onChange={(value) => setDob(value)}
               isValidDate={ validateDate }
+              locale={locale}
             />
             {errorInvalidDob && (
               <Form.Control.Feedback type="invalid" className="d-block">
