@@ -107,7 +107,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     if (filteredTransfers.length) {
       _.forEach(filteredTransfers, x => arr.push({ id: x.id, therapist_id: x.to_therapist_id, status: x.status, first_name: x.to_therapist.first_name, last_name: x.to_therapist.last_name }));
     }
-    setPendingTransfers(arr);
+    setPendingTransfers(previousTransfers => _.uniqBy([...previousTransfers, ...arr], 'therapist_id'));
   }, [transfers, editId]);
 
   if (therapistsByClinic.length && profile !== undefined) {
@@ -235,11 +235,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
 
   const handleRemovePendingSecondaryTherapist = (id, therapistId) => {
     setSelectedTherapists(selectedTherapists => _.filter(selectedTherapists, x => x !== therapistId));
+    setPendingTransfers(pendingTransfers => _.filter(pendingTransfers, x => x.therapist_id !== therapistId));
 
     if (id) {
       dispatch(deleteTransfer(id));
-    } else {
-      setPendingTransfers(pendingTransfers => _.filter(pendingTransfers, x => x.therapist_id !== therapistId));
     }
   };
 
@@ -252,7 +251,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     const priority = { invited: 1, declined: 2 };
 
     if (Array.isArray(e)) {
-      const filteredE = e.length ? _.filter(therapistsByClinic, item => e.find(x => x.value === item.id).value === item.id) : [];
+      const filteredE = e.length ? _.filter(therapistsByClinic, item => e.some(x => x.value === item.id)) : [];
 
       if (filteredE.length) {
         _.forEach(filteredE, x => transformE.push({ therapist_id: x.id, status: 'invited', first_name: x.first_name, last_name: x.last_name }));
@@ -265,7 +264,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       }
     }
 
-    setSelectedTherapists(Array.isArray(e) ? e.map(x => x.value) : []);
+    setSelectedTherapists(previousSelects => Array.isArray(e) ? [...previousSelects, ...e.map(x => x.value)] : previousSelects);
     setPendingTransfers(pendingTransfers => _.chain([...pendingTransfers, ...transformE])
       .sortBy(t => priority[t.status])
       .uniqBy('therapist_id')
