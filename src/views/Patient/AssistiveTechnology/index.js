@@ -496,6 +496,7 @@ const AssistiveTechnologyHistory = () => {
                 closeOnSelect={true}
                 value={formattedProvisionDate}
                 onChange={(value) => setProvisionDate(value)}
+                locale={userLocale}
               />
               {errorProvisionDate && (
                 <Form.Control.Feedback type="invalid">
@@ -537,6 +538,7 @@ const AssistiveTechnologyHistory = () => {
                     closeOnSelect={true}
                     value={formattedFollowUpDate}
                     onChange={(value) => setFollowUpDate(value)}
+                    locale={userLocale}
                   />
                   {errorFollowUpDate && (
                     <Form.Control.Feedback type="invalid">
