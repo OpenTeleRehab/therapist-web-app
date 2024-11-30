@@ -7,6 +7,7 @@ import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
 import { unSubscribeEvent, chatLogout } from 'utils/rocketchat';
+import { User } from 'services/user';
 import RocketchatContext from 'context/RocketchatContext';
 
 const Navigation = ({ translate }) => {
@@ -19,13 +20,18 @@ const Navigation = ({ translate }) => {
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (isChatConnected) {
       unSubscribeEvent(chatSocket, subscribeIds.roomMessageId);
       unSubscribeEvent(chatSocket, subscribeIds.notifyLoggedId);
       chatLogout(chatSocket, subscribeIds.loginId);
     }
     if (keycloak.authenticated) {
+      // Audit log for logout
+      await User.logoutUserAction({
+        log_name: 'therapist_service',
+        type: 'logout'
+      });
       keycloak.logout();
     }
   };
