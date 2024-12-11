@@ -26,6 +26,7 @@ import { getClinicName, getClinicIdentity } from 'utils/clinic';
 import { getChatRooms } from 'utils/therapist';
 import AgeCalculation from 'utils/age';
 import { deleteChatRoom } from 'utils/rocketchat';
+import { LOCATIONS } from 'variables/location';
 import _ from 'lodash';
 
 const CreatePatient = ({ show, handleClose, editId }) => {
@@ -51,6 +52,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [phoneExist, setPhoneExist] = useState(false);
   const [errorGender, setErrorGender] = useState(false);
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
+  const [errorLocation, setErrorLocation] = useState(false);
   const [selectedTherapists, setSelectedTherapists] = useState([]);
   const [originalSecondaryTherapists, setOriginalSecondaryTherapists] = useState([]);
   const [patientChatUserId, setPatientChatUserId] = useState('');
@@ -71,7 +73,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     date_of_birth: '',
     age: '',
     therapist_id: '',
-    therapist_identity: ''
+    therapist_identity: '',
+    location: ''
   });
   const [dob, setDob] = useState('');
 
@@ -140,7 +143,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         gender: editingData.gender || '',
         note: editingData.note || '',
         date_of_birth: editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
-        age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : ''
+        age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : '',
+        location: editingData.location || ''
       });
       setSelectedTherapists(editingData.secondary_therapists);
       setOriginalSecondaryTherapists(editingData.secondary_therapists);
@@ -220,7 +224,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       date_of_birth: '',
       note: '',
       age: '',
-      dial_code: ''
+      dial_code: '',
+      location: ''
     });
   };
 
@@ -316,6 +321,13 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       setErrorLastName(true);
     } else {
       setErrorLastName(false);
+    }
+
+    if (formFields.location === '') {
+      canSave = false;
+      setErrorLocation(true);
+    } else {
+      setErrorLocation(false);
     }
 
     if (errorInvalidDob) {
@@ -507,6 +519,23 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
+        <Form.Group controlId="formLocation">
+          <Form.Label>{translate('common.location')}</Form.Label>
+          <span className="text-dark ml-1">*</span>
+          <Select
+            classNamePrefix="filter"
+            value={LOCATIONS.filter(option => option.value === formFields.location)}
+            getOptionLabel={option => translate('common.' + option.key)}
+            options={LOCATIONS}
+            placeholder={translate('placeholder.location')}
+            className={errorLocation ? 'is-invalid' : ''}
+            onChange={(e) => handleSingleSelectChange('location', e.value)}
+            aria-label="Location"
+          />
+          <Form.Control.Feedback type="invalid">
+            {translate('error.location')}
+          </Form.Control.Feedback>
+        </Form.Group>
         <Form.Group controlId="secondary-therapist">
           <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
           <Select
