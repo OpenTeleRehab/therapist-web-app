@@ -90,6 +90,18 @@ const translateQuestionnaireFail = () => ({
   type: 'TRANSLATE_QUESTIONNAIRE_FAIL'
 });
 
+const downloadQuestionnaireResultsRequest = () => ({
+  type: 'DOWNLOAD_QUESTIONNAIRE_RESULTS_REQUEST'
+});
+
+const downloadQuestionnaireResultsSuccess = () => ({
+  type: 'DOWNLOAD_QUESTIONNAIRE_RESULTS_SUCCESS'
+});
+
+const downloadQuestionnaireResultsFail = () => ({
+  type: 'DOWNLOAD_QUESTIONNAIRE_RESULTS_FAIL'
+});
+
 export const mutation = {
   getQuestionnairesRequest,
   getQuestionnairesSuccess,
@@ -112,5 +124,8 @@ export const mutation = {
   clearFilterQuestionnairesRequest,
   translateQuestionnaireRequest,
   translateQuestionnaireSuccess,
-  translateQuestionnaireFail
+  translateQuestionnaireFail,
+  downloadQuestionnaireResultsRequest,
+  downloadQuestionnaireResultsSuccess,
+  downloadQuestionnaireResultsFail
 };

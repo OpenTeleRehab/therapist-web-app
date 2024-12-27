@@ -148,6 +148,18 @@ const updateFavorite = (id, payload) => {
     });
 };
 
+const downloadQuestionnaireResults = (id, language) => {
+  return axios.get('/questionnaire-result/export', { params: { id: id, lang: language }, responseType: 'blob' })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Questionnaire = {
   getQuestionnaires,
   getQuestionnairesByIds,
@@ -156,5 +168,6 @@ export const Questionnaire = {
   createQuestionnaire,
   updateQuestionnaire,
   deleteQuestionnaire,
-  translateQuestionnaire
+  translateQuestionnaire,
+  downloadQuestionnaireResults
 };
