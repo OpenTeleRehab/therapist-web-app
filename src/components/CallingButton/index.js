@@ -3,7 +3,7 @@ import { isSupported } from 'twilio-video';
 import PropTypes from 'prop-types';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Translate } from 'react-localize-redux';
-import { VscWarning } from 'react-icons/all';
+import { VscWarning } from 'react-icons/vsc';
 const CallingButton = ({ isVideo, children, ...props }) => {
   const [supportedDevice, setSupportedDevice] = useState(undefined);
 

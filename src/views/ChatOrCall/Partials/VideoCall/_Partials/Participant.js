@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import { FaUserCircle } from 'react-icons/all';
+import { FaUserCircle } from 'react-icons/fa';
 
 const Participant = ({ participant }) => {
   const [videoTracks, setVideoTracks] = useState([]);

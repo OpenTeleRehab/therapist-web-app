@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Badge, Button, Nav, Tab } from 'react-bootstrap';
 import { Link, useHistory, useLocation } from 'react-router-dom';
-import { TiWarning } from 'react-icons/all';
+import { TiWarning } from 'react-icons/ti';
 import { BsPlus, BsChatDotsFill } from 'react-icons/bs';
 import { RiCalendar2Line } from 'react-icons/ri';
 import { ProgressBar } from 'react-step-progress-bar';

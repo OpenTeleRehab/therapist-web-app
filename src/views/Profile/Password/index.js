@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import { updatePassword } from 'store/auth/actions';
 import validatePassword from '../../../utils/validatePassword';
-import { FaEye, FaEyeSlash } from 'react-icons/all';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import customColorScheme from '../../../utils/customColorScheme';
 import _ from 'lodash';
 

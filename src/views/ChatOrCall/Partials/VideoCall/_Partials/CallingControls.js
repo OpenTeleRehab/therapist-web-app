@@ -5,9 +5,11 @@ import {
   IoMicOff,
   IoMicOutline,
   IoVideocamOffOutline,
-  IoVideocamOutline,
+  IoVideocamOutline
+} from 'react-icons/io5';
+import {
   MdCallEnd
-} from 'react-icons/all';
+} from 'react-icons/md';
 import CallingButton from '../../../../../components/CallingButton';
 
 const CallingControls = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, onMissCall }) => {
