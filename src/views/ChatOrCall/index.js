@@ -214,6 +214,7 @@ const ChatOrCall = ({ translate }) => {
                     isVideoCall={isVideoCall}
                     onUpdateMessage={handleUpdateMessage}
                     indicator={videoCall}
+                    chatRooms={chatRooms}
                   />
                 </div>
               </Col>

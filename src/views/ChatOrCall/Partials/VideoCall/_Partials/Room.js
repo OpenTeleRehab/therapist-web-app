@@ -7,8 +7,9 @@ import CallingScreen from './CallingScreen';
 import CallingControls from './CallingControls';
 import LocalParticipant from './LocalParticipant';
 import { showErrorNotification } from '../../../../../store/notification/actions';
+import { getParticipantName } from 'utils/general';
 
-const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, onMissCall, onEndCall }) => {
+const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, onMissCall, onEndCall, chatRooms }) => {
   const dispatch = useDispatch();
   const [room, setRoom] = useState();
   const [participant, setParticipant] = useState();
@@ -114,7 +115,7 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioO
 
   return (
     <div className="room">
-      <h6 className="text-white participant-name">{participant.identity}</h6>
+      <h6 className="text-white participant-name">{getParticipantName(chatRooms, participant.identity)}</h6>
       <div className="remote">
         <Participant participant={participant} />
       </div>
@@ -143,7 +144,8 @@ Room.propTypes = {
   setIsVideoOn: PropTypes.func,
   setIsAudioOn: PropTypes.func,
   onMissCall: PropTypes.func,
-  onEndCall: PropTypes.func
+  onEndCall: PropTypes.func,
+  chatRooms: PropTypes.array
 };
 
 export default Room;

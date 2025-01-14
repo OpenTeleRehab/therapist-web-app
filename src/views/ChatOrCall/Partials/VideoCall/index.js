@@ -5,7 +5,7 @@ import { Therapist } from '../../../../services/therapist';
 import Room from './_Partials/Room';
 import CallingScreen from './_Partials/CallingScreen';
 
-const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator }) => {
+const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator, chatRooms }) => {
   const [isVideoOn, setIsVideoOn] = useState(isVideoCall);
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [token, setToken] = useState('');
@@ -39,6 +39,7 @@ const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator }) => {
           setIsAudioOn={setIsAudioOn}
           onMissCall={onMissCall}
           onEndCall={onEndCall}
+          chatRooms={chatRooms}
         />
       ) : (
         <CallingScreen
@@ -57,7 +58,8 @@ VideoCall.propTypes = {
   roomName: PropTypes.string,
   isVideoCall: PropTypes.bool,
   onUpdateMessage: PropTypes.func,
-  indicator: PropTypes.object
+  indicator: PropTypes.object,
+  chatRooms: PropTypes.array
 };
 
 export default VideoCall;
