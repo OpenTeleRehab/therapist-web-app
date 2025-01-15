@@ -173,6 +173,12 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
     }
   };
 
+  const validateNumberInput = (e) => {
+    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <>
       <DragDropContext onDragEnd={(e) => onDragEnd(e)}>
@@ -345,6 +351,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               name="value"
                                               value={answer.value}
                                               placeholder={translate('question.answer_value')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerValueError[index] ? answerValueError[index][answerIndex] : false}
                                               aria-label="answer value"
@@ -363,6 +370,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               name="threshold"
                                               value={answer.threshold}
                                               placeholder={translate('question.answer_threshold')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
                                               aria-label="answer threshold"
@@ -427,6 +435,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               name="value"
                                               value={answer.value}
                                               placeholder={translate('question.answer_value')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerValueError[index] ? answerValueError[index][answerIndex] : false}
                                               aria-label="answer value"
@@ -445,6 +454,7 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                               name="threshold"
                                               value={answer.threshold}
                                               placeholder={translate('question.answer_threshold')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
                                               isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
                                               aria-label="answer threshold"
@@ -501,46 +511,47 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                     </Form.Group>
                                   </Col>
                                   {Boolean(question.mark_as_countable) && (
-                                    question.answers.map((answer, answerIndex) => (
-                                      <>
-                                        <Col sm={3} xs={3}>
-                                          <Form.Group controlId={`formAnswerValue${answerIndex}`}>
-                                            <Form.Control
-                                              type="number"
-                                              name="value"
-                                              value={answer.value}
-                                              placeholder={translate('question.answer_value')}
-                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
-                                              isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
-                                              aria-label="answer value"
-                                              disabled={disabledEditAnswerValueThreshold()}
-                                              min={0}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                              {translate('question.answer.value.required')}
-                                            </Form.Control.Feedback>
-                                          </Form.Group>
-                                        </Col>
-                                        <Col sm={3} xs={3}>
-                                          <Form.Group controlId={`formAnswerThreshold${answerIndex}`}>
-                                            <Form.Control
-                                              type="number"
-                                              name="threshold"
-                                              value={answer.threshold}
-                                              placeholder={translate('question.answer_threshold')}
-                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
-                                              isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
-                                              aria-label="answer threshold"
-                                              disabled={disabledEditAnswerValueThreshold()}
-                                              min={0}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                              {translate('question.answer.threshold.required')}
-                                            </Form.Control.Feedback>
-                                          </Form.Group>
-                                        </Col>
-                                      </>
-                                    )))}
+                                    <>
+                                      <Col sm={3} xs={3}>
+                                        <Form.Group controlId={'formAnswerValue'}>
+                                          <Form.Control
+                                            type="number"
+                                            name="value"
+                                            value={question.answers[0] ? question.answers[0].value : ''}
+                                            placeholder={translate('question.answer_value')}
+                                            onKeyDown={(e) => validateNumberInput(e)}
+                                            onChange={(e) => handleAnswerChange(index, 0, e)}
+                                            isInvalid={answerThresholdError[index] ? answerThresholdError[index][0] : false}
+                                            aria-label="answer value"
+                                            disabled={disabledEditAnswerValueThreshold()}
+                                            min={0}
+                                          />
+                                          <Form.Control.Feedback type="invalid">
+                                            {translate('question.answer.value.required')}
+                                          </Form.Control.Feedback>
+                                        </Form.Group>
+                                      </Col>
+                                      <Col sm={3} xs={3}>
+                                        <Form.Group controlId={'formAnswerThreshold'}>
+                                          <Form.Control
+                                            type="number"
+                                            name="threshold"
+                                            value={question.answers[0] ? question.answers[0].threshold : ''}
+                                            placeholder={translate('question.answer_threshold')}
+                                            onKeyDown={(e) => validateNumberInput(e)}
+                                            onChange={(e) => handleAnswerChange(index, 0, e)}
+                                            isInvalid={answerThresholdError[index] ? answerThresholdError[index][0] : false}
+                                            aria-label="answer threshold"
+                                            disabled={disabledEditAnswerValueThreshold()}
+                                            min={0}
+                                          />
+                                          <Form.Control.Feedback type="invalid">
+                                            {translate('question.answer.threshold.required')}
+                                          </Form.Control.Feedback>
+                                        </Form.Group>
+                                      </Col>
+                                    </>
+                                  )}
                                 </Row>
                               )
                             }
