@@ -8,6 +8,7 @@ import CallingScreen from './_Partials/CallingScreen';
 const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator, chatRooms }) => {
   const [isVideoOn, setIsVideoOn] = useState(isVideoCall);
   const [isAudioOn, setIsAudioOn] = useState(true);
+  const [selectedTranscriptingLanguage, setSelectedTranscriptingLanguage] = useState('en-US');
   const [token, setToken] = useState('');
 
   useEffect(() => {
@@ -37,6 +38,8 @@ const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator, chatRoom
           setIsVideoOn={setIsVideoOn}
           isAudioOn={isAudioOn}
           setIsAudioOn={setIsAudioOn}
+          selectedTranscriptingLanguage={selectedTranscriptingLanguage}
+          setSelectedTranscriptingLanguage={setSelectedTranscriptingLanguage}
           onMissCall={onMissCall}
           onEndCall={onEndCall}
           chatRooms={chatRooms}

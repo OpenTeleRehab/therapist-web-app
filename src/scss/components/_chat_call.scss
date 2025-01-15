@@ -287,6 +287,14 @@
         z-index: 99;
       }
     }
+    .transcript-language {
+      position: absolute;
+      left: 45px;
+      top: 30px;
+      margin: 0;
+      z-index: 99;
+      width: 200px;
+    }
     .local,
     .remote {
       background-color: $dark;
