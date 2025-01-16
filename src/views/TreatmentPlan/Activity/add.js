@@ -230,7 +230,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
         ) {
           const startQuestionniareIds = questionnaires
             .filter(questionnaire =>
-              !questionnaire.include_at_the_end
+              !questionnaire.include_at_the_end && questionnaire.include_at_the_start
             )
             .map(questionnaire => questionnaire.id);
 
@@ -245,7 +245,7 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
         ) {
           const endQuestionniareIds = questionnaires
             .filter(questionnaire =>
-              !questionnaire.include_at_the_start
+              !questionnaire.include_at_the_start && questionnaire.include_at_the_end
             )
             .map(questionnaire => questionnaire.id);
 
