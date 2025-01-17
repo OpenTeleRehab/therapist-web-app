@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/fa';
 
@@ -6,7 +6,6 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   const videoRef = useRef();
   const audioRef = useRef();
   const recognitionRef = useRef();
-  const [isRecognizing, setIsRecognizing] = useState(false);
 
   const trackpubsToTracks = (trackMap) =>
     Array.from(trackMap.values())
@@ -41,7 +40,6 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
       recognitionRef.current.continuous = true; // Keeps listening until stopped
       recognitionRef.current.interimResults = true; // Shows interim results
       recognitionRef.current.lang = 'en-US'; // Set language
-      recognitionRef.current.onstart = () => setIsRecognizing(true);
       recognitionRef.current.onerror = (event) => {
         console.error(`Speech recognition error detected: ${event.error}`);
         restartSpeechRecognition();
@@ -93,9 +91,12 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   const restartSpeechRecognition = () => {
     if (recognitionRef.current) {
       try {
-        if (isRecognizing) {
+        try {
           recognitionRef.current.stop();
+        } catch (error) {
+          console.warn('Error stopping recognition:', error);
         }
+
         recognitionRef.current.lang = selectedTranscriptingLanguage;
         recognitionRef.current.onend = () => {
           restartSpeechRecognition();
