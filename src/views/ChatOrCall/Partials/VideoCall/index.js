@@ -1,59 +1,52 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { VideoCallContextProvider } from '../../../../context/VideoCallContext';
+import { CALL_STATUS } from '../../../../variables/rocketchat';
 import PropTypes from 'prop-types';
-import { CALL_STATUS } from 'variables/rocketchat';
-import { Therapist } from '../../../../services/therapist';
 import Room from './_Partials/Room';
 import CallingScreen from './_Partials/CallingScreen';
 
-const VideoCall = ({ roomName, isVideoCall, onUpdateMessage, indicator, chatRooms }) => {
-  const [isVideoOn, setIsVideoOn] = useState(isVideoCall);
+const VideoCall = () => {
+  const { callAccessToken, videoCall } = useSelector(state => state.rocketchat);
+  const [isVideoOn, setIsVideoOn] = useState(undefined);
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [selectedTranscriptingLanguage, setSelectedTranscriptingLanguage] = useState('en-US');
-  const [token, setToken] = useState('');
 
   useEffect(() => {
-    if (roomName) {
-      Therapist.getCallAccessToken(roomName).then(response => {
-        if (response.success) {
-          setToken(response.token);
-        }
-      });
+    if (videoCall && videoCall.status === CALL_STATUS.AUDIO_STARTED) {
+      setIsVideoOn(false);
     }
-  }, [roomName]);
-
-  const onEndCall = () => {
-    onUpdateMessage(isVideoCall ? CALL_STATUS.VIDEO_ENDED : CALL_STATUS.AUDIO_ENDED, indicator._id);
-  };
-  const onMissCall = () => {
-    onUpdateMessage(isVideoCall ? CALL_STATUS.VIDEO_MISSED : CALL_STATUS.AUDIO_MISSED, indicator._id);
-  };
+    if (videoCall && videoCall.status === CALL_STATUS.VIDEO_STARTED) {
+      setIsVideoOn(true);
+    }
+  }, [videoCall]);
 
   return (
-    <>
-      {token ? (
-        <Room
-          token={token}
-          roomName={roomName}
-          isVideoOn={isVideoOn}
-          setIsVideoOn={setIsVideoOn}
-          isAudioOn={isAudioOn}
-          setIsAudioOn={setIsAudioOn}
-          selectedTranscriptingLanguage={selectedTranscriptingLanguage}
-          setSelectedTranscriptingLanguage={setSelectedTranscriptingLanguage}
-          onMissCall={onMissCall}
-          onEndCall={onEndCall}
-          chatRooms={chatRooms}
-        />
-      ) : (
-        <CallingScreen
-          isVideoOn={isVideoOn}
-          setIsVideoOn={setIsVideoOn}
-          isAudioOn={isAudioOn}
-          setIsAudioOn={setIsAudioOn}
-          onMissCall={onMissCall}
-        />
+    <VideoCallContextProvider>
+      {callAccessToken && videoCall && (
+        <div className="calling">
+          <Room
+            callAccessToken={callAccessToken}
+            isVideoOn={isVideoOn}
+            isAudioOn={isAudioOn}
+            selectedTranscriptingLanguage={selectedTranscriptingLanguage}
+            setIsVideoOn={setIsVideoOn}
+            setIsAudioOn={setIsAudioOn}
+            setSelectedTranscriptingLanguage={setSelectedTranscriptingLanguage}
+          />
+        </div>
       )}
-    </>
+      {!callAccessToken && videoCall && videoCall.status.startsWith('jitsi_call') && (videoCall.status.endsWith('_started')) && (
+        <div className="calling">
+          <CallingScreen
+            isVideoOn={isVideoOn}
+            isAudioOn={isAudioOn}
+            setIsVideoOn={setIsVideoOn}
+            setIsAudioOn={setIsAudioOn}
+          />
+        </div>
+      )}
+    </VideoCallContextProvider>
   );
 };
 
@@ -61,8 +54,7 @@ VideoCall.propTypes = {
   roomName: PropTypes.string,
   isVideoCall: PropTypes.bool,
   onUpdateMessage: PropTypes.func,
-  indicator: PropTypes.object,
-  chatRooms: PropTypes.array
+  indicator: PropTypes.object
 };
 
 export default VideoCall;

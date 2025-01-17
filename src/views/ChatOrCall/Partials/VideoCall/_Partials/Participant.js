@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/fa';
+import { getParticipantName } from '../../../../../utils/general';
 
 const Participant = ({ participant }) => {
   const [videoTracks, setVideoTracks] = useState([]);
@@ -65,12 +66,15 @@ const Participant = ({ participant }) => {
   }, [audioTracks]);
 
   return (
-    <div className="participant">
-      {!videoTracks.length && (
+    <div className="remote-participant">
+      {(videoTracks.length === 0 || videoTracks[0].isEnabled === false) && (
         <div className="participant-avatar">
           <FaUserCircle size={50} color="white" />
         </div>
       )}
+      <p className="participant-identity">
+        {getParticipantName(participant.identity)}
+      </p>
       <video ref={videoRef} autoPlay />
       <audio ref={audioRef} autoPlay />
     </div>

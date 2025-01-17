@@ -88,6 +88,19 @@ const updateVideoCallSuccess = (data) => ({
   data
 });
 
+const removeVideoCallSuccess = () => ({
+  type: 'REMOVE_VIDEO_CALL_STATUS_SUCCESS'
+});
+
+const getCallAccessTokenSuccess = (data) => ({
+  type: 'GET_CALL_ACCESS_TOKEN_SUCCESS',
+  data
+});
+
+const getCallAccessTokenFail = () => ({
+  type: 'GET_CALL_ACCESS_TOKEN_FAIL'
+});
+
 export const mutation = {
   setWebsocketConnectionSuccess,
   chatUserLoginSuccess,
@@ -107,5 +120,8 @@ export const mutation = {
   updateChatUserStatusSuccess,
   sendAttachmentMessagesSuccess,
   sendAttachmentMessagesFail,
-  updateVideoCallSuccess
+  updateVideoCallSuccess,
+  removeVideoCallSuccess,
+  getCallAccessTokenSuccess,
+  getCallAccessTokenFail
 };

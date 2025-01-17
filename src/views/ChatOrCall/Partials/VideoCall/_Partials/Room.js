@@ -1,49 +1,72 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { connect, createLocalVideoTrack, createLocalAudioTrack, LocalDataTrack } from 'twilio-video';
+import { useDispatch, useSelector } from 'react-redux';
+import { useVideoCallContext } from '../../../../../context/VideoCallContext';
 import PropTypes from 'prop-types';
 import Participant from './Participant';
 import CallingScreen from './CallingScreen';
 import CallingControls from './CallingControls';
 import LocalParticipant from './LocalParticipant';
+import ParticipantInvitation from './ParticipantInvitation';
 import { showErrorNotification } from '../../../../../store/notification/actions';
-import { getParticipantName } from 'utils/general';
 import { languages } from '../../../../../variables/webApiAvailableLanguages';
+import { CALL_STATUS } from '../../../../../variables/rocketchat';
 import Select from 'react-select';
 
-const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn, selectedTranscriptingLanguage, setSelectedTranscriptingLanguage, onMissCall, onEndCall, chatRooms }) => {
+const Room = ({
+  callAccessToken,
+  isVideoOn,
+  isAudioOn,
+  selectedTranscriptingLanguage,
+  setIsVideoOn,
+  setIsAudioOn,
+  setSelectedTranscriptingLanguage
+}) => {
   const dispatch = useDispatch();
+  const { profile } = useSelector(state => state.auth);
+  const { videoCall } = useSelector(state => state.rocketchat);
+  const { handleAddParticipants, handleAddRoom } = useVideoCallContext();
   const [room, setRoom] = useState();
-  const [participant, setParticipant] = useState();
+  const [participants, setParticipants] = useState([]);
   const isActive = useRef(true);
 
   useEffect(() => {
+    handleAddParticipants(participants);
+  }, [participants]);
+
+  useEffect(() => {
+    handleAddRoom(room);
+  }, [room]);
+
+  useEffect(() => {
     const participantConnected = participant => {
-      setParticipant(participant);
+      setParticipants((prevParticipants) => [...prevParticipants, participant]);
     };
 
-    const participantDisconnected = () => {
-      onEndCall();
-      setParticipant(undefined);
+    const participantDisconnected = participant => {
+      setParticipants((prevParticipants) => prevParticipants.filter(item => item.identity !== participant.identity));
     };
 
-    connect(token, {
-      name: roomName,
-      video: isVideoOn,
+    connect(callAccessToken, {
+      name: videoCall.u._id,
+      video: videoCall && videoCall.status === CALL_STATUS.VIDEO_STARTED,
       audio: isAudioOn,
       networkQuality: { local: 3, remote: 3 }
     }).then(async (room) => {
-      if (!isActive.current && room && room.localParticipant.state === 'connected') {
+      if (!isActive.current) {
         room.disconnect();
         return;
       }
 
       setRoom(room);
+
       const dataTrack = new LocalDataTrack();
       await room.localParticipant.publishTrack(dataTrack);
+
+      room.participants.forEach(participantConnected);
+
       room.on('participantConnected', participantConnected);
       room.on('participantDisconnected', participantDisconnected);
-      room.participants.forEach(participantConnected);
     }).catch(error => {
       if ('code' in error) {
         // Handle connection error here.
@@ -65,7 +88,7 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioO
         }
       });
     };
-  }, [roomName, token]);
+  }, []);
 
   const toggleVideo = async () => {
     if (room === undefined) {
@@ -105,64 +128,70 @@ const Room = ({ roomName, token, isVideoOn, setIsVideoOn, isAudioOn, setIsAudioO
     setIsAudioOn(toggleAudioOn);
   };
 
-  if (!participant) {
-    return (
-      <CallingScreen
-        isVideoOn={isVideoOn}
-        setIsVideoOn={toggleVideo}
-        isAudioOn={isAudioOn}
-        setIsAudioOn={toggleAudio}
-        onMissCall={onMissCall}
-      />
-    );
-  }
-
   return (
-    <div className="room">
-      <h6 className="text-white participant-name">{getParticipantName(chatRooms, participant.identity)}</h6>
-      <div className="transcript-language">
-        <Select
-          classNamePrefix="filter"
-          value={languages.filter(option => option.code === selectedTranscriptingLanguage)}
-          getOptionLabel={option => option.name}
-          getOptionValue={option => option.code}
-          options={languages}
-          onChange={(e) => setSelectedTranscriptingLanguage(e.code)}
-          aria-label="Language"
-        />
-      </div>
-      <div className="remote">
-        <Participant participant={participant} />
-      </div>
+    <>
+      <ParticipantInvitation participants={participants} isVideoOn={isVideoOn}/>
 
-      <div className="local">
-        <LocalParticipant participant={room.localParticipant} isVideoOn={isVideoOn} isAudioOn={isAudioOn} selectedTranscriptingLanguage={selectedTranscriptingLanguage} />
-      </div>
-
-      <div className="fixed-bottom">
-        <CallingControls
+      {participants.length === 0 ? (
+        <CallingScreen
           isVideoOn={isVideoOn}
-          setIsVideoOn={toggleVideo}
           isAudioOn={isAudioOn}
+          setIsVideoOn={toggleVideo}
           setIsAudioOn={toggleAudio}
-          onMissCall={onMissCall}/>
-      </div>
-    </div>
+        />
+      ) : (
+        <div className="room">
+          <h6 className="text-white participant-name">
+            {profile.first_name} {profile.last_name}
+          </h6>
+          <div className="transcript-language">
+            <Select
+              classNamePrefix="filter"
+              value={languages.filter(option => option.code === selectedTranscriptingLanguage)}
+              getOptionLabel={option => option.name}
+              getOptionValue={option => option.code}
+              options={languages}
+              onChange={(e) => setSelectedTranscriptingLanguage(e.code)}
+              aria-label="Language"
+            />
+          </div>
+          <div className="remote">
+            {participants.map(participant => (
+              <Participant key={participant.identity} participant={participant}/>
+            ))}
+          </div>
+          <div className="local">
+            {room && (
+              <LocalParticipant
+                participant={room.localParticipant}
+                isVideoOn={isVideoOn}
+                isAudioOn={isAudioOn}
+                selectedTranscriptingLanguage={selectedTranscriptingLanguage}
+              />
+            )}
+          </div>
+          <div className="fixed-bottom">
+            <CallingControls
+              isVideoOn={isVideoOn}
+              isAudioOn={isAudioOn}
+              setIsVideoOn={toggleVideo}
+              setIsAudioOn={toggleAudio}
+            />
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
 Room.propTypes = {
-  roomName: PropTypes.string,
-  token: PropTypes.string,
+  callAccessToken: PropTypes.string,
   isVideoOn: PropTypes.bool,
   isAudioOn: PropTypes.bool,
   selectedTranscriptingLanguage: PropTypes.string,
   setIsVideoOn: PropTypes.func,
   setIsAudioOn: PropTypes.func,
-  setSelectedTranscriptingLanguage: PropTypes.func,
-  onMissCall: PropTypes.func,
-  onEndCall: PropTypes.func,
-  chatRooms: PropTypes.array
+  setSelectedTranscriptingLanguage: PropTypes.func
 };
 
 export default Room;

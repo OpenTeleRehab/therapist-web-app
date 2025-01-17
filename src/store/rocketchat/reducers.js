@@ -44,6 +44,16 @@ export const rocketchat = (state = initialState, action) => {
         videoCall: action.data
       });
     }
+    case 'REMOVE_VIDEO_CALL_STATUS_SUCCESS': {
+      return Object.assign({}, state, {
+        videoCall: undefined
+      });
+    }
+    case 'GET_CALL_ACCESS_TOKEN_SUCCESS': {
+      return Object.assign({}, state, {
+        callAccessToken: action.data
+      });
+    }
     default:
       return state;
   }

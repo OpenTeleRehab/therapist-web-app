@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Translate } from 'react-localize-redux';
 import { VscWarning } from 'react-icons/vsc';
+
 const CallingButton = ({ isVideo, children, ...props }) => {
   const [supportedDevice, setSupportedDevice] = useState(undefined);
 
@@ -40,13 +41,24 @@ const CallingButton = ({ isVideo, children, ...props }) => {
   }
 
   return (
-    <OverlayTrigger overlay={<Tooltip><Translate id={!isSupported ? 'error_message.video_call.unsupported_device' : 'error_message.video_call.unsupported_browser'} /></Tooltip>}>
+    <OverlayTrigger
+      overlay={
+        <Tooltip>
+          <Translate
+            id={
+              !isSupported
+                ? 'error_message.video_call.unsupported_device'
+                : 'error_message.video_call.unsupported_browser'
+            }
+          />
+        </Tooltip>
+      }
+    >
       <span className="d-inline-block btn-with-warning">
         {callingBtn}
         <span className="badge rounded-pill bg-warning"><VscWarning size={10} /></span>
       </span>
     </OverlayTrigger>
-
   );
 };
 
