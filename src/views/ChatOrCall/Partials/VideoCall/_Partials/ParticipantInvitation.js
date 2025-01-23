@@ -20,22 +20,27 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
   const [rooms, setRooms] = useState(_.cloneDeep(chatRooms));
 
   useEffect(() => {
+    toggleInvitation(rooms.some(item => item.countdown > 0));
+  }, [rooms]);
+
+  useEffect(() => {
     const timers = rooms.map((participant) => {
       if (participant.countdown === 0) {
-        toggleInvitation(false);
         handleSendMessage(participant.rid, participant.name, isVideoOn ? CALL_STATUS.VIDEO_MISSED : CALL_STATUS.AUDIO_MISSED);
+        return null;
       }
 
       if (participant.countdown > 0) {
         const timer = setTimeout(() => {
           setRooms((prev) =>
             prev.map((p) =>
-              p.id === participant.id && !participants.some(item => item.identity === participant.name)
+              p.id === participant.id && !participants.some(item => item.identity === (p.u.username + '_' + profile.clinic_id))
                 ? { ...p, countdown: p.countdown - 1 }
-                : p
+                : { ...p, countdown: undefined }
             )
           );
         }, 1000);
+
         return timer;
       }
 
@@ -46,12 +51,10 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
   }, [rooms, participants]);
 
   const handleInvitation = (room) => {
-    toggleInvitation(true);
-
     setRooms((prev) =>
       prev.map((participant) =>
         participant.u._id === room.u._id
-          ? { ...participant, isInvited: true, countdown: 60 }
+          ? { ...participant, countdown: 60 }
           : participant
       )
     );
