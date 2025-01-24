@@ -104,7 +104,9 @@ export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
     const data = await Rocketchat.getUserStatus(userNames, authUserId, authToken);
     if (data.success) {
       data.users.forEach(user => {
-        chatRooms[mapIndex[user._id]].u.status = user.status;
+        if (chatRooms[mapIndex[user._id]]) {
+          chatRooms[mapIndex[user._id]].u.status = user.status;
+        }
       });
       dispatch(mutation.getChatUsersStatusSuccess(chatRooms));
       return true;
