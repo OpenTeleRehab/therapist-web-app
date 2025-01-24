@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/fa';
+import { getParticipantName } from '../../../../../utils/general';
 
 const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscriptingLanguage }) => {
   const videoRef = useRef();
@@ -59,7 +60,7 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   const sendData = message => {
     if (participant && participant.dataTracks) {
       const dataTrack = participant.dataTracks.values().next().value.track;
-      dataTrack.send('[' + participant.identity + ']: ' + message); // Send the message
+      dataTrack.send('[' + getParticipantName(participant.identity) + ']: ' + message); // Send the message
     } else {
       console.error('DataTrack is not available.');
     }
