@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/fa';
-import { getParticipantName } from '../../../../../utils/general';
+import { useSelector } from 'react-redux';
 
 const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscriptingLanguage }) => {
   const videoRef = useRef();
   const audioRef = useRef();
   const recognitionRef = useRef();
+  const { profile } = useSelector((state) => state.auth);
 
   const trackpubsToTracks = (trackMap) =>
     Array.from(trackMap.values())
@@ -60,7 +61,7 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   const sendData = message => {
     if (participant && participant.dataTracks) {
       const dataTrack = participant.dataTracks.values().next().value.track;
-      dataTrack.send('[' + getParticipantName(participant.identity) + ']: ' + message); // Send the message
+      dataTrack.send('[' + profile.first_name + ']: ' + message); // Send the message
     } else {
       console.error('DataTrack is not available.');
     }
