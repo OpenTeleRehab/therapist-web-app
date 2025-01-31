@@ -35,7 +35,7 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   }, [participant, isAudioOn]);
 
   useEffect(() => {
-    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+    if (!recognitionRef.current && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
@@ -59,7 +59,7 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   }, [selectedTranscriptingLanguage]);
 
   const sendData = message => {
-    if (participant && participant.dataTracks) {
+    if (participant && participant.dataTracks && participant.dataTracks.values().next().value) {
       const dataTrack = participant.dataTracks.values().next().value.track;
       dataTrack.send('[' + profile.first_name + ']: ' + message); // Send the message
     } else {
@@ -88,6 +88,7 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   const stopListening = () => {
     if (!recognitionRef.current) return;
     recognitionRef.current.stop();
+    recognitionRef.current = null;
   };
 
   const restartSpeechRecognition = () => {
