@@ -94,7 +94,7 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
                   <p className="mb-0 d-flex align-items-center">
                     {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
                   </p>
-                  {participants.some(item => item.identity === (room.u.username + '_' + profile.clinic_id)) ? (
+                  {participants.some(item => item.identity === (room.u.username + '_' + profile.country_id)) ? (
                     <Button className="min-w-92" size="sm" disabled>
                       <BiPhoneCall size={16} /> {translate('common.joined')}
                     </Button>
@@ -118,7 +118,7 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
                   <p className="mb-0 d-flex align-items-center">
                     {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
                   </p>
-                  {participants.some(item => item.identity === (room.u.username + '_' + profile.clinic_id)) ? (
+                  {participants.some(item => item.identity === (room.u.username + '_' + profile.country_id)) ? (
                     <Button className="min-w-92" size="sm" disabled>
                       <BiPhoneCall size={16} /> {translate('common.joined')}
                     </Button>
