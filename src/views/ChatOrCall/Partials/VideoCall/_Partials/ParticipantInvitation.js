@@ -59,7 +59,7 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
       )
     );
 
-    handleSendMessage(room.rid, room.name, isVideoOn ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
+    handleSendMessage(room.rid, room.u.username, isVideoOn ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
   };
 
   return (
