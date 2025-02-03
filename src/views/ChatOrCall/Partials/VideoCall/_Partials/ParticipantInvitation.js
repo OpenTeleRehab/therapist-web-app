@@ -34,7 +34,7 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
         const timer = setTimeout(() => {
           setRooms((prev) =>
             prev.map((p) =>
-              p.id === participant.id && !participants.some(item => item.identity === (p.u.username + '_' + profile.clinic_id))
+              p.id === participant.id && !participants.some(item => item.identity === (p.u.username + '_' + profile.country_id))
                 ? { ...p, countdown: p.countdown - 1 }
                 : { ...p, countdown: undefined }
             )
