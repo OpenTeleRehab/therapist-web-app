@@ -3,6 +3,7 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import { Translate, getTranslate } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { getPublishSurvey, submitSurvey, skipSurvey } from '../../store/survey/actions';
+import _ from 'lodash';
 
 const Survey = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const Survey = () => {
   const [currentQuestion, setCurrentQuestion] = useState();
   const [validationErrors, setValidationErrors] = useState({});
   const [hasMandatoryQuestion, setHasMandatoryQuestion] = useState(false);
+  const [canSubmit, setCanSubmit] = useState(false);
 
   useEffect(() => {
     dispatch(getPublishSurvey({
@@ -48,6 +50,11 @@ const Survey = () => {
     }
   }, [publishSurvey, currentIndex]);
 
+  useEffect(() => {
+    const isEmpty = Object.values(answers).every(arr => arr.length === 0);
+    setCanSubmit(!isEmpty);
+  }, [answers]);
+
   const checkShowSurvey = () => {
     const lastSurveyShownDate = localStorage.getItem('lastSurveyShownDate');
 
@@ -62,6 +69,12 @@ const Survey = () => {
     const elapsedTime = currentDate - lastShownDate;
 
     return elapsedTime >= frequencyInMs;
+  };
+
+  const validateNumberInput = (e) => {
+    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+    }
   };
 
   const handleInputChange = (questionId, value, type) => {
@@ -97,12 +110,24 @@ const Survey = () => {
 
   const handleNext = () => {
     // Validate mandatory question before moving to next question
-    if (currentQuestion.mandatory && (!answers[currentQuestion.id] || !answers[currentQuestion.id].length)) {
+    if (currentQuestion.mandatory && (!answers[currentQuestion.id] || (_.isArray(answers[currentQuestion.id]) && !answers[currentQuestion.id].length))) {
       setValidationErrors((prevErrors) => ({
         ...prevErrors,
         [currentQuestion.id]: translate('survey.answer.required')
       }));
       return;
+    }
+
+    if (currentQuestion.type === 'open-number') {
+      const threshold = currentQuestion.answers[0].threshold;
+      const minValue = 0;
+      if (!_.isEmpty(answers[currentQuestion.id]) && (answers[currentQuestion.id] > threshold || answers[currentQuestion.id] < minValue)) {
+        setValidationErrors((prevErrors) => ({
+          ...prevErrors,
+          [currentQuestion.id]: translate('survey.error.thereshold_value', { minValue: minValue, threshold: threshold })
+        }));
+        return;
+      }
     }
 
     // If there are no errors, proceed to the next question
@@ -114,16 +139,19 @@ const Survey = () => {
   const handleSubmit = () => {
     const newErrors = {};
 
+    if (!canSubmit) {
+      return;
+    }
     // Validate all mandatory questions before submitting
     publishSurvey.questionnaire.questions.forEach((question) => {
-      if (question.mandatory && (!answers[question.id] || !answers[question.id].length)) {
+      if (question.mandatory && (!answers[question.id] || (_.isArray(answers[question.id]) && !answers[question.id].length))) {
         newErrors[question.id] = translate('survey.answer.required');
       }
       if (question.type === 'open-number') {
-        const threshold = currentQuestion.answers[0].threshold;
+        const threshold = question.answers[0].threshold;
         const minValue = 0;
         if (answers[question.id] && (answers[question.id] > threshold || answers[question.id] < minValue)) {
-          newErrors[question.id] = translate('survey.error.thereshold_value', { minValue: minValue }, { threshold: threshold });
+          newErrors[question.id] = translate('survey.error.thereshold_value', { minValue: minValue, threshold: threshold });
         }
       }
     });
@@ -232,6 +260,7 @@ const Survey = () => {
                   <Form.Control
                     type="number"
                     aria-label="Number input box"
+                    onKeyDown={(e) => validateNumberInput(e)}
                     value={answers[currentQuestion.id] || ''}
                     min={0}
                     onChange={(e) =>
@@ -266,7 +295,7 @@ const Survey = () => {
           </Button>
           }
           {currentIndex === questionsLength - 1 && (
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button disabled={!canSubmit} variant="primary" onClick={handleSubmit}>
               <Translate id="common.submit"/>
             </Button>
           )}
