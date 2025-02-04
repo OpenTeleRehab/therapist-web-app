@@ -15,7 +15,8 @@ const Survey = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [currentQuestion, setCurrentQuestion] = useState();
-  const [validationError, setValidationError] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [hasMandatoryQuestion, setHasMandatoryQuestion] = useState(false);
 
   useEffect(() => {
     dispatch(getPublishSurvey({
@@ -35,6 +36,10 @@ const Survey = () => {
       setShowSurvey(true);
       localStorage.setItem('lastSurveyShownDate', new Date().toISOString());
     }
+
+    setHasMandatoryQuestion(
+      (publishSurvey.questionnaire.questions && publishSurvey.questionnaire.questions.some(question => question.mandatory)) || false
+    );
   }, [publishSurvey]);
 
   useEffect(() => {
@@ -52,10 +57,8 @@ const Survey = () => {
 
     // Calculate interval time based on the frequency in days
     const frequencyInMs = publishSurvey.frequency * 24 * 60 * 60 * 1000;
-
     const currentDate = new Date();
     const lastShownDate = new Date(lastSurveyShownDate);
-
     const elapsedTime = currentDate - lastShownDate;
 
     return elapsedTime >= frequencyInMs;
@@ -75,6 +78,15 @@ const Survey = () => {
     } else {
       setAnswers({ ...answers, [questionId]: value });
     }
+
+    // Clear any existing validation error for the current question
+    if (validationErrors[questionId]) {
+      setValidationErrors((prevErrors) => {
+        const updatedErrors = { ...prevErrors };
+        delete updatedErrors[questionId];
+        return updatedErrors;
+      });
+    }
   };
 
   const handlePrevious = () => {
@@ -84,25 +96,43 @@ const Survey = () => {
   };
 
   const handleNext = () => {
-    // Check if the current question has been answered
-    if (!answers[currentQuestion.id] || answers[currentQuestion.id].length === 0) {
-      setValidationError(true);
+    // Validate mandatory question before moving to next question
+    if (currentQuestion.mandatory && (!answers[currentQuestion.id] || !answers[currentQuestion.id].length)) {
+      setValidationErrors((prevErrors) => ({
+        ...prevErrors,
+        [currentQuestion.id]: translate('survey.answer.required')
+      }));
       return;
     }
 
-    // Clear validation error if answered
-    setValidationError(false);
-
+    // If there are no errors, proceed to the next question
     if (currentIndex < (publishSurvey.questionnaire.questions.length - 1)) {
       setCurrentIndex(currentIndex + 1);
     }
   };
 
   const handleSubmit = () => {
-    if (!answers[currentQuestion.id] || answers[currentQuestion.id].length === 0) {
-      setValidationError(true);
+    const newErrors = {};
+
+    // Validate all mandatory questions before submitting
+    publishSurvey.questionnaire.questions.forEach((question) => {
+      if (question.mandatory && (!answers[question.id] || !answers[question.id].length)) {
+        newErrors[question.id] = translate('survey.answer.required');
+      }
+      if (question.type === 'open-number') {
+        const threshold = currentQuestion.answers[0].threshold;
+        const minValue = 0;
+        if (answers[question.id] && (answers[question.id] > threshold || answers[question.id] < minValue)) {
+          newErrors[question.id] = translate('survey.error.thereshold_value', { minValue: minValue }, { threshold: threshold });
+        }
+      }
+    });
+
+    if (Object.keys(newErrors).length > 0) {
+      setValidationErrors(newErrors);
       return;
     }
+
     const formattedAnswers = Object.entries(answers).map(([questionId, answer]) => ({
       question_id: parseInt(questionId, 10),
       answer
@@ -136,7 +166,7 @@ const Survey = () => {
   const questionsLength = publishSurvey && publishSurvey.questionnaire && publishSurvey.questionnaire.questions ? publishSurvey.questionnaire.questions.length : undefined;
 
   return (
-    <Modal show={showSurvey} size="lg" scrollable={true} backdrop="static" keyboard={false}>
+    <Modal show={showSurvey} size="lg" scrollable={true} backdrop="static" keyboard={false} >
       <Modal.Header>
         <Modal.Title>
           {publishSurvey.questionnaire && publishSurvey.questionnaire.title}
@@ -149,7 +179,7 @@ const Survey = () => {
       <Modal.Body>
         {currentQuestion && (
           <>
-            <h5>{currentQuestion.title}</h5>
+            <h5>{currentQuestion.title} {!!currentQuestion.mandatory && <span>*</span>}</h5>
             {currentQuestion.type === 'checkbox' && currentQuestion.answers.map((answer, index) => (
               <div key={index}>
                 <Form.Check
@@ -203,6 +233,7 @@ const Survey = () => {
                     type="number"
                     aria-label="Number input box"
                     value={answers[currentQuestion.id] || ''}
+                    min={0}
                     onChange={(e) =>
                       handleInputChange(currentQuestion.id, e.target.value, 'number')
                     }
@@ -212,8 +243,8 @@ const Survey = () => {
             )}
           </>
         )}
-        {validationError && (
-          <h6 className="text-danger">{translate('survey.answer.required')}</h6>
+        {validationErrors[currentQuestion && currentQuestion.id] && (
+          <h6 className="text-danger">{validationErrors[currentQuestion && currentQuestion.id]}</h6>
         )}
       </Modal.Body>
       <Modal.Footer className="d-flex justify-content-between">
@@ -230,9 +261,10 @@ const Survey = () => {
           )}
         </div>
         <div>
-          <Button variant="primary" onClick={handleSkipSurvey} className='mr-1'>
+          {!hasMandatoryQuestion && <Button variant="primary" onClick={handleSkipSurvey} className='mr-1'>
             <Translate id="common.skip"/>
           </Button>
+          }
           {currentIndex === questionsLength - 1 && (
             <Button variant="primary" onClick={handleSubmit}>
               <Translate id="common.submit"/>
