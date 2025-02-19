@@ -14,6 +14,8 @@ import 'scss/app.scss';
 import SplashScreen from 'components/SplashScreen';
 import ConfigurationProvider from './ConfigurationProvider';
 import Guidance from './components/Guidance';
+import Survey from 'components/Survey';
+import VideoCall from './views/ChatOrCall/Partials/VideoCall';
 
 const App = () => {
   return (
@@ -32,6 +34,8 @@ const App = () => {
               <Route path="/patient" />
               <RouteSwitch />
               <Guidance />
+              <Survey />
+              <VideoCall />
             </Router>
           </LocalizeProvider>
         </ConfigurationProvider>

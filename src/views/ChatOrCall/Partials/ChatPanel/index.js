@@ -8,6 +8,7 @@ import { IoCallOutline, IoVideocamOutline } from 'react-icons/io5';
 import { CALL_STATUS, CHAT_TYPES, USER_STATUS } from 'variables/rocketchat';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  getCallAccessToken,
   postAttachmentMessage,
   sendPodcastNotification
 } from 'store/rocketchat/actions';
@@ -17,18 +18,16 @@ import RocketchatContext from '../../../../context/RocketchatContext';
 import { markMessagesAsRead } from '../../../../utils/chat';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
-const ChatPanel = (
-  {
-    translate,
-    userStatus,
-    chatUserId,
-    chatRooms,
-    selectedRoom,
-    messages,
-    hideChatPanel,
-    isVideoCall,
-    onSendMessage
-  }) => {
+
+const ChatPanel = ({
+  translate,
+  userStatus,
+  chatUserId,
+  selectedRoom,
+  messages,
+  hideChatPanel,
+  onSendMessage
+}) => {
   const dispatch = useDispatch();
   const chatSocket = useContext(RocketchatContext);
   const therapist = useSelector(state => state.auth.profile);
@@ -87,8 +86,11 @@ const ChatPanel = (
   };
 
   const handleCall = (isVideo) => {
+    // Send audio or video call message
     onSendMessage(isVideo ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
-    isVideoCall(isVideo);
+
+    // Get twilio call access token
+    dispatch(getCallAccessToken(therapist.chat_user_id));
   };
 
   const handleSendPodcastNotification = (therapist, selectedRoom, body, translatable) => {
@@ -104,55 +106,51 @@ const ChatPanel = (
     }
   };
 
-  return (
-    <>
-      {selectedRoom && chatRooms.length ? (
-        <>
-          <div className="chat-message-header d-flex justify-content-between align-items-center">
-            <h4 className="font-weight-bold mb-0 d-flex align-items-center">
-              <Button variant="link" className="d-md-none btn-back" onClick={() => hideChatPanel(true)} aria-label="Status">
-                <BsChevronLeft size={18} color="#0077C8" />
-              </Button>
-              {selectedRoom.name}
-              {userStatus(selectedRoom, 'md')}
-            </h4>
-            <div className="d-flex justify-content-end">
-              <CallingButton variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => handleCall(false)} aria-label="Audio call">
-                <IoCallOutline size={18} color="#333333" />
-              </CallingButton>
-              <CallingButton isVideo variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => handleCall(true)} aria-label="Video call">
-                <IoVideocamOutline size={18} color="#333333" />
-              </CallingButton>
-            </div>
+  if (selectedRoom) {
+    return (
+      <>
+        <div className="chat-message-header d-flex justify-content-between align-items-center">
+          <h4 className="font-weight-bold mb-0 d-flex align-items-center">
+            <Button variant="link" className="d-md-none btn-back" onClick={() => hideChatPanel(true)} aria-label="Status">
+              <BsChevronLeft size={18} color="#0077C8" />
+            </Button>
+            {selectedRoom.name}
+            {userStatus(selectedRoom, 'md')}
+          </h4>
+          <div className="d-flex justify-content-end">
+            <CallingButton variant="light" className="btn-audio-call bg-white rounded-circle mr-2" onClick={() => handleCall(false)} aria-label="Audio call">
+              <IoCallOutline size={18} color="#333333" />
+            </CallingButton>
+            <CallingButton isVideo variant="light" className="btn-video-call bg-white rounded-circle" onClick={() => handleCall(true)} aria-label="Video call">
+              <IoVideocamOutline size={18} color="#333333" />
+            </CallingButton>
           </div>
-          <Message
-            translate={translate}
-            messages={allMessages.length > messages.length ? allMessages : messages}
-            currentUser={chatUserId}
-            msgOuterHeight={msgOuterHeight}
-          />
-          <InputToolbar
-            onSend={handleSendMessage}
-            onInputSizeChanged={handleInputSizeChanged}
-            translate={translate}
-          />
-        </>
-      ) : (
-        <Alert variant="primary" className="mt-3">{translate('chat_message.please_select_patient')}</Alert>
-      )}
-    </>
-  );
+        </div>
+        <Message
+          translate={translate}
+          messages={allMessages.length > messages.length ? allMessages : messages}
+          currentUser={chatUserId}
+          msgOuterHeight={msgOuterHeight}
+        />
+        <InputToolbar
+          onSend={handleSendMessage}
+          onInputSizeChanged={handleInputSizeChanged}
+          translate={translate}
+        />
+      </>
+    );
+  }
+
+  return <Alert variant="primary" className="mt-3">{translate('chat_message.please_select_patient')}</Alert>;
 };
 
 ChatPanel.propTypes = {
   translate: PropTypes.func,
   userStatus: PropTypes.func,
   chatUserId: PropTypes.string,
-  chatRooms: PropTypes.array,
   selectedRoom: PropTypes.object,
   messages: PropTypes.array,
   hideChatPanel: PropTypes.func,
-  isVideoCall: PropTypes.func,
   onSendMessage: PropTypes.func
 };
 

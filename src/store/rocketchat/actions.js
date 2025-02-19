@@ -5,6 +5,7 @@ import { mutation } from './mutations';
 import { showErrorNotification } from 'store/notification/actions';
 import { getMessage } from 'utils/general';
 import { markMessagesAsRead } from 'utils/chat';
+import { Therapist } from '../../services/therapist';
 
 export const connectWebsocket = (payload) => (dispatch) => {
   dispatch(mutation.setWebsocketConnectionSuccess(payload));
@@ -29,6 +30,8 @@ export const updateVideoCallStatus = (payload) => (dispatch) => {
 export const getChatRooms = () => async (dispatch, getState) => {
   const { profile } = getState().auth;
   const { authToken, authUserId } = getState().rocketchat;
+  const { therapistsByClinic } = getState().therapist;
+
   const payload = {
     therapist_id: profile.id,
     enabled: 1,
@@ -39,7 +42,7 @@ export const getChatRooms = () => async (dispatch, getState) => {
   const data = await User.getUsers(payload);
   const subscriptions = await Rocketchat.getSubscriptions(authUserId, authToken);
 
-  if (data.success) {
+  if (data.success || therapistsByClinic.length) {
     const chatRooms = [];
 
     for (const user of data.data) {
@@ -60,6 +63,24 @@ export const getChatRooms = () => async (dispatch, getState) => {
             totalMessages: 0
           });
         }
+      }
+    }
+    for (const therapist of therapistsByClinic.filter(item => item.id !== profile.id)) {
+      const subscription = subscriptions.find(room => room.rid.includes(therapist.chat_user_id));
+
+      if (subscription) {
+        chatRooms.push({
+          rid: subscription.rid,
+          name: `${therapist.last_name} ${therapist.first_name}`,
+          unread: subscription.unread,
+          u: {
+            _id: therapist.chat_user_id,
+            username: therapist.identity,
+            status: 'offline'
+          },
+          lastMessage: {},
+          totalMessages: 0
+        });
       }
     }
     dispatch(mutation.getChatRoomsSuccess(chatRooms));
@@ -83,7 +104,9 @@ export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
     const data = await Rocketchat.getUserStatus(userNames, authUserId, authToken);
     if (data.success) {
       data.users.forEach(user => {
-        chatRooms[mapIndex[user._id]].u.status = user.status;
+        if (chatRooms[mapIndex[user._id]]) {
+          chatRooms[mapIndex[user._id]].u.status = user.status;
+        }
       });
       dispatch(mutation.getChatUsersStatusSuccess(chatRooms));
       return true;
@@ -188,4 +211,16 @@ export const postAttachmentMessage = (roomId, attachment) => async (dispatch, ge
 
 export const sendPodcastNotification = (payload) => async () => {
   await Firebase.sendPodcastNotification(payload);
+};
+
+export const getCallAccessToken = (roomId) => async (dispatch) => {
+  const data = await Therapist.getCallAccessToken(roomId);
+  if (data.success) {
+    dispatch(mutation.getCallAccessTokenSuccess(data.token));
+    return true;
+  } else {
+    dispatch(mutation.getCallAccessTokenFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.error));
+    return false;
+  }
 };

@@ -31,7 +31,7 @@
       border-radius: 0;
       &-item {
         border-width: 0;
-        border-top: 1px outset $border-color;
+        border-bottom: 1px solid $border-color;
         border-left: 5px solid $white;
         font-weight: $font-weight-bold;
         padding: 8px 15px 8px 10px;
@@ -222,9 +222,15 @@
 
 .calling {
   background-color: $dark;
-  position: relative;
-  height: calc(100vh - 61px);
+  position: fixed;
+  top: 59px;
+  height: calc(100vh - 59px);
   width: 100%;
+  z-index: 1000;
+  @include media-breakpoint-up(xl) {
+    top: 70px;
+    height: calc(100vh - 70px);
+  }
   .sidebar-toggle {
     position: absolute;
     top: 0;
@@ -263,6 +269,7 @@
           .btn {
             &-video-call,
             &-muted-call,
+            &-accept-call,
             &-end-call {
               border-radius: 50%;
               height: 46px;
@@ -281,15 +288,22 @@
         font-size: 18px;
         font-weight: 600;
         position: absolute;
-        left: 45px;
+        left: 16px;
         top: 7px;
         margin: 0;
         z-index: 99;
       }
     }
+    .transcript-language {
+      position: absolute;
+      left: 16px;
+      top: 38px;
+      margin: 0;
+      z-index: 99;
+      width: 200px;
+    }
     .local,
     .remote {
-      background-color: $dark;
       .participant,
       video {
         background-color: $black;
@@ -298,13 +312,8 @@
       }
     }
     .local {
-      border: 2px solid $primary;
-      border-radius: 6px;
-      position: absolute;
-      bottom: 35px;
-      left: 45px;
-      width: 210px;
-      height: 160px;
+      height: 100%;
+      width: 100%;
       .participant {
         &-avatar {
           position: absolute;
@@ -315,18 +324,48 @@
       }
     }
     .remote {
-      height: 100%;
-      width: 100%;
-      .participant {
-        &-avatar {
-          background-color: $dark;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          position: absolute;
-          height: 100%;
-          width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: absolute;
+      top: 60px;
+      right: 15px;
+      &-participant {
+        border: 2px solid $primary;
+        border-radius: 6px;
+        overflow: hidden;
+        position: relative;
+        height: 160px;
+        width: 210px;
+        .participant {
+          &-avatar {
+            background-color: $dark;
+            display: grid;
+            place-items: center;
+            height: 100%;
+            width: 100%;
+          }
+          &-identity {
+            color: #000000;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            text-align: center;
+            margin: 0 0 6px 0;
+            width: 100%;
+          }
         }
+      }
+    }
+  }
+  .btn {
+    &-add {
+      &-participant {
+        min-width: 210px;
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        z-index: 999;
       }
     }
   }

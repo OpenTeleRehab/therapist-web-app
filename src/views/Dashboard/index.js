@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Row, Col, Card, Accordion } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { IoPerson } from 'react-icons/all';
+import { IoPerson } from 'react-icons/io5';
 import { FaNotesMedical } from 'react-icons/fa';
 import { Pie } from 'react-chartjs-2';
 import PropTypes from 'prop-types';

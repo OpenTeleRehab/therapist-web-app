@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { getTranslate } from 'react-localize-redux';
-import { VscWarning } from 'react-icons/all';
+import { VscWarning } from 'react-icons/vsc';
 import { useSelector } from 'react-redux';
 const SmsButton = ({ children, ...props }) => {
   const localize = useSelector((state) => state.localize);

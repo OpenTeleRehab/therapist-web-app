@@ -22,7 +22,7 @@ const reorderQuestion = (questions, startIndex, endIndex) => {
   return result;
 };
 
-const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, modifiable }) => {
+const Question = ({ translate, questions, setQuestions, language, questionTitleError, answerFieldError, answerValueError, answerThresholdError, modifiable }) => {
   const { languages } = useSelector(state => state.language);
 
   const handleFileChange = (e, index) => {
@@ -52,7 +52,11 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
 
   const handleAddAnswer = (index) => {
     const newAnswer = questions[index].answers;
-    newAnswer.push({ description: '' });
+    if (questions[index].mark_as_countable) {
+      newAnswer.push({ description: '', value: '', threshold: '' });
+    } else {
+      newAnswer.push({ description: '' });
+    }
     const questionData = [...questions];
     questionData[index] = { ...questionData[index], answers: newAnswer };
     setQuestions(questionData);
@@ -60,9 +64,9 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
 
   const handleAnswerChange = (questionIndex, answerIndex, e) => {
     const answers = questions[questionIndex].answers;
-    answers[answerIndex].description = e.target.value;
+    answers[answerIndex][e.target.name] = e.target.value;
     const questionData = [...questions];
-    questionData[questionIndex] = { ...questionData[questionIndex], answer: answers };
+    questionData[questionIndex] = { ...questionData[questionIndex], answers: answers };
     setQuestions(questionData);
   };
 
@@ -94,6 +98,37 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
     setQuestions([...questions]);
   };
 
+  const handleMarkAsCountable = (index, e) => {
+    const values = [...questions];
+    values[index][e.target.name] = e.target.checked;
+    if (e.target.checked) {
+      values[index] = {
+        ...values[index],
+        answers: (values[index].type === 'checkbox' || values[index].type === 'multiple')
+          ? values[index].answers.map(answer => ({
+            ...answer,
+            value: '',
+            threshold: ''
+          }))
+          : [{ value: '', threshold: '' }]
+      };
+    } else {
+      values[index] = {
+        ...values[index],
+        answers: (values[index].type === 'checkbox' || values[index].type === 'multiple')
+          ? values[index].answers.map(answer => ({
+            description: answer.description
+          })) : []
+      };
+    }
+    setQuestions(values);
+  };
+
+  const disabledEditAnswerValueThreshold = () => {
+    const languageObj = languages.find(item => item.id === parseInt(language, 10));
+    return languageObj && languageObj.code !== languageObj.fallback;
+  };
+
   const enableButtons = (question, isEnabled) => {
     const languageObj = languages.find(item => item.id === parseInt(language, 10));
     return languageObj && languageObj.code === languageObj.fallback && (modifiable || !question.id || isEnabled);
@@ -101,8 +136,10 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
 
   const handleCloneQuestion = (index) => {
     const { title, type } = questions[index];
-    const answers = _.cloneDeep(questions[index].answers);
-    setQuestions([...questions, { title, type, answers }]);
+    const answers = _.cloneDeep(questions[index].answers).map(answer =>
+      _.omit(answer, ['id'])
+    );
+    setQuestions([...questions, { title, type, mark_as_countable: questions[index].mark_as_countable, answers }]);
     setTimeout(() => {
       window.scrollTo({ left: 0, top: document.body.scrollHeight, behavior: 'smooth' });
     }, 300);
@@ -133,6 +170,12 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
   const handleEnterKeyPress = (e) => {
     if (e.key === 'Enter') {
       e.stopPropagation();
+    }
+  };
+
+  const validateNumberInput = (e) => {
+    if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
     }
   };
 
@@ -259,18 +302,33 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                           </Row>
                         </Card.Header>
                         <Card.Body>
+                          {(question.type === 'multiple' || question.type === 'checkbox' || question.type === 'open-number') && (
+                            <Row key={index}>
+                              <Col sm={4} xs={4}>
+                                <Form.Group controlId="formMarkAsCountable">
+                                  <Form.Check
+                                    name="mark_as_countable"
+                                    onChange={e => handleMarkAsCountable(index, e)}
+                                    value={true}
+                                    checked={question.mark_as_countable}
+                                    label={translate('question.mark_as_countable')}
+                                  />
+                                </Form.Group>
+                              </Col>
+                            </Row>
+                          )}
                           <div className="mb-3">
                             {
                               question.type === 'checkbox' && (
                                 question.answers.map((answer, answerIndex) => (
                                   <Row key={answerIndex}>
-                                    <Col sm={8} xs={7}>
+                                    <Col sm={4} xs={4}>
                                       <Form.Check type='checkbox'>
                                         <Form.Check.Input type='checkbox' isValid className="mt-3" disabled aria-label="checkbox"/>
                                         <Form.Check.Label className="w-100">
                                           <Form.Group controlId={`formValue${answerIndex}`}>
                                             <Form.Control
-                                              name="value"
+                                              name="description"
                                               value={answer.description}
                                               placeholder={translate('question.answer.description.placeholder')}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
@@ -284,19 +342,61 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         </Form.Check.Label>
                                       </Form.Check>
                                     </Col>
+                                    {Boolean(question.mark_as_countable) && (
+                                      <>
+                                        <Col sm={3} xs={3}>
+                                          <Form.Group controlId={`formAnswerValue${answerIndex}`}>
+                                            <Form.Control
+                                              type="number"
+                                              name="value"
+                                              value={answer.value}
+                                              placeholder={translate('question.answer_value')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
+                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
+                                              isInvalid={answerValueError[index] ? answerValueError[index][answerIndex] : false}
+                                              aria-label="answer value"
+                                              disabled={disabledEditAnswerValueThreshold()}
+                                              min={0}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                              {translate('question.answer.value.required')}
+                                            </Form.Control.Feedback>
+                                          </Form.Group>
+                                        </Col>
+                                        <Col sm={3} xs={3}>
+                                          <Form.Group controlId={`formAnswerThreshold${answerIndex}`}>
+                                            <Form.Control
+                                              type="number"
+                                              name="threshold"
+                                              value={answer.threshold}
+                                              placeholder={translate('question.answer_threshold')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
+                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
+                                              isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
+                                              aria-label="answer threshold"
+                                              disabled={disabledEditAnswerValueThreshold()}
+                                              min={0}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                              {translate('question.answer.threshold.required')}
+                                            </Form.Control.Feedback>
+                                          </Form.Group>
+                                        </Col>
+                                      </>
+                                    )}
                                     {enableButtons(question, !answer.id) &&
-                                    <Col sm={4} xl={3} className="mt-1">
-                                      <Button
-                                        variant="outline-danger"
-                                        className="remove-btn"
-                                        onClick={() => handleAnswerRemove(index, answerIndex)}
-                                        disabled={question.answers.length <= 2}
-                                        aria-label="Remove button"
-                                        onKeyPress={(e) => handleEnterKeyPress(e)}
-                                      >
-                                        <BsX size={15} />
-                                      </Button>
-                                    </Col>
+                                      <Col sm={2} xl={2} className="mt-1">
+                                        <Button
+                                          variant="outline-danger"
+                                          className="remove-btn"
+                                          onClick={() => handleAnswerRemove(index, answerIndex)}
+                                          disabled={question.answers.length <= 2}
+                                          aria-label="Remove button"
+                                          onKeyPress={(e) => handleEnterKeyPress(e)}
+                                        >
+                                          <BsX size={15} />
+                                        </Button>
+                                      </Col>
                                     }
                                   </Row>
                                 ))
@@ -306,13 +406,13 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                               question.type === 'multiple' && (
                                 question.answers.map((answer, answerIndex) => (
                                   <Row key={answerIndex}>
-                                    <Col sm={8} xl={7}>
+                                    <Col sm={4} xl={3}>
                                       <Form.Check type='radio'>
                                         <Form.Check.Input type='radio' isValid className="mt-3" disabled aria-label="radio" />
                                         <Form.Check.Label className="w-100">
                                           <Form.Group controlId={`formValue${answerIndex}`}>
                                             <Form.Control
-                                              name="value"
+                                              name="description"
                                               value={answer.description}
                                               placeholder={translate('question.answer.description.placeholder')}
                                               onChange={(e) => handleAnswerChange(index, answerIndex, e)}
@@ -326,19 +426,61 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                                         </Form.Check.Label>
                                       </Form.Check>
                                     </Col>
+                                    {Boolean(question.mark_as_countable) && (
+                                      <>
+                                        <Col sm={3} xs={3}>
+                                          <Form.Group controlId={`formAnswerValue${answerIndex}`}>
+                                            <Form.Control
+                                              type="number"
+                                              name="value"
+                                              value={answer.value}
+                                              placeholder={translate('question.answer_value')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
+                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
+                                              isInvalid={answerValueError[index] ? answerValueError[index][answerIndex] : false}
+                                              aria-label="answer value"
+                                              disabled={disabledEditAnswerValueThreshold()}
+                                              min={0}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                              {translate('question.answer.value.required')}
+                                            </Form.Control.Feedback>
+                                          </Form.Group>
+                                        </Col>
+                                        <Col sm={3} xs={3}>
+                                          <Form.Group controlId={`formAnswerThreshold${answerIndex}`}>
+                                            <Form.Control
+                                              type="number"
+                                              name="threshold"
+                                              value={answer.threshold}
+                                              placeholder={translate('question.answer_threshold')}
+                                              onKeyDown={(e) => validateNumberInput(e)}
+                                              onChange={(e) => handleAnswerChange(index, answerIndex, e)}
+                                              isInvalid={answerThresholdError[index] ? answerThresholdError[index][answerIndex] : false}
+                                              aria-label="answer threshold"
+                                              disabled={disabledEditAnswerValueThreshold()}
+                                              min={0}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                              {translate('question.answer.threshold.required')}
+                                            </Form.Control.Feedback>
+                                          </Form.Group>
+                                        </Col>
+                                      </>
+                                    )}
                                     {enableButtons(question, !answer.id) &&
-                                    <Col sm={4} xl={3} className="mt-1">
-                                      <Button
-                                        variant="outline-danger"
-                                        className="remove-btn"
-                                        onClick={() => handleAnswerRemove(index, answerIndex)}
-                                        disabled={question.answers.length <= 2}
-                                        aria-label="Remove button"
-                                        onKeyPress={(e) => handleEnterKeyPress(e)}
-                                      >
-                                        <BsX size={15} />
-                                      </Button>
-                                    </Col>
+                                      <Col sm={2} xl={2} className="mt-1">
+                                        <Button
+                                          variant="outline-danger"
+                                          className="remove-btn"
+                                          onClick={() => handleAnswerRemove(index, answerIndex)}
+                                          disabled={question.answers.length <= 2}
+                                          aria-label="Remove button"
+                                          onKeyPress={(e) => handleEnterKeyPress(e)}
+                                        >
+                                          <BsX size={15} />
+                                        </Button>
+                                      </Col>
                                     }
                                   </Row>
                                 ))
@@ -357,14 +499,60 @@ const Question = ({ translate, questions, setQuestions, language, questionTitleE
                             }
                             {
                               question.type === 'open-number' && (
-                                <Form.Group controlId='formValue'>
-                                  <Form.Control
-                                    disabled
-                                    type="number"
-                                    name="value"
-                                    aria-label="Open number"
-                                  />
-                                </Form.Group>
+                                <Row>
+                                  <Col sm={4} xs={4}>
+                                    <Form.Group controlId='formValue'>
+                                      <Form.Control
+                                        disabled
+                                        type="number"
+                                        name="value"
+                                        aria-label="Open number"
+                                      />
+                                    </Form.Group>
+                                  </Col>
+                                  {Boolean(question.mark_as_countable) && (
+                                    <>
+                                      <Col sm={3} xs={3}>
+                                        <Form.Group controlId={'formAnswerValue'}>
+                                          <Form.Control
+                                            type="number"
+                                            name="value"
+                                            value={question.answers[0] ? question.answers[0].value : ''}
+                                            placeholder={translate('question.answer_value')}
+                                            onKeyDown={(e) => validateNumberInput(e)}
+                                            onChange={(e) => handleAnswerChange(index, 0, e)}
+                                            isInvalid={answerThresholdError[index] ? answerThresholdError[index][0] : false}
+                                            aria-label="answer value"
+                                            disabled={disabledEditAnswerValueThreshold()}
+                                            min={0}
+                                          />
+                                          <Form.Control.Feedback type="invalid">
+                                            {translate('question.answer.value.required')}
+                                          </Form.Control.Feedback>
+                                        </Form.Group>
+                                      </Col>
+                                      <Col sm={3} xs={3}>
+                                        <Form.Group controlId={'formAnswerThreshold'}>
+                                          <Form.Control
+                                            type="number"
+                                            name="threshold"
+                                            value={question.answers[0] ? question.answers[0].threshold : ''}
+                                            placeholder={translate('question.answer_threshold')}
+                                            onKeyDown={(e) => validateNumberInput(e)}
+                                            onChange={(e) => handleAnswerChange(index, 0, e)}
+                                            isInvalid={answerThresholdError[index] ? answerThresholdError[index][0] : false}
+                                            aria-label="answer threshold"
+                                            disabled={disabledEditAnswerValueThreshold()}
+                                            min={0}
+                                          />
+                                          <Form.Control.Feedback type="invalid">
+                                            {translate('question.answer.threshold.required')}
+                                          </Form.Control.Feedback>
+                                        </Form.Group>
+                                      </Col>
+                                    </>
+                                  )}
+                                </Row>
                               )
                             }
                             {
@@ -403,7 +591,10 @@ Question.propTypes = {
   language: PropTypes.string,
   questionTitleError: PropTypes.array,
   answerFieldError: PropTypes.array,
-  modifiable: PropTypes.bool
+  modifiable: PropTypes.bool,
+  answerValueError: PropTypes.array,
+  answerThresholdError: PropTypes.array
+
 };
 
 export default withLocalize(Question);

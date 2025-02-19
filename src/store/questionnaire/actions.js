@@ -2,6 +2,7 @@ import { Questionnaire } from 'services/questionnaire';
 import { mutation } from './mutations';
 import { showErrorNotification, showSuccessNotification } from 'store/notification/actions';
 import { showSpinner } from 'store/spinnerOverlay/actions';
+import { saveAs } from 'file-saver';
 
 export const getQuestionnaires = payload => async dispatch => {
   dispatch(mutation.getQuestionnairesRequest());
@@ -98,6 +99,20 @@ export const deleteQuestionnaire = id => async (dispatch, getState) => {
   } else {
     dispatch(mutation.deleteQuestionnaireFail());
     dispatch(showErrorNotification('toast_title.delete_questionnaire', data.message));
+    return false;
+  }
+};
+
+export const downloadQuestionnaireResults = (id, language) => async dispatch => {
+  dispatch(mutation.downloadQuestionnaireResultsRequest());
+  const res = await Questionnaire.downloadQuestionnaireResults(id, language);
+  if (res) {
+    dispatch(mutation.downloadQuestionnaireResultsSuccess());
+    saveAs(res, 'Questionnaire_Results.xlsx');
+    return true;
+  } else {
+    dispatch(mutation.downloadQuestionnaireResultsFail());
+    dispatch(showErrorNotification('toast_title.error_message', res.message));
     return false;
   }
 };

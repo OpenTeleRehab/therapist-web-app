@@ -254,7 +254,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                             id={`questionnaire-${questionnaire.id}`}
                             checked={selectedQuestionnaires.includes(questionnaire.id)}
                             onChange={(e) => {
-                              onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true);
+                              onSectionChange(e.currentTarget.checked, questionnaire.id, questionnaire.include_at_the_start, questionnaire.include_at_the_end); setShowPreview(true);
                             }}
                             custom={true}
                             disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}
@@ -266,7 +266,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
                             id={`questionnaire-${questionnaire.id}`}
                             checked={selectedQuestionnaires.includes(questionnaire.id)}
                             onChange={(e) => {
-                              onSectionChange(e.currentTarget.checked, questionnaire.id); setShowPreview(true);
+                              onSectionChange(e.currentTarget.checked, questionnaire.id, questionnaire.include_at_the_start, questionnaire.include_at_the_end); setShowPreview(true);
                             }}
                             custom={true}
                             disabled={oldSelectedQuestionnaires.includes(questionnaire.id) && !isOwnCreated}

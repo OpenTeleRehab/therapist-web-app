@@ -1,5 +1,6 @@
 export const initialState = {
   chatRooms: [],
+  therapistChatRooms: [],
   messages: [],
   isChatConnected: false,
   isOnChatPage: false,
@@ -8,5 +9,6 @@ export const initialState = {
   authUserId: undefined,
   tokenExpiredAt: null,
   selectedRoom: undefined,
-  videoCall: undefined
+  videoCall: undefined,
+  callAccessToken: undefined
 };

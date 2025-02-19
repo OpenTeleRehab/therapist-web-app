@@ -16,15 +16,20 @@ import {
   addMaterialDataPreview, addPresetDataPreview,
   addQuestionnaireDataPreview
 } from '../../../store/treatmentPlan/actions';
+import { getQuestionnaires } from 'store/questionnaire/actions';
 
 const AddActivity = ({ show, handleClose, week, day, activities, setActivities, isPreset, isOwnCreated, originData }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const dispatch = useDispatch();
+  const { profile } = useSelector((state) => state.auth);
   const { presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
+  const { questionnaires } = useSelector(state => state.questionnaire);
   const [selectedExercises, setSelectedExercises] = useState([]);
   const [selectedMaterials, setSelectedMaterials] = useState([]);
   const [selectedQuestionnaires, setSelectedQuestionnaires] = useState([]);
+  const [startQuestionnaires, setStartQuestionnaires] = useState([]);
+  const [endQuestionnaires, setEndQuestionnaires] = useState([]);
   const [viewQuestionnaire, setViewQuestionnaire] = useState(false);
   const [viewExercise, setViewExercise] = useState(false);
   const [viewEducationMaterial, setViewEducationMaterial] = useState(false);
@@ -54,6 +59,13 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
     setOldSelectedQuestionnaires(originDayActivity ? originDayActivity.questionnaires : []);
   }, [week, day, originData]);
 
+  useEffect(() => {
+    dispatch(getQuestionnaires({
+      page_size: 9999,
+      therapist_id: profile ? profile.id : ''
+    }));
+  }, [dispatch]);
+
   const handleExercisesChange = (checked, id) => {
     setViewExercise(false);
     if (checked) {
@@ -80,17 +92,27 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
     setSelectedMaterials([...selectedMaterials]);
   };
 
-  const handleQuestionnairesChange = (checked, id) => {
+  const handleQuestionnairesChange = (checked, id, includeAtTheStart, includeAtTheEnd) => {
     setViewQuestionnaire(false);
     if (checked) {
+      if (includeAtTheStart) {
+        startQuestionnaires.push(id);
+      }
+      if (includeAtTheEnd) {
+        endQuestionnaires.push(id);
+      }
       selectedQuestionnaires.push(id);
       setTotalSelectedActivity(totalSelectedActivity + 1);
       dispatch(addQuestionnaireDataPreview(id));
     } else {
       _.remove(selectedQuestionnaires, n => n === id);
+      _.remove(startQuestionnaires, n => n === id);
+      _.remove(endQuestionnaires, n => n === id);
       setTotalSelectedActivity(totalSelectedActivity - 1);
     }
     setSelectedQuestionnaires([...selectedQuestionnaires]);
+    setStartQuestionnaires([...startQuestionnaires]);
+    setEndQuestionnaires([...endQuestionnaires]);
   };
 
   const handleConfirm = () => {
@@ -127,7 +149,28 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
       const updatedActivities = _.unionWith([...newActivities], activities, (a, n) => {
         return a.week === n.week && a.day === n.day;
       });
-      setActivities(updatedActivities);
+      const foundStartQuestionnaires = getQuestionnaireByPhase(updatedActivities, 'start');
+      const foundEndQuestionnaires = getQuestionnaireByPhase(updatedActivities, 'end');
+      const lastDayActivity = getLastDayActivityOfTreatment(updatedActivities);
+      const firstDayActivity = getFirstDayActivityOfTreatment(updatedActivities);
+      const finalActivities = updatedActivities.map((ac) => {
+        let updatedQuestionnaires = [...ac.questionnaires];
+        // Remove the start or end questinnaires from other day
+        if (
+          !(firstDayActivity && ac.day === firstDayActivity.day && ac.week === firstDayActivity.week) &&
+          !(lastDayActivity && ac.day === lastDayActivity.day && ac.week === lastDayActivity.week)
+        ) {
+          updatedQuestionnaires = updatedQuestionnaires.filter((id) => {
+            const shouldRemove =
+              foundStartQuestionnaires.includes(id) ||
+              foundEndQuestionnaires.includes(id);
+            return !shouldRemove;
+          });
+        }
+
+        return { ...ac, questionnaires: updatedQuestionnaires };
+      });
+      setActivities(finalActivities);
       dispatch(addPresetDataPreview(presetId));
     } else {
       const newActivity = {
@@ -137,12 +180,126 @@ const AddActivity = ({ show, handleClose, week, day, activities, setActivities, 
         materials: selectedMaterials,
         questionnaires: selectedQuestionnaires
       };
+
       const updatedActivities = _.unionWith([newActivity], activities, (a, n) => {
         return a.week === n.week && a.day === n.day;
       });
-      setActivities(updatedActivities);
+      const lastDayActivity = getLastDayActivityOfTreatment(updatedActivities);
+      const firstDayActivity = getFirstDayActivityOfTreatment(updatedActivities);
+      const foundStartQuestionnaires = getQuestionnaireByPhase(updatedActivities, 'start');
+      const foundEndQuestionnaires = getQuestionnaireByPhase(updatedActivities, 'end');
+      // Add the start and end questionnaires to the start and end day of treatment if have
+      const finalActivities = updatedActivities.map((ac) => {
+        let updatedQuestionnaires = [...ac.questionnaires];
+
+        if (firstDayActivity && ac.day === firstDayActivity.day && ac.week === firstDayActivity.week) {
+          if (startQuestionnaires.length) {
+            updatedQuestionnaires = _.union(updatedQuestionnaires, startQuestionnaires);
+          }
+          // Move the existing start questionnaire to the start day of treatment
+          updatedQuestionnaires = _.union(updatedQuestionnaires, foundStartQuestionnaires);
+        }
+
+        if (lastDayActivity && ac.week === lastDayActivity.week && ac.day === lastDayActivity.day) {
+          if (endQuestionnaires.length) {
+            updatedQuestionnaires = _.union(updatedQuestionnaires, endQuestionnaires);
+          }
+          // Move the existing end questionnaire to the end day of treatment if new last day have activitiest assign to
+          updatedQuestionnaires = _.union(updatedQuestionnaires, foundEndQuestionnaires);
+        }
+
+        // Remove the start or end questinnaires from other day
+        if (
+          !(firstDayActivity && ac.day === firstDayActivity.day && ac.week === firstDayActivity.week) &&
+          !(lastDayActivity && ac.day === lastDayActivity.day && ac.week === lastDayActivity.week)
+        ) {
+          updatedQuestionnaires = updatedQuestionnaires.filter((id) => {
+            const shouldRemove =
+              endQuestionnaires.includes(id) ||
+              startQuestionnaires.includes(id) ||
+              foundStartQuestionnaires.includes(id) ||
+              foundEndQuestionnaires.includes(id);
+
+            return !shouldRemove;
+          });
+        }
+
+        // Remove the start questinnaires from last day
+        if (!(lastDayActivity && firstDayActivity && firstDayActivity.day === lastDayActivity.day && firstDayActivity.week === lastDayActivity.week) &&
+          lastDayActivity && ac.day === lastDayActivity.day && ac.week === lastDayActivity.week
+        ) {
+          const startQuestionniareIds = questionnaires
+            .filter(questionnaire =>
+              !questionnaire.include_at_the_end && questionnaire.include_at_the_start
+            )
+            .map(questionnaire => questionnaire.id);
+
+          updatedQuestionnaires = updatedQuestionnaires.filter((id) => {
+            return !startQuestionniareIds.includes(id);
+          });
+        }
+
+        // Remove the end questinnaires from first day
+        if (!(lastDayActivity && firstDayActivity && firstDayActivity.day === lastDayActivity.day && firstDayActivity.week === lastDayActivity.week) &&
+        firstDayActivity && ac.day === firstDayActivity.day && ac.week === firstDayActivity.week
+        ) {
+          const endQuestionniareIds = questionnaires
+            .filter(questionnaire =>
+              !questionnaire.include_at_the_start && questionnaire.include_at_the_end
+            )
+            .map(questionnaire => questionnaire.id);
+
+          updatedQuestionnaires = updatedQuestionnaires.filter((id) => {
+            return !endQuestionniareIds.includes(id);
+          });
+        }
+
+        return { ...ac, questionnaires: updatedQuestionnaires };
+      });
+      setActivities(finalActivities);
     }
     handleClose();
+  };
+
+  const getQuestionnaireByPhase = (treatmentActivities, includeAt) => {
+    const allActivityQuestionnaires = treatmentActivities.flatMap(activity => activity.questionnaires);
+    // Filter the start and end questionnaire ids if present in the treatment activities
+    const foundQuestionnaires = questionnaires
+      .filter(q => (includeAt === 'start' ? q.include_at_the_start : q.include_at_the_end) && allActivityQuestionnaires.includes(q.id))
+      .map(q => q.id);
+    return foundQuestionnaires;
+  };
+
+  const getLastDayActivityOfTreatment = (treatmentActivities) => {
+    let lastDayActivity = null;
+    const activityDayWithActivities = treatmentActivities.filter(
+      (activity) => activity.exercises.length > 0 || activity.materials.length > 0 || activity.questionnaires.length > 0
+    );
+    if (activityDayWithActivities.length > 0) {
+      lastDayActivity = activityDayWithActivities.reduce((last, current) => {
+        if (current.week > last.week || (current.week === last.week && current.day > last.day)) {
+          return current;
+        }
+        return last;
+      });
+    }
+    return lastDayActivity;
+  };
+
+  const getFirstDayActivityOfTreatment = (treatmentActivities) => {
+    let firstDayActivity = null;
+    const activityDayWithActivities = treatmentActivities.filter(
+      (activity) => activity.exercises.length > 0 || activity.materials.length > 0 || activity.questionnaires.length > 0
+    );
+    if (activityDayWithActivities.length > 0) {
+      firstDayActivity = activityDayWithActivities.reduce((first, current) => {
+        if (current.week < first.week || (current.week === first.week && current.day < first.day)) {
+          return current;
+        }
+        return first;
+      });
+    }
+    return firstDayActivity;
   };
 
   const handlePresetChange = (checked, id) => {

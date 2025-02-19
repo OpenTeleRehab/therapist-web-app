@@ -7,7 +7,7 @@ import {
   ListGroup
 } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { BsPlusCircle } from 'react-icons/all';
+import { BsPlusCircle } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import CreateTreatmentGoal from './create';
