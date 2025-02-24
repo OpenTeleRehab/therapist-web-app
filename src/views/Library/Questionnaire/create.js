@@ -168,7 +168,7 @@ const CreateQuestionnaire = ({ translate }) => {
           errorAnswerValue[i].push(false);
         }
 
-        if (questions[i].mark_as_countable && questions[i].answers[j].threshold === '') {
+        if (questions[i].type === 'open-number' && questions[i].mark_as_countable && questions[i].answers[j].threshold === '') {
           canSave = false;
           errorAnswerThreshold[i].push(true);
         } else {
