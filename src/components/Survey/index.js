@@ -18,6 +18,7 @@ const Survey = () => {
   const [currentQuestion, setCurrentQuestion] = useState();
   const [validationErrors, setValidationErrors] = useState({});
   const [hasMandatoryQuestion, setHasMandatoryQuestion] = useState(false);
+  const [canSubmit, setCanSubmit] = useState(false);
 
   useEffect(() => {
     dispatch(getPublishSurvey({
@@ -48,6 +49,11 @@ const Survey = () => {
       setCurrentQuestion(publishSurvey.questionnaire.questions[currentIndex]);
     }
   }, [publishSurvey, currentIndex]);
+
+  useEffect(() => {
+    const isEmpty = Object.values(answers).every(arr => arr.length === 0);
+    setCanSubmit(!isEmpty);
+  }, [answers]);
 
   const checkShowSurvey = () => {
     const lastSurveyShownDate = localStorage.getItem('lastSurveyShownDate');
@@ -133,13 +139,16 @@ const Survey = () => {
   const handleSubmit = () => {
     const newErrors = {};
 
+    if (!canSubmit) {
+      return;
+    }
     // Validate all mandatory questions before submitting
     publishSurvey.questionnaire.questions.forEach((question) => {
       if (question.mandatory && (!answers[question.id] || (_.isArray(answers[question.id]) && !answers[question.id].length))) {
         newErrors[question.id] = translate('survey.answer.required');
       }
       if (question.type === 'open-number') {
-        const threshold = currentQuestion.answers[0].threshold;
+        const threshold = question.answers[0].threshold;
         const minValue = 0;
         if (answers[question.id] && (answers[question.id] > threshold || answers[question.id] < minValue)) {
           newErrors[question.id] = translate('survey.error.thereshold_value', { minValue: minValue, threshold: threshold });
@@ -286,7 +295,7 @@ const Survey = () => {
           </Button>
           }
           {currentIndex === questionsLength - 1 && (
-            <Button variant="primary" onClick={handleSubmit}>
+            <Button disabled={!canSubmit} variant="primary" onClick={handleSubmit}>
               <Translate id="common.submit"/>
             </Button>
           )}
