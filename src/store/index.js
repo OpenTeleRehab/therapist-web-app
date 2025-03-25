@@ -35,6 +35,8 @@ import { message } from 'store/message/reducers';
 import { organization } from 'store/organization/reducers';
 import { transfer } from 'store/transfer/reducers';
 import { survey } from 'store/survey/reducers';
+import { superset } from 'store/superset/reducers';
+
 export const rootReducer = {
   localize: localizeReducer,
   user,
@@ -65,7 +67,8 @@ export const rootReducer = {
   message,
   organization,
   transfer,
-  survey
+  survey,
+  superset
 };
 
 const devTool =
