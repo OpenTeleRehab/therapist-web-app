@@ -7,7 +7,6 @@ import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
 import { unSubscribeEvent, chatLogout } from 'utils/rocketchat';
-import { User } from 'services/user';
 import RocketchatContext from 'context/RocketchatContext';
 
 const Navigation = ({ translate }) => {
@@ -28,10 +27,10 @@ const Navigation = ({ translate }) => {
     }
     if (keycloak.authenticated) {
       // Audit log for logout
-      await User.logoutUserAction({
-        log_name: 'therapist_service',
-        type: 'logout'
-      });
+      // await User.logoutUserAction({
+      //   log_name: 'therapist_service',
+      //   type: 'logout'
+      // });
       keycloak.logout();
     }
   };
