@@ -20,6 +20,7 @@ import ChatOrCall from 'views/ChatOrCall';
 import faqPage from 'views/Faq';
 import TermConditionPage from 'views/TermCondition';
 import PrivacyPolicyPage from 'views/PrivacyPolicy';
+import SupersetDashboard from 'views/Superset';
 
 import CreateExercise from 'views/Library/Exercise/create';
 import CreateEducationMaterial from 'views/Library/EducationMaterial/create';
@@ -34,6 +35,13 @@ const routes = [
     title: 'dashboard',
     path: ROUTES.DASHBOARD,
     component: DashboardPage,
+    exact: true,
+    type: PRIVATE
+  },
+  {
+    title: 'superset',
+    path: ROUTES.SUPERSET,
+    component: SupersetDashboard,
     exact: true,
     type: PRIVATE
   },
