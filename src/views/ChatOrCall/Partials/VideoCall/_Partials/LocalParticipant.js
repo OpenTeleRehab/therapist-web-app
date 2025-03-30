@@ -100,16 +100,19 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
           console.warn('Error stopping recognition:', error);
         }
 
-        recognitionRef.current.lang = selectedTranscriptingLanguage;
-        recognitionRef.current.onend = () => {
-          restartSpeechRecognition();
-        };
+        if (isAudioOn) {
+          recognitionRef.current.lang = selectedTranscriptingLanguage;
+          recognitionRef.current.onend = () => {
+            restartSpeechRecognition();
+          };
 
-        setTimeout(() => {
-          try {
-            startListening();
-          } catch (e) {}
-        }, 500);
+          setTimeout(() => {
+            try {
+              startListening();
+            } catch (e) {
+            }
+          }, 500);
+        }
       } catch (e) {
         console.log('Error while trying to restart SpeechRecognition', e);
       }
