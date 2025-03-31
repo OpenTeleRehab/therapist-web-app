@@ -56,7 +56,7 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
 
   useEffect(() => {
     restartSpeechRecognition();
-  }, [selectedTranscriptingLanguage]);
+  }, [selectedTranscriptingLanguage, isAudioOn]);
 
   const sendData = message => {
     if (participant && participant.dataTracks && participant.dataTracks.values().next().value) {
@@ -102,9 +102,6 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
 
         if (isAudioOn) {
           recognitionRef.current.lang = selectedTranscriptingLanguage;
-          recognitionRef.current.onend = () => {
-            restartSpeechRecognition();
-          };
 
           setTimeout(() => {
             try {
