@@ -76,7 +76,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   };
 
   const handleAcceptDialogConfirm = () => {
-    dispatch(updateAppointmentStatus(id, { status: APPOINTMENT_STATUS.ACCEPTED }, filter)).then(result => {
+    dispatch(updateAppointmentStatus(id, { therapist_status: APPOINTMENT_STATUS.ACCEPTED }, filter)).then(result => {
       if (result) {
         dispatch(showSuccessNotification('toast_title.accept_appointment', 'success_message.appointment_accept'));
         handleDialogClose();
@@ -85,7 +85,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   };
 
   const handleRejectDialogConfirm = () => {
-    dispatch(updateAppointmentStatus(id, { status: APPOINTMENT_STATUS.REJECTED }, filter)).then(result => {
+    dispatch(updateAppointmentStatus(id, { therapist_status: APPOINTMENT_STATUS.REJECTED }, filter)).then(result => {
       if (result) {
         dispatch(showSuccessNotification('toast_title.reject_appointment', 'success_message.appointment_reject'));
         handleDialogClose();
