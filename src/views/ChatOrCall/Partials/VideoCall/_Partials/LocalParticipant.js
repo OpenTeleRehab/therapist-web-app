@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
-const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscriptingLanguage }) => {
+const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscriptingLanguage, setSpeechRecognitionAvailable }) => {
   const videoRef = useRef();
   const audioRef = useRef();
   const recognitionRef = useRef();
@@ -68,7 +68,12 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
   };
 
   const startListening = () => {
-    if (!recognitionRef.current) return alert('Speech Recognition not supported!');
+    if (!recognitionRef.current) {
+      setSpeechRecognitionAvailable(false);
+      return;
+    } else {
+      setSpeechRecognitionAvailable(true);
+    }
     recognitionRef.current.start();
 
     recognitionRef.current.onresult = (event) => {
@@ -140,7 +145,8 @@ LocalParticipant.propTypes = {
   participant: PropTypes.object,
   isAudioOn: PropTypes.bool,
   isVideoOn: PropTypes.bool,
-  selectedTranscriptingLanguage: PropTypes.string
+  selectedTranscriptingLanguage: PropTypes.string,
+  setSpeechRecognitionAvailable: PropTypes.func
 };
 
 export default LocalParticipant;

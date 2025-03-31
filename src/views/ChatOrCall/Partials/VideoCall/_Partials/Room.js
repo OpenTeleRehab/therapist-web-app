@@ -12,6 +12,7 @@ import { showErrorNotification } from '../../../../../store/notification/actions
 import { languages } from '../../../../../variables/webApiAvailableLanguages';
 import { CALL_STATUS } from '../../../../../variables/rocketchat';
 import Select from 'react-select';
+import { getTranslate } from 'react-localize-redux';
 
 const Room = ({
   callAccessToken,
@@ -23,11 +24,14 @@ const Room = ({
   setSelectedTranscriptingLanguage
 }) => {
   const dispatch = useDispatch();
+  const localize = useSelector((state) => state.localize);
   const { profile } = useSelector(state => state.auth);
   const { videoCall } = useSelector(state => state.rocketchat);
+  const translate = getTranslate(localize);
   const { handleAddParticipants, handleAddRoom } = useVideoCallContext();
   const [room, setRoom] = useState();
   const [participants, setParticipants] = useState([]);
+  const [speechRecognitionAvailable, setSpeechRecognitionAvailable] = useState(true);
   const isActive = useRef(true);
 
   useEffect(() => {
@@ -146,6 +150,7 @@ const Room = ({
           </h6>
           <div className="transcript-language">
             <Select
+              isDisabled={!speechRecognitionAvailable}
               classNamePrefix="filter"
               value={languages.filter(option => option.code === selectedTranscriptingLanguage)}
               getOptionLabel={option => option.name}
@@ -154,6 +159,11 @@ const Room = ({
               onChange={(e) => setSelectedTranscriptingLanguage(e.code)}
               aria-label="Language"
             />
+            {!speechRecognitionAvailable && (
+              <p className="text-danger">
+                {translate('common.transcript.not.available')}
+              </p>
+            )}
           </div>
           <div className="remote">
             {participants.map(participant => (
@@ -167,6 +177,7 @@ const Room = ({
                 isVideoOn={isVideoOn}
                 isAudioOn={isAudioOn}
                 selectedTranscriptingLanguage={selectedTranscriptingLanguage}
+                setSpeechRecognitionAvailable={setSpeechRecognitionAvailable}
               />
             )}
           </div>
