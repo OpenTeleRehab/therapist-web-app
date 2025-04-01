@@ -1,7 +1,9 @@
 import React, { createContext, useEffect, useContext, useState } from 'react';
 import PropTypes from 'prop-types';
+import { getTranslate } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { sendNewMessage, updateMessage } from '../utils/rocketchat';
+import { showErrorNotification } from '../store/notification/actions';
 import { getCallAccessToken, sendPodcastNotification } from '../store/rocketchat/actions';
 import { CALL_STATUS } from '../variables/rocketchat';
 import { mutation } from '../store/rocketchat/mutations';
@@ -16,8 +18,10 @@ export const useVideoCallContext = () => useContext(VideoCallContext);
 export const VideoCallContextProvider = ({ children }) => {
   const dispatch = useDispatch();
   const chatSocket = useContext(RocketchatContext);
-  const { idleTimer } = useContext(AppContext);
+  const localize = useSelector((state) => state.localize);
   const { profile } = useSelector(state => state.auth);
+  const translate = getTranslate(localize);
+  const { idleTimer } = useContext(AppContext);
   const { authUserId, videoCall, chatRooms } = useSelector(state => state.rocketchat);
   const [hasParticipantInviting, setHasParticipantInviting] = useState(false);
   const [room, setRoom] = useState(undefined);
@@ -32,12 +36,21 @@ export const VideoCallContextProvider = ({ children }) => {
   }, [room]);
 
   useEffect(() => {
+    // Call busy listener
+    if (videoCall && videoCall.status === CALL_STATUS.BUSY) {
+      setTimeout(() => {
+        handleDisconnectRoom();
+
+        dispatch(mutation.getCallAccessTokenSuccess(undefined));
+        dispatch(mutation.removeVideoCallSuccess());
+        dispatch(showErrorNotification(translate('toast_title.jitsi_call_busy'), translate('error_message.jitsi_call_busy')));
+      }, 3000);
+    }
+
     // Missed or ended call listener
     if (videoCall && [CALL_STATUS.AUDIO_MISSED, CALL_STATUS.VIDEO_MISSED, CALL_STATUS.AUDIO_ENDED, CALL_STATUS.VIDEO_ENDED].includes(videoCall.status)) {
       if (videoCall.u._id !== authUserId || (videoCall.u._id === authUserId && participants.length === 0 && !hasParticipantInviting)) {
-        if (room) {
-          room.disconnect();
-        }
+        handleDisconnectRoom();
 
         dispatch(mutation.getCallAccessTokenSuccess(undefined));
         dispatch(mutation.removeVideoCallSuccess());
@@ -106,6 +119,20 @@ export const VideoCallContextProvider = ({ children }) => {
       }
     } else {
       handleUpdateMessage(_id, rid, identity, videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED);
+    }
+  };
+
+  const handleDisconnectRoom = () => {
+    if (room) {
+      // Disconnect from room
+      room.disconnect();
+
+      // Stop local tracks
+      if (room.localParticipant && room.localParticipant.tracks.length) {
+        room.localParticipant.tracks.forEach(function (trackPublication) {
+          trackPublication.track.stop();
+        });
+      }
     }
   };
 

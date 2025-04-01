@@ -8,9 +8,10 @@ import {
   updateVideoCallStatus
 } from 'store/rocketchat/actions';
 import { showErrorNotification } from 'store/notification/actions';
-import { USER_STATUS } from 'variables/rocketchat';
+import { CALL_STATUS, USER_STATUS } from 'variables/rocketchat';
 import { getUniqueId, getMessage } from './general';
 import { Rocketchat } from '../services/roketchat';
+import store from '../store';
 
 export const initialChatSocket = (dispatch, subscribeIds, username, password) => {
   let authUserId = '';
@@ -89,9 +90,17 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
       if (collection === 'stream-room-messages') {
         // trigger change in chat room
         const { _id, rid, u, msg } = fields.args[0];
-        if (msg !== '' && msg.includes('jitsi_call')) {
-          dispatch(updateVideoCallStatus({ _id, rid, u, status: msg }));
+        const { videoCall } = store.getState().rocketchat;
+        const { profile } = store.getState().auth;
+
+        if (msg && msg.includes('jitsi_call')) {
+          if (videoCall && videoCall.rid !== rid) {
+            updateMessage(socket, { _id, rid, msg: CALL_STATUS.BUSY }, profile.id);
+          } else {
+            dispatch(updateVideoCallStatus({ _id, rid, u, status: msg }));
+          }
         }
+
         const newMessage = getMessage(fields.args[0], authUserId, authToken);
         dispatch(appendNewMessage(newMessage, socket));
       } else if (collection === 'stream-notify-logged') {
