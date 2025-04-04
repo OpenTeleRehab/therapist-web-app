@@ -39,10 +39,12 @@ export const VideoCallContextProvider = ({ children }) => {
     // Call busy listener
     if (videoCall && videoCall.status === CALL_STATUS.BUSY) {
       setTimeout(() => {
-        handleDisconnectRoom();
+        if (participants.length === 0) {
+          handleDisconnectRoom();
 
-        dispatch(mutation.getCallAccessTokenSuccess(undefined));
-        dispatch(mutation.removeVideoCallSuccess());
+          dispatch(mutation.getCallAccessTokenSuccess(undefined));
+          dispatch(mutation.removeVideoCallSuccess());
+        }
         dispatch(showErrorNotification(translate('toast_title.jitsi_call_busy'), translate('error_message.jitsi_call_busy')));
       }, 3000);
     }
