@@ -90,11 +90,11 @@ export const initialChatSocket = (dispatch, subscribeIds, username, password) =>
       if (collection === 'stream-room-messages') {
         // trigger change in chat room
         const { _id, rid, u, msg } = fields.args[0];
-        const { videoCall } = store.getState().rocketchat;
+        const { authUserId, videoCall } = store.getState().rocketchat;
         const { profile } = store.getState().auth;
 
         if (msg && msg.includes('jitsi_call')) {
-          if (videoCall && videoCall.rid !== rid) {
+          if (videoCall && u._id !== authUserId && [CALL_STATUS.AUDIO_STARTED, CALL_STATUS.VIDEO_STARTED, CALL_STATUS.BUSY].includes(msg)) {
             updateMessage(socket, { _id, rid, msg: CALL_STATUS.BUSY }, profile.id);
           } else {
             dispatch(updateVideoCallStatus({ _id, rid, u, status: msg }));
