@@ -1,5 +1,4 @@
 export const DASHBOARD = '/dashboard';
-export const SUPERSET = '/superset';
 export const PROFILE = '/profile';
 export const FAQ = '/faq';
 export const TC = '/term-condition';
