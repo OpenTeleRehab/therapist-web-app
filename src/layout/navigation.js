@@ -95,14 +95,6 @@ const Navigation = ({ translate }) => {
             {translate('dashboard')}
           </NavLink>
           <NavLink
-            exact
-            to={ROUTES.SUPERSET}
-            key="nav-superset"
-            className="d-flex align-items-center nav-link"
-          >
-            {translate('superset')}
-          </NavLink>
-          <NavLink
             to={ROUTES.PATIENT}
             key="nav-patient"
             className="d-flex align-items-center nav-link"
