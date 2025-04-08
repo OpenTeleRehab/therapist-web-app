@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { Link, NavLink, withRouter } from 'react-router-dom';
-import { Navbar, Nav, Dropdown, Badge } from 'react-bootstrap';
+import { Navbar, Nav, Dropdown, Badge, Tooltip, Button, OverlayTrigger } from 'react-bootstrap';
 import * as ROUTES from 'variables/routes';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
@@ -9,6 +9,9 @@ import { useSelector } from 'react-redux';
 import { unSubscribeEvent, chatLogout } from 'utils/rocketchat';
 import RocketchatContext from 'context/RocketchatContext';
 import { User } from 'services/user';
+import { Translate } from 'react-localize-redux';
+import { BsCloudDownload } from 'react-icons/bs';
+import DownloadTracker from '../components/DownloadTracker';
 
 const Navigation = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -17,6 +20,7 @@ const Navigation = ({ translate }) => {
   const { chatRooms, isChatConnected, subscribeIds } = useSelector((state) => state.rocketchat);
   const { appointments } = useSelector((state) => state.appointment);
   const [show, setShow] = useState(false);
+  const [showDownloadTrackers, setShowDownloadTrackers] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -83,6 +87,15 @@ const Navigation = ({ translate }) => {
       <span className="portal-name ml-3">
         {translate('portal.name')}
       </span>
+      <OverlayTrigger
+        placement="bottom"
+        overlay={<Tooltip><Translate id="common.download.history" /></Tooltip>}
+      >
+        <Button aria-label="Download history" variant="link" className="ml-5 p-0" onClick={() => setShowDownloadTrackers(true)}>
+          <BsCloudDownload size={25} />
+        </Button>
+      </OverlayTrigger>
+      <DownloadTracker showDownloadTrackers={showDownloadTrackers} setShowDownloadTrackers={setShowDownloadTrackers} />
       <Navbar.Toggle aria-controls="basic-navbar-nav ml-auto" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto" variant="pills">

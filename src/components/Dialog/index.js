@@ -14,7 +14,6 @@ const Dialog = (props) => {
     children,
     onCopy,
     onEdit,
-    onDownload,
     copyLabel,
     editLabel,
     ...rest
@@ -41,11 +40,6 @@ const Dialog = (props) => {
             {confirmLabel}
           </Button>
         }
-        {onDownload && (
-          <Button variant="outline-dark" onClick={onDownload}>
-            <Translate id="questionnaire.download_report"/>
-          </Button>
-        )}
         {onCopy &&
           <Button variant="outline-dark" onClick={onCopy}>
             {copyLabel}
@@ -75,7 +69,6 @@ Dialog.propTypes = {
   disabledConfirmButton: PropTypes.bool,
   onCopy: PropTypes.func,
   onEdit: PropTypes.func,
-  onDownload: PropTypes.func,
   copyLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   editLabel: PropTypes.oneOfType([PropTypes.string, PropTypes.node])
 

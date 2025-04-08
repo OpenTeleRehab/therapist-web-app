@@ -2,7 +2,6 @@ import { Questionnaire } from 'services/questionnaire';
 import { mutation } from './mutations';
 import { showErrorNotification, showSuccessNotification } from 'store/notification/actions';
 import { showSpinner } from 'store/spinnerOverlay/actions';
-import { saveAs } from 'file-saver';
 
 export const getQuestionnaires = payload => async dispatch => {
   dispatch(mutation.getQuestionnairesRequest());
@@ -103,16 +102,16 @@ export const deleteQuestionnaire = id => async (dispatch, getState) => {
   }
 };
 
-export const downloadQuestionnaireResults = (id, language) => async dispatch => {
+export const downloadQuestionnaireResults = (language) => async dispatch => {
   dispatch(mutation.downloadQuestionnaireResultsRequest());
-  const res = await Questionnaire.downloadQuestionnaireResults(id, language);
-  if (res) {
+  const data = await Questionnaire.downloadQuestionnaireResults(language);
+  if (data) {
     dispatch(mutation.downloadQuestionnaireResultsSuccess());
-    saveAs(res, 'Questionnaire_Results.xlsx');
-    return true;
+    dispatch(showSuccessNotification('toast_title.export', data.message));
+    return data.data;
   } else {
     dispatch(mutation.downloadQuestionnaireResultsFail());
-    dispatch(showErrorNotification('toast_title.error_message', res.message));
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
     return false;
   }
 };

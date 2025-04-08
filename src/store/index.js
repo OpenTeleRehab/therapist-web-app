@@ -36,6 +36,7 @@ import { organization } from 'store/organization/reducers';
 import { transfer } from 'store/transfer/reducers';
 import { survey } from 'store/survey/reducers';
 import { superset } from 'store/superset/reducers';
+import { downloadTracker } from 'store/downloadTracker/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -68,7 +69,8 @@ export const rootReducer = {
   organization,
   transfer,
   survey,
-  superset
+  superset,
+  downloadTracker
 };
 
 const devTool =

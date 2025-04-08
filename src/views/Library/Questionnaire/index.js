@@ -21,7 +21,7 @@ import {
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
-import { getQuestionnaires, deleteQuestionnaire, downloadQuestionnaireResults } from 'store/questionnaire/actions';
+import { getQuestionnaires, deleteQuestionnaire } from 'store/questionnaire/actions';
 import ViewQuestionnaire from './viewQuestionnaire';
 import CheckboxTree from 'react-checkbox-tree';
 import SearchInput from 'components/Form/SearchInput';
@@ -176,14 +176,6 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
 
   const handleTranslate = (id) => {
     history.push(ROUTES.QUESTIONNAIRE_TRANSLATE.replace(':id', id).replace(':lang', language));
-  };
-
-  const handleDownload = (id) => {
-    dispatch(downloadQuestionnaireResults(id, language)).then(result => {
-      if (result) {
-        handleViewQuestionnaireClose();
-      }
-    });
   };
 
   const customSelectStyles = {
@@ -375,7 +367,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
             </>
           )}
           { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
-          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} handleDownload={() => handleDownload(id)} />}
+          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
         </Col>
       </Row>
       <Dialog
