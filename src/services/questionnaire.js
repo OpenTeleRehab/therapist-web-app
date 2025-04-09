@@ -148,8 +148,8 @@ const updateFavorite = (id, payload) => {
     });
 };
 
-const downloadQuestionnaireResults = (id, language) => {
-  return axios.get('/questionnaire-result/export', { params: { id: id, lang: language }, responseType: 'blob' })
+const downloadQuestionnaireResults = (language) => {
+  return axios.get('/export', { params: { lang: language, type: 'questionnaire_result' } })
     .then(
       res => {
         return res.data;

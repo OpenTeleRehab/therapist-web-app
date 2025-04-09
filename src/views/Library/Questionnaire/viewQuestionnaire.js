@@ -7,7 +7,7 @@ import { Accordion, AccordionContext, Card, Form } from 'react-bootstrap';
 import { BsChevronDown, BsChevronRight } from 'react-icons/bs';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 
-const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handleEdit, showEdit, showCopy, handleDownload }) => {
+const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handleEdit, showEdit, showCopy }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
 
@@ -21,7 +21,6 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
       className="mt-3"
       onEdit={showEdit ? () => handleEdit(questionnaire.id) : null}
       onCopy={showCopy ? () => handleCopy(questionnaire.id) : null}
-      onDownload={handleDownload}
     >
       <div className="d-flex flex-column mb-2">
         <span className="font-weight-bold">{translate('questionnaire.description')}</span>
@@ -122,8 +121,7 @@ ViewQuestionnaire.propTypes = {
   showCopy: PropTypes.bool,
   showEdit: PropTypes.bool,
   handleCopy: PropTypes.func,
-  handleEdit: PropTypes.func,
-  handleDownload: PropTypes.func
+  handleEdit: PropTypes.func
 };
 
 export default ViewQuestionnaire;
