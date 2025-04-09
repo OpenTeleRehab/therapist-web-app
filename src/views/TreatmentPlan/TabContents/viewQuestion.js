@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import 'react-phone-input-2/lib/style.css';
-import { Accordion, AccordionContext, Card, Form } from 'react-bootstrap';
+import { Accordion, AccordionContext, Badge, Card, Form } from 'react-bootstrap';
 import _ from 'lodash';
 import { BsChevronDown, BsChevronRight } from 'react-icons/bs';
 
@@ -34,6 +34,10 @@ const ViewQuestion = ({ show, handleClose, questionnaire }) => {
         <span className="font-weight-bold">{translate('questionnaire.number_of_question')}</span>
         <span>{questionnaire.questions.length}</span>
       </div>
+      <div className="d-flex flex-column mb-3">
+        <span className="font-weight-bold">{translate('questionnaire.total_score')}</span>
+        <span>{questionnaire.score}</span>
+      </div>
       {questionnaire.questions.map((question, index) => (
         <Accordion key={index}>
           <Card className="mb-3 question-card">
@@ -55,7 +59,15 @@ const ViewQuestion = ({ show, handleClose, questionnaire }) => {
                       question.answers.map((answer, index) => (
                         <div key={index}>
                           <Form.Check
-                            inline label={answer.description}
+                            inline
+                            label={
+                              <>
+                                {answer.description}
+                                {answer.value && (
+                                  <Badge className="ml-2" pill variant="warning">{translate('question.answer_value')}: {answer.value}</Badge>
+                                )}
+                              </>
+                            }
                             type='checkbox'
                             checked={ questionnaire.answers.find(patientAnswer => _.includes(patientAnswer.answer, answer.id))}
                             disabled
@@ -69,7 +81,15 @@ const ViewQuestion = ({ show, handleClose, questionnaire }) => {
                       question.answers.map((answer, index) => (
                         <div key={index}>
                           <Form.Check
-                            inline label={answer.description}
+                            inline
+                            label={
+                              <>
+                                {answer.description}
+                                {answer.value && (
+                                  <Badge className="ml-2" pill variant="warning">{translate('question.answer_value')}: {answer.value}</Badge>
+                                )}
+                              </>
+                            }
                             type='radio'
                             checked={questionnaire.answers.find(patientAnswer => patientAnswer.answer === answer.id)}
                             disabled
@@ -101,6 +121,16 @@ const ViewQuestion = ({ show, handleClose, questionnaire }) => {
                             value={answerValue(question.id)}
                           />
                         </Form.Group>
+                        {question.answers.map((answer, index) => (
+                          <div key={index}>
+                            {answer.value && (
+                              <Badge pill variant="warning">{translate('question.answer_value')}: {answer.value}</Badge>
+                            )}
+                            {answer.threshold && (
+                              <Badge className="ml-1" pill variant="danger">{translate('question.answer_threshold')}: {answer.threshold}</Badge>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     )
                   }
