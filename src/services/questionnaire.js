@@ -1,6 +1,7 @@
 import { isCancel } from 'axios';
 import axios from 'utils/axios';
 import _ from 'lodash';
+import { getCountryIsoCode } from '../utils/country';
 
 const getQuestionnaires = payload => {
   if (window.questionnaireAbortController !== undefined) {
@@ -148,8 +149,8 @@ const updateFavorite = (id, payload) => {
     });
 };
 
-const downloadQuestionnaireResults = (language) => {
-  return axios.get('/export', { params: { lang: language, type: 'questionnaire_result' } })
+const downloadQuestionnaireResults = (language, countryId) => {
+  return axios.get('/export', { params: { lang: language, type: 'questionnaire_result' }, headers: { country: getCountryIsoCode(countryId) } })
     .then(
       res => {
         return res.data;
