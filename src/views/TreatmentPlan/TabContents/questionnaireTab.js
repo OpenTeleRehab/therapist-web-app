@@ -28,6 +28,7 @@ const QuestionnaireTab = () => {
     { name: 'submitted_date', title: translate('questionnaire.submitted_date') },
     { name: 'title', title: translate('questionnaire.title') + '/' + translate('questionnaire.description') },
     { name: 'number_of_question', title: translate('questionnaire.number_of_question') },
+    { name: 'score', title: translate('questionnaire.total_score') },
     { name: 'action', title: translate('common.action') }
   ];
 
@@ -69,6 +70,7 @@ const QuestionnaireTab = () => {
               }}
             />,
             number_of_question: questionnaire.questions.length,
+            score: questionnaire.score,
             action
           };
         })
