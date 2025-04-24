@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGuestToken } from '../../store/superset/actions';
 import { embedDashboard } from '@superset-ui/embedded-sdk';
@@ -7,12 +7,26 @@ import PropTypes from 'prop-types';
 const Dashboard = ({ dashboardId }) => {
   const dispatch = useDispatch();
   const { guestToken, exp } = useSelector(state => state.superset);
+  const { profile } = useSelector((state) => state.auth);
+  const { languages } = useSelector(state => state.language);
   const containerRef = useRef(null);
   const intervalIdRef = useRef(null);
+  const [locale, setLocale] = useState('en');
 
   const refreshToken = () => {
     dispatch(getGuestToken());
   };
+
+  useEffect(() => {
+    if (languages.length && profile) {
+      const language = languages.find(lang => lang.id === profile.language_id);
+      if (language) {
+        setLocale(language.code);
+      } else {
+        setLocale('en');
+      }
+    }
+  }, [languages, profile]);
 
   useEffect(() => {
     if (!guestToken) {
@@ -44,12 +58,15 @@ const Dashboard = ({ dashboardId }) => {
         fetchGuestToken: () => guestToken,
         dashboardUiConfig: {
           hideTitle: true,
-          filters: { expanded: true }
+          filters: { expanded: true },
+          urlParams: {
+            languagecode: locale
+          }
         },
         iframeSandboxExtras: ['allow-top-navigation', 'allow-popups-to-escape-sandbox']
       });
     }
-  }, [guestToken]);
+  }, [guestToken, locale]);
 
   return (
     <div>
