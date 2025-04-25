@@ -12,6 +12,7 @@ const Dashboard = ({ dashboardId }) => {
   const containerRef = useRef(null);
   const intervalIdRef = useRef(null);
   const [locale, setLocale] = useState('en');
+  const [langReady, setLangReady] = useState(false);
 
   const refreshToken = () => {
     dispatch(getGuestToken());
@@ -27,6 +28,22 @@ const Dashboard = ({ dashboardId }) => {
       }
     }
   }, [languages, profile]);
+
+  useEffect(() => {
+    if (!locale) return;
+    setLangReady(false);
+    const langFrame = document.createElement('iframe');
+    langFrame.style.display = 'none';
+    langFrame.src = `${process.env.REACT_APP_SUPERSET_API_BASE_URL}/lang/${locale}`;
+    langFrame.onload = () => {
+      setLangReady(true);
+    };
+    document.body.appendChild(langFrame);
+
+    return () => {
+      document.body.removeChild(langFrame);
+    };
+  }, [locale]);
 
   useEffect(() => {
     if (!guestToken) {
@@ -50,7 +67,7 @@ const Dashboard = ({ dashboardId }) => {
   }, [guestToken]);
 
   useEffect(() => {
-    if (containerRef.current && guestToken) {
+    if (containerRef.current && guestToken && langReady) {
       embedDashboard({
         id: dashboardId,
         supersetDomain: process.env.REACT_APP_SUPERSET_API_BASE_URL,
@@ -66,7 +83,7 @@ const Dashboard = ({ dashboardId }) => {
         iframeSandboxExtras: ['allow-top-navigation', 'allow-popups-to-escape-sandbox']
       });
     }
-  }, [guestToken, locale]);
+  }, [guestToken, locale, langReady]);
 
   return (
     <div>
