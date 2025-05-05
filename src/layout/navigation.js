@@ -8,7 +8,6 @@ import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
 import { unSubscribeEvent, chatLogout } from 'utils/rocketchat';
 import RocketchatContext from 'context/RocketchatContext';
-import { User } from 'services/user';
 import DownloadTracker from '../components/DownloadTracker';
 
 const Navigation = ({ translate }) => {
@@ -29,11 +28,6 @@ const Navigation = ({ translate }) => {
       chatLogout(chatSocket, subscribeIds.loginId);
     }
     if (keycloak.authenticated) {
-      // Audit log for logout
-      await User.logoutUserAction({
-        log_name: 'therapist_service',
-        type: 'logout'
-      });
       keycloak.logout();
     }
   };

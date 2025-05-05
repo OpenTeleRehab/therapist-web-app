@@ -112,18 +112,6 @@ const getActivitiesByIds = (activityIds, treatmentPlanId, type, day, week, lang,
     });
 };
 
-const logoutUserAction = (payload) => {
-  return axios.post('/audit-logs', payload)
-    .then(
-      res => {
-        return res.data;
-      }
-    )
-    .catch((e) => {
-      return e.response.data;
-    });
-};
-
 export const User = {
   createUser,
   getUsers,
@@ -131,6 +119,5 @@ export const User = {
   activateDeactivateAccount,
   deleteAccount,
   deletePatientChatRoomById,
-  getActivitiesByIds,
-  logoutUserAction
+  getActivitiesByIds
 };
