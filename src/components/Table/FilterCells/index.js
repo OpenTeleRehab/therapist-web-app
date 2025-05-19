@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { TableFilterRow } from '@devexpress/dx-react-grid-bootstrap4';
 import StatusFilterCell from 'components/Table/FilterCells/StatusFilterCell';
 import TreatmentStatusFilterCell from 'components/Table/FilterCells/TreatmentStatusFilterCell';
+import TransferFilterCell from 'components/Table/FilterCells/TransferFilterCell';
 import DateRangeFilterCell from 'components/Table/FilterCells/DateRangeFilterCell';
 import DateOfBirthFilterCell from 'components/Table/FilterCells/DateOfBirthFilterCell';
 import NumberFilterCell from './NumberFilterCell';
@@ -37,6 +38,8 @@ const FilterCell = (props) => {
     return <FollowUpDateFilterCell {...props} />;
   } else if (column.name === 'assistive_name') {
     return <AssistiveTechnologyFilterCell {...props} />;
+  } else if (column.name === 'transfer') {
+    return <TransferFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };
