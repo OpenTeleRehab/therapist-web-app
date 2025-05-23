@@ -32,12 +32,8 @@ const TransferFilterCell = ({ filter, onFilter }) => {
       name: translate('transfer.status.invited')
     },
     {
-      value: 'accepted',
-      name: translate('transfer.status.accept')
-    },
-    {
       value: 'declined',
-      name: translate('transfer.status.decline')
+      name: translate('transfer.status.declined')
     }
   ];
 
