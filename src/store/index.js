@@ -37,6 +37,8 @@ import { transfer } from 'store/transfer/reducers';
 import { survey } from 'store/survey/reducers';
 import { superset } from 'store/superset/reducers';
 import { downloadTracker } from 'store/downloadTracker/reducers';
+import { healthConditionGroup } from 'store/healthConditionGroup/reducers';
+import { healthCondition } from 'store/healthCondition/reducers';
 
 export const rootReducer = {
   localize: localizeReducer,
@@ -70,7 +72,9 @@ export const rootReducer = {
   transfer,
   survey,
   superset,
-  downloadTracker
+  downloadTracker,
+  healthConditionGroup,
+  healthCondition
 };
 
 const devTool =

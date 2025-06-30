@@ -11,9 +11,10 @@ import moment from 'moment';
 import { createTreatmentPlan } from 'store/treatmentPlan/actions';
 import { getUsers } from '../../../store/user/actions';
 import { getLastActivityDate } from '../../../utils/treatmentPlan';
-import { getDiseases } from '../../../store/disease/actions';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
+import { getHealthConditionGroups } from '../../../store/healthConditionGroup/actions';
+import { getHealthConditions } from '../../../store/healthCondition/actions';
 
 const AssignPatient = ({ show, handleClose, weeks, activities }) => {
   const dispatch = useDispatch();
@@ -21,9 +22,12 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
   const translate = getTranslate(localize);
 
   const { users } = useSelector(state => state.user);
-  const diseases = useSelector((state) => state.disease.diseases);
   const { profile } = useSelector(state => state.auth);
+  const healthConditionGroups = useSelector((state) => state.healthConditionGroup.healthConditionGroups);
+  const healthConditions = useSelector((state) => state.healthCondition.healthConditions);
   const [startDate, setStartDate] = useState('');
+  const [errorHealthConditionGroup, setErrorHealthConditionGroup] = useState(false);
+  const [errorHealthCondition, setErrorHealthCondition] = useState(false);
   const [errorName, setErrorName] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorPatient, setErrorPatient] = useState(false);
@@ -34,8 +38,27 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     patient_id: '',
     start_date: '',
     end_date: '',
-    disease_id: ''
+    health_condition_group_id: '',
+    health_condition_id: ''
   });
+
+  useEffect(() => {
+    dispatch(getHealthConditionGroups({ lang: profile.language_id }));
+    dispatch(getHealthConditions({ lang: profile.language_id }));
+  }, [dispatch, profile]);
+
+  useEffect(() => {
+    if (formFields.health_condition_group_id) {
+      dispatch(getHealthConditions({ lang: profile.language_id, parent_id: formFields.health_condition_group_id }));
+    }
+  }, [formFields.health_condition_group_id]);
+
+  useEffect(() => {
+    if (healthConditions.length && formFields.health_condition_id && !formFields.health_condition_group_id) {
+      const condition = healthConditions.find(item => item.id === formFields.health_condition_id);
+      setFormFields({ ...formFields, health_condition_group_id: condition.parent_id });
+    }
+  }, [healthConditions, formFields.health_condition_group_id, formFields.health_condition_id]);
 
   useEffect(() => {
     const yesterday = moment().subtract(1, 'day');
@@ -63,10 +86,6 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     }
   }, [profile, dispatch]);
 
-  useEffect(() => {
-    dispatch(getDiseases({ lang: profile.language_id }));
-  }, [dispatch, profile]);
-
   const handleChange = e => {
     const { name, value } = e.target;
     setFormFields({ ...formFields, [name]: value });
@@ -79,6 +98,8 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
 
   const handleConfirm = () => {
     let canSave = true;
+    setErrorHealthConditionGroup(false);
+    setErrorHealthCondition(false);
 
     if (formFields.name === '') {
       canSave = false;
@@ -101,6 +122,20 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
       setErrorStartDate(false);
     }
 
+    if (!formFields.health_condition_group_id) {
+      canSave = false;
+      setErrorHealthConditionGroup(true);
+    } else {
+      setErrorHealthConditionGroup(false);
+    }
+
+    if (!formFields.health_condition_id) {
+      canSave = false;
+      setErrorHealthCondition(true);
+    } else {
+      setErrorHealthCondition(false);
+    }
+
     if (canSave) {
       formFields.end_date = getLastActivityDate(formFields.start_date, activities);
 
@@ -121,7 +156,11 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
   };
 
   const handleSingleSelectChange = (key, value) => {
-    setFormFields({ ...formFields, [key]: value });
+    if (key === 'health_condition_group_id') {
+      setFormFields({ ...formFields, [key]: value, health_condition_id: '' });
+    } else {
+      setFormFields({ ...formFields, [key]: value });
+    }
   };
 
   const customSelectStyles = {
@@ -153,7 +192,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row>
-          <Col lg={4}>
+          <Col md={6}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.choose_a_patient')}</Form.Label>
               <Form.Control
@@ -176,7 +215,54 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
               )}
             </Form.Group>
           </Col>
-          <Col lg={4}>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.health_condition_group')}</Form.Label>
+              <span className="text-dark ml-1">*</span>
+              <Select
+                placeholder={translate('placeholder.health_condition_group')}
+                classNamePrefix="filter"
+                className={errorHealthConditionGroup ? 'is-invalid' : ''}
+                value={healthConditionGroups.filter(option => option.id === parseInt(formFields.health_condition_group_id))}
+                getOptionLabel={option => `${option.title}`}
+                options={[
+                  { id: '', title: translate('placeholder.health_condition_group') },
+                  ...healthConditionGroups
+                ]}
+                onChange={(e) => handleSingleSelectChange('health_condition_group_id', e.id)}
+                styles={customSelectStyles}
+                aria-label={translate('treatment_plan.health_condition_group')}
+              />
+              <Form.Control.Feedback type="invalid">
+                {translate('error.treatment_plan.health_condition_group')}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col md={6}>
+            <Form.Group>
+              <Form.Label>{translate('treatment_plan.health_condition')}</Form.Label>
+              <span className="text-dark ml-1">*</span>
+              <Select
+                isDisabled={!formFields.health_condition_group_id}
+                placeholder={translate('placeholder.health_condition')}
+                classNamePrefix="filter"
+                className={errorHealthCondition ? 'is-invalid' : ''}
+                value={healthConditions.filter(option => option.id === parseInt(formFields.health_condition_id))}
+                getOptionLabel={option => `${option.title}`}
+                options={[
+                  { id: '', title: translate('placeholder.health_condition') },
+                  ...healthConditions
+                ]}
+                onChange={(e) => handleSingleSelectChange('health_condition_id', e.id)}
+                styles={customSelectStyles}
+                aria-label={translate('treatment_plan.health_condition')}
+              />
+              <Form.Control.Feedback type="invalid">
+                {translate('error.treatment_plan.health_condition')}
+              </Form.Control.Feedback>
+            </Form.Group>
+          </Col>
+          <Col lg={6}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.name')}</Form.Label>
               <span className="text-dark ml-1">*</span>
@@ -192,25 +278,6 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
               <Form.Control.Feedback type="invalid">
                 {translate('error.treatment_plan.name')}
               </Form.Control.Feedback>
-            </Form.Group>
-          </Col>
-          <Col lg={4}>
-            <Form.Group>
-              <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
-              <span className="text-dark ml-1"></span>
-              <Select
-                placeholder={translate('placeholder.disease')}
-                classNamePrefix="filter"
-                value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
-                getOptionLabel={option => `${option.name}`}
-                options={[
-                  { id: '', name: translate('placeholder.disease') },
-                  ...diseases
-                ]}
-                onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
-                styles={customSelectStyles}
-                aria-label="Disease"
-              />
             </Form.Group>
           </Col>
         </Form.Row>
