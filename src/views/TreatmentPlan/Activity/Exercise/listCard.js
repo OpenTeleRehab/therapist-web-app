@@ -18,7 +18,7 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
   const [exercise, setExercise] = useState([]);
   const [viewExercise, setViewExercise] = useState(false);
   const [treatmentPlanExercises, setTreatmentPlanExercises] = useState([]);
-  const { previewData } = useSelector(state => state.treatmentPlan.treatmentPlansDetail);
+  const { previewData, activities } = useSelector(state => state.treatmentPlan.treatmentPlansDetail);
 
   useEffect(() => {
     if (treatmentPlanSelectedExercises && treatmentPlanSelectedExercises.length > 0) {
@@ -62,7 +62,9 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
   return (
     <>
       {exerciseIds.map(id => {
-        const exercise = previewData && previewData.exercises ? _.find(previewData.exercises, { id }) : undefined;
+        const exercise =
+          _.find(activities, { activity_id: id, day, week }) ||
+          (previewData && previewData.exercises ? _.find(previewData.exercises, { id }) : undefined);
 
         if (!exercise) {
           return <CardPlaceholder key={id}/>;
@@ -86,7 +88,7 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
                           aria-label="Remove exercise"
                           className="btn-circle-sm btn-circle-primary"
                           variant="outline-primary"
-                          onClick={() => onSelectionRemove(exercise.id)}
+                          onClick={() => onSelectionRemove(exercise.activity_id || exercise.id)}
                         >
                           <BsX size={14} />
                         </Button>
@@ -97,7 +99,7 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
                                         aria-label="Remove exercise"
                                         className="btn-circle-sm"
                                         variant="outline-primary"
-                                        onClick={() => onSelectionRemove(exercise.id)}
+                                        onClick={() => onSelectionRemove(exercise.activity_id || exercise.id)}
                                       >
                                         <BsX size={14} />
                                       </Button>

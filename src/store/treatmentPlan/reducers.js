@@ -1,6 +1,7 @@
 export const initialState = {
   treatmentPlans: [],
   treatmentPlansDetail: {
+    activities: [],
     previewData: {
       exercises: [],
       materials: [],

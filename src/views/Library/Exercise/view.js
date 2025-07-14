@@ -15,7 +15,8 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
   const [formFields, setFormFields] = useState({
     sets: 0,
     reps: 0,
-    additional_information: ''
+    additional_information: '',
+    activity_id: ''
   });
   const [setsError, setSetsError] = useState(false);
   const [repsError, setRepsError] = useState(false);
@@ -27,13 +28,15 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
         setFormFields({
           sets: customExercise.sets,
           reps: customExercise.reps,
-          additional_information: customExercise.additional_information
+          additional_information: customExercise.additional_information,
+          activity_id: customExercise.activity_id
         });
       } else {
         setFormFields({
           sets: exercise.sets,
           reps: exercise.reps,
-          additional_information: exercise.additional_information
+          additional_information: exercise.additional_information,
+          activity_id: exercise.activity_id
         });
       }
     }
