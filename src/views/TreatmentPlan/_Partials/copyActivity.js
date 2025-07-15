@@ -27,7 +27,7 @@ const CopyActivity = ({ show, handleClose, activities, setActivities, dayActivit
           User.getActivitiesByIds([exercise], treatmentPlanId, TYPE.exercise, dayActivityToCopy.day, dayActivityToCopy.week, lang, therapistId).then(res => {
             if (res.data) {
               res.data.forEach(data => {
-                customExercises.push({ additional_information: data.additional_information, reps: data.reps, sets: data.sets, id: data.id });
+                customExercises.push({ additional_information: data.additional_information, reps: data.reps, sets: data.sets, id: data.id, activity_id: data.activity_id });
               });
             }
           });
@@ -37,7 +37,7 @@ const CopyActivity = ({ show, handleClose, activities, setActivities, dayActivit
       User.getActivitiesByIds(dayActivityToCopy.exercises, treatmentPlanId, TYPE.exercise, dayActivityToCopy.day, dayActivityToCopy.week, lang, therapistId).then(res => {
         if (res.data) {
           res.data.forEach(data => {
-            customExercises.push({ additional_information: data.additional_information, reps: data.reps, sets: data.sets, id: data.id });
+            customExercises.push({ additional_information: data.additional_information, reps: data.reps, sets: data.sets, id: data.id, activity_id: data.activity_id });
           });
         }
       });
