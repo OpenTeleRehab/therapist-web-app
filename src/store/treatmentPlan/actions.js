@@ -86,6 +86,10 @@ export const getPresetTreatmentPlans = payload => async dispatch => {
   }
 };
 
+export const resetTreatmentPlanDetailActivities = () => async dispatch => {
+  dispatch(mutation.resetTreatmentPlanDetailActivities());
+};
+
 export const downloadTreatmentPlan = id => async (dispatch) => {
   dispatch(mutation.downloadTreatmentPlanRequest());
   const res = await TreatmentPlan.downloadTreatmentPlan(id);

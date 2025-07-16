@@ -43,6 +43,14 @@ export const treatmentPlan = (state = initialState, action) => {
         treatmentPlansDetail: action.data
       });
     }
+    case 'RESET_TREATMENT_PLAN_DETAIL_ACTIVITIES': {
+      return Object.assign({}, state, {
+        treatmentPlansDetail: {
+          ...state.treatmentPlansDetail,
+          activities: []
+        }
+      });
+    }
     case 'UPDATE_TREATMENT_PLAN_SUCCESS': {
       const { id, data } = action;
       const treatmentPlans = state.treatmentPlans.map(t => t.id === parseInt(id) ? { ...t, ...data } : t);

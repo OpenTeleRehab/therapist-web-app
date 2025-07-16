@@ -7,7 +7,8 @@ import { getTranslate } from 'react-localize-redux';
 import settings from 'settings';
 import {
   createTreatmentPlan, updateTreatmentPlan,
-  getTreatmentPlans, getTreatmentPlansDetail
+  getTreatmentPlans, getTreatmentPlansDetail,
+  resetTreatmentPlanDetailActivities
 } from 'store/treatmentPlan/actions';
 import moment from 'moment';
 
@@ -32,7 +33,7 @@ const CreateTreatmentPlan = () => {
   const { id, patientId } = useParams();
   const { state } = useLocation();
 
-  const { treatmentPlans } = useSelector(state => state.treatmentPlan);
+  const { treatmentPlans, treatmentPlansDetail } = useSelector(state => state.treatmentPlan);
   const { users } = useSelector(state => state.user);
   const { profile } = useSelector(state => state.auth);
   const validateDate = (current) => {
@@ -90,6 +91,12 @@ const CreateTreatmentPlan = () => {
       dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
   }, [id, patientId, profile, dispatch]);
+
+  useEffect(() => {
+    if (!id && treatmentPlansDetail.activities.length > 0) {
+      dispatch(resetTreatmentPlanDetailActivities());
+    }
+  }, [id, dispatch, treatmentPlansDetail]);
 
   useEffect(() => {
     if (!patientId && profile) {

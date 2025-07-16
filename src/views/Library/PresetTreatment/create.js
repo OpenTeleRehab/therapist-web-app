@@ -5,7 +5,8 @@ import { useParams, useHistory } from 'react-router-dom';
 import { getTranslate } from 'react-localize-redux';
 import {
   createTreatmentPlan, updateTreatmentPlan,
-  getTreatmentPlansDetail, getPresetTreatmentPlans
+  getTreatmentPlansDetail, getPresetTreatmentPlans,
+  resetTreatmentPlanDetailActivities
 } from 'store/treatmentPlan/actions';
 
 import ActivitySection from 'views/TreatmentPlan/_Partials/activitySection';
@@ -22,7 +23,7 @@ const CreatePresetTreatment = () => {
   const { id } = useParams();
 
   const { profile } = useSelector((state) => state.auth);
-  const { presetTreatmentPlans } = useSelector((state) => state.treatmentPlan);
+  const { presetTreatmentPlans, treatmentPlansDetail } = useSelector((state) => state.treatmentPlan);
   const [formFields, setFormFields] = useState({ name: '' });
   const [weeks, setWeeks] = useState(1);
   const [errorName, setErrorName] = useState(false);
@@ -41,6 +42,12 @@ const CreatePresetTreatment = () => {
       dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
   }, [id, dispatch, profile]);
+
+  useEffect(() => {
+    if (!id && treatmentPlansDetail.activities.length > 0) {
+      dispatch(resetTreatmentPlanDetailActivities());
+    }
+  }, [id, dispatch, treatmentPlansDetail]);
 
   useEffect(() => {
     if (id && presetTreatmentPlans.length) {

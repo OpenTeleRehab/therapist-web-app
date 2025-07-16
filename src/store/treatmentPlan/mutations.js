@@ -93,6 +93,10 @@ const addDataPreview = (data) => ({
   data
 });
 
+const resetTreatmentPlanDetailActivities = () => ({
+  type: 'RESET_TREATMENT_PLAN_DETAIL_ACTIVITIES'
+});
+
 export const mutation = {
   createTreatmentPlanRequest,
   createTreatmentPlanSuccess,
@@ -115,5 +119,6 @@ export const mutation = {
   downloadTreatmentPlanRequest,
   downloadTreatmentPlanSuccess,
   downloadTreatmentPlanFail,
-  addDataPreview
+  addDataPreview,
+  resetTreatmentPlanDetailActivities
 };
