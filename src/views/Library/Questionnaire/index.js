@@ -367,7 +367,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
             </>
           )}
           { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
-          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
+          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} id={questionnaire.id} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
         </Col>
       </Row>
       <Dialog

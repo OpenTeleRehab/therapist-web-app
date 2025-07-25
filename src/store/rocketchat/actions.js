@@ -1,6 +1,6 @@
 import { Rocketchat } from 'services/roketchat';
 import { Firebase } from 'services/firebase';
-import { User } from 'services/user';
+import { Patient } from 'services/patient';
 import { mutation } from './mutations';
 import { showErrorNotification } from 'store/notification/actions';
 import { getMessage } from 'utils/general';
@@ -39,7 +39,7 @@ export const getChatRooms = () => async (dispatch, getState) => {
     page: 1,
     disableAbortController: true
   };
-  const data = await User.getUsers(payload);
+  const data = await Patient.getPatientsForChatroom(payload);
   const subscriptions = await Rocketchat.getSubscriptions(authUserId, authToken);
 
   if (data.success || therapistsByClinic.length) {

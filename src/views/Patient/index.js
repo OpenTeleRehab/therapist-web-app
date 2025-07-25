@@ -40,7 +40,6 @@ const Patient = () => {
   const { search } = useLocation();
   const [view, setView] = useState(VIEW_PATIENT);
   const [show, setShow] = useState(false);
-  const [editId, setEditId] = useState('');
   const { users, loading } = useSelector(state => state.user);
   const { profile } = useSelector((state) => state.auth);
   const { countries } = useSelector((state) => state.country);
@@ -184,7 +183,6 @@ const Patient = () => {
   };
 
   const handleClose = () => {
-    setEditId('');
     setShow(false);
   };
 
@@ -215,7 +213,7 @@ const Patient = () => {
                   {translate('patient.new')}
                 </Button>
               </div>
-              {show && <CreatePatient handleClose={handleClose} show={show} editId={editId}/>}
+              {show && <CreatePatient handleClose={handleClose} show={show} />}
             </div>
             <CustomTable
               loading={loading}

@@ -35,3 +35,15 @@ export const getPatientsByIds = payload => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const getPatientsForChatroom = payload => async dispatch => {
+  dispatch(mutation.getPatientsForChatroomRequest());
+  const data = await Patient.getPatientsForChatroom(payload);
+  if (data.success) {
+    dispatch(mutation.getPatientsForChatroomSuccess(data.data));
+    return data.info;
+  } else {
+    dispatch(mutation.getPatientsForChatroomFail());
+    dispatch(showErrorNotification('toast_title.error_message', data.message));
+  }
+};

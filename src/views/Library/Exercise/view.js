@@ -3,12 +3,14 @@ import PropTypes from 'prop-types';
 import { getTranslate } from 'react-localize-redux';
 import { Col, Form } from 'react-bootstrap';
 import Carousel from 'react-bootstrap/Carousel';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import Dialog from 'components/Dialog';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
+import { getExercise } from 'store/exercise/actions';
 
-const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSave, exercise, readOnly, handleCopy, handleEdit, showEdit, showCopy }) => {
+const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSave, id, readOnly, handleCopy, handleEdit, showEdit, showCopy }) => {
+  const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [index, setIndex] = useState(0);
@@ -20,6 +22,21 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
   });
   const [setsError, setSetsError] = useState(false);
   const [repsError, setRepsError] = useState(false);
+  const { languages } = useSelector(state => state.language);
+  const { exercise, filters } = useSelector(state => state.exercise);
+  const [language, setLanguage] = useState(languages[0].id);
+
+  useEffect(() => {
+    if (filters && filters.lang) {
+      setLanguage(filters.lang);
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    if (id && language) {
+      dispatch(getExercise(id, language));
+    }
+  }, [id, language, dispatch]);
 
   useEffect(() => {
     if (exercise) {
@@ -81,8 +98,8 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
       onCopy={showCopy ? () => handleCopy(exercise.id) : null}
     >
       <Form onSubmit={handleSave}>
-        <Carousel activeIndex={index} onSelect={handleSelect} controls={exercise.files.length > 1} indicators={exercise.files.length > 1} className="view-exercise-carousel">
-          { exercise.files.map((file, index) => (
+        <Carousel activeIndex={index} onSelect={handleSelect} controls={exercise.files && exercise.files.length > 1} indicators={exercise.files && exercise.files.length > 1} className="view-exercise-carousel">
+          { exercise.files && exercise.files.map((file, index) => (
             <Carousel.Item key={index}>
               { file.fileType === 'audio/mpeg' &&
               <div className="img-thumbnail w-100 pt-2 pl-5 pr-5 bg-light audio-wrapper">
@@ -192,7 +209,7 @@ ViewExercise.propTypes = {
   showView: PropTypes.bool,
   handleViewClose: PropTypes.func,
   handleViewSave: PropTypes.func,
-  exercise: PropTypes.object,
+  id: PropTypes.string,
   readOnly: PropTypes.bool,
   customExercises: PropTypes.array,
   showCopy: PropTypes.bool,

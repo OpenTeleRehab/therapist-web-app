@@ -7,6 +7,11 @@ export const patient = (state = initialState, action) => {
         patients: action.data
       });
     }
+    case 'GET_PATIENT_SUCCESS': {
+      return Object.assign({}, state, {
+        patient: action.data
+      });
+    }
     default:
       return state;
   }
