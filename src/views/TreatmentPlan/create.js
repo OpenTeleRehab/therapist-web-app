@@ -36,6 +36,8 @@ const CreateTreatmentPlan = () => {
   const { treatmentPlans, treatmentPlansDetail } = useSelector(state => state.treatmentPlan);
   const { users } = useSelector(state => state.user);
   const { profile } = useSelector(state => state.auth);
+  const { countries } = useSelector(state => state.country);
+
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
@@ -99,10 +101,10 @@ const CreateTreatmentPlan = () => {
   }, [id, dispatch, treatmentPlansDetail]);
 
   useEffect(() => {
-    if (!patientId && profile) {
+    if (!patientId && profile && countries.length) {
       dispatch(getUsers({ therapist_id: profile.id, page_size: 999 }));
     }
-  }, [patientId, profile, dispatch]);
+  }, [patientId, profile, dispatch, countries]);
 
   useEffect(() => {
     if (!isPast()) {
