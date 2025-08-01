@@ -25,6 +25,7 @@ const ChatOrCall = ({ translate }) => {
   const chatSocket = useContext(RocketchatContext);
   const therapist = useSelector(state => state.auth.profile);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const { countries } = useSelector(state => state.country);
   const {
     authToken,
     chatRooms,
@@ -42,7 +43,7 @@ const ChatOrCall = ({ translate }) => {
   }, [therapist]);
 
   useEffect(() => {
-    if (therapist && therapist.chat_user_id && authToken) {
+    if (therapist && therapist.chat_user_id && authToken && countries.length) {
       dispatch(getChatRooms()).then(success => {
         if (success) {
           dispatch(getLastMessages());
@@ -56,7 +57,7 @@ const ChatOrCall = ({ translate }) => {
     return () => {
       dispatch(setIsOnChatPage(false));
     };
-  }, [authToken, dispatch, therapist]);
+  }, [authToken, dispatch, therapist, countries]);
 
   const getTotalOnlineUsers = () => {
     const onlineStatus = chatRooms.filter(room => {

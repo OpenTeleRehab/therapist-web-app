@@ -34,6 +34,7 @@ const ConfigurationProvider = ({ children }) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const profile = useSelector((state) => state.auth.profile);
+  const countries = useSelector((state) => state.country.countries);
   const [appLoading, setAppLoading] = useState(true);
 
   useEffect(() => {
@@ -47,11 +48,6 @@ const ConfigurationProvider = ({ children }) => {
           });
           dispatch(getClinics(res.data.country_id));
           dispatch(getProfessions(res.data.country_id));
-          dispatch(getAppointments({
-            now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-            date: moment().locale('en').format(settings.date_format),
-            therapist_id: res.data.id
-          }));
         } else {
           setAppLoading(false);
         }
@@ -61,6 +57,16 @@ const ConfigurationProvider = ({ children }) => {
       dispatch(getColorScheme());
     }
   }, [appLoading, dispatch]);
+
+  useEffect(() => {
+    if (profile && countries.length) {
+      dispatch(getAppointments({
+        now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+        date: moment().locale('en').format(settings.date_format),
+        therapist_id: profile.id
+      }));
+    }
+  }, [profile, countries, dispatch]);
 
   useEffect(() => {
     if (profile && profile.chat_user_id) {

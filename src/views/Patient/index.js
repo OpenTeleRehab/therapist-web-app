@@ -110,10 +110,10 @@ const Patient = () => {
   }, [search, currentPage, pageSize, searchValue, filters, dispatch, profile, countries]);
 
   useEffect(() => {
-    if (authToken && therapist && therapist.chat_user_id && therapist.chat_rooms.length) {
+    if (authToken && therapist && therapist.chat_user_id && therapist.chat_rooms.length && countries.length) {
       dispatch(getChatRooms());
     }
-  }, [dispatch, authToken, therapist]);
+  }, [dispatch, authToken, therapist, countries]);
 
   useEffect(() => {
     dispatch(getTransfers());

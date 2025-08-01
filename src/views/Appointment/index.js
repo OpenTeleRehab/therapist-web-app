@@ -34,6 +34,7 @@ const Appointment = ({ translate }) => {
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const { countries } = useSelector(state => state.country);
   const calendarRef = useRef();
   const [events, setEvents] = useState([]);
   const [date, setDate] = useState();
@@ -58,7 +59,7 @@ const Appointment = ({ translate }) => {
   }, [patientId]);
 
   useEffect(() => {
-    if (date && profile) {
+    if (date && profile && countries.length) {
       const filter = {
         now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         date: moment(date).locale('en').format(settings.date_format),
@@ -73,7 +74,7 @@ const Appointment = ({ translate }) => {
 
       dispatch(getAppointments(filter));
     }
-  }, [dispatch, date, selectedDate, profile, patientId]);
+  }, [dispatch, date, selectedDate, profile, patientId, countries]);
 
   useEffect(() => {
     if (date && profile) {
