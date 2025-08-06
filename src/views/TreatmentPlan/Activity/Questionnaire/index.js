@@ -327,7 +327,7 @@ const Questionnaire = ({ translate, selectedQuestionnaires, onSectionChange, vie
             </>
           )}
           { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
-          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} questionnaire={questionnaire}/> }
+          { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} handleClose={handleViewQuestionnaireClose} id={questionnaire.id}/> }
         </Col>
       </Row>
     </>

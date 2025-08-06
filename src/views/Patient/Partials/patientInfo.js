@@ -19,11 +19,12 @@ import CustomPhoneNumber from 'utils/phoneNumber';
 import EllipsisText from 'react-ellipsis-text';
 import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
-import { activateDeactivateAccount, getUsers, deleteAccount } from 'store/user/actions';
+import { activateDeactivateAccount, deleteAccount } from 'store/user/actions';
+import { getPatient } from 'store/patient/actions';
 import {
   getOrganizationTherapistAndMaxSms
 } from 'store/organization/actions';
-import CreatePatient from 'views/Patient/create';
+import EditPatient from 'views/Patient/edit';
 import Dialog from 'components/Dialog';
 import {
   getChatRooms,
@@ -51,7 +52,7 @@ import TransferPatient from '../transfer';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
-  const users = useSelector(state => state.user.users);
+  const patient = useSelector(state => state.patient.patient);
   const { profile } = useSelector((state) => state.auth);
   const therapist = useSelector(state => state.auth.profile);
   const countries = useSelector(state => state.country.countries);
@@ -82,31 +83,28 @@ const PatientInfo = ({ id, translate }) => {
   });
 
   useEffect(() => {
-    if (countries.length) {
-      dispatch(getUsers({
-        id: id
-      }));
+    if (id && countries.length) {
+      dispatch(getPatient(id));
     }
   }, [dispatch, id, countries]);
 
   useEffect(() => {
-    if (id && users.length && countries.length) {
-      const data = users.find(user => user.id === parseInt(id));
-      setPhone(data.phone);
+    if (id && patient && countries.length) {
+      setPhone(patient.phone);
       setFormFields({
-        name: data.last_name + ' ' + data.first_name || '',
-        id: data.id || '',
-        phone: CustomPhoneNumber(data.dial_code, data.phone) || '',
-        date_of_birth: moment(data.date_of_birth, 'YYYY-MM-DD').locale('en').format(settings.date_format) || '',
-        country: getCountryName(data.country_id, countries),
-        note: data.note || '',
-        age: AgeCalculation(data.date_of_birth, translate) || '',
-        chat_user_id: data.chat_user_id || '',
-        enabled: data.enabled
+        name: patient.last_name + ' ' + patient.first_name || '',
+        id: patient.id || '',
+        phone: CustomPhoneNumber(patient.dial_code, patient.phone) || '',
+        date_of_birth: moment(patient.date_of_birth, 'YYYY-MM-DD').locale('en').format(settings.date_format) || '',
+        country: getCountryName(patient.country_id, countries),
+        note: patient.note || '',
+        age: AgeCalculation(patient.date_of_birth, translate) || '',
+        chat_user_id: patient.chat_user_id || '',
+        enabled: patient.enabled
       });
-      setIsSecondaryTherapist(data.secondary_therapists.includes(profile.id));
+      setIsSecondaryTherapist(patient.secondary_therapists.includes(profile.id));
     }
-  }, [id, translate, profile, users, countries]);
+  }, [id, translate, profile, patient, countries]);
 
   useEffect(() => {
     if (therapist) {
@@ -188,8 +186,7 @@ const PatientInfo = ({ id, translate }) => {
   };
 
   const handleSelectRoomToChat = () => {
-    if (id && users.length) {
-      const patient = users.find(user => user.id === parseInt(id));
+    if (id && patient) {
       const findIndex = chatRooms.findIndex(r => r.u._id === patient.chat_user_id);
 
       if (findIndex !== -1 && patient.enabled) {
@@ -203,8 +200,7 @@ const PatientInfo = ({ id, translate }) => {
   };
 
   const handleSelectRoomToCall = () => {
-    if (id && users.length) {
-      const patient = users.find(user => user.id === parseInt(id));
+    if (id && patient) {
       const findIndex = chatRooms.findIndex(r => r.u._id === patient.chat_user_id);
       const _id = generateHash();
       const rid = chatRooms[findIndex].rid;
@@ -311,7 +307,7 @@ const PatientInfo = ({ id, translate }) => {
         </div>
       </div>
 
-      {show && <CreatePatient handleClose={handleClose} show={show} editId={editId} />}
+      {show && <EditPatient handleClose={handleClose} show={show} editId={editId} />}
       {showTransferDialog && <TransferPatient show={showTransferDialog} patientId={parseInt(id)} therapist={therapist} handleClose={() => setShowTransferDialog(false)} />}
 
       <Dialog

@@ -366,7 +366,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
           { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
         </Col>
       </Row>
-      {previewExercise && <ViewExercise showView handleViewClose={handleViewClose} exercise={previewExercise} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
+      {previewExercise && <ViewExercise showView handleViewClose={handleViewClose} id={previewExercise.id} handleEdit={() => handleEdit(id)} handleCopy={() => handleCopy(id)} showEdit={showEdit} showCopy={showCopy} />}
 
       <Dialog
         show={show}

@@ -35,6 +35,7 @@ const ViewTreatmentPlan = () => {
   const dispatch = useDispatch();
   const { id, patientId } = useParams();
   const { profile } = useSelector((state) => state.auth);
+  const { countries } = useSelector((state) => state.country);
   const { treatmentPlans, presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
   const [treatmentPlansDetail, setTreatmentPlansDetail] = useState({});
   const [formFields, setFormFields] = useState({
@@ -63,21 +64,21 @@ const ViewTreatmentPlan = () => {
   }, [dispatch, profile]);
 
   useEffect(() => {
-    if (id) {
+    if (id && profile && countries.length) {
       const additionalParams = patientId ? {} : { type: 'preset' };
       dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
-  }, [id, patientId, dispatch, profile]);
+  }, [id, patientId, dispatch, profile, countries]);
 
   useEffect(() => {
-    if (id && patientId) {
+    if (id && patientId && countries.length) {
       if (treatmentPlans.length) {
         const treatmentPlan = _.find(treatmentPlans, { id: parseInt(id) }) || {};
         setTreatmentPlansDetail(treatmentPlan);
       } else {
         dispatch(getTreatmentPlans({ id }));
       }
-    } else if (id) {
+    } else if (id && countries.length) {
       if (presetTreatmentPlans.length) {
         const treatmentPlan = _.find(presetTreatmentPlans, { id: parseInt(id) }) || {};
         setTreatmentPlansDetail(treatmentPlan);
@@ -85,7 +86,7 @@ const ViewTreatmentPlan = () => {
         dispatch(getPresetTreatmentPlans({ id, type: 'preset' }));
       }
     }
-  }, [id, patientId, dispatch, treatmentPlans, presetTreatmentPlans]);
+  }, [id, patientId, dispatch, treatmentPlans, presetTreatmentPlans, countries]);
 
   useEffect(() => {
     if (id && !_.isEmpty(treatmentPlansDetail)) {

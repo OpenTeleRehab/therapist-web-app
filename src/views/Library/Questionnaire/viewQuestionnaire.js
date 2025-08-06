@@ -1,15 +1,32 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Dialog from 'components/Dialog';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
 import PropTypes from 'prop-types';
 import { Accordion, AccordionContext, Card, Form } from 'react-bootstrap';
 import { BsChevronDown, BsChevronRight } from 'react-icons/bs';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
+import { getQuestionnaire } from 'store/questionnaire/actions';
 
-const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handleEdit, showEdit, showCopy }) => {
+const ViewQuestionnaire = ({ show, handleClose, id, handleCopy, handleEdit, showEdit, showCopy }) => {
+  const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const { languages } = useSelector(state => state.language);
+  const { questionnaire, filters } = useSelector(state => state.questionnaire);
+  const [language, setLanguage] = useState(languages[0].id);
+
+  useEffect(() => {
+    if (filters && filters.lang) {
+      setLanguage(filters.lang);
+    }
+  }, [filters]);
+
+  useEffect(() => {
+    if (id && language) {
+      dispatch(getQuestionnaire(id, language));
+    }
+  }, [id, language, dispatch]);
 
   return (
     <Dialog
@@ -28,9 +45,9 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
       </div>
       <div className="d-flex flex-column mb-3">
         <span className="font-weight-bold">{translate('questionnaire.number_of_question')}</span>
-        <span>{questionnaire.questions.length}</span>
+        <span>{questionnaire.questions && questionnaire.questions.length}</span>
       </div>
-      {questionnaire.questions.map((question, index) => (
+      {questionnaire.questions && questionnaire.questions.map((question, index) => (
         <Accordion key={index}>
           <Card className="mb-3 question-card">
             <Accordion.Toggle eventKey={index + 1} className="card-header view-question-card-header d-flex justify-content-between card-header border-0">
@@ -117,7 +134,7 @@ const ViewQuestionnaire = ({ show, handleClose, questionnaire, handleCopy, handl
 ViewQuestionnaire.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
-  questionnaire: PropTypes.array,
+  id: PropTypes.string,
   showCopy: PropTypes.bool,
   showEdit: PropTypes.bool,
   handleCopy: PropTypes.func,

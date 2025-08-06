@@ -37,8 +37,34 @@ const getPatientsByIds = payload => {
     });
 };
 
+const getPatientsForChatroom = payload => {
+  if (window.userAbortController !== undefined) {
+    // TODO: remove condition after refactor getChatRooms action
+    if (!payload.disableAbortController) {
+      window.userAbortController.abort();
+    }
+  }
+
+  window.userAbortController = new AbortController();
+
+  return axios.get('/patient/list-for-chatroom', {
+    params: payload,
+    signal: window.userAbortController.signal,
+    headers: { country: getCountryIsoCode() }
+  })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Patient = {
   getPatients,
   getPatient,
-  getPatientsByIds
+  getPatientsByIds,
+  getPatientsForChatroom
 };

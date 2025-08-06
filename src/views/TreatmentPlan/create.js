@@ -81,18 +81,18 @@ const CreateTreatmentPlan = () => {
   }, [dispatch, profile]);
 
   useEffect(() => {
-    if (id && treatmentPlans.length === 0) {
+    if (id && treatmentPlans.length === 0 && countries.length) {
       const additionalParams = patientId ? {} : { type: 'preset' };
       dispatch(getTreatmentPlans({ id, ...additionalParams }));
     }
-  }, [id, patientId, treatmentPlans, dispatch]);
+  }, [id, patientId, treatmentPlans, dispatch, countries]);
 
   useEffect(() => {
-    if (id) {
+    if (id && countries.length) {
       const additionalParams = patientId ? {} : { type: 'preset' };
       dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
-  }, [id, patientId, profile, dispatch]);
+  }, [id, patientId, profile, dispatch, countries]);
 
   useEffect(() => {
     if (!id && treatmentPlansDetail.activities.length > 0) {

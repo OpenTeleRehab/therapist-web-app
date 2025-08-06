@@ -23,6 +23,7 @@ const CreatePresetTreatment = () => {
   const { id } = useParams();
 
   const { profile } = useSelector((state) => state.auth);
+  const { countries } = useSelector((state) => state.country);
   const { presetTreatmentPlans, treatmentPlansDetail } = useSelector((state) => state.treatmentPlan);
   const [formFields, setFormFields] = useState({ name: '' });
   const [weeks, setWeeks] = useState(1);
@@ -37,11 +38,11 @@ const CreatePresetTreatment = () => {
   }, [id, presetTreatmentPlans, dispatch]);
 
   useEffect(() => {
-    if (id) {
+    if (id && profile && countries.length) {
       const additionalParams = { type: 'preset' };
       dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
-  }, [id, dispatch, profile]);
+  }, [id, dispatch, profile, countries]);
 
   useEffect(() => {
     if (!id && treatmentPlansDetail.activities.length > 0) {

@@ -132,7 +132,7 @@ const ListQuestionnaireCard = ({ questionnaireIds, onSelectionRemove, readOnly, 
           </div>
         );
       })}
-      { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} questionnaire={questionnaire} handleClose={handleViewQuestionnaireClose}/> }
+      { viewQuestionnaire && <ViewQuestionnaire show={viewQuestionnaire} id={questionnaire.id} handleClose={handleViewQuestionnaireClose}/> }
     </>
   );
 };

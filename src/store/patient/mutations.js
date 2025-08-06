@@ -37,6 +37,19 @@ const getTransferPatientFail = () => ({
   type: 'GET_TRANSFER_PATIENT_FAIL'
 });
 
+const getPatientsForChatroomRequest = () => ({
+  type: 'GET_PATIENTS_CHATROOM_REQUEST'
+});
+
+const getPatientsForChatroomSuccess = (data) => ({
+  type: 'GET_PATIENTS_CHATROOM_SUCCESS',
+  data
+});
+
+const getPatientsForChatroomFail = () => ({
+  type: 'GET_PATIENTS_CHATROOM_FAIL'
+});
+
 export const mutation = {
   getPatientsRequest,
   getPatientsSuccess,
@@ -46,5 +59,8 @@ export const mutation = {
   getPatientFail,
   getTransferPatientRequest,
   getTransferPatientSuccess,
-  getTransferPatientFail
+  getTransferPatientFail,
+  getPatientsForChatroomRequest,
+  getPatientsForChatroomSuccess,
+  getPatientsForChatroomFail
 };

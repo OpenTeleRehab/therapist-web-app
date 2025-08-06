@@ -336,7 +336,7 @@ const Exercise = ({ translate, selectedExercises, onSectionChange, setViewExerci
             </>
           )}
           { loading && <Spinner className="loading-spinner" animation="border" variant="primary" /> }
-          { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} exercise={exercise} /> }
+          { viewExercise && <ViewExercise showView={viewExercise} handleViewClose={handleViewClose} id={exercise.id} /> }
         </Col>
       </Row>
     </>

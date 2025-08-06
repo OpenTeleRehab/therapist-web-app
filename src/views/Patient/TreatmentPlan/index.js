@@ -16,6 +16,8 @@ const TreatmentHistory = () => {
   const history = useHistory();
   const { patientId } = useParams();
   const { treatmentPlans, loading } = useSelector(state => state.treatmentPlan);
+  const { profile } = useSelector((state) => state.auth);
+  const { countries } = useSelector((state) => state.country);
 
   const columns = [
     { name: 'name', title: translate('common.treatment_name') },
@@ -38,7 +40,7 @@ const TreatmentHistory = () => {
   }, [pageSize, searchValue, filters]);
 
   useEffect(() => {
-    if (patientId) {
+    if (patientId && profile && countries.length) {
       dispatch(getTreatmentPlans({
         patient_id: patientId,
         search_value: searchValue,
@@ -51,7 +53,7 @@ const TreatmentHistory = () => {
         }
       });
     }
-  }, [currentPage, pageSize, searchValue, filters, patientId, dispatch]);
+  }, [currentPage, pageSize, searchValue, filters, patientId, dispatch, countries, profile]);
 
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_TREATMENT_PLAN_DETAIL.replace(':patientId', patientId).replace(':id', row.id));
