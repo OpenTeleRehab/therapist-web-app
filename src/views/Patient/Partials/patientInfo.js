@@ -24,7 +24,7 @@ import { getPatient } from 'store/patient/actions';
 import {
   getOrganizationTherapistAndMaxSms
 } from 'store/organization/actions';
-import EditPatient from 'views/Patient/edit';
+import CreatePatient from 'views/Patient/create';
 import Dialog from 'components/Dialog';
 import {
   getChatRooms,
@@ -307,7 +307,7 @@ const PatientInfo = ({ id, translate }) => {
         </div>
       </div>
 
-      {show && <EditPatient handleClose={handleClose} show={show} editId={editId} />}
+      {show && <CreatePatient handleClose={handleClose} show={show} editId={editId} />}
       {showTransferDialog && <TransferPatient show={showTransferDialog} patientId={parseInt(id)} therapist={therapist} handleClose={() => setShowTransferDialog(false)} />}
 
       <Dialog

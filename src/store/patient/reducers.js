@@ -12,6 +12,11 @@ export const patient = (state = initialState, action) => {
         patient: action.data
       });
     }
+    case 'CLEAR_PATIENT':
+      return {
+        ...state,
+        patient: {}
+      };
     default:
       return state;
   }

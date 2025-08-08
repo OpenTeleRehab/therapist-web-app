@@ -47,3 +47,7 @@ export const getPatientsForChatroom = payload => async dispatch => {
     dispatch(showErrorNotification('toast_title.error_message', data.message));
   }
 };
+
+export const clearPatient = () => async dispatch => {
+  dispatch(mutation.clearPatient());
+};
