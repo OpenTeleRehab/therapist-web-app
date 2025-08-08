@@ -50,6 +50,10 @@ const getPatientsForChatroomFail = () => ({
   type: 'GET_PATIENTS_CHATROOM_FAIL'
 });
 
+const clearPatient = () => ({
+  type: 'CLEAR_PATIENT'
+});
+
 export const mutation = {
   getPatientsRequest,
   getPatientsSuccess,
@@ -62,5 +66,6 @@ export const mutation = {
   getTransferPatientFail,
   getPatientsForChatroomRequest,
   getPatientsForChatroomSuccess,
-  getPatientsForChatroomFail
+  getPatientsForChatroomFail,
+  clearPatient
 };

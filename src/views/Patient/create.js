@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { Col, Form } from 'react-bootstrap';
 import Dialog from 'components/Dialog';
 import Chip from '../../components/Chip';
@@ -8,27 +8,33 @@ import Datetime from 'components/DateTime';
 import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment';
+import RocketchatContext from 'context/RocketchatContext';
 
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import Select from 'react-select';
 
-import { createUser, getUsers } from 'store/user/actions';
+import { createUser, updateUser } from 'store/user/actions';
 import { getProfile } from 'store/auth/actions';
 import { getTherapistsByClinic } from 'store/therapist/actions';
 import { deleteTransfer, getTransfers } from '../../store/transfer/actions';
 import { Therapist as therapistService } from 'services/therapist';
+import { User as patientService } from 'services/user';
+import { getPatient, clearPatient } from 'store/patient/actions';
 
 import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
+import { getChatRooms } from 'utils/therapist';
 import AgeCalculation from 'utils/age';
+import { deleteChatRoom } from 'utils/rocketchat';
 import { LOCATIONS } from 'variables/location';
 import _ from 'lodash';
 
-const CreatePatient = ({ show, handleClose }) => {
+const CreatePatient = ({ show, handleClose, editId }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
+  const patient = useSelector(state => state.patient.patient);
 
   const countries = useSelector(state => state.country.countries);
   const therapistsByClinic = useSelector(state => state.therapist.therapistsByClinic);
@@ -49,8 +55,12 @@ const CreatePatient = ({ show, handleClose }) => {
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
   const [errorLocation, setErrorLocation] = useState(false);
   const [selectedTherapists, setSelectedTherapists] = useState([]);
+  const [originalSecondaryTherapists, setOriginalSecondaryTherapists] = useState([]);
+  const [patientChatUserId, setPatientChatUserId] = useState('');
   const [pendingTransfers, setPendingTransfers] = useState([]);
   const [locale, setLocale] = useState('en-us');
+
+  const chatSocket = useContext(RocketchatContext);
 
   const [formFields, setFormFields] = useState({
     first_name: '',
@@ -70,6 +80,18 @@ const CreatePatient = ({ show, handleClose }) => {
   const [dob, setDob] = useState('');
 
   useEffect(() => {
+    if (editId && countries.length) {
+      dispatch(getPatient(editId));
+    }
+  }, [dispatch, editId, countries]);
+
+  useEffect(() => {
+    if (show && !editId) {
+      dispatch(clearPatient());
+    }
+  }, [show, editId, dispatch]);
+
+  useEffect(() => {
     if (languages.length && profile) {
       const language = languages.find(lang => lang.id === profile.language_id);
       if (language) {
@@ -81,14 +103,6 @@ const CreatePatient = ({ show, handleClose }) => {
   }, [languages, profile]);
 
   useEffect(() => {
-    if (!show) {
-      resetData();
-    }
-    // eslint-disable-next-line
-    dispatch(getUsers({ therapist_id: profile.id, page_size: 999 }));
-  }, [show, profile]);
-
-  useEffect(() => {
     if (profile !== undefined) {
       dispatch(getTherapistsByClinic(profile.clinic_id));
       dispatch(getTransfers());
@@ -97,8 +111,12 @@ const CreatePatient = ({ show, handleClose }) => {
 
   useEffect(() => {
     const arr = [];
+    const filteredTransfers = transfers.filter(item => item.patient_id === editId && item.therapist_type === 'supplementary') || [];
+    if (filteredTransfers.length) {
+      _.forEach(filteredTransfers, x => arr.push({ id: x.id, therapist_id: x.to_therapist_id, status: x.status, first_name: x.to_therapist.first_name, last_name: x.to_therapist.last_name }));
+    }
     setPendingTransfers(previousTransfers => _.uniqBy([...previousTransfers, ...arr], 'therapist_id'));
-  }, [transfers]);
+  }, [transfers, editId]);
 
   if (therapistsByClinic.length && profile !== undefined) {
     therapistsByClinic.forEach(function (therapist, index) {
@@ -118,19 +136,41 @@ const CreatePatient = ({ show, handleClose }) => {
   }
 
   useEffect(() => {
-    resetData();
-    if (profile !== undefined) {
+    if (editId && patient) {
+      const editingData = patient;
       setFormFields({
-        ...formFields,
-        country_id: profile.country_id,
-        clinic_id: profile.clinic_id,
-        clinic_identity: getClinicIdentity(profile.clinic_id, clinics),
-        therapist_id: profile.id,
-        therapist_identity: profile.identity
+        first_name: editingData.first_name || '',
+        last_name: editingData.last_name || '',
+        country_id: editingData.country_id || '',
+        clinic_id: editingData.clinic_id || '',
+        phone: editingData.phone || '',
+        dial_code: editingData.dial_code || '',
+        gender: editingData.gender || '',
+        note: editingData.note || '',
+        date_of_birth: editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD').format(settings.date_format) : '',
+        age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : '',
+        location: editingData.location || ''
       });
+      setSelectedTherapists(editingData.secondary_therapists);
+      setOriginalSecondaryTherapists(editingData.secondary_therapists);
+      setPatientChatUserId(editingData.chat_user_id);
+
+      setDob(editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD') : '');
+    } else {
+      resetData();
+      if (profile !== undefined) {
+        setFormFields({
+          ...formFields,
+          country_id: profile.country_id,
+          clinic_id: profile.clinic_id,
+          clinic_identity: getClinicIdentity(profile.clinic_id, clinics),
+          therapist_id: profile.id,
+          therapist_identity: profile.identity
+        });
+      }
     }
     // eslint-disable-next-line
-  }, [profile]);
+  }, [editId, patient, profile]);
 
   useEffect(() => {
     if (formFields.clinic_id) {
@@ -159,7 +199,7 @@ const CreatePatient = ({ show, handleClose }) => {
       }
 
       if (formValues.phone) {
-        therapistService.getPatientByPhoneNumber(formValues.phone, '').then(res => {
+        therapistService.getPatientByPhoneNumber(formValues.phone, editId || '').then(res => {
           if (res.data > 0) {
             setPhoneExist(true);
           } else {
@@ -307,13 +347,37 @@ const CreatePatient = ({ show, handleClose }) => {
         stage: url.includes('local') ? 'local' : url.includes('demo') ? 'demo' : 'live'
       };
 
-      dispatch(createUser(payload))
-        .then(result => {
-          if (result) {
-            dispatch(getProfile());
-            handleClose();
-          }
-        });
+      if (editId) {
+        dispatch(updateUser(editId, payload))
+          .then(result => {
+            if (result) {
+              if (originalSecondaryTherapists) {
+                originalSecondaryTherapists.forEach(function (therapist, index) {
+                  if (!_.includes(selectedTherapists, therapist) || selectedTherapists.length === 0) {
+                    const roomIds = getChatRooms(therapist, therapistsByClinic);
+                    const fIndex = roomIds.findIndex(r => r.includes(patientChatUserId));
+                    if (fIndex > -1) {
+                      const chatRoomId = roomIds[fIndex];
+                      deleteChatRoom(chatSocket, chatRoomId, profile.id);
+
+                      therapistService.deleteTherapistChatRoomById(therapist, chatRoomId);
+                      patientService.deletePatientChatRoomById(editId, chatRoomId);
+                    }
+                  }
+                });
+              }
+              handleClose();
+            }
+          });
+      } else {
+        dispatch(createUser(payload))
+          .then(result => {
+            if (result) {
+              dispatch(getProfile());
+              handleClose();
+            }
+          });
+      }
     }
   };
 
@@ -327,10 +391,10 @@ const CreatePatient = ({ show, handleClose }) => {
   return (
     <Dialog
       show={show}
-      title={translate('patient.new')}
+      title={translate(editId ? 'patient.edit' : 'patient.new')}
       onCancel={handleClose}
       onConfirm={handleConfirm}
-      confirmLabel={translate('common.create')}
+      confirmLabel={editId ? translate('common.save') : translate('common.create')}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Group controlId="formPhone">
@@ -481,7 +545,7 @@ const CreatePatient = ({ show, handleClose }) => {
           <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
           <Select
             isMulti
-            value={options.filter(obj => selectedTherapists.includes(obj.value))}
+            value={options.filter(obj => (selectedTherapists || []).includes(obj.value))}
             options={options}
             placeholder={translate('placeholder.therapist')}
             className="basic-multi-select"
@@ -525,7 +589,8 @@ const CreatePatient = ({ show, handleClose }) => {
 
 CreatePatient.propTypes = {
   show: PropTypes.bool,
-  handleClose: PropTypes.func
+  handleClose: PropTypes.func,
+  editId: PropTypes.number
 };
 
 export default CreatePatient;
