@@ -6,7 +6,6 @@ import { BiEdit } from 'react-icons/bi';
 import { FaDownload } from 'react-icons/fa';
 import { Button, Dropdown, DropdownButton, OverlayTrigger, Tab, Tabs, Tooltip } from 'react-bootstrap';
 import moment from 'moment/moment';
-import _ from 'lodash';
 
 import * as ROUTES from 'variables/routes';
 import PatientInfo from 'views/Patient/Partials/patientInfo';
@@ -36,8 +35,8 @@ const ViewTreatmentPlan = () => {
   const { id, patientId } = useParams();
   const { profile } = useSelector((state) => state.auth);
   const { countries } = useSelector((state) => state.country);
-  const { treatmentPlans, presetTreatmentPlans } = useSelector(state => state.treatmentPlan);
-  const [treatmentPlansDetail, setTreatmentPlansDetail] = useState({});
+  const treatmentPlansDetail = useSelector((state) => state.treatmentPlan.treatmentPlansDetail);
+
   const [formFields, setFormFields] = useState({
     name: '',
     description: '',
@@ -56,6 +55,7 @@ const ViewTreatmentPlan = () => {
   const [downloading, setDownloading] = useState(false);
   const diseases = useSelector((state) => state.disease.diseases);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const pageSize = 10;
 
   useEffect(() => {
     if (profile && profile.language_id) {
@@ -66,30 +66,25 @@ const ViewTreatmentPlan = () => {
   useEffect(() => {
     if (id && profile && countries.length) {
       const additionalParams = patientId ? {} : { type: 'preset' };
-      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
+      dispatch(getTreatmentPlansDetail({
+        id,
+        lang: profile.language_id,
+        ...additionalParams,
+        therapist_id: profile.id
+      }));
     }
   }, [id, patientId, dispatch, profile, countries]);
 
   useEffect(() => {
     if (id && patientId && countries.length) {
-      if (treatmentPlans.length) {
-        const treatmentPlan = _.find(treatmentPlans, { id: parseInt(id) }) || {};
-        setTreatmentPlansDetail(treatmentPlan);
-      } else {
-        dispatch(getTreatmentPlans({ id }));
-      }
+      dispatch(getTreatmentPlans({ id, page_size: pageSize }));
     } else if (id && countries.length) {
-      if (presetTreatmentPlans.length) {
-        const treatmentPlan = _.find(presetTreatmentPlans, { id: parseInt(id) }) || {};
-        setTreatmentPlansDetail(treatmentPlan);
-      } else {
-        dispatch(getPresetTreatmentPlans({ id, type: 'preset' }));
-      }
+      dispatch(getPresetTreatmentPlans({ id, type: 'preset', page_size: pageSize }));
     }
-  }, [id, patientId, dispatch, treatmentPlans, presetTreatmentPlans, countries]);
+  }, [id, patientId, dispatch, countries]);
 
   useEffect(() => {
-    if (id && !_.isEmpty(treatmentPlansDetail)) {
+    if (id && countries.length && treatmentPlansDetail) {
       setFormFields({
         name: treatmentPlansDetail.name,
         description: treatmentPlansDetail.description || '',
@@ -103,7 +98,7 @@ const ViewTreatmentPlan = () => {
       setActivities(treatmentPlansDetail.activities);
       setStartDate(moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format));
     }
-  }, [id, treatmentPlansDetail, diseases]);
+  }, [id, treatmentPlansDetail, diseases, countries]);
 
   const handleDelete = () => {
     setShowDeleteDialog(true);
