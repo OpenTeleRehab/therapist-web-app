@@ -24,7 +24,6 @@ import { getLastActivityDate } from '../../utils/treatmentPlan';
 import Select from 'react-select';
 import scssColors from '../../scss/custom.scss';
 import { getDiseases } from 'store/disease/actions';
-import { getPatient } from 'store/patient/actions';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -70,8 +69,6 @@ const CreateTreatmentPlan = () => {
   const [originGoals, setOriginGoals] = useState([]);
   const [treatmentPlanId, setTreatmentPlanId] = useState();
   const diseases = useSelector((state) => state.disease.diseases);
-  const pageSize = 10;
-  const patient = useSelector(state => state.patient.patient);
 
   useEffect(() => {
     if (activity) {
@@ -86,19 +83,14 @@ const CreateTreatmentPlan = () => {
   useEffect(() => {
     if (id && treatmentPlans.length === 0 && countries.length) {
       const additionalParams = patientId ? {} : { type: 'preset' };
-      dispatch(getTreatmentPlans({ id, ...additionalParams, page_size: pageSize }));
+      dispatch(getTreatmentPlans({ id, ...additionalParams }));
     }
   }, [id, patientId, treatmentPlans, dispatch, countries]);
 
   useEffect(() => {
     if (id && countries.length) {
       const additionalParams = patientId ? {} : { type: 'preset' };
-      dispatch(getTreatmentPlansDetail({
-        id,
-        lang: profile.language_id,
-        ...additionalParams,
-        therapist_id: profile.id
-      }));
+      dispatch(getTreatmentPlansDetail({ id, lang: profile.language_id, ...additionalParams, therapist_id: profile.id }));
     }
   }, [id, patientId, profile, dispatch, countries]);
 
@@ -113,12 +105,6 @@ const CreateTreatmentPlan = () => {
       dispatch(getUsers({ therapist_id: profile.id, page_size: 999 }));
     }
   }, [patientId, profile, dispatch, countries]);
-
-  useEffect(() => {
-    if (patientId && countries.length) {
-      dispatch(getPatient(patientId));
-    }
-  }, [dispatch, patientId, countries]);
 
   useEffect(() => {
     if (!isPast()) {
@@ -143,8 +129,8 @@ const CreateTreatmentPlan = () => {
   }, [formFields.start_date, weeks]);
 
   useEffect(() => {
-    if (id && countries.length && treatmentPlansDetail) {
-      const editingData = treatmentPlansDetail;
+    if (id && treatmentPlans.length) {
+      const editingData = treatmentPlans.find(treatmentPlan => treatmentPlan.id === parseInt(id));
       setFormFields({
         name: editingData.name,
         description: editingData.description,
@@ -167,7 +153,7 @@ const CreateTreatmentPlan = () => {
       setIsOwnCreated(true);
     }
     // eslint-disable-next-line
-  }, [id, treatmentPlansDetail, profile, countries]);
+  }, [id, treatmentPlans, profile]);
 
   const resetData = () => {
     setErrorName(false);
@@ -382,11 +368,9 @@ const CreateTreatmentPlan = () => {
                     <Form.Label>{translate('treatment_plan.patient')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
                     <Select
-                      isDisabled={!!patientId}
+                      isDisabled={patientId}
                       classNamePrefix="filter"
-                      value={
-                        patient || users.find(u => u.id === formFields.patient_id) || null
-                      }
+                      value={users.filter(option => option.id === parseInt(formFields.patient_id))}
                       getOptionLabel={option => `${option.last_name} ${option.first_name}`}
                       options={users}
                       onChange={(e) => handleSingleSelectChange('patient_id', e.id)}

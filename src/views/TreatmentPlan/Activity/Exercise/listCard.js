@@ -158,7 +158,7 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
           </div>
         );
       })}
-      { viewExercise && <ViewExercise showView={viewExercise} customExercises={customExercises} handleViewClose={handleViewClose} handleViewSave={onSelectionModify} id={exercise.id} readOnly={readOnly && !isOwnCreated} /> }
+      { viewExercise && <ViewExercise showView={viewExercise} customExercises={customExercises} handleViewClose={handleViewClose} handleViewSave={onSelectionModify} id={exercise.activity_id} readOnly={readOnly && !isOwnCreated} /> }
     </>
   );
 };
