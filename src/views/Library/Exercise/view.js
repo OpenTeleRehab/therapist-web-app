@@ -22,9 +22,9 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
   });
   const [setsError, setSetsError] = useState(false);
   const [repsError, setRepsError] = useState(false);
-  const { languages } = useSelector(state => state.language);
+  const { profile } = useSelector((state) => state.auth);
   const { exercise, filters } = useSelector(state => state.exercise);
-  const [language, setLanguage] = useState(languages[0].id);
+  const [language, setLanguage] = useState(profile.language_id);
 
   useEffect(() => {
     if (filters && filters.lang) {
