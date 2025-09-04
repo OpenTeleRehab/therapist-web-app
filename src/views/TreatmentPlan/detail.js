@@ -76,14 +76,14 @@ const ViewTreatmentPlan = () => {
         const treatmentPlan = _.find(treatmentPlans, { id: parseInt(id) }) || {};
         setTreatmentPlansDetail(treatmentPlan);
       } else {
-        dispatch(getTreatmentPlans({ id, page_size: 1 }));
+        dispatch(getTreatmentPlans({ id, page_size: 99 }));
       }
     } else if (id && countries.length) {
       if (presetTreatmentPlans.length) {
         const treatmentPlan = _.find(presetTreatmentPlans, { id: parseInt(id) }) || {};
         setTreatmentPlansDetail(treatmentPlan);
       } else {
-        dispatch(getPresetTreatmentPlans({ id, type: 'preset', page_size: 1 }));
+        dispatch(getPresetTreatmentPlans({ id, type: 'preset', page_size: 99 }));
       }
     }
   }, [id, patientId, dispatch, treatmentPlans, presetTreatmentPlans, countries]);

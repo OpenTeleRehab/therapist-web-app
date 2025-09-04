@@ -83,7 +83,7 @@ const CreateTreatmentPlan = () => {
   useEffect(() => {
     if (id && treatmentPlans.length === 0 && countries.length) {
       const additionalParams = patientId ? {} : { type: 'preset' };
-      dispatch(getTreatmentPlans({ id, ...additionalParams }));
+      dispatch(getTreatmentPlans({ id, ...additionalParams, page_size: 99 }));
     }
   }, [id, patientId, treatmentPlans, dispatch, countries]);
 
