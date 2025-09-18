@@ -30,7 +30,6 @@ export const updateVideoCallStatus = (payload) => (dispatch) => {
 export const getChatRooms = () => async (dispatch, getState) => {
   const { profile } = getState().auth;
   const { authToken, authUserId } = getState().rocketchat;
-  const { therapistsByClinic } = getState().therapist;
 
   const payload = {
     therapist_id: profile.id,
@@ -40,9 +39,10 @@ export const getChatRooms = () => async (dispatch, getState) => {
     disableAbortController: true
   };
   const data = await Patient.getPatientsForChatroom(payload);
+  const dataTherapist = await Therapist.getTherapistsForChatroom(profile.clinic_id);
   const subscriptions = await Rocketchat.getSubscriptions(authUserId, authToken);
 
-  if (data.success || therapistsByClinic.length) {
+  if (data.success || dataTherapist.success) {
     const chatRooms = [];
 
     for (const user of data.data) {
@@ -65,7 +65,8 @@ export const getChatRooms = () => async (dispatch, getState) => {
         }
       }
     }
-    for (const therapist of therapistsByClinic.filter(item => item.id !== profile.id)) {
+    const therapists = dataTherapist.data;
+    for (const therapist of therapists.filter(item => item.id !== profile.id)) {
       const subscription = subscriptions.find(room => room.rid.includes(therapist.chat_user_id));
 
       if (subscription) {
