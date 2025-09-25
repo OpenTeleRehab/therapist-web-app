@@ -62,9 +62,23 @@ const getCallAccessToken = (roomName) => {
     });
 };
 
+const getTherapistsForChatroom = (clinicId) => {
+  const params = { clinic_id: clinicId };
+  return axios.get('therapist/list-for-chatroom', { params })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Therapist = {
   getTherapistsByClinic,
   deleteTherapistChatRoomById,
   getPatientByPhoneNumber,
-  getCallAccessToken
+  getCallAccessToken,
+  getTherapistsForChatroom
 };
