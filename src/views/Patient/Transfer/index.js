@@ -57,9 +57,7 @@ const Transfer = () => {
   const handleAcceptTransfer = (transferId, patient) => {
     dispatch(acceptTransfer({
       transfer_id: transferId,
-      patient_id: patient.id,
-      patient_chat_user_id: patient.chat_user_id,
-      chat_rooms: patient.chat_rooms
+      patient_id: patient.id
     }));
     dispatch(getTransfers());
   };
