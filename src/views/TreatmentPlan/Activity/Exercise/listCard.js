@@ -40,9 +40,9 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
     setViewExercise(false);
   };
 
-  const renderSetsAndRepsvalue = (exercise, translate) => {
+  const renderSetsAndRepsvalue = ({ exercise, exerciseId, translate }) => {
     let { sets, reps } = exercise;
-    const customExercise = _.find(customExercises, { id: exercise.id });
+    const customExercise = _.find(customExercises, { id: exerciseId });
     if (customExercise) {
       sets = customExercise.sets;
       reps = customExercise.reps;
@@ -58,7 +58,6 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
       </>
     );
   };
-
   return (
     <>
       {exerciseIds.map(id => {
@@ -67,7 +66,7 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
           (previewData && previewData.exercises ? _.find(previewData.exercises, { id }) : undefined);
 
         if (!exercise) {
-          return <CardPlaceholder key={id}/>;
+          return <CardPlaceholder key={id} />;
         }
 
         return (
@@ -95,14 +94,14 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
                       ) : (
                         <>
                           {(!treatmentPlanExercises.includes(exercise.id) || exercise.created_by === therapistId) && !readOnly &&
-                                      <Button
-                                        aria-label="Remove exercise"
-                                        className="btn-circle-sm"
-                                        variant="outline-primary"
-                                        onClick={() => onSelectionRemove(exercise.activity_id || exercise.id)}
-                                      >
-                                        <BsX size={14} />
-                                      </Button>
+                            <Button
+                              aria-label="Remove exercise"
+                              className="btn-circle-sm"
+                              variant="outline-primary"
+                              onClick={() => onSelectionRemove(exercise.activity_id || exercise.id)}
+                            >
+                              <BsX size={14} />
+                            </Button>
                           }
                         </>
                       )
@@ -135,30 +134,30 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
                           {therapistId === exercise.therapist_id && (
                             <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
                           )}
-                          { exercise.title }
+                          {exercise.title}
                         </h5>
                         : (
                           <OverlayTrigger
-                            overlay={<Tooltip id="button-tooltip-2">{ exercise.title }</Tooltip>}
+                            overlay={<Tooltip id="button-tooltip-2">{exercise.title}</Tooltip>}
                           >
                             <h5 className="card-title">
                               {therapistId === exercise.therapist_id && (
                                 <BsPersonFill size={20} className="owner-btn mr-1 mb-1" />
                               )}
-                              { exercise.title }
+                              {exercise.title}
                             </h5>
                           </OverlayTrigger>
                         )
                     }
                   </Card.Title>
-                  {renderSetsAndRepsvalue(exercise, translate)}
+                  {renderSetsAndRepsvalue({ exercise, exerciseId: exercise?.activity_id ?? exercise.id, translate })}
                 </Card.Body>
               </div>
             </Card>
           </div>
         );
       })}
-      { viewExercise && <ViewExercise showView={viewExercise} customExercises={customExercises} handleViewClose={handleViewClose} handleViewSave={onSelectionModify} id={exercise.activity_id} readOnly={readOnly && !isOwnCreated} /> }
+      {viewExercise && <ViewExercise activityInfo={exercise} showView={viewExercise} customExercises={customExercises} handleViewClose={handleViewClose} handleViewSave={onSelectionModify} id={exercise.activity_id ?? exercise.id} readOnly={readOnly && !isOwnCreated} />}
     </>
   );
 };
