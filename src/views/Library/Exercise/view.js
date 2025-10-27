@@ -9,7 +9,7 @@ import Dialog from 'components/Dialog';
 import GoogleTranslationAttribute from '../../../components/GoogleTranslationAttribute';
 import { getExercise } from 'store/exercise/actions';
 
-const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSave, id, readOnly, handleCopy, handleEdit, showEdit, showCopy }) => {
+const ViewExercise = ({ activityInfo, customExercises, showView, handleViewClose, handleViewSave, id, readOnly, handleCopy, handleEdit, showEdit, showCopy }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
@@ -40,7 +40,7 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
 
   useEffect(() => {
     if (exercise) {
-      const customExercise = _.find(customExercises, { id: exercise.id });
+      const customExercise = _.find(customExercises, { id: id });
       if (customExercise) {
         setFormFields({
           sets: customExercise.sets,
@@ -50,10 +50,10 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
         });
       } else {
         setFormFields({
-          sets: exercise.sets,
-          reps: exercise.reps,
-          additional_information: exercise.additional_information,
-          activity_id: exercise.activity_id
+          sets: activityInfo?.sets ?? exercise?.sets,
+          reps: activityInfo?.reps ?? exercise?.reps,
+          additional_information: activityInfo?.additional_information ?? exercise?.additional_information,
+          activity_id: activityInfo?.id || ''
         });
       }
     }
@@ -81,7 +81,7 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
     }
 
     if (canSave) {
-      handleViewSave({ ...formFields, id: exercise.id });
+      handleViewSave({ ...formFields, id });
       handleViewClose();
     }
   };
@@ -89,47 +89,47 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
   return (
     <Dialog
       show={showView}
-      title={exercise.title}
+      title={exercise.title || ''}
       cancelLabel={translate('common.close')}
       confirmLabel={translate('common.save')}
       onCancel={handleViewClose}
       onConfirm={!readOnly ? handleSave : null}
-      onEdit={showEdit ? () => handleEdit(exercise.id) : null}
-      onCopy={showCopy ? () => handleCopy(exercise.id) : null}
+      onEdit={showEdit ? () => handleEdit(exercise?.id) : null}
+      onCopy={showCopy ? () => handleCopy(exercise?.id) : null}
     >
       <Form onSubmit={handleSave}>
         <Carousel activeIndex={index} onSelect={handleSelect} controls={exercise.files && exercise.files.length > 1} indicators={exercise.files && exercise.files.length > 1} className="view-exercise-carousel">
-          { exercise.files && exercise.files.map((file, index) => (
+          {exercise.files && exercise.files.map((file, index) => (
             <Carousel.Item key={index}>
-              { file.fileType === 'audio/mpeg' &&
-              <div className="img-thumbnail w-100 pt-2 pl-5 pr-5 bg-light audio-wrapper">
-                <audio controls className="w-100 mt-4">
-                  <source src={file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${file.id}`} type="audio/ogg" />
-                </audio>
-              </div>
+              {file.fileType === 'audio/mpeg' &&
+                <div className="img-thumbnail w-100 pt-2 pl-5 pr-5 bg-light audio-wrapper">
+                  <audio controls className="w-100 mt-4">
+                    <source src={file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${file.id}`} type="audio/ogg" />
+                  </audio>
+                </div>
               }
-              { (file.fileType !== 'audio/mpeg' && file.fileType !== 'video/mp4') &&
-              <img
-                className="d-block w-100"
-                src={file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${file.id}`} alt="..."
-              />
+              {(file.fileType !== 'audio/mpeg' && file.fileType !== 'video/mp4') &&
+                <img
+                  className="d-block w-100"
+                  src={file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${file.id}`} alt="..."
+                />
               }
 
-              { file.fileType === 'video/mp4' &&
-              <video className="w-100 img-thumbnail" controls>
-                <source src={file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${file.id}`} type="video/mp4" />
-              </video>
+              {file.fileType === 'video/mp4' &&
+                <video className="w-100 img-thumbnail" controls>
+                  <source src={file.url || `${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${file.id}`} type="video/mp4" />
+                </video>
               }
             </Carousel.Item>
           ))}
         </Carousel>
 
-        {readOnly && exercise.sets > 0 && (
+        {readOnly && (formFields.sets > 0) && (
           <p className="mt-2">
-            {translate('exercise.number_of_sets_and_reps', { sets: exercise.sets, reps: exercise.reps })}
+            {translate('exercise.number_of_sets_and_reps', { sets: formFields?.sets, reps: formFields?.reps })}
           </p>
         )}
-        {!readOnly && exercise.sets >= 0 && (
+        {!readOnly && (activityInfo?.sets > 0 || exercise?.sets > 0) && (
           <Form.Row className="mt-2">
             <Form.Group as={Col} controlId="formSets">
               <Form.Label>{translate('exercise.sets')}</Form.Label>
@@ -169,7 +169,7 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
         )}
 
         <div className="mt-2">
-          { exercise.additional_fields && exercise.additional_fields.map((additionalField, index) => (
+          {exercise?.additional_fields && exercise?.additional_fields.map((additionalField, index) => (
             <div key={index}>
               <strong>{additionalField.field}</strong>
               <p style={{ whiteSpace: 'pre-wrap' }}>{additionalField.value}</p>
@@ -177,10 +177,10 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
           ))}
         </div>
 
-        {readOnly && exercise.additional_information && (
+        {readOnly && formFields?.additional_information && (
           <div>
             <strong>{translate('exercise.additional_information')}</strong>
-            <p>{exercise.additional_information}</p>
+            <p>{formFields.additional_information}</p>
           </div>
         )}
         {!readOnly && (
@@ -193,12 +193,12 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
               value={formFields.additional_information}
               placeholder={translate('exercise.additional_information.placeholder')}
               onChange={handleChange}
-              // isInvalid={errorDescription}
+            // isInvalid={errorDescription}
             />
           </Form.Group>
         )}
       </Form>
-      { exercise.auto_translated === true && (
+      {exercise.auto_translated === true && (
         <GoogleTranslationAttribute />
       )}
     </Dialog>
@@ -206,6 +206,7 @@ const ViewExercise = ({ customExercises, showView, handleViewClose, handleViewSa
 };
 
 ViewExercise.propTypes = {
+  activityInfo: PropTypes.object,
   showView: PropTypes.bool,
   handleViewClose: PropTypes.func,
   handleViewSave: PropTypes.func,
