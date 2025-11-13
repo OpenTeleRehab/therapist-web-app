@@ -42,12 +42,11 @@ const getQuestionnaire = (id, language) => {
 
 const createQuestionnaire = (payload) => {
   const formData = new FormData();
-
   formData.append('lang', payload.lang);
   formData.append('therapist_id', payload.therapist_id);
   formData.append('data', JSON.stringify(payload));
 
-  _.map(payload.questions, (question, index) => {
+  _.forEach(payload.questions, (question, index) => {
     if (question.file) {
       formData.append(index, question.file);
     }
@@ -83,23 +82,23 @@ const translateQuestionnaire = (payload) => {
 
 const updateQuestionnaire = (id, payload) => {
   const formData = new FormData();
-  const noChangedFileIds = [];
-
   formData.append('lang', payload.lang);
   formData.append('therapist_id', payload.therapist_id);
   formData.append('data', JSON.stringify(payload));
 
-  _.map(payload.questions, (question, index) => {
-    if (question.file) {
-      if (question.file.id === undefined) {
-        formData.append(index, question.file);
-      } else {
-        noChangedFileIds.push(question.id);
-      }
+  _.forEach(payload.questions, (question, index) => {
+    const { file, id } = question;
+
+    // Skip if an existing file already has an ID
+    if (file?.id) return;
+
+    // Append either new file or mark as having no file
+    if (file instanceof File) {
+      formData.append(index, file);
+    } else {
+      formData.append('no_file_questions[]', id);
     }
   });
-
-  formData.append('no_changed_files', noChangedFileIds.toString());
 
   return axios.post(`/questionnaire/${id}?_method=PUT`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(
