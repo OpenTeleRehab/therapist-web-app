@@ -23,7 +23,8 @@ import * as ROUTES from '../../variables/routes';
 import { getLastActivityDate } from '../../utils/treatmentPlan';
 import Select from 'react-select';
 import scssColors from '../../scss/custom.scss';
-import { getDiseases } from 'store/disease/actions';
+import { getHealthConditionGroups } from '../../store/healthConditionGroup/actions';
+import { getHealthConditions } from '../../store/healthCondition/actions';
 
 const CreateTreatmentPlan = () => {
   const history = useHistory();
@@ -38,6 +39,8 @@ const CreateTreatmentPlan = () => {
   const { profile } = useSelector(state => state.auth);
   const { countries } = useSelector(state => state.country);
 
+  const healthConditionGroups = useSelector((state) => state.healthConditionGroup.healthConditionGroups);
+  const healthConditions = useSelector((state) => state.healthCondition.healthConditions);
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
     return current.isAfter(yesterday);
@@ -49,12 +52,15 @@ const CreateTreatmentPlan = () => {
     patient_id: patientId,
     start_date: '',
     end_date: '',
-    disease_id: ''
+    health_condition_group_id: '',
+    health_condition_id: ''
   });
   const [weeks, setWeeks] = useState(1);
   const [startDate, setStartDate] = useState('');
   const [editingTreatmentPlan, setEditingTreatmentPlan] = useState([]);
 
+  const [errorHealthConditionGroup, setErrorHealthConditionGroup] = useState(false);
+  const [errorHealthCondition, setErrorHealthCondition] = useState(false);
   const [errorName, setErrorName] = useState(false);
   const [errorStartDate, setErrorStartDate] = useState(false);
   const [errorPatient, setErrorPatient] = useState(false);
@@ -68,7 +74,6 @@ const CreateTreatmentPlan = () => {
   const [originData, setOriginData] = useState([]);
   const [originGoals, setOriginGoals] = useState([]);
   const [treatmentPlanId, setTreatmentPlanId] = useState();
-  const diseases = useSelector((state) => state.disease.diseases);
 
   useEffect(() => {
     if (activity) {
@@ -77,8 +82,15 @@ const CreateTreatmentPlan = () => {
   }, [activity]);
 
   useEffect(() => {
-    dispatch(getDiseases({ lang: profile.language_id }));
+    dispatch(getHealthConditionGroups({ lang: profile.language_id }));
+    dispatch(getHealthConditions({ lang: profile.language_id }));
   }, [dispatch, profile]);
+
+  useEffect(() => {
+    if (formFields.health_condition_group_id) {
+      dispatch(getHealthConditions({ lang: profile.language_id, parent_id: formFields.health_condition_group_id }));
+    }
+  }, [formFields.health_condition_group_id]);
 
   useEffect(() => {
     if (id && treatmentPlans.length === 0 && countries.length) {
@@ -137,7 +149,7 @@ const CreateTreatmentPlan = () => {
         patient_id: editingData.patient_id,
         start_date: moment(editingData.start_date, settings.date_format).locale('en').format(settings.date_format),
         end_date: moment(editingData.end_date, settings.date_format).format(settings.date_format),
-        disease_id: editingData.disease_id
+        health_condition_id: editingData.health_condition_id
       });
       setEditingTreatmentPlan(editingData);
       setStartDate(moment(editingData.start_date, settings.date_format));
@@ -155,6 +167,13 @@ const CreateTreatmentPlan = () => {
     // eslint-disable-next-line
   }, [id, treatmentPlans, profile]);
 
+  useEffect(() => {
+    if (healthConditions.length && formFields.health_condition_id && !formFields.health_condition_group_id) {
+      const condition = healthConditions.find(item => item.id === formFields.health_condition_id);
+      setFormFields({ ...formFields, health_condition_group_id: condition.parent_id });
+    }
+  }, [healthConditions, formFields.health_condition_group_id, formFields.health_condition_id]);
+
   const resetData = () => {
     setErrorName(false);
     setErrorStartDate(false);
@@ -164,7 +183,8 @@ const CreateTreatmentPlan = () => {
       patient_id: patientId,
       start_date: '',
       end_date: '',
-      disease_id: ''
+      health_condition_group_id: '',
+      health_condition_id: ''
     });
   };
 
@@ -174,12 +194,18 @@ const CreateTreatmentPlan = () => {
   };
 
   const handleSingleSelectChange = (key, value) => {
-    setFormFields({ ...formFields, [key]: value });
+    if (key === 'health_condition_group_id') {
+      setFormFields({ ...formFields, [key]: value, health_condition_id: '' });
+    } else {
+      setFormFields({ ...formFields, [key]: value });
+    }
   };
 
   const handleSaveAsPreset = () => {
     let canSave = true;
     setErrorPatient(false);
+    setErrorHealthConditionGroup(false);
+    setErrorHealthCondition(false);
     setErrorStartDate(false);
 
     if (presetName === '') {
@@ -235,6 +261,20 @@ const CreateTreatmentPlan = () => {
       setErrorPatient(true);
     } else {
       setErrorPatient(false);
+    }
+
+    if (!formFields.health_condition_group_id) {
+      canSave = false;
+      setErrorHealthConditionGroup(true);
+    } else {
+      setErrorHealthConditionGroup(false);
+    }
+
+    if (!formFields.health_condition_id) {
+      canSave = false;
+      setErrorHealthCondition(true);
+    } else {
+      setErrorHealthCondition(false);
     }
 
     if (formFields.start_date === '' || !moment(formFields.start_date, settings.date_format).isValid()) {
@@ -363,7 +403,7 @@ const CreateTreatmentPlan = () => {
           <Accordion.Collapse eventKey="0">
             <>
               <Row>
-                <Col md={4}>
+                <Col md={6}>
                   <Form.Group>
                     <Form.Label>{translate('treatment_plan.patient')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
@@ -384,7 +424,54 @@ const CreateTreatmentPlan = () => {
                     )}
                   </Form.Group>
                 </Col>
-                <Col md={4}>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>{translate('treatment_plan.health_condition_group')}</Form.Label>
+                    <span className="text-dark ml-1">*</span>
+                    <Select
+                      placeholder={translate('placeholder.health_condition_group')}
+                      classNamePrefix="filter"
+                      className={errorHealthConditionGroup ? 'is-invalid' : ''}
+                      value={healthConditionGroups.filter(option => option.id === parseInt(formFields.health_condition_group_id))}
+                      getOptionLabel={option => `${option.title}`}
+                      options={[
+                        { id: '', title: translate('placeholder.health_condition_group') },
+                        ...healthConditionGroups
+                      ]}
+                      onChange={(e) => handleSingleSelectChange('health_condition_group_id', e.id)}
+                      styles={customSelectStyles}
+                      aria-label={translate('treatment_plan.health_condition_group')}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {translate('error.treatment_plan.health_condition_group')}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group>
+                    <Form.Label>{translate('treatment_plan.health_condition')}</Form.Label>
+                    <span className="text-dark ml-1">*</span>
+                    <Select
+                      isDisabled={!formFields.health_condition_group_id}
+                      placeholder={translate('placeholder.health_condition')}
+                      classNamePrefix="filter"
+                      className={errorHealthCondition ? 'is-invalid' : ''}
+                      value={healthConditions.filter(option => option.id === parseInt(formFields.health_condition_id))}
+                      getOptionLabel={option => `${option.title}`}
+                      options={[
+                        { id: '', title: translate('placeholder.health_condition') },
+                        ...healthConditions
+                      ]}
+                      onChange={(e) => handleSingleSelectChange('health_condition_id', e.id)}
+                      styles={customSelectStyles}
+                      aria-label={translate('treatment_plan.health_condition')}
+                    />
+                    <Form.Control.Feedback type="invalid">
+                      {translate('error.treatment_plan.health_condition')}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
                   <Form.Group controlId="formTreatmentName">
                     <Form.Label>{translate('treatment_plan.name')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
@@ -401,25 +488,6 @@ const CreateTreatmentPlan = () => {
                     <Form.Control.Feedback type="invalid">
                       {translate('error.treatment_plan.name')}
                     </Form.Control.Feedback>
-                  </Form.Group>
-                </Col>
-                <Col md={4}>
-                  <Form.Group>
-                    <Form.Label>{translate('treatment_plan.international_classification')}</Form.Label>
-                    <span className="text-dark ml-1"></span>
-                    <Select
-                      placeholder={translate('placeholder.disease')}
-                      classNamePrefix="filter"
-                      value={diseases.filter(option => option.id === parseInt(formFields.disease_id))}
-                      getOptionLabel={option => `${option.name}`}
-                      options={[
-                        { id: '', name: translate('placeholder.disease') },
-                        ...diseases
-                      ]}
-                      onChange={(e) => handleSingleSelectChange('disease_id', e.id)}
-                      styles={customSelectStyles}
-                      aria-label="Disease"
-                    />
                   </Form.Group>
                 </Col>
               </Row>
