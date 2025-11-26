@@ -1,14 +1,13 @@
 import React, { useContext, useState } from 'react';
 import { Link, NavLink, withRouter } from 'react-router-dom';
-import { Navbar, Nav, Dropdown, Badge } from 'react-bootstrap';
+import { Badge, Dropdown, Nav, Navbar } from 'react-bootstrap';
 import * as ROUTES from 'variables/routes';
 import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
-import { unSubscribeEvent, chatLogout } from 'utils/rocketchat';
+import { chatLogout, unSubscribeEvent } from 'utils/rocketchat';
 import RocketchatContext from 'context/RocketchatContext';
-import DownloadTracker from '../components/DownloadTracker';
 
 const Navigation = ({ translate }) => {
   const { keycloak } = useKeycloak();
@@ -17,7 +16,6 @@ const Navigation = ({ translate }) => {
   const { chatRooms, isChatConnected, subscribeIds } = useSelector((state) => state.rocketchat);
   const { appointments } = useSelector((state) => state.appointment);
   const [show, setShow] = useState(false);
-  const [showDownloadTrackers, setShowDownloadTrackers] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -79,7 +77,7 @@ const Navigation = ({ translate }) => {
       <span className="portal-name ml-3">
         {translate('portal.name')}
       </span>
-      <Navbar.Toggle aria-controls="basic-navbar-nav ml-auto" />
+      <Navbar.Toggle aria-controls="basic-navbar-nav ml-auto"/>
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto" variant="pills">
           <NavLink
@@ -131,7 +129,7 @@ const Navigation = ({ translate }) => {
             </NavLink>
           )}
 
-          { profile !== undefined && (
+          {profile !== undefined && (
             <Dropdown>
               <Dropdown.Toggle variant="link" id="dropdown-basic">
                 {translate('common.welcome')} {profile.last_name} {profile.first_name}
@@ -139,37 +137,24 @@ const Navigation = ({ translate }) => {
                 {profile.email}
               </Dropdown.Toggle>
 
-              <Dropdown.Menu
-                alignRight={true}
-              >
-                <Dropdown.Item as={Link} to={ROUTES.PROFILE}>
-                  {translate('profile.setting')}
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to={ROUTES.FAQ}>
-                  {translate('profile.faq')}
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to={ROUTES.TC}>
-                  {translate('profile.tc')}
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to={ROUTES.PP}>
-                  {translate('profile.pp')}
-                </Dropdown.Item>
-                <Dropdown.Item onClick={() => setShowDownloadTrackers(true)}>
-                  {translate('common.download.history')}
-                </Dropdown.Item>
-                <DownloadTracker showDownloadTrackers={showDownloadTrackers} setShowDownloadTrackers={setShowDownloadTrackers} />
+              <Dropdown.Menu alignRight={true}>
+                <Dropdown.Item as={Link} to={ROUTES.PROFILE}>{translate('profile.setting')}</Dropdown.Item>
+                <Dropdown.Item as={Link} to={ROUTES.FAQ}>{translate('profile.faq')}</Dropdown.Item>
+                <Dropdown.Item as={Link} to={ROUTES.TC}>{translate('profile.tc')}</Dropdown.Item>
+                <Dropdown.Item as={Link} to={ROUTES.PP}>{translate('profile.pp')}</Dropdown.Item>
                 <Dropdown.Item onClick={handleShow}>{translate('logout')}</Dropdown.Item>
-                <Dialog
-                  show={show}
-                  title={translate('logout.confirmation')}
-                  cancelLabel={translate('logout.cancel')}
-                  onCancel={handleClose}
-                  confirmLabel={translate('logout.confirm')}
-                  onConfirm={handleConfirm}
-                >
-                  <p>{translate('logout.message')}</p>
-                </Dialog>
               </Dropdown.Menu>
+
+              <Dialog
+                show={show}
+                title={translate('logout.confirmation')}
+                cancelLabel={translate('logout.cancel')}
+                onCancel={handleClose}
+                confirmLabel={translate('logout.confirm')}
+                onConfirm={handleConfirm}
+              >
+                <p>{translate('logout.message')}</p>
+              </Dialog>
             </Dropdown>
           )}
         </Nav>
