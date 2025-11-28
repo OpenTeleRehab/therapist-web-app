@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "moduleResolution": "Node",
+    "isolatedModules": true,
+    "baseUrl": "src",
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": false,
+
+    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": false,
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "**/*.js"]
+}

@@ -9,6 +9,8 @@ import PropTypes from 'prop-types';
 import settings from 'settings';
 import moment from 'moment';
 import RocketchatContext from 'context/RocketchatContext';
+import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
 
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
@@ -24,6 +26,8 @@ import { getPatient, clearPatient } from 'store/patient/actions';
 
 import { getCountryName, getCountryIsoCode } from 'utils/country';
 import { getClinicName, getClinicIdentity } from 'utils/clinic';
+import { getRegionName } from 'utils/region';
+import { getProvinceName } from 'utils/province';
 import { getChatRooms } from 'utils/therapist';
 import AgeCalculation from 'utils/age';
 import { deleteChatRoom } from 'utils/rocketchat';
@@ -43,6 +47,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const { transfers } = useSelector(state => state.transfer);
   const definedCountries = useSelector(state => state.country.definedCountries);
   const { languages } = useSelector(state => state.language);
+
+  const { data: provinces } = useList(END_POINTS.PROVINCE);
+  const { data: regions } = useList(END_POINTS.REGION);
 
   const [errorCountry, setErrorCountry] = useState(false);
   const [errorClinic, setErrorClinic] = useState(false);
@@ -431,6 +438,36 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             />
             <Form.Control.Feedback type="invalid">
               {translate('error.country')}
+            </Form.Control.Feedback>
+          </Form.Group>
+          <Form.Group as={Col} controlId="formClinic">
+            <Form.Label>{translate('common.region')}</Form.Label>
+            <Select
+              value={formFields.clinic_id}
+              placeholder={getRegionName(1, regions?.data)}
+              classNamePrefix="filter"
+              className={errorClinic ? 'is-invalid' : ''}
+              isDisabled={true}
+              aria-label="Clinic"
+            />
+            <Form.Control.Feedback type="invalid">
+              {translate('error.clinic')}
+            </Form.Control.Feedback>
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId="formCountry">
+            <Form.Label>{translate('common.province')}</Form.Label>
+            <Select
+              value={formFields.country_id}
+              placeholder={getProvinceName(1, provinces?.data)}
+              classNamePrefix="filter"
+              className={errorCountry ? 'is-invalid' : ''}
+              isDisabled={true}
+              aria-label="Province"
+            />
+            <Form.Control.Feedback type="invalid">
+              {translate('error.province')}
             </Form.Control.Feedback>
           </Form.Group>
           <Form.Group as={Col} controlId="formClinic">

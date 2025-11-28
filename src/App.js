@@ -13,6 +13,8 @@ import keycloak from 'utils/keycloak';
 import 'scss/app.scss';
 import SplashScreen from 'components/SplashScreen';
 import ConfigurationProvider from './ConfigurationProvider';
+import ReactQueryProvider from './ReactQueryProvider';
+import { ToastProvider } from 'components/V2/Toast';
 import Guidance from './components/Guidance';
 import Survey from 'components/Survey';
 import VideoCall from './views/ChatOrCall/Partials/VideoCall';
@@ -28,17 +30,21 @@ const App = () => {
       LoadingComponent={<SplashScreen />}
     >
       <Provider store={store}>
-        <ConfigurationProvider>
-          <LocalizeProvider store={store}>
-            <Router history={createBrowserHistory()}>
-              <Route path="/patient" />
-              <RouteSwitch />
-              <Guidance />
-              <Survey />
-              <VideoCall />
-            </Router>
-          </LocalizeProvider>
-        </ConfigurationProvider>
+        <ToastProvider>
+          <ReactQueryProvider>
+            <ConfigurationProvider>
+              <LocalizeProvider store={store}>
+                <Router history={createBrowserHistory()}>
+                  <Route path="/patient" />
+                  <RouteSwitch />
+                  <Guidance />
+                  <Survey />
+                  <VideoCall />
+                </Router>
+              </LocalizeProvider>
+            </ConfigurationProvider>
+          </ReactQueryProvider>
+        </ToastProvider>
       </Provider>
     </ReactKeycloakProvider>
   );
