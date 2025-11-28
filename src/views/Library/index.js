@@ -7,6 +7,7 @@ import queryString from 'query-string';
 import { useDispatch, useSelector } from 'react-redux';
 import { Exercise as exerciseService } from 'services/exercise';
 import _ from 'lodash';
+import { USER_TYPE } from 'variables/user';
 
 import { CATEGORY_TYPES } from 'variables/category';
 import { SYSTEM_TYPES } from 'variables/systemLimit';
@@ -84,14 +85,14 @@ const Library = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (therapistId) {
+    if (therapistId && profile?.type === USER_TYPE.THERAPIST) {
       exerciseService.countTherapistLibraries(therapistId).then(res => {
         if (res.success) {
           setAllowCreateContent(res.data < maxLibraries);
         }
       });
     }
-  }, [therapistId, view, maxLibraries]);
+  }, [therapistId, view, maxLibraries, profile]);
 
   useEffect(() => {
     if (selectedExercises.length || selectedMaterials.length || selectedQuestionnaires.length) {
@@ -153,6 +154,7 @@ const Library = ({ translate }) => {
             {newContentLink && (
               allowCreateContent ? (
                 <Button
+                  style={{ visibility: profile.type === 'phc_worker' && view !== 'preset_treatment' ? 'hidden' : 'visible' }}
                   as={Link} to={newContentLink}
                 >
                   <BsPlus size={20} className="mr-1"/>
@@ -164,7 +166,7 @@ const Library = ({ translate }) => {
                   overlay={<Tooltip id="button-tooltip">{translate('library.content_upload_reach_limit', { number: maxLibraries })}</Tooltip>}
                 >
                   <span className="d-inline-block">
-                    <Button disabled style={{ pointerEvents: 'none' }}>
+                    <Button disabled style={{ pointerEvents: 'none', visibility: profile.type === 'phc_worker' && view !== 'preset_treatment' ? 'hidden' : 'visible' }}>
                       <BsPlus size={20} className="mr-1"/>
                       {translate('common.new_content')}
                     </Button>
