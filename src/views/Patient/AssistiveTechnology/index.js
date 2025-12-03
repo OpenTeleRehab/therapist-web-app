@@ -147,7 +147,7 @@ const AssistiveTechnologyHistory = () => {
   }, [followUpDate, userLocale]);
 
   useEffect(() => {
-    if (from.isValid) {
+    if (from) {
       // set locale to en before convert
       moment.locale('en');
 
@@ -163,7 +163,7 @@ const AssistiveTechnologyHistory = () => {
   }, [from, userLocale]);
 
   useEffect(() => {
-    if (to.isValid) {
+    if (to) {
       // set locale to en before convert
       moment.locale('en');
       setTimeTo(to.formatted12 ? to.formatted12 : moment(to, 'hh:mm A').locale('en').format('hh:mm a'));
@@ -430,8 +430,8 @@ const AssistiveTechnologyHistory = () => {
             rows={patientAssistiveTechnologies.map(item => {
               const action = (
                 <>
-                  <EditAction onClick={() => handleEdit(item)} />
-                  <DeleteAction className="ml-1" onClick={() => handleDelete(item.id)} />
+                  <EditAction disabled={item.therapist_id !== profile.id} onClick={() => handleEdit(item)} />
+                  <DeleteAction disabled={item.therapist_id !== profile.id} className="ml-1" onClick={() => handleDelete(item.id)} />
                 </>
               );
 
