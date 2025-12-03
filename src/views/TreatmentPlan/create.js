@@ -403,7 +403,7 @@ const CreateTreatmentPlan = () => {
           <Accordion.Collapse eventKey="0">
             <>
               <Row>
-                <Col md={6}>
+                <Col md={12}>
                   <Form.Group>
                     <Form.Label>{translate('treatment_plan.patient')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
@@ -424,7 +424,7 @@ const CreateTreatmentPlan = () => {
                     )}
                   </Form.Group>
                 </Col>
-                <Col md={6}>
+                <Col md={4}>
                   <Form.Group>
                     <Form.Label>{translate('treatment_plan.health_condition_group')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
@@ -447,7 +447,7 @@ const CreateTreatmentPlan = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-                <Col md={6}>
+                <Col md={4}>
                   <Form.Group>
                     <Form.Label>{translate('treatment_plan.health_condition')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
@@ -471,7 +471,7 @@ const CreateTreatmentPlan = () => {
                     </Form.Control.Feedback>
                   </Form.Group>
                 </Col>
-                <Col md={6}>
+                <Col md={4}>
                   <Form.Group controlId="formTreatmentName">
                     <Form.Label>{translate('treatment_plan.name')}</Form.Label>
                     <span className="text-dark ml-1">*</span>
@@ -492,10 +492,7 @@ const CreateTreatmentPlan = () => {
                 </Col>
               </Row>
               <Row>
-                <Col md={6}>
-                  <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} isOwnCreated={isOwnCreated} originGoals={originGoals} />
-                </Col>
-                <Col md={6}>
+                <Col md={12}>
                   <Form.Group controlId="formDescription">
                     <Form.Label>{translate('treatment_plan.description')}</Form.Label>
                     <Form.Control
@@ -509,6 +506,9 @@ const CreateTreatmentPlan = () => {
                       disabled={!isOwnCreated}
                     />
                   </Form.Group>
+                </Col>
+                <Col md={12} className="text-center">
+                  <TreatmentGoal goals={goals} setGoals={setGoals} readOnly={readOnly} isOwnCreated={isOwnCreated} originGoals={originGoals} />
                 </Col>
               </Row>
             </>

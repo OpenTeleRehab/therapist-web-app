@@ -192,7 +192,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
         <Form.Row>
-          <Col md={6}>
+          <Col md={12}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.choose_a_patient')}</Form.Label>
               <Form.Control
@@ -215,7 +215,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
               )}
             </Form.Group>
           </Col>
-          <Col md={6}>
+          <Col md={12}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.health_condition_group')}</Form.Label>
               <span className="text-dark ml-1">*</span>
@@ -238,7 +238,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
-          <Col md={6}>
+          <Col md={12}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.health_condition')}</Form.Label>
               <span className="text-dark ml-1">*</span>
@@ -262,7 +262,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
               </Form.Control.Feedback>
             </Form.Group>
           </Col>
-          <Col lg={6}>
+          <Col lg={12}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.name')}</Form.Label>
               <span className="text-dark ml-1">*</span>
@@ -282,10 +282,7 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
           </Col>
         </Form.Row>
         <Form.Row>
-          <Col lg={6}>
-            <TreatmentGoal goals={goals} setGoals={setGoals} />
-          </Col>
-          <Col lg={6}>
+          <Col lg={12}>
             <Form.Group>
               <Form.Label>{translate('treatment_plan.description')}</Form.Label>
               <Form.Control
@@ -298,6 +295,9 @@ const AssignPatient = ({ show, handleClose, weeks, activities }) => {
                 onChange={handleChange}
               />
             </Form.Group>
+          </Col>
+          <Col lg={12} className="text-center">
+            <TreatmentGoal goals={goals} setGoals={setGoals} />
           </Col>
         </Form.Row>
         <Form.Row>
