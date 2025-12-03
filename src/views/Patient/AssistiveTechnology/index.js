@@ -430,8 +430,8 @@ const AssistiveTechnologyHistory = () => {
             rows={patientAssistiveTechnologies.map(item => {
               const action = (
                 <>
-                  <EditAction onClick={() => handleEdit(item)} />
-                  <DeleteAction className="ml-1" onClick={() => handleDelete(item.id)} />
+                  <EditAction disabled={item.therapist_id !== profile.id} onClick={() => handleEdit(item)} />
+                  <DeleteAction disabled={item.therapist_id !== profile.id} className="ml-1" onClick={() => handleDelete(item.id)} />
                 </>
               );
 
