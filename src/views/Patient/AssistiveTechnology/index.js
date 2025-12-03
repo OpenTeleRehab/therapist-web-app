@@ -147,7 +147,7 @@ const AssistiveTechnologyHistory = () => {
   }, [followUpDate, userLocale]);
 
   useEffect(() => {
-    if (from.isValid) {
+    if (from) {
       // set locale to en before convert
       moment.locale('en');
 
@@ -163,7 +163,7 @@ const AssistiveTechnologyHistory = () => {
   }, [from, userLocale]);
 
   useEffect(() => {
-    if (to.isValid) {
+    if (to) {
       // set locale to en before convert
       moment.locale('en');
       setTimeTo(to.formatted12 ? to.formatted12 : moment(to, 'hh:mm A').locale('en').format('hh:mm a'));
