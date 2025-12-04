@@ -11,6 +11,7 @@ import {
   BsSquare,
   BsPersonFill
 } from 'react-icons/bs';
+import { USER_TYPE } from 'variables/user';
 
 import Pagination from 'components/Pagination';
 import { getExercises, deleteExercise } from 'store/exercise/actions';
@@ -198,15 +199,17 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                   id="exercise-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
-                <Form.Check
-                  custom
-                  type="checkbox"
-                  name="my_contents_only"
-                  className="mt-3"
-                  label={translate('library.show_my_contents_only')}
-                  id="exercise-showMyContentsOnly"
-                  onChange={handleCheckBoxChange}
-                />
+                {profile.type === USER_TYPE.THERAPIST && (
+                  <Form.Check
+                    custom
+                    type="checkbox"
+                    name="my_contents_only"
+                    className="mt-3"
+                    label={translate('library.show_my_contents_only')}
+                    id="exercise-showMyContentsOnly"
+                    onChange={handleCheckBoxChange}
+                  />
+                )}
               </Form.Group>
               <Form.Group>
                 <Form.Label>{translate('common.language')}</Form.Label>
