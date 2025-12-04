@@ -31,6 +31,10 @@ import { getNextAppointment } from '../../utils/appointment';
 import queryString from 'query-string';
 import Transfer from './Transfer';
 import { APPOINTMENT_STATUS } from 'variables/appointment';
+import { USER_GROUPS } from 'variables/user';
+import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
+import { getSupplementaryPhcWorker } from 'utils/phcWorker';
 
 const VIEW_PATIENT = 'patient';
 const VIEW_TRANSFER = 'transfer';
@@ -55,8 +59,9 @@ const Patient = () => {
   const translate = getTranslate(localize);
   const history = useHistory();
   const pendingTransfers = transfers.filter(item => item.to_therapist_id === profile.id && item.status === 'invited');
+  const { data: phcWorkers } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE, { phc_service_id: profile?.phc_service_id }, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
 
-  const columns = [
+  const baseColumns = [
     { name: 'identity', title: translate('common.id') },
     { name: 'last_name', title: translate('common.last_name'), width: 50 },
     { name: 'first_name', title: translate('common.first_name'), width: 50 },
@@ -69,6 +74,12 @@ const Patient = () => {
     { name: 'notification', title: translate('common.notification') },
     { name: 'transfer', title: translate('common.transfer') }
   ];
+  const columns = [...baseColumns];
+  if (profile.type === USER_GROUPS.PHC_WORKER) {
+    columns.splice(9, 0,
+      { name: 'supplementary_phc_worker', title: translate('common.lead_supplementary_phc_worker') }
+    );
+  }
 
   const defaultHiddenColumnNames = [
     'age',
@@ -83,6 +94,7 @@ const Patient = () => {
     { columnName: 'ongoing_treatment_plan', wordWrapEnabled: true },
     { columnName: 'treatment_status', wordWrapEnabled: true },
     { columnName: 'secondary_therapist', wordWrapEnabled: true },
+    { columnName: 'supplementary_phc_worker', wordWrapEnabled: true },
     { columnName: 'transfer', wordWrapEnabled: true, width: 150 }
   ];
 
@@ -98,13 +110,15 @@ const Patient = () => {
   useEffect(() => {
     if (profile !== undefined && countries.length && search === '') {
       dispatch(getUsers({
-        therapist_id: profile.id,
+        therapist_id: profile.type === USER_GROUPS.THERAPIST ? profile.id : null,
         filters,
         search_value: searchValue,
         page_size: pageSize,
         page: currentPage + 1
       }));
-      dispatch(getTherapistsByClinic(profile.clinic_id));
+      if (profile.type === USER_GROUPS.THERAPIST) {
+        dispatch(getTherapistsByClinic(profile.clinic_id));
+      }
     }
   }, [search, currentPage, pageSize, searchValue, filters, dispatch, profile, countries]);
 
@@ -154,8 +168,8 @@ const Patient = () => {
 
       secondaryTherapistHTML = therapists.join(', ');
     }
-
-    return primaryTherapistHTML + '/' + secondaryTherapistHTML;
+    if (primaryTherapistHTML && secondaryTherapistHTML) return `${primaryTherapistHTML} / ${secondaryTherapistHTML}`;
+    return primaryTherapistHTML || secondaryTherapistHTML || '';
   };
 
   const handleRowClick = (row) => {
@@ -278,6 +292,7 @@ const Patient = () => {
                   treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),
                   next_appointment: getNextAppointment(user.next_appointment),
                   secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
+                  supplementary_phc_worker: profile.type === USER_GROUPS.PHC_WORKER && <span dangerouslySetInnerHTML={{ __html: getSupplementaryPhcWorker(profile, user, phcWorkers?.data) }}></span>,
                   notification,
                   transfer: transfer && transfer.from_therapist_id === therapist.id && <Badge pill variant="warning">{translate(`transfer.status.${transfer.status}`)}</Badge>
                 };

@@ -6,6 +6,7 @@ import { showErrorNotification } from 'store/notification/actions';
 import { getMessage } from 'utils/general';
 import { markMessagesAsRead } from 'utils/chat';
 import { Therapist } from '../../services/therapist';
+import { USER_GROUPS } from 'variables/user';
 
 export const connectWebsocket = (payload) => (dispatch) => {
   dispatch(mutation.setWebsocketConnectionSuccess(payload));
@@ -32,14 +33,14 @@ export const getChatRooms = () => async (dispatch, getState) => {
   const { authToken, authUserId } = getState().rocketchat;
 
   const payload = {
-    therapist_id: profile.id,
+    therapist_id: profile.type === USER_GROUPS.THERAPIST ? profile.id : undefined,
     enabled: 1,
     page_size: 999999,
     page: 1,
     disableAbortController: true
   };
   const data = await Patient.getPatientsForChatroom(payload);
-  const dataTherapist = await Therapist.getTherapistsForChatroom(profile.clinic_id);
+  const dataTherapist = profile.type === USER_GROUPS.THERAPIST ? await Therapist.getTherapistsForChatroom(profile.clinic_id) : await Therapist.getPhcWorkersForChatroom(profile.phc_service_id);
   const subscriptions = await Rocketchat.getSubscriptions(authUserId, authToken);
 
   if (data.success || dataTherapist.success) {

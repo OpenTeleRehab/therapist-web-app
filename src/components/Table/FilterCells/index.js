@@ -28,7 +28,7 @@ const FilterCell = (props) => {
     return <DateOfBirthFilterCell {...props} />;
   } else if (column.name === 'age') {
     return <NumberFilterCell {...props} />;
-  } else if (column.name === 'secondary_therapist') {
+  } else if (column.name === 'secondary_therapist' || column.name === 'supplementary_phc_worker') {
     return <TherapistTypeFilterCell {...props} />;
   } else if (column.name === 'next_appointment') {
     return <NextAppointmentFilterCell {...props} />;

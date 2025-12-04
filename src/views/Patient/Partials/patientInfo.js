@@ -49,6 +49,7 @@ import {
   getTherapistMessage
 } from '../../../store/message/actions';
 import TransferPatient from '../transfer';
+import { USER_GROUPS } from '../../../variables/user';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -102,7 +103,7 @@ const PatientInfo = ({ id, translate }) => {
         chat_user_id: patient.chat_user_id || '',
         enabled: patient.enabled
       });
-      setIsSecondaryTherapist(patient.secondary_therapists.includes(profile.id));
+      setIsSecondaryTherapist(profile.type === USER_GROUPS.THERAPIST ? patient.secondary_therapists?.includes(profile.id) : patient.supplementary_phc_workers?.includes(profile.id));
     }
   }, [id, translate, profile, patient, countries]);
 
