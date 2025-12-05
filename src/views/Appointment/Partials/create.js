@@ -44,7 +44,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
 
   useEffect(() => {
     if (profile) {
-      dispatch(getUsers({ therapist_id: profile.id, page_size: 999, enabled: true }));
+      dispatch(getUsers({ page_size: 999, enabled: true }));
     }
   }, [profile, dispatch]);
 
@@ -86,7 +86,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   }, [date]);
 
   useEffect(() => {
-    if (from.isValid) {
+    if (from) {
       // set moment locale to en before convert
       moment.locale('en');
       setFormattedTo(moment(from.formatted12, 'hh:mm a').locale(userLocale).add(15, 'minutes').format('hh:mm A'));
@@ -101,7 +101,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   }, [from, userLocale]);
 
   useEffect(() => {
-    if (to.isValid) {
+    if (to) {
       // set moment locale to en before convert
       moment.locale('en');
       setTimeTo(to.formatted12 ? to.formatted12 : moment(to, 'hh:mm A').locale('en').format('hh:mm a'));
@@ -203,7 +203,6 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
     if (canSave) {
       const data = {
         patient_id: patientId,
-        therapist_id: profile.id,
         from: moment(moment(date).format(settings.date_format) + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         to: moment(moment(date).format(settings.date_format) + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         note
@@ -213,8 +212,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
         now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         date: moment(date).locale('en').format(settings.date_format),
         selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-        selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-        therapist_id: profile.id
+        selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null
       };
 
       if (editId) {
