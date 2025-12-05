@@ -59,13 +59,12 @@ const Appointment = ({ translate }) => {
   }, [patientId]);
 
   useEffect(() => {
-    if (date && profile && countries.length) {
+    if (date && countries.length) {
       const filter = {
         now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
         date: moment(date).locale('en').format(settings.date_format),
         selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-        selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-        therapist_id: profile.id
+        selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null
       };
 
       if (patientId) {
@@ -74,23 +73,22 @@ const Appointment = ({ translate }) => {
 
       dispatch(getAppointments(filter));
     }
-  }, [dispatch, date, selectedDate, profile, patientId, countries]);
+  }, [dispatch, date, selectedDate, patientId, countries]);
 
   useEffect(() => {
-    if (date && profile) {
+    if (date) {
       if (!Array.isArray(appointments) && appointments && appointments.unreadAppointments.length) {
         dispatch(updateAppointmentUnread(_.map(appointments.unreadAppointments, 'id'))).then(result => {
           if (result) {
             dispatch(getAppointments({
               now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-              date: moment(date).locale('en').format(settings.date_format),
-              therapist_id: profile.id
+              date: moment(date).locale('en').format(settings.date_format)
             }));
           }
         });
       }
     }
-  }, [dispatch, date, profile, appointments]);
+  }, [dispatch, date, appointments]);
 
   useEffect(() => {
     if (languages.length && profile) {

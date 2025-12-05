@@ -28,7 +28,6 @@ import { RejectAction, TrashAction } from 'components/ActionIcons';
 
 const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
   const dispatch = useDispatch();
-  const { profile } = useSelector((state) => state.auth);
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { colorScheme } = useSelector(state => state.colorScheme);
@@ -41,8 +40,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
     now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
     date: moment(date).locale('en').format(settings.date_format),
     selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-    selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-    therapist_id: profile.id
+    selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null
   };
 
   useEffect(() => {
