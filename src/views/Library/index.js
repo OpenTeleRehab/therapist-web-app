@@ -167,27 +167,34 @@ const Library = ({ translate }) => {
       <div className="d-flex justify-content-end flex-wrap flex-md-nowrap align-items-center mb-3">
         <div className="btn-toolbar mb-2 mb-md-0">
           <div className="btn-toolbar mb-2 mb-md-0">
-            {newContentLink && (
-              allowCreateContent ? (
-                <Button
-                  style={{ visibility: hideCreateBtn() ? 'hidden' : 'visible' }}
-                  as={Link} to={newContentLink}
-                >
-                  <BsPlus size={20} className="mr-1"/>
-                  {translate('common.new_content')}
-                </Button>
-              ) : (
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={<Tooltip id="button-tooltip">{translate('library.content_upload_reach_limit', { number: maxLibraries })}</Tooltip>}
-                >
-                  <span className="d-inline-block">
-                    <Button disabled style={{ pointerEvents: 'none', visibility: profile.type === 'phc_worker' && view !== 'preset_treatment' ? 'hidden' : 'visible' }}>
-                      <BsPlus size={20} className="mr-1"/>
-                      {translate('common.new_content')}
-                    </Button>
-                  </span>
-                </OverlayTrigger>
+            {view === VIEW_PRESET_TREATMENT ? (
+              <Button as={Link} to={newContentLink}>
+                <BsPlus size={20} className="mr-1"/>
+                {translate('common.new_content')}
+              </Button>
+            ) : (
+              newContentLink && (
+                allowCreateContent ? (
+                  <Button
+                    style={{ visibility: hideCreateBtn() ? 'hidden' : 'visible' }}
+                    as={Link} to={newContentLink}
+                  >
+                    <BsPlus size={20} className="mr-1"/>
+                    {translate('common.new_content')}
+                  </Button>
+                ) : (
+                  <OverlayTrigger
+                    placement="bottom"
+                    overlay={<Tooltip id="button-tooltip">{translate('library.content_upload_reach_limit', { number: maxLibraries })}</Tooltip>}
+                  >
+                    <span className="d-inline-block">
+                      <Button disabled style={{ pointerEvents: 'none', visibility: profile.type === 'phc_worker' && view !== 'preset_treatment' ? 'hidden' : 'visible' }}>
+                        <BsPlus size={20} className="mr-1"/>
+                        {translate('common.new_content')}
+                      </Button>
+                    </span>
+                  </OverlayTrigger>
+                )
               )
             )}
           </div>
