@@ -1,4 +1,4 @@
-export const USER_TYPE = {
+export const USER_GROUPS = {
   THERAPIST: 'therapist',
   PHC_WORKER: 'phc_worker',
 };

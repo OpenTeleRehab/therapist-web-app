@@ -7,7 +7,8 @@ import queryString from 'query-string';
 import { useDispatch, useSelector } from 'react-redux';
 import { Exercise as exerciseService } from 'services/exercise';
 import _ from 'lodash';
-import { USER_TYPE } from 'variables/user';
+import { USER_ROLES } from 'variables/user';
+import { useKeycloak } from '@react-keycloak/web';
 
 import { CATEGORY_TYPES } from 'variables/category';
 import { SYSTEM_TYPES } from 'variables/systemLimit';
@@ -35,6 +36,7 @@ const VIEW_PRESET_TREATMENT = 'preset_treatment';
 const Library = ({ translate }) => {
   const { search } = useLocation();
   const dispatch = useDispatch();
+  const { keycloak } = useKeycloak();
   const [view, setView] = useState(undefined);
   const [newContentLink, setNewContentLink] = useState(undefined);
   const [maxLibraries, setMaxLibraries] = useState(20);
@@ -85,7 +87,7 @@ const Library = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (therapistId && profile?.type === USER_TYPE.THERAPIST) {
+    if (therapistId) {
       exerciseService.countTherapistLibraries(therapistId).then(res => {
         if (res.success) {
           setAllowCreateContent(res.data < maxLibraries);
@@ -146,6 +148,20 @@ const Library = ({ translate }) => {
     setSelectedQuestionnaires([...selectedQuestionnaires]);
   };
 
+  const hideCreateBtn = () => {
+    const viewRoleMap = {
+      [VIEW_EXERCISE]: USER_ROLES.SETUP_EXERCISE,
+      [VIEW_EDUCATION]: USER_ROLES.SETUP_EDUCATIONAL_MATERIAL,
+      [VIEW_QUESTIONNAIRE]: USER_ROLES.SETUP_QUESTIONNAIRE,
+    };
+
+    const requiredRole = viewRoleMap[view];
+
+    if (!requiredRole) return false;
+
+    return !keycloak.hasRealmRole(requiredRole);
+  };
+
   return (
     <>
       <div className="d-flex justify-content-end flex-wrap flex-md-nowrap align-items-center mb-3">
@@ -154,7 +170,7 @@ const Library = ({ translate }) => {
             {newContentLink && (
               allowCreateContent ? (
                 <Button
-                  style={{ visibility: profile.type === 'phc_worker' && view !== 'preset_treatment' ? 'hidden' : 'visible' }}
+                  style={{ visibility: hideCreateBtn() ? 'hidden' : 'visible' }}
                   as={Link} to={newContentLink}
                 >
                   <BsPlus size={20} className="mr-1"/>
