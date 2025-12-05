@@ -18,7 +18,8 @@ import {
   BsSquare,
   BsPersonFill
 } from 'react-icons/bs';
-import { USER_TYPE } from 'variables/user';
+import { USER_ROLES } from 'variables/user';
+import { useKeycloak } from '@react-keycloak/web';
 
 import Pagination from 'components/Pagination';
 import Spinner from 'react-bootstrap/Spinner';
@@ -50,6 +51,7 @@ import { TranslateAction } from '../../../components/ActionIcons/TranslateAction
 const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allowCreateContent, onSectionChange, selectedMaterials, isShowPreviewList }) => {
   const dispatch = useDispatch();
   const history = useHistory();
+  const { keycloak } = useKeycloak();
   const { loading, educationMaterials, filters, totalCount } = useSelector(state => state.educationMaterial);
   const { categoryTreeData } = useSelector((state) => state.category);
   const { colorScheme } = useSelector(state => state.colorScheme);
@@ -217,7 +219,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                   id="material-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
-                {profile.type === USER_TYPE.THERAPIST && (
+                {keycloak.hasRealmRole(USER_ROLES.SETUP_EDUCATIONAL_MATERIAL) && (
                   <Form.Check
                     custom
                     type="checkbox"
