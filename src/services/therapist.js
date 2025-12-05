@@ -16,7 +16,7 @@ const getTherapistsByClinic = (clinicId) => {
 
 const deleteTherapistChatRoomById = (id, chatRoomId) => {
   const formData = new FormData();
-  formData.append('therapist_id', id);
+  formData.append('user_id', id);
   formData.append('chat_room_id', chatRoomId);
   return axios.post('/therapist/delete-chat-room/by-id', formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     .then(
@@ -75,10 +75,24 @@ const getTherapistsForChatroom = (clinicId) => {
     });
 };
 
+const getPhcWorkersForChatroom = (phcServiceId) => {
+  const params = { phc_service_id: phcServiceId };
+  return axios.get('phc-workers/list-for-chatroom', { params })
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Therapist = {
   getTherapistsByClinic,
   deleteTherapistChatRoomById,
   getPatientByPhoneNumber,
   getCallAccessToken,
-  getTherapistsForChatroom
+  getTherapistsForChatroom,
+  getPhcWorkersForChatroom
 };

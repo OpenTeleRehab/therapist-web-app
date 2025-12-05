@@ -1,6 +1,7 @@
 import { User } from 'services/user';
 import { mutation } from './mutations';
 import { getTranslate } from 'react-localize-redux';
+import { getPatient } from 'store/patient/actions';
 
 import {
   showErrorNotification,
@@ -45,8 +46,7 @@ export const updateUser = (id, payload) => async (dispatch, getState) => {
   const data = await User.updateUser(id, payload);
   if (data.success) {
     dispatch(mutation.updateUserSuccess());
-    const filters = getState().user.filters;
-    dispatch(getUsers(filters));
+    dispatch(getPatient(id));
     dispatch(showSuccessNotification('toast_title.edit_patient_account', data.message));
     return true;
   } else {
@@ -62,8 +62,7 @@ export const activateDeactivateAccount = (id, enabled) => async (dispatch, getSt
   const translate = getTranslate(getState().localize);
   if (data.success) {
     dispatch(mutation.activateDeactivateSuccess());
-    const filters = getState().user.filters;
-    dispatch(getUsers(filters));
+    dispatch(getPatient(id));
     dispatch(showSuccessNotification('toast_title.activate_deactivate_patient_account', data.message, { status: data.enabled ? translate('patient.activate') : translate('patient.deactivate') }));
     return true;
   } else {
@@ -79,8 +78,6 @@ export const deleteAccount = (id) => async (dispatch, getState) => {
   const data = await User.deleteAccount(id);
   if (data.success) {
     dispatch(mutation.deleteSuccess());
-    const filters = getState().user.filters;
-    dispatch(getUsers(filters));
     dispatch(showSuccessNotification('toast_title.delete_patient_account', data.message));
     return true;
   } else {

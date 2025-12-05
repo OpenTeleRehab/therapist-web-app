@@ -33,6 +33,9 @@ import AgeCalculation from 'utils/age';
 import { deleteChatRoom } from 'utils/rocketchat';
 import { LOCATIONS } from 'variables/location';
 import _ from 'lodash';
+import { USER_GROUPS } from 'variables/user';
+import { getPhcServiceIdentity, getPhcServiceName } from 'utils/phcService';
+import { useMutationAction } from 'hooks/useMutationAction';
 
 const CreatePatient = ({ show, handleClose, editId }) => {
   const dispatch = useDispatch();
@@ -41,7 +44,6 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const patient = useSelector(state => state.patient.patient);
 
   const countries = useSelector(state => state.country.countries);
-  const therapistsByClinic = useSelector(state => state.therapist.therapistsByClinic);
   const clinics = useSelector(state => state.clinic.clinics);
   const { profile } = useSelector((state) => state.auth);
   const { transfers } = useSelector(state => state.transfer);
@@ -50,6 +52,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
 
   const { data: provinces } = useList(END_POINTS.PROVINCE);
   const { data: regions } = useList(END_POINTS.REGION);
+  const { data: phcServices } = useList(END_POINTS.PHC_SERVICES, {}, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
+  const { mutate: phcWorkersDeleteChatRoom } = useMutationAction(END_POINTS.PHC_WORKERS_DELETE_CHAT_ROOM);
+  const { data: userOptions } = useList(END_POINTS.USER_OPTION_LIST);
 
   const [errorCountry, setErrorCountry] = useState(false);
   const [errorClinic, setErrorClinic] = useState(false);
@@ -77,11 +82,12 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     phone: '',
     gender: '',
     clinic_identity: '',
+    phc_service_identity: '',
     note: '',
     date_of_birth: '',
     age: '',
-    therapist_id: '',
     therapist_identity: '',
+    phc_worker_identity: '',
     location: ''
   });
   const [dob, setDob] = useState('');
@@ -110,10 +116,10 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   }, [languages, profile]);
 
   useEffect(() => {
-    if (profile !== undefined) {
+    if (profile?.type === USER_GROUPS.THERAPIST) {
       dispatch(getTherapistsByClinic(profile.clinic_id));
-      dispatch(getTransfers());
     }
+    dispatch(getTransfers());
   }, [dispatch, profile]);
 
   useEffect(() => {
@@ -125,19 +131,11 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     setPendingTransfers(previousTransfers => _.uniqBy([...previousTransfers, ...arr], 'therapist_id'));
   }, [transfers, editId]);
 
-  if (therapistsByClinic.length && profile !== undefined) {
-    therapistsByClinic.forEach(function (therapist, index) {
-      if (parseInt(therapist.id) === parseInt(profile.id)) {
-        therapistsByClinic.splice(index, 1);
-      }
-    });
-  }
-
   const options = [];
-  if (therapistsByClinic.length) {
-    therapistsByClinic.forEach(function (therapist, index) {
-      if (!_.some(pendingTransfers, x => x.therapist_id === therapist.id && x.status === 'invited')) {
-        options.push({ value: therapist.id, label: therapist.first_name + ' ' + therapist.last_name });
+  if (profile && userOptions?.data?.length) {
+    (userOptions?.data || []).forEach(function (user) {
+      if (!_.some(pendingTransfers, pendingTransfer => pendingTransfer.therapist_id === user.id && pendingTransfer.status === 'invited') && Number(user.id) !== Number(profile.id)) {
+        options.push({ value: user.id, label: user.first_name + ' ' + user.last_name });
       }
     });
   }
@@ -150,6 +148,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         last_name: editingData.last_name || '',
         country_id: editingData.country_id || '',
         clinic_id: editingData.clinic_id || '',
+        phc_service_id: editingData.phc_service_id || '',
         phone: editingData.phone || '',
         dial_code: editingData.dial_code || '',
         gender: editingData.gender || '',
@@ -158,8 +157,8 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         age: editingData.date_of_birth !== null ? AgeCalculation(editingData.date_of_birth, translate) : '',
         location: editingData.location || ''
       });
-      setSelectedTherapists(editingData.secondary_therapists);
-      setOriginalSecondaryTherapists(editingData.secondary_therapists);
+      setSelectedTherapists(profile.type === USER_GROUPS.THERAPIST ? editingData.secondary_therapists : editingData.supplementary_phc_workers);
+      setOriginalSecondaryTherapists(profile.type === USER_GROUPS.THERAPIST ? editingData.secondary_therapists : editingData.supplementary_phc_workers);
       setPatientChatUserId(editingData.chat_user_id);
 
       setDob(editingData.date_of_birth !== null ? moment(editingData.date_of_birth, 'YYYY-MM-DD') : '');
@@ -170,17 +169,19 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           ...formFields,
           country_id: profile.country_id,
           clinic_id: profile.clinic_id,
+          phc_service_id: profile.phc_service_id,
           clinic_identity: getClinicIdentity(profile.clinic_id, clinics),
-          therapist_id: profile.id,
-          therapist_identity: profile.identity
+          phc_service_identity: getPhcServiceIdentity(profile.phc_service_id, phcServices?.data),
+          therapist_identity: profile.type === USER_GROUPS.THERAPIST ? profile.identity : null,
+          phc_worker_identity: profile.type === USER_GROUPS.PHC_WORKER ? profile.identity : null,
         });
       }
     }
     // eslint-disable-next-line
-  }, [editId, patient, profile]);
+  }, [editId, patient, profile, phcServices]);
 
   useEffect(() => {
-    if (formFields.clinic_id) {
+    if (formFields.clinic_id || formFields.phc_service_id) {
       if (dob) {
         if (moment(dob, settings.date_format, true).isValid() && dob.isBefore(moment())) {
           const date = moment(dob).locale('en').format(settings.date_format);
@@ -268,7 +269,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     const priority = { invited: 1, declined: 2 };
 
     if (Array.isArray(e)) {
-      const filteredE = e.length ? _.filter(therapistsByClinic, item => e.some(x => x.value === item.id)) : [];
+      const filteredE = e.length ? _.filter(userOptions?.data || [], item => e.some(x => x.value === item.id)) : [];
 
       if (filteredE.length) {
         _.forEach(filteredE, x => transformE.push({ therapist_id: x.id, status: 'invited', first_name: x.first_name, last_name: x.last_name }));
@@ -350,9 +351,14 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       const url = window.location.href;
       const payload = {
         ...formValues,
-        secondary_therapists: selectedTherapists,
         stage: url.includes('local') ? 'local' : url.includes('demo') ? 'demo' : 'live'
       };
+
+      if (profile?.type === USER_GROUPS.THERAPIST) {
+        payload.secondary_therapists = selectedTherapists;
+      } else if (profile?.type === USER_GROUPS.PHC_WORKER) {
+        payload.supplementary_phc_workers = selectedTherapists;
+      }
 
       if (editId) {
         dispatch(updateUser(editId, payload))
@@ -361,13 +367,17 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               if (originalSecondaryTherapists) {
                 originalSecondaryTherapists.forEach(function (therapist, index) {
                   if (!_.includes(selectedTherapists, therapist) || selectedTherapists.length === 0) {
-                    const roomIds = getChatRooms(therapist, therapistsByClinic);
+                    const roomIds = getChatRooms(therapist, userOptions?.data || []);
                     const fIndex = roomIds.findIndex(r => r.includes(patientChatUserId));
                     if (fIndex > -1) {
                       const chatRoomId = roomIds[fIndex];
                       deleteChatRoom(chatSocket, chatRoomId, profile.id);
 
-                      therapistService.deleteTherapistChatRoomById(therapist, chatRoomId);
+                      if (profile.type === USER_GROUPS.THERAPIST) {
+                        therapistService.deleteTherapistChatRoomById(therapist, chatRoomId);
+                      } else {
+                        phcWorkersDeleteChatRoom({ id: null, payload: { user_id: therapist, chat_room_id: chatRoomId } });
+                      }
                       patientService.deletePatientChatRoomById(editId, chatRoomId);
                     }
                   }
@@ -444,7 +454,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             <Form.Label>{translate('common.region')}</Form.Label>
             <Select
               value={formFields.clinic_id}
-              placeholder={getRegionName(1, regions?.data)}
+              placeholder={getRegionName(profile?.region_id, regions?.data)}
               classNamePrefix="filter"
               className={errorClinic ? 'is-invalid' : ''}
               isDisabled={true}
@@ -460,7 +470,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             <Form.Label>{translate('common.province')}</Form.Label>
             <Select
               value={formFields.country_id}
-              placeholder={getProvinceName(1, provinces?.data)}
+              placeholder={getProvinceName(profile?.province_id, provinces?.data)}
               classNamePrefix="filter"
               className={errorCountry ? 'is-invalid' : ''}
               isDisabled={true}
@@ -470,20 +480,33 @@ const CreatePatient = ({ show, handleClose, editId }) => {
               {translate('error.province')}
             </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group as={Col} controlId="formClinic">
-            <Form.Label>{translate('common.clinic')}</Form.Label>
-            <Select
-              value={formFields.clinic_id}
-              placeholder={getClinicName(profile.clinic_id, clinics)}
-              classNamePrefix="filter"
-              className={errorClinic ? 'is-invalid' : ''}
-              isDisabled={true}
-              aria-label="Clinic"
-            />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.clinic')}
-            </Form.Control.Feedback>
-          </Form.Group>
+          {profile?.type === USER_GROUPS.THERAPIST && (
+            <Form.Group as={Col} controlId="formClinic">
+              <Form.Label>{translate('common.clinic')}</Form.Label>
+              <Select
+                value={formFields.clinic_id}
+                placeholder={getClinicName(profile.clinic_id, clinics)}
+                classNamePrefix="filter"
+                className={errorClinic ? 'is-invalid' : ''}
+                isDisabled={true}
+                aria-label="Clinic"
+              />
+              <Form.Control.Feedback type="invalid">
+                {translate('error.clinic')}
+              </Form.Control.Feedback>
+            </Form.Group>
+          )}
+          {profile?.type === USER_GROUPS.PHC_WORKER && (
+            <Form.Group controlId="formPhcService" as={Col}>
+              <Form.Label>{translate('common.phc_service')}</Form.Label>
+              <Form.Control
+                name="phc_service_name"
+                type="text"
+                value={getPhcServiceName(profile.phc_service_id, phcServices?.data)}
+                disabled
+              />
+            </Form.Group>
+          )}
         </Form.Row>
         <Form.Row>
           <Form.Group as={Col} controlId="formGender">
@@ -578,36 +601,71 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             {translate('error.location')}
           </Form.Control.Feedback>
         </Form.Group>
-        <Form.Group controlId="secondary-therapist">
-          <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
-          <Select
-            isMulti
-            value={options.filter(obj => (selectedTherapists || []).includes(obj.value))}
-            options={options}
-            placeholder={translate('placeholder.therapist')}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            onChange={handleMultipleSelectChange}
-            isClearable
-            aria-label="Secondary therapist"
-          />
+        {profile?.type === USER_GROUPS.PHC_WORKER && (
+          <Form.Group controlId="supplementary_phc_worker">
+            <Form.Label>{translate('common.supplementary_phc_worker')}</Form.Label>
+            <Select
+              isMulti
+              value={options.filter(obj => (selectedTherapists || []).includes(obj.value))}
+              options={options}
+              placeholder={translate('placeholder.supplementary_phc_worker')}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={handleMultipleSelectChange}
+              isClearable
+              aria-label="Supplementary PHC Worker"
+            />
 
-          {pendingTransfers.length > 0 && (
-            <>
-              <p className="mt-2 mb-2"><strong>{translate('transfer.pending_accept_decline')}</strong></p>
-              {pendingTransfers.map(item => {
-                return (
-                  <Chip
-                    key={item.therapist_id}
-                    variant={item.status === 'invited' ? 'primary' : 'danger'}
-                    label={`${item.first_name} ${item.last_name}`}
-                    onDelete={() => handleRemovePendingSecondaryTherapist(item.id, item.therapist_id)}
-                  />
-                );
-              })}
-            </>
-          )}
-        </Form.Group>
+            {pendingTransfers.length > 0 && (
+              <>
+                <p className="mt-2 mb-2"><strong>{translate('transfer.pending_accept_decline')}</strong></p>
+                {pendingTransfers.map(item => {
+                  return (
+                    <Chip
+                      key={item.therapist_id}
+                      variant={item.status === 'invited' ? 'primary' : 'danger'}
+                      label={`${item.first_name} ${item.last_name}`}
+                      onDelete={() => handleRemovePendingSecondaryTherapist(item.id, item.therapist_id)}
+                    />
+                  );
+                })}
+              </>
+            )}
+          </Form.Group>
+        )}
+
+        {profile?.type === USER_GROUPS.THERAPIST && (
+          <Form.Group controlId="secondary-therapist">
+            <Form.Label>{translate('common.secondary_therapist')}</Form.Label>
+            <Select
+              isMulti
+              value={options.filter(obj => (selectedTherapists || []).includes(obj.value))}
+              options={options}
+              placeholder={translate('placeholder.therapist')}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              onChange={handleMultipleSelectChange}
+              isClearable
+              aria-label="Secondary therapist"
+            />
+
+            {pendingTransfers.length > 0 && (
+              <>
+                <p className="mt-2 mb-2"><strong>{translate('transfer.pending_accept_decline')}</strong></p>
+                {pendingTransfers.map(item => {
+                  return (
+                    <Chip
+                      key={item.therapist_id}
+                      variant={item.status === 'invited' ? 'primary' : 'danger'}
+                      label={`${item.first_name} ${item.last_name}`}
+                      onDelete={() => handleRemovePendingSecondaryTherapist(item.id, item.therapist_id)}
+                    />
+                  );
+                })}
+              </>
+            )}
+          </Form.Group>
+        )}
         <Form.Group controlId="formNote">
           <Form.Label>{translate('common.note')}</Form.Label>
           <Form.Control
