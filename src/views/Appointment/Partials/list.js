@@ -173,20 +173,20 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                       <div className="p-3 ml-auto">
                         {appointment.created_by_therapist && (
                           <>
-                            <Button aria-label="Edit" className="font-weight-bold pr-3 pl-3" onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local()) || appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED}>
+                            <Button aria-label="Edit" className="font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local()) || appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED}>
                               <BiEdit className="mr-1" size={20} /><span>{translate('common.edit')}</span>
                             </Button>
-                            <TrashAction className="font-weight-bold ml-1" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
+                            <TrashAction className="mb-1 font-weight-bold" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
                           </>
                         )}
                         {!appointment.created_by_therapist && !(therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())) && (
                           <>
                             {!(therapistStatus === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())) && (
-                              <Button aria-label="Accept" className="ml-auto font-weight-bold pr-3 pl-3" onClick={() => handleAccept(appointment.id)}>
+                              <Button aria-label="Accept" className="ml-auto font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleAccept(appointment.id)}>
                                 <FaCalendarCheck size={15} /><span>{translate('common.accept')}</span>
                               </Button>
                             )}
-                            <RejectAction className="ml-1 pr-3 pl-3 font-weight-bold" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />
+                            <RejectAction className="pr-3 pl-3 mb-1 font-weight-bold" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />
                           </>
                         )}
                       </div>
