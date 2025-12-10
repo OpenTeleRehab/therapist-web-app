@@ -50,9 +50,9 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const definedCountries = useSelector(state => state.country.definedCountries);
   const { languages } = useSelector(state => state.language);
 
-  const { data: provinces } = useList(END_POINTS.PROVINCE);
-  const { data: regions } = useList(END_POINTS.REGION);
-  const { data: phcServices } = useList(END_POINTS.PHC_SERVICES, {}, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
+  const { data: { data: provinces } = {} } = useList(END_POINTS.PROVINCE);
+  const { data: { data: regions } = {} } = useList(END_POINTS.REGION);
+  const { data: { data: phcServices } = {} } = useList(END_POINTS.PHC_SERVICES, {}, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
   const { mutate: phcWorkersDeleteChatRoom } = useMutationAction(END_POINTS.PHC_WORKERS_DELETE_CHAT_ROOM);
   const { data: userOptions } = useList(END_POINTS.USER_OPTION_LIST);
 
@@ -438,72 +438,54 @@ const CreatePatient = ({ show, handleClose, editId }) => {
         <Form.Row>
           <Form.Group as={Col} controlId="formCountry">
             <Form.Label>{translate('common.country')}</Form.Label>
-            <Select
-              value={formFields.country_id}
-              placeholder={getCountryName(profile.country_id, countries)}
-              classNamePrefix="filter"
-              className={errorCountry ? 'is-invalid' : ''}
-              isDisabled={true}
-              aria-label="Country"
+            <Form.Control
+              disabled
+              value={getCountryName(profile.country_id, countries)}
+              name="country_name"
+              type="text"
             />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.country')}
-            </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group as={Col} controlId="formClinic">
+          <Form.Group as={Col} controlId="formRegion">
             <Form.Label>{translate('common.region')}</Form.Label>
-            <Select
-              value={formFields.clinic_id}
-              placeholder={getRegionName(profile?.region_id, regions?.data)}
-              classNamePrefix="filter"
-              className={errorClinic ? 'is-invalid' : ''}
-              isDisabled={true}
-              aria-label="Clinic"
+            <Form.Control
+              disabled
+              value={getRegionName(profile?.region_id, regions)}
+              name="region_name"
+              type="text"
             />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.clinic')}
-            </Form.Control.Feedback>
           </Form.Group>
         </Form.Row>
         <Form.Row>
-          <Form.Group as={Col} controlId="formCountry">
+          <Form.Group as={Col} controlId="formProvince">
             <Form.Label>{translate('common.province')}</Form.Label>
-            <Select
-              value={formFields.country_id}
-              placeholder={getProvinceName(profile?.province_id, provinces?.data)}
-              classNamePrefix="filter"
-              className={errorCountry ? 'is-invalid' : ''}
-              isDisabled={true}
-              aria-label="Province"
+            <Form.Control
+              disabled
+              value={getProvinceName(profile?.province_id, provinces)}
+              name="province_name"
+              type="text"
             />
-            <Form.Control.Feedback type="invalid">
-              {translate('error.province')}
-            </Form.Control.Feedback>
           </Form.Group>
+
           {profile?.type === USER_GROUPS.THERAPIST && (
             <Form.Group as={Col} controlId="formClinic">
               <Form.Label>{translate('common.clinic')}</Form.Label>
-              <Select
-                value={formFields.clinic_id}
-                placeholder={getClinicName(profile.clinic_id, clinics)}
-                classNamePrefix="filter"
-                className={errorClinic ? 'is-invalid' : ''}
-                isDisabled={true}
-                aria-label="Clinic"
+              <Form.Control
+                disabled
+                value={getClinicName(profile.clinic_id, clinics)}
+                name="clinic_name"
+                type="text"
               />
-              <Form.Control.Feedback type="invalid">
-                {translate('error.clinic')}
-              </Form.Control.Feedback>
             </Form.Group>
           )}
+
           {profile?.type === USER_GROUPS.PHC_WORKER && (
-            <Form.Group controlId="formPhcService" as={Col}>
+            <Form.Group as={Col} controlId="formPhcService">
               <Form.Label>{translate('common.phc_service')}</Form.Label>
               <Form.Control
+                disabled
+                value={getPhcServiceName(profile.phc_service_id, phcServices)}
                 name="phc_service_name"
                 type="text"
-                value={getPhcServiceName(profile.phc_service_id, phcServices?.data)}
-                disabled
               />
             </Form.Group>
           )}
