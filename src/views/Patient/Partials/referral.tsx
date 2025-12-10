@@ -105,8 +105,9 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
             control={control}
             name='to_clinic_id'
             label={t('common.clinic')}
+            placeholder={t('placeholder.clinic')}
             options={clinicOptions}
-            rules={{ required: t('common.required') }}
+            rules={{ required: t('error.clinic') }}
           />
         </Form.Group>
       </DialogBody>
