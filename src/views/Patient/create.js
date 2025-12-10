@@ -351,7 +351,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       const url = window.location.href;
       const payload = {
         ...formValues,
-        stage: url.includes('local') ? 'local' : url.includes('demo') ? 'demo' : 'live'
+        stage: url.includes('local') ? 'local' : url.includes('latest') ? 'latest' : url.includes('demo') ? 'demo' : 'live'
       };
 
       if (profile?.type === USER_GROUPS.THERAPIST) {
