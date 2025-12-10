@@ -18,6 +18,7 @@ import { ToastProvider } from 'components/V2/Toast';
 import Guidance from './components/Guidance';
 import Survey from 'components/Survey';
 import VideoCall from './views/ChatOrCall/Partials/VideoCall';
+import { DialogProvider } from 'components/V2/Dialog';
 
 const App = () => {
   return (
@@ -33,15 +34,17 @@ const App = () => {
         <ToastProvider>
           <ReactQueryProvider>
             <ConfigurationProvider>
-              <LocalizeProvider store={store}>
-                <Router history={createBrowserHistory()}>
-                  <Route path="/patient" />
-                  <RouteSwitch />
-                  <Guidance />
-                  <Survey />
-                  <VideoCall />
-                </Router>
-              </LocalizeProvider>
+              <DialogProvider>
+                <LocalizeProvider store={store}>
+                  <Router history={createBrowserHistory()}>
+                    <Route path="/patient" />
+                    <RouteSwitch />
+                    <Guidance />
+                    <Survey />
+                    <VideoCall />
+                  </Router>
+                </LocalizeProvider>
+              </DialogProvider>
             </ConfigurationProvider>
           </ReactQueryProvider>
         </ToastProvider>

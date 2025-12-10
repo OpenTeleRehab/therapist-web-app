@@ -5,7 +5,7 @@ import axiosInstance from 'utils/axios';
 export const useList = <T>(
   resource: string,
   params: any = {},
-  options: Partial<UseQueryOptions<IListResponse<T>>>
+  options?: Partial<UseQueryOptions<IListResponse<T>>>
 ): UseQueryResult<IListResponse<T>, unknown> => {
   return useQuery<IListResponse<T>>({
     queryKey: [resource, params],
