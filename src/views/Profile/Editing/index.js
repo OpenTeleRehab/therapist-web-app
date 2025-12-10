@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Col, Form } from 'react-bootstrap';
 import { getTranslate } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
@@ -11,19 +11,31 @@ import { getClinicName } from 'utils/clinic';
 import Select from 'react-select';
 import scssColors from '../../../scss/custom.scss';
 import customColorScheme from '../../../utils/customColorScheme';
+import { USER_GROUPS } from '../../../variables/user';
+import { END_POINTS } from 'variables/endPoint';
+import { useList } from 'hooks/useList';
 import _ from 'lodash';
+import { getRegionName } from '../../../utils/region';
+import { getProvinceName } from '../../../utils/province';
+import { getPhcServiceName } from '../../../utils/phcService';
 
 const Edition = () => {
+  const dispatch = useDispatch();
+  const localize = useSelector((state) => state.localize);
+  const translate = getTranslate(localize);
+  const history = useHistory();
+
   const clinics = useSelector(state => state.clinic.clinics);
   const countries = useSelector(state => state.country.countries);
   const languages = useSelector(state => state.language.languages);
   const professions = useSelector(state => state.profession.professions);
   const { colorScheme } = useSelector(state => state.colorScheme);
-  const dispatch = useDispatch();
-  const localize = useSelector((state) => state.localize);
-  const translate = getTranslate(localize);
-  const history = useHistory();
   const { profile } = useSelector((state) => state.auth);
+
+  const { data: { data: provinces } = {} } = useList(END_POINTS.PROVINCE);
+  const { data: { data: regions } = {} } = useList(END_POINTS.REGION);
+  const { data: { data: phcServices } = {} } = useList(END_POINTS.PHC_SERVICES, {}, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
+
   const [formFields, setFormFields] = useState({
     last_name: '',
     first_name: '',
@@ -200,29 +212,65 @@ const Edition = () => {
         </Form.Row>
 
         <Form.Row>
-          <Form.Group className="col-sm-4 md-4" controlId="formCountry">
+          <Form.Group className="col-sm-4" controlId="formCountry">
             <Form.Label>{translate('common.country')}</Form.Label>
-            <Select
-              aria-label={getCountryName(profile.country_id, countries)}
-              value={formFields.country_id}
-              placeholder={getCountryName(profile.country_id, countries)}
-              classNamePrefix="filter"
-              isDisabled={true}
+            <Form.Control
+              disabled
+              value={getCountryName(profile.country_id, countries)}
+              name="country_name"
+              type="text"
             />
           </Form.Group>
         </Form.Row>
 
         <Form.Row>
-          <Form.Group className="col-sm-4 md-4" controlId="formClinic">
-            <Form.Label>{translate('common.clinic')}</Form.Label>
-            <Select
-              aria-label={getClinicName(profile.clinic_id, clinics)}
-              value={formFields.clinic_id}
-              placeholder={getClinicName(profile.clinic_id, clinics)}
-              classNamePrefix="filter"
-              isDisabled={true}
+          <Form.Group className="col-sm-4" controlId="formRegion">
+            <Form.Label>{translate('common.region')}</Form.Label>
+            <Form.Control
+              disabled
+              value={getRegionName(profile?.region_id, regions)}
+              name="region_name"
+              type="text"
             />
           </Form.Group>
+        </Form.Row>
+
+        <Form.Row>
+          <Form.Group className="col-sm-4" controlId="formProvince">
+            <Form.Label>{translate('common.province')}</Form.Label>
+            <Form.Control
+              disabled
+              value={getProvinceName(profile?.province_id, provinces)}
+              name="province_name"
+              type="text"
+            />
+          </Form.Group>
+        </Form.Row>
+
+        <Form.Row>
+          {profile?.type === USER_GROUPS.THERAPIST && (
+            <Form.Group className="col-sm-4" controlId="formClinic">
+              <Form.Label>{translate('common.clinic')}</Form.Label>
+              <Form.Control
+                disabled
+                value={getClinicName(profile.clinic_id, clinics)}
+                name="clinic_name"
+                type="text"
+              />
+            </Form.Group>
+          )}
+
+          {profile?.type === USER_GROUPS.PHC_WORKER && (
+            <Form.Group className="col-sm-4" controlId="formPhcService">
+              <Form.Label>{translate('common.phc_service')}</Form.Label>
+              <Form.Control
+                disabled
+                value={getPhcServiceName(profile.phc_service_id, phcServices)}
+                name="phc_service_name"
+                type="text"
+              />
+            </Form.Group>
+          )}
         </Form.Row>
 
         <Form.Row>
