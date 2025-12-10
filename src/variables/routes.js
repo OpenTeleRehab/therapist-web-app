@@ -6,6 +6,7 @@ export const PP = '/privacy-policy';
 export const PROFILE_PASSWORD = '/profile#password';
 export const PATIENT = '/patient';
 export const PATIENT_TRANSFER = PATIENT + '?tab=transfer';
+export const PATIENT_REFERRAL = PATIENT + '?tab=referral';
 
 export const LIBRARY = '/library';
 export const EXERCISE_CREATE = LIBRARY + '/exercise/create';

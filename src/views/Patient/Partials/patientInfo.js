@@ -50,11 +50,14 @@ import {
 } from '../../../store/message/actions';
 import TransferPatient from '../transfer';
 import { USER_GROUPS } from '../../../variables/user';
+import useDialog from 'components/V2/Dialog';
+import ReferralPatient from './referral';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
   const patient = useSelector(state => state.patient.patient);
   const { profile } = useSelector((state) => state.auth);
+  const { openDialog } = useDialog();
   const therapist = useSelector(state => state.auth.profile);
   const countries = useSelector(state => state.country.countries);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
@@ -142,6 +145,13 @@ const PatientInfo = ({ id, translate }) => {
 
   const handleTransfer = () => {
     setShowTransferDialog(true);
+  };
+
+  const handleReferral = () => {
+    openDialog({
+      title: translate('patient.referral.title'),
+      content: <ReferralPatient patientId={parseInt(id)} />
+    });
   };
 
   const handleClose = () => {
@@ -283,6 +293,7 @@ const PatientInfo = ({ id, translate }) => {
           <DropdownButton alignRight variant="primary" title={translate('common.action')} className="mr-3">
             <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
             <Dropdown.Item onClick={() => handleTransfer()}>{translate('common.transfer')}</Dropdown.Item>
+            <Dropdown.Item onClick={() => handleReferral()}>{translate('patient.referral')}</Dropdown.Item>
             <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
             <Dropdown.Item onClick={handleDeleteAccount} disabled={formFields.enabled}>{translate('patient.delete_account')}</Dropdown.Item>
           </DropdownButton>

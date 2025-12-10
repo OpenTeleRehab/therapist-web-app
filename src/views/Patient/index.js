@@ -30,18 +30,22 @@ import { getTransfers } from '../../store/transfer/actions';
 import { getNextAppointment } from '../../utils/appointment';
 import queryString from 'query-string';
 import Transfer from './Transfer';
+import PatientReferralList from './PatientReferral';
 import { APPOINTMENT_STATUS } from 'variables/appointment';
-import { USER_GROUPS } from 'variables/user';
+import { USER_GROUPS, USER_ROLES } from 'variables/user';
 import { useList } from 'hooks/useList';
 import { END_POINTS } from 'variables/endPoint';
 import { getSupplementaryPhcWorker } from 'utils/phcWorker';
+import { useKeycloak } from '@react-keycloak/web';
 
 const VIEW_PATIENT = 'patient';
 const VIEW_TRANSFER = 'transfer';
+const VIEW_REFERRAL = 'referral';
 
 const Patient = () => {
   const dispatch = useDispatch();
   const { search } = useLocation();
+  const { keycloak } = useKeycloak();
   const [view, setView] = useState(VIEW_PATIENT);
   const [show, setShow] = useState(false);
   const { users, loading } = useSelector(state => state.user);
@@ -60,6 +64,7 @@ const Patient = () => {
   const history = useHistory();
   const pendingTransfers = transfers.filter(item => item.to_therapist_id === profile.id && item.status === 'invited');
   const { data: phcWorkers } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE, { phc_service_id: profile?.phc_service_id }, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
+  const { data: referralAssignments } = useList(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT);
 
   const baseColumns = [
     { name: 'identity', title: translate('common.id') },
@@ -135,6 +140,8 @@ const Patient = () => {
   useEffect(() => {
     if (queryString.parse(search).tab === VIEW_TRANSFER) {
       setView(VIEW_TRANSFER);
+    } else if (queryString.parse(search).tab === VIEW_REFERRAL) {
+      setView(VIEW_REFERRAL);
     } else {
       setView(VIEW_PATIENT);
     }
@@ -211,6 +218,13 @@ const Patient = () => {
               {translate('patient.list')}
             </Nav.Link>
           </Nav.Item>
+          {keycloak.hasRealmRole(USER_ROLES.MANAGE_REFERRAL_ASSIGNMENT) && (
+            <Nav.Item>
+              <Nav.Link as={Link} to={ROUTES.PATIENT_REFERRAL} eventKey={VIEW_REFERRAL}>
+                {translate('referral.list')} <Badge className="ml-1" variant="danger">  {(referralAssignments?.data || []).length}</Badge>
+              </Nav.Link>
+            </Nav.Item>
+          )}
           <Nav.Item>
             <Nav.Link as={Link} to={ROUTES.PATIENT_TRANSFER} eventKey={VIEW_TRANSFER}>
               {translate('transfer.list')} <Badge className="ml-1" variant="danger">{ pendingTransfers.length }</Badge>
@@ -301,6 +315,9 @@ const Patient = () => {
           </Tab.Pane>
           <Tab.Pane eventKey={VIEW_TRANSFER}>
             <Transfer/>
+          </Tab.Pane>
+          <Tab.Pane eventKey={VIEW_REFERRAL}>
+            <PatientReferralList />
           </Tab.Pane>
         </Tab.Content>
       </Tab.Container>
