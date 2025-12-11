@@ -28,6 +28,9 @@ export const updateTreatmentPlan = (id, payload) => async dispatch => {
   if (data.success) {
     dispatch(mutation.updateTreatmentPlanSuccess(id, payload));
     dispatch(showSuccessNotification('toast_title.update_treatment_plan', data.message));
+    if (payload.type === 'preset') {
+      dispatch(getPresetTreatmentPlans({ id, type: 'preset' }));
+    }
     return true;
   } else {
     dispatch(mutation.updateTreatmentPlanFail());
