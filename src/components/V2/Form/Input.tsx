@@ -11,6 +11,8 @@ type InputProps<T extends FieldValues> = {
     'setValueAs' | 'disabled' | 'valueAsNumber' | 'valueAsDate'
   >;
   as?: React.ElementType;
+  controlAs?: React.ElementType;
+  rows?: number;
   label?: string;
 } & Omit<FormControlProps, 'name'>;
 
@@ -20,6 +22,8 @@ const Input = <T extends FieldValues>({
   rules,
   as,
   label,
+  controlAs,
+  rows,
   ...props
 }: InputProps<T>) => {
   const sanitizedControlId = name.replace(/\./g, '_');
@@ -40,6 +44,8 @@ const Input = <T extends FieldValues>({
           <Form.Control
             {...props}
             {...field}
+            rows={rows}
+            as={controlAs}
             isInvalid={!!fieldState.error}
           />
 

@@ -16,6 +16,7 @@ import DialogBody from 'components/V2/Dialog/DialogBody';
 import DialogFooter from 'components/V2/Dialog/DialogFooter';
 import { useCreate } from 'hooks/useCreate';
 import useToast from 'components/V2/Toast';
+import { useInvalidate } from 'hooks/useInvalidate';
 
 type ReferralPatientProps = {
   patientId: number;
@@ -23,6 +24,7 @@ type ReferralPatientProps = {
 
 const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
   const t = useTranslate() as any;
+  const invalidate = useInvalidate();
   const profile = useSelector((state: any) => state.auth.profile);
   const countries = useSelector((state: any) => state.country.countries);
   const clinics = useSelector((state: any) => state.clinic.clinics);
@@ -64,6 +66,7 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
           title: t('patient.referral.title'),
           message: t(res.message || ''),
         });
+        invalidate(END_POINTS.PATIENT);
         closeDialog();
       }
     });

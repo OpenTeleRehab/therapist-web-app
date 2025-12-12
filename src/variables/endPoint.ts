@@ -7,4 +7,5 @@ export const END_POINTS = {
   USER_OPTION_LIST: 'therapist/option/list',
   PATIENT_REFERRAL: 'patient-referrals',
   PATIENT_REFERRAL_ASSIGNMENT: 'patient-referral-assignments',
+  PATIENT: 'patient',
 };
