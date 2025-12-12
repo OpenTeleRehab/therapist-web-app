@@ -76,6 +76,8 @@ const Patient = () => {
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
     { name: 'supplementary_phc_worker', title: translate('common.lead_supplementary_phc_worker') },
+    { name: 'health_condition_groups', title: translate('common.health_condition_group') },
+    { name: 'health_conditions', title: translate('common.health_condition') },
     { name: 'notification', title: translate('common.notification') },
     { name: 'transfer', title: translate('common.transfer') },
 
@@ -278,6 +280,8 @@ const Patient = () => {
                   next_appointment: getNextAppointment(user.next_appointment),
                   secondary_therapist: <span dangerouslySetInnerHTML={{ __html: renderLeadAndSupplementTherapists(profile.id, user.lead_and_supplementary_therapists ?? []) }}></span>,
                   supplementary_phc_worker: <span dangerouslySetInnerHTML={{ __html: renderLeadAndSupplementPhcWorkers(profile.id, user.lead_and_supplementary_phc_workers ?? []) }}></span>,
+                  health_condition_groups: user.healthConditionGroups,
+                  health_conditions: user.healthConditions,
                   notification,
                   transfer: transfer && transfer.from_therapist_id === therapist.id && <Badge pill variant="warning">{translate(`transfer.status.${transfer.status}`)}</Badge>,
                   referred_by: user.referred_by,
