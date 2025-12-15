@@ -44,7 +44,7 @@ const PatientReferralList = () => {
     acceptPatientReferral({ id: `${referralAssignmentId}/accept`, payload: { status: 'accepted' } }, {
       onSuccess: (res) => {
         showToast({
-          title: t('patient.referral.assignment.title'),
+          title: t('patient.referral_assignment.accept.title'),
           message: t(res.message ?? '')
         });
       }

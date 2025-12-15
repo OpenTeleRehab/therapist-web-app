@@ -65,7 +65,7 @@ const Patient = () => {
   const history = useHistory();
   const pendingTransfers = transfers.filter(item => item.to_therapist_id === profile.id && item.status === 'invited');
   const { data: phcWorkers } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE, { phc_service_id: profile?.phc_service_id }, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
-  const { data: referralAssignmentCount } = useOne(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT, 'count');
+  const { data: referralAssignmentCount } = useOne(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT_COUNT, null, { enabled: profile?.type === USER_GROUPS.THERAPIST });
 
   const baseColumns = [
     { name: 'identity', title: translate('common.id') },
