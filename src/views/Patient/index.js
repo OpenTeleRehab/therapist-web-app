@@ -34,6 +34,7 @@ import PatientReferralList from './PatientReferral';
 import { APPOINTMENT_STATUS } from 'variables/appointment';
 import { USER_GROUPS, USER_ROLES } from 'variables/user';
 import { useList } from 'hooks/useList';
+import { useOne } from 'hooks/useOne';
 import { END_POINTS } from 'variables/endPoint';
 import { getSupplementaryPhcWorker } from 'utils/phcWorker';
 import { useKeycloak } from '@react-keycloak/web';
@@ -64,7 +65,7 @@ const Patient = () => {
   const history = useHistory();
   const pendingTransfers = transfers.filter(item => item.to_therapist_id === profile.id && item.status === 'invited');
   const { data: phcWorkers } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE, { phc_service_id: profile?.phc_service_id }, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
-  const { data: referralAssignments } = useList(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT);
+  const { data: referralAssignmentCount } = useOne(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT, 'count');
 
   const baseColumns = [
     { name: 'identity', title: translate('common.id') },
@@ -218,10 +219,10 @@ const Patient = () => {
               {translate('patient.list')}
             </Nav.Link>
           </Nav.Item>
-          {keycloak.hasRealmRole(USER_ROLES.MANAGE_REFERRAL_ASSIGNMENT) && (
+          {keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL_ASSIGNMENT) && (
             <Nav.Item>
               <Nav.Link as={Link} to={ROUTES.PATIENT_REFERRAL} eventKey={VIEW_REFERRAL}>
-                {translate('referral.list')} <Badge className="ml-1" variant="danger">  {(referralAssignments?.data || []).length}</Badge>
+                {translate('referral.list')} <Badge className="ml-1" variant="danger">  {referralAssignmentCount ?? 0}</Badge>
               </Nav.Link>
             </Nav.Item>
           )}

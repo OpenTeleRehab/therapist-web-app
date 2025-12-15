@@ -53,6 +53,8 @@ import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import useDialog from 'components/V2/Dialog';
 import ReferralPatient from './referral';
 import { useKeycloak } from '@react-keycloak/web';
+import { useOne } from 'hooks/useOne';
+import { END_POINTS } from 'variables/endPoint';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -87,6 +89,7 @@ const PatientInfo = ({ id, translate }) => {
     note: '',
     enabled: ''
   });
+  const { data: patientReferral } = useOne(END_POINTS.PATIENT, `${id}/referrals`, { enabled: !!id });
 
   useEffect(() => {
     if (id && countries.length) {
@@ -295,8 +298,13 @@ const PatientInfo = ({ id, translate }) => {
           <DropdownButton alignRight variant="primary" title={translate('common.action')} className="mr-3">
             <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
             <Dropdown.Item onClick={() => handleTransfer()}>{translate('common.transfer')}</Dropdown.Item>
-            {keycloak.hasRealmRole(USER_ROLES.MANAGE_REFERRAL) && (
-              <Dropdown.Item onClick={() => handleReferral()}>{translate('patient.referral')}</Dropdown.Item>
+            {keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL) && (
+              <Dropdown.Item
+                onClick={() => handleReferral()}
+                disabled={['accepted', 'invited'].includes(patientReferral?.status)}
+              >
+                {translate('patient.referral')}
+              </Dropdown.Item>
             )}
             <Dropdown.Item onClick={handleActivateDeactivateAccount}>{formFields.enabled ? translate('patient.deactivate_account') : translate('patient.activate_account')}</Dropdown.Item>
             <Dropdown.Item onClick={handleDeleteAccount} disabled={formFields.enabled}>{translate('patient.delete_account')}</Dropdown.Item>
