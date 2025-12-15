@@ -67,7 +67,7 @@ const Patient = () => {
   const { data: phcWorkers } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE, { phc_service_id: profile?.phc_service_id }, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
   const { data: referralAssignmentCount } = useOne(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT_COUNT, null, { enabled: profile?.type === USER_GROUPS.THERAPIST });
 
-  const baseColumns = [
+  const columns = [
     { name: 'identity', title: translate('common.id') },
     { name: 'last_name', title: translate('common.last_name'), width: 50 },
     { name: 'first_name', title: translate('common.first_name'), width: 50 },
@@ -77,15 +77,18 @@ const Patient = () => {
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
+
+    ...(profile.type === USER_GROUPS.PHC_WORKER
+      ? [{ name: 'supplementary_phc_worker', title: translate('common.lead_supplementary_phc_worker') }]
+      : []),
+
     { name: 'notification', title: translate('common.notification') },
-    { name: 'transfer', title: translate('common.transfer') }
+    { name: 'transfer', title: translate('common.transfer') },
+
+    ...(profile.type === USER_GROUPS.PHC_WORKER
+      ? [{ name: 'referral_status', title: translate('patient.referral') }]
+      : []),
   ];
-  const columns = [...baseColumns];
-  if (profile.type === USER_GROUPS.PHC_WORKER) {
-    columns.splice(9, 0,
-      { name: 'supplementary_phc_worker', title: translate('common.lead_supplementary_phc_worker') }
-    );
-  }
 
   const defaultHiddenColumnNames = [
     'age',
@@ -309,7 +312,8 @@ const Patient = () => {
                   secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
                   supplementary_phc_worker: profile.type === USER_GROUPS.PHC_WORKER && <span dangerouslySetInnerHTML={{ __html: getSupplementaryPhcWorker(profile, user, phcWorkers?.data) }}></span>,
                   notification,
-                  transfer: transfer && transfer.from_therapist_id === therapist.id && <Badge pill variant="warning">{translate(`transfer.status.${transfer.status}`)}</Badge>
+                  transfer: transfer && transfer.from_therapist_id === therapist.id && <Badge pill variant="warning">{translate(`transfer.status.${transfer.status}`)}</Badge>,
+                  referral_status: user.referral_status && <Badge pill variant="warning">{translate(`referral.status.${user.referral_status}`)}</Badge>
                 };
               })}
             />
