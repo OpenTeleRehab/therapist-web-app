@@ -53,8 +53,6 @@ import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import useDialog from 'components/V2/Dialog';
 import ReferralPatient from './referral';
 import { useKeycloak } from '@react-keycloak/web';
-import { useOne } from 'hooks/useOne';
-import { END_POINTS } from 'variables/endPoint';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -89,7 +87,6 @@ const PatientInfo = ({ id, translate }) => {
     note: '',
     enabled: ''
   });
-  const { data: patientReferral } = useOne(END_POINTS.PATIENT, `${id}/referrals`, { enabled: !!id });
 
   useEffect(() => {
     if (id && countries.length) {
@@ -301,7 +298,7 @@ const PatientInfo = ({ id, translate }) => {
             {keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL) && (
               <Dropdown.Item
                 onClick={() => handleReferral()}
-                disabled={['accepted', 'invited'].includes(patientReferral?.status)}
+                disabled={['accepted', 'invited'].includes(patient?.referral_status)}
               >
                 {translate('patient.referral')}
               </Dropdown.Item>
