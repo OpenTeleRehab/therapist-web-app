@@ -297,7 +297,7 @@ const PatientInfo = ({ id, translate }) => {
             <Dropdown.Item onClick={() => handleTransfer()}>{translate('common.transfer')}</Dropdown.Item>
             {keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL) && (
               <Dropdown.Item
-                onClick={() => handleReferral()}
+                onClick={handleReferral}
                 disabled={['accepted', 'invited'].includes(patient?.referral_status)}
               >
                 {translate('patient.referral')}

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import useTranslate from 'hooks/useTranslate';
 import useDialog from 'components/V2/Dialog';
 import { useForm } from 'react-hook-form';
@@ -33,18 +33,20 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
   const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE);
   const { data: regions } = useList<IRegionResource>(END_POINTS.REGION);
   const { mutate: createReferral } = useCreate<IReferralRequest>(END_POINTS.PATIENT_REFERRAL);
-  const { control, handleSubmit, watch } = useForm<IReferralForm>({
+  const { control, handleSubmit, watch, setValue } = useForm<IReferralForm>({
     defaultValues: {
       patient_id: patientId,
       region_id: profile.region_id,
       province_id: profile.province_id,
     }
   });
+  const prevRegionId = useRef<number | null>(null);
+  const regionId = watch('region_id');
   const provinceId = watch('province_id');
 
   const provinceOptions = useMemo(() => {
-    return (provinces?.data ?? []).map((p) => ({ label: p.name, value: p.id }));
-  }, [provinces]);
+    return (provinces?.data ?? []).filter((p) => p.region_id === regionId).map((p) => ({ label: p.name, value: p.id }));
+  }, [provinces, regionId]);
 
   const regionOptions = useMemo(() => {
     return (regions?.data ?? []).map((p) => ({ label: p.name, value: p.id }));
@@ -53,6 +55,20 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
   const clinicOptions = useMemo(() => {
     return clinics.filter((c: any) => c.province.id === provinceId).map((c: any) => ({ label: c.name, value: c.id }));
   }, [clinics, provinceId]);
+
+  useEffect(() => {
+    if (prevRegionId.current === null) {
+      prevRegionId.current = regionId;
+      return;
+    }
+
+    if (prevRegionId.current !== regionId) {
+      setValue('province_id', 0);
+      setValue('to_clinic_id', 0);
+    }
+
+    prevRegionId.current = regionId;
+  }, [regionId, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     const payload: IReferralRequest = {
@@ -100,7 +116,17 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
             name='province_id'
             label={t('common.province')}
             options={provinceOptions}
-            rules={{ required: t('common.required') }}
+            placeholder={t('placeholder.province')}
+            rules={{
+              required: t('error.province'),
+              validate: (value) => {
+                if (value) {
+                  return true;
+                }
+
+                return t('error.province');
+              }
+            }}
           />
         </Form.Group>
         <Form.Group controlId="formClinic">
@@ -110,7 +136,17 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
             label={t('common.clinic')}
             placeholder={t('placeholder.clinic')}
             options={clinicOptions}
-            rules={{ required: t('error.clinic') }}
+            isDisabled={!provinceId}
+            rules={{
+              required: t('error.clinic'),
+              validate: (value) => {
+                if (value) {
+                  return true;
+                }
+
+                return t('error.clinic');
+              }
+            }}
           />
         </Form.Group>
       </DialogBody>

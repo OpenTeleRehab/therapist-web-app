@@ -8,6 +8,7 @@ import { Button, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { END_POINTS } from 'variables/endPoint';
 import useToast from 'components/V2/Toast';
+import { useInvalidate } from 'hooks/useInvalidate';
 
 type DeclineFormProps = {
   referralAssignmentId: number;
@@ -15,6 +16,7 @@ type DeclineFormProps = {
 
 const DeclineForm = ({ referralAssignmentId }: DeclineFormProps) => {
   const t: any = useTranslate();
+  const invalidate = useInvalidate();
   const { showToast } = useToast();
   const { closeDialog } = useDialog();
   const { mutate: declineReferral } = useUpdate(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT);
@@ -23,6 +25,7 @@ const DeclineForm = ({ referralAssignmentId }: DeclineFormProps) => {
   const onSubmit = handleSubmit(async (data) => {
     declineReferral({ id: `${referralAssignmentId}/decline`, payload: data }, {
       onSuccess: (res) => {
+        invalidate(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT_COUNT);
         showToast({
           title: t('patient.referral.decline.title'),
           message: t(res.message),
@@ -39,7 +42,7 @@ const DeclineForm = ({ referralAssignmentId }: DeclineFormProps) => {
           control={control}
           controlAs="textarea"
           name='reason'
-          label={t('referral.reason')}
+          label={t('common.reason')}
           rules={{ required: t('error.field.required') }}
           rows={4}
         />
