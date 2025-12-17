@@ -348,20 +348,14 @@ const CreatePatient = ({ show, handleClose, editId }) => {
     }
 
     if (canSave) {
-      const url = window.location.href;
-      const payload = {
-        ...formValues,
-        stage: url.includes('local') ? 'local' : url.includes('latest') ? 'latest' : url.includes('demo') ? 'demo' : 'live'
-      };
-
       if (profile?.type === USER_GROUPS.THERAPIST) {
-        payload.secondary_therapists = selectedTherapists;
+        formValues.secondary_therapists = selectedTherapists;
       } else if (profile?.type === USER_GROUPS.PHC_WORKER) {
-        payload.supplementary_phc_workers = selectedTherapists;
+        formValues.supplementary_phc_workers = selectedTherapists;
       }
 
       if (editId) {
-        dispatch(updateUser(editId, payload))
+        dispatch(updateUser(editId, formValues))
           .then(result => {
             if (result) {
               if (originalSecondaryTherapists) {
@@ -387,7 +381,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             }
           });
       } else {
-        dispatch(createUser(payload))
+        dispatch(createUser(formValues))
           .then(result => {
             if (result) {
               dispatch(getProfile());
