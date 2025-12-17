@@ -9,6 +9,7 @@ import { Exercise as exerciseService } from 'services/exercise';
 import _ from 'lodash';
 import { USER_ROLES } from 'variables/user';
 import { useKeycloak } from '@react-keycloak/web';
+import { useRole } from 'hooks/useRole';
 
 import { CATEGORY_TYPES } from 'variables/category';
 import { SYSTEM_TYPES } from 'variables/systemLimit';
@@ -37,6 +38,7 @@ const Library = ({ translate }) => {
   const { search } = useLocation();
   const dispatch = useDispatch();
   const { keycloak } = useKeycloak();
+  const { hasAnyRole } = useRole();
   const [view, setView] = useState(undefined);
   const [newContentLink, setNewContentLink] = useState(undefined);
   const [maxLibraries, setMaxLibraries] = useState(20);
@@ -87,7 +89,7 @@ const Library = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (therapistId) {
+    if (therapistId && hasAnyRole([USER_ROLES.SETUP_EXERCISE, USER_ROLES.SETUP_EDUCATIONAL_MATERIAL, USER_ROLES.SETUP_QUESTIONNAIRE])) {
       exerciseService.countTherapistLibraries(therapistId).then(res => {
         if (res.success) {
           setAllowCreateContent(res.data < maxLibraries);
