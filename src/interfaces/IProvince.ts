@@ -1,6 +1,7 @@
 export interface IProvinceResource {
   id: number;
   identity: string;
+  region_id: number;
   region_name: string;
   name: string;
   therapist_limit: number;
