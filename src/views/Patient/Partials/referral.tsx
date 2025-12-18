@@ -30,7 +30,7 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
   const clinics = useSelector((state: any) => state.clinic.clinics);
   const { closeDialog } = useDialog();
   const { showToast } = useToast();
-  const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE);
+  const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE_BY_USER_COUNTRY);
   const { data: regions } = useList<IRegionResource>(END_POINTS.REGION);
   const { mutate: createReferral } = useCreate<IReferralRequest>(END_POINTS.PATIENT_REFERRAL);
   const { control, handleSubmit, watch, setValue } = useForm<IReferralForm>({
