@@ -9,4 +9,5 @@ export const END_POINTS = {
   PATIENT_REFERRAL_ASSIGNMENT: 'patient-referral-assignments',
   PATIENT_REFERRAL_ASSIGNMENT_COUNT: 'patient-referral-assignments/count',
   PATIENT: 'patient',
+  PROVINCE_BY_USER_COUNTRY: 'provinces-by-user-country',
 };
