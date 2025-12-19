@@ -81,7 +81,7 @@ const PatientReferralList = () => {
       );
 
       return {
-        identity: ra.id,
+        identity: ra.patient_identity,
         date_of_birth: ra.date_of_birth ? moment(ra.date_of_birth).format('DD/MM/YYYY') : '',
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(ra.lead_and_supplementary_phc) }}></span>,
         referred_by: ra.referred_by,
