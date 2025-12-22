@@ -52,6 +52,7 @@ import TransferPatient from '../transfer';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import useDialog from 'components/V2/Dialog';
 import ReferralPatient from './referral';
+import PhcTransfer from './phcTransfer';
 import { useKeycloak } from '@react-keycloak/web';
 
 const PatientInfo = ({ id, translate }) => {
@@ -146,7 +147,14 @@ const PatientInfo = ({ id, translate }) => {
   };
 
   const handleTransfer = () => {
-    setShowTransferDialog(true);
+    if (profile.type === USER_GROUPS.PHC_WORKER) {
+      openDialog({
+        title: translate('common.transfer_patient'),
+        content: <PhcTransfer patientId={parseInt(id)} />
+      });
+    } else {
+      setShowTransferDialog(true);
+    }
   };
 
   const handleReferral = () => {
