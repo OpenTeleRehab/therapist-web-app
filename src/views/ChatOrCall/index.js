@@ -157,7 +157,7 @@ const ChatOrCall = ({ translate }) => {
                 <Tab eventKey="patient" title={translate('patient')}>
                   <ChatRoomList
                     translate={translate}
-                    chatRooms={chatRooms.filter(item => item.u.username.startsWith('P'))}
+                    chatRooms={chatRooms.filter(item => /^P\d+/.test(item.u.username))}
                     selectedRoom={selectedRoom}
                     keyword={searchValue}
                     therapist={therapist}
@@ -170,6 +170,18 @@ const ChatOrCall = ({ translate }) => {
                   <ChatRoomList
                     translate={translate}
                     chatRooms={chatRooms.filter(item => item.u.username.startsWith('T'))}
+                    selectedRoom={selectedRoom}
+                    keyword={searchValue}
+                    therapist={therapist}
+                    userStatus={renderUserStatus}
+                    socket={chatSocket}
+                    hideChatPanel={setHideChatPanel}
+                  />
+                </Tab>
+                <Tab eventKey="phc_worker" title={translate('phc_worker')}>
+                  <ChatRoomList
+                    translate={translate}
+                    chatRooms={chatRooms.filter(item => item.u.username.startsWith('PHC'))}
                     selectedRoom={selectedRoom}
                     keyword={searchValue}
                     therapist={therapist}

@@ -62,9 +62,8 @@ const getCallAccessToken = (roomName) => {
     });
 };
 
-const getTherapistsForChatroom = (clinicId) => {
-  const params = { clinic_id: clinicId };
-  return axios.get('therapist/list-for-chatroom', { params })
+const getTherapistsForChatroom = () => {
+  return axios.get('chat/therapists')
     .then(
       res => {
         return res.data;
@@ -75,9 +74,8 @@ const getTherapistsForChatroom = (clinicId) => {
     });
 };
 
-const getPhcWorkersForChatroom = (phcServiceId) => {
-  const params = { phc_service_id: phcServiceId };
-  return axios.get('phc-workers/list-for-chatroom', { params })
+const getPhcWorkersForChatroom = () => {
+  return axios.get('chat/phc-workers')
     .then(
       res => {
         return res.data;
