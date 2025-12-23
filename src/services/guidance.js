@@ -1,7 +1,8 @@
 import axios from 'utils/axios';
 
-const getGuidances = (lang) => {
-  return axios.get(`guidance-page?lang=${lang}`)
+const getGuidances = (payload) => {
+  const query = new URLSearchParams(payload);
+  return axios.get('guidance-page', { params: query })
     .then(
       res => {
         return res.data;
