@@ -89,7 +89,7 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
         <Tabs defaultActiveKey="patient" className="mb-3">
           <Tab eventKey="patient" title={translate('patient')}>
             <ListGroup>
-              {rooms.filter(item => item.u.username.startsWith('P')).map((room, index) => (
+              {rooms.filter(item => /^P\d+/.test(item.u.username)).map((room, index) => (
                 <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
                   <p className="mb-0 d-flex align-items-center">
                     {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
@@ -114,6 +114,30 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
           <Tab eventKey="therapist" title={translate('therapist')}>
             <ListGroup>
               {rooms.filter(item => item.u.username.startsWith('T')).map((room, index) => (
+                <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
+                  <p className="mb-0 d-flex align-items-center">
+                    {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
+                  </p>
+                  {participants.some(item => item.identity === (room.u.username + '_' + profile.country_id)) ? (
+                    <Button className="min-w-92" size="sm" disabled>
+                      <BiPhoneCall size={16} /> {translate('common.joined')}
+                    </Button>
+                  ) : room.countdown > 0 ? (
+                    <Button className="min-w-92" size="sm" disabled>
+                      <BiPhoneCall size={16} /> {translate('common.inviting')}
+                    </Button>
+                  ) : (
+                    <Button className="min-w-92" size="sm" onClick={() => handleInvitation(room)}>
+                      <FaUserPlus size={16} /> {translate('common.invite')}
+                    </Button>
+                  )}
+                </ListGroup.Item>
+              ))}
+            </ListGroup>
+          </Tab>
+          <Tab eventKey="phc_worker" title={translate('phc_worker')}>
+            <ListGroup>
+              {rooms.filter(item => item.u.username.startsWith('PHC')).map((room, index) => (
                 <ListGroup.Item key={index} className="d-flex justify-content-between align-items-center">
                   <p className="mb-0 d-flex align-items-center">
                     {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
