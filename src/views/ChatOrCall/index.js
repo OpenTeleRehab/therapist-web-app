@@ -10,13 +10,12 @@ import {
   getLastMessages,
   sendPodcastNotification
 } from 'store/rocketchat/actions';
-import ChatRoomList from 'views/ChatOrCall/Partials/ChatRoomList';
-import ChatPanel from 'views/ChatOrCall/Partials/ChatPanel';
+import ChatRoomList from './Partials/ChatRoomList';
+import ChatPanel from './Partials/ChatPanel';
 import RocketchatContext from 'context/RocketchatContext';
 import { USER_STATUS } from 'variables/rocketchat';
 import { sendNewMessage, updateMessage } from '../../utils/rocketchat';
 import { generateHash } from '../../utils/general';
-import { getTherapistsByClinic } from '../../store/therapist/actions';
 import customColorScheme from '../../utils/customColorScheme';
 import _ from 'lodash';
 
@@ -35,12 +34,6 @@ const ChatOrCall = ({ translate }) => {
   } = useSelector(state => state.rocketchat);
   const [searchValue, setSearchValue] = useState('');
   const [hideChatPanel, setHideChatPanel] = useState(true);
-
-  useEffect(() => {
-    if (therapist !== undefined) {
-      dispatch(getTherapistsByClinic(therapist.clinic_id));
-    }
-  }, [therapist]);
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && authToken && countries.length) {
