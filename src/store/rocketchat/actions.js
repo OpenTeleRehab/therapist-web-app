@@ -32,21 +32,15 @@ export const getChatRooms = () => async (dispatch, getState) => {
   const { profile } = getState().auth;
   const { authToken, authUserId } = getState().rocketchat;
 
-  const payload = {
-    therapist_id: profile.type === USER_GROUPS.THERAPIST ? profile.id : undefined,
-    enabled: 1,
-    page_size: 999999,
-    page: 1,
-    disableAbortController: true
-  };
-  const data = await Patient.getPatientsForChatroom(payload);
-  const dataTherapist = profile.type === USER_GROUPS.THERAPIST ? await Therapist.getTherapistsForChatroom(profile.clinic_id) : await Therapist.getPhcWorkersForChatroom(profile.phc_service_id);
+  const data = await Patient.getPatientsForChatroom();
+  const dataTherapist = await Therapist.getTherapistsForChatroom();
+  const dataPhcWorker = await Therapist.getPhcWorkersForChatroom();
   const subscriptions = await Rocketchat.getSubscriptions(authUserId, authToken);
 
-  if (data.success || dataTherapist.success) {
+  if (data.success || dataTherapist.success || dataPhcWorker.success) {
     const chatRooms = [];
 
-    for (const user of data.data) {
+    for (const user of data.data ?? []) {
       if (user.chat_user_id && subscriptions.length) {
         const subscription = subscriptions.find(room => room.rid.includes(user.chat_user_id));
 
@@ -66,7 +60,8 @@ export const getChatRooms = () => async (dispatch, getState) => {
         }
       }
     }
-    const therapists = dataTherapist.data;
+
+    const therapists = dataTherapist.data ?? [];
     for (const therapist of therapists.filter(item => item.id !== profile.id)) {
       const subscription = subscriptions.find(room => room.rid.includes(therapist.chat_user_id));
 
@@ -85,6 +80,27 @@ export const getChatRooms = () => async (dispatch, getState) => {
         });
       }
     }
+
+    const phcWorker = dataPhcWorker.data ?? [];
+    for (const therapist of phcWorker.filter(item => item.id !== profile.id)) {
+      const subscription = subscriptions.find(room => room.rid.includes(therapist.chat_user_id));
+
+      if (subscription) {
+        chatRooms.push({
+          rid: subscription.rid,
+          name: `${therapist.last_name} ${therapist.first_name}`,
+          unread: subscription.unread,
+          u: {
+            _id: therapist.chat_user_id,
+            username: therapist.identity,
+            status: 'offline'
+          },
+          lastMessage: {},
+          totalMessages: 0
+        });
+      }
+    }
+
     dispatch(mutation.getChatRoomsSuccess(chatRooms));
     return chatRooms.length > 0;
   } else {
