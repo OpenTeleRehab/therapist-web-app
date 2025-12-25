@@ -6,7 +6,7 @@ import { Form, Button } from 'react-bootstrap';
 import { IReferralForm, IReferralRequest } from 'interfaces/IReferral';
 import CustomSelect from 'components/V2/Form/Select';
 import { getCountryName } from 'utils/country';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import { useList } from 'hooks/useList';
 import { END_POINTS } from 'variables/endPoint';
@@ -17,12 +17,14 @@ import DialogFooter from 'components/V2/Dialog/DialogFooter';
 import { useCreate } from 'hooks/useCreate';
 import useToast from 'components/V2/Toast';
 import { useInvalidate } from 'hooks/useInvalidate';
+import { getPatient } from 'store/patient/actions';
 
 type ReferralPatientProps = {
   patientId: number;
 }
 
 const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
+  const dispatch = useDispatch();
   const t = useTranslate() as any;
   const invalidate = useInvalidate();
   const profile = useSelector((state: any) => state.auth.profile);
@@ -82,6 +84,7 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
           title: t('patient.referral.title'),
           message: t(res.message || ''),
         });
+        dispatch(getPatient(patientId));
         invalidate(END_POINTS.PATIENT);
         closeDialog();
       }
