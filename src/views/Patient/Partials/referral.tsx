@@ -27,9 +27,9 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
   const invalidate = useInvalidate();
   const profile = useSelector((state: any) => state.auth.profile);
   const countries = useSelector((state: any) => state.country.countries);
-  const clinics = useSelector((state: any) => state.clinic.clinics);
   const { closeDialog } = useDialog();
   const { showToast } = useToast();
+  const { data: clinics } = useList<IProvinceResource>(END_POINTS.CLINIC_BY_USER_COUNTRY);
   const { data: provinces } = useList<IProvinceResource>(END_POINTS.PROVINCE_BY_USER_COUNTRY);
   const { data: regions } = useList<IRegionResource>(END_POINTS.REGION);
   const { mutate: createReferral } = useCreate<IReferralRequest>(END_POINTS.PATIENT_REFERRAL);
@@ -53,7 +53,7 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
   }, [regions]);
 
   const clinicOptions = useMemo(() => {
-    return clinics.filter((c: any) => c.province.id === provinceId).map((c: any) => ({ label: c.name, value: c.id }));
+    return (clinics?.data ?? []).filter((c: any) => c.province.id === provinceId).map((c: any) => ({ label: c.name, value: c.id }));
   }, [clinics, provinceId]);
 
   useEffect(() => {
