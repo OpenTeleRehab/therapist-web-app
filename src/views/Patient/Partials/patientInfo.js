@@ -119,10 +119,10 @@ const PatientInfo = ({ id, translate }) => {
         getOrganizationTherapistAndMaxSms(process.env.REACT_APP_NAME))
         .then(r => {
           if (r) {
-            setMaxSms(r.max_sms_per_week);
+            setMaxSms(profile.type === USER_GROUPS.THERAPIST ? r.max_sms_per_week : r.max_phc_sms_per_week);
             dispatch(getTherapistMessage()).then(result => {
               if (result) {
-                if (result >= r.max_sms_per_week) {
+                if ((profile.type === USER_GROUPS.THERAPIST && result >= r.max_sms_per_week) || (profile.type === USER_GROUPS.PHC_WORKER && result >= r.max_phc_sms_per_week)) {
                   setReachMaxSms(true);
                 } else {
                   setReachMaxSms(false);

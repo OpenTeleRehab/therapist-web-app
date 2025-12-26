@@ -64,7 +64,7 @@ const SmsToolbar = (props) => {
   }, [date]);
 
   useEffect(() => {
-    if (time.isValid) {
+    if (time) {
       // set moment locale to en before convert
       moment.locale('en');
       const formatted = moment(time.formatted12, 'hh:mm a').locale(userLocale).format('hh:mm A');
