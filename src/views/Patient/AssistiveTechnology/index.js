@@ -47,6 +47,7 @@ const AssistiveTechnologyHistory = () => {
     { name: 'assistive_name', title: translate('common.name') },
     { name: 'provision_date', title: translate('common.provision_date') },
     { name: 'follow_up_date', title: translate('common.follow_up_date') },
+    { name: 'created_by', title: translate('common.created_by') },
     { name: 'action', title: translate('common.action') }
   ];
 
@@ -439,6 +440,7 @@ const AssistiveTechnologyHistory = () => {
                 assistive_name: getAssistiveTechnologyName(item.assistive_technology_id),
                 provision_date: item.provision_date,
                 follow_up_date: item.follow_up_date,
+                created_by: item.created_by,
                 action
               };
             })}
