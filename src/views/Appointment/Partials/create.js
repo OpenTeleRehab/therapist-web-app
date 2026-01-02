@@ -12,13 +12,22 @@ import { createAppointment, updateAppointment } from 'store/appointment/actions'
 import Select from 'react-select';
 import TimeKeeper from 'react-timekeeper';
 import scssColors from '../../../scss/custom.scss';
+import { useList } from 'hooks/useList';
+import { useCreate } from 'hooks/useCreate';
+import { useUpdate } from 'hooks/useUpdate';
+import { END_POINTS } from 'variables/endPoint';
+import { USER_GROUPS } from 'variables/user';
+import { APPOINTMENT_OPTIONS, APPOINTMENT_RECIPIENT_TYPES } from '../../../variables/appointment';
+import useToast from 'components/V2/Toast';
+import { getCountryIsoCode } from 'utils/country';
 
-const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedDate, userLocale }) => {
+const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, selectedDate, userLocale }) => {
   const dispatch = useDispatch();
+  const { showToast } = useToast();
   const localize = useSelector((state) => state.localize);
   const { profile } = useSelector((state) => state.auth);
   const { users } = useSelector(state => state.user);
-  const { appointments } = useSelector((state) => state.appointment);
+  const { appointmentsWithPatients } = useSelector((state) => state.appointment);
   const translate = getTranslate(localize);
   const [date, setDate] = useState('');
   const [from, setFrom] = useState('');
@@ -31,6 +40,10 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   const [showFromTime, setShowFromTime] = useState(false);
   const [showToTime, setShowToTime] = useState(false);
   const [timeTo, setTimeTo] = useState('12:00 am');
+  const [recipientType, setRecipientType] = useState('');
+  const [phcWorkerOptions, setPhcWorkerOptions] = useState([]);
+  const [therapistOptions, setTherapistOptions] = useState([]);
+  const [recipientId, setRecipientId] = useState('');
 
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
@@ -41,6 +54,15 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   const [errorDate, setErrorDate] = useState(false);
   const [errorFrom, setErrorFrom] = useState(false);
   const [errorTo, setErrorTo] = useState(false);
+  const [errorRecipientType, setErrorRecipientType] = useState(false);
+  const [errorRecipient, setErrorRecipient] = useState(false);
+
+  const { data: { data: referralTherapists = [] } = {} } = useList(END_POINTS.REFERRAL_THERAPISTS, null, { enabled: profile.type === USER_GROUPS.PHC_WORKER }, { country: getCountryIsoCode() });
+  const { data: { data: acceptedReferralPhcWorkers = [] } = {} } = useList(END_POINTS.PHC_WORKERS_WITH_ACCEPTED_REFERRALS, null, { enabled: profile.type === USER_GROUPS.THERAPIST }, { country: getCountryIsoCode() });
+  const { data: { data: therapists = [] } = {} } = useList(END_POINTS.THERAPISTS_BY_CLINIC, null, { enabled: profile.type === USER_GROUPS.THERAPIST });
+  const { data: { data: phcWorkers = [] } = {} } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE, { phc_service_id: profile.phc_service_id }, { enabled: profile.type === USER_GROUPS.PHC_WORKER });
+  const { mutate: createAppointmentMutation } = useCreate(END_POINTS.APPOINTMENTS);
+  const { mutate: updateAppointmentMutation } = useUpdate(END_POINTS.APPOINTMENTS);
 
   useEffect(() => {
     if (profile) {
@@ -49,31 +71,38 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   }, [profile, dispatch]);
 
   useEffect(() => {
-    if (!editId && selectedDate) {
-      setDate(selectedDate);
+    if (profile.type === USER_GROUPS.PHC_WORKER) {
+      setPhcWorkerOptions(phcWorkers);
+      setTherapistOptions(referralTherapists);
+    } else {
+      setPhcWorkerOptions(acceptedReferralPhcWorkers);
+      setTherapistOptions(therapists);
     }
-  }, [selectedDate, editId]);
+  }, [profile, phcWorkers, referralTherapists, acceptedReferralPhcWorkers, therapists]);
 
   useEffect(() => {
-    if (editId && appointments) {
-      let appointment = null;
-      if (selectedPatientId) {
-        appointment = appointments.requests.find(
-          item => item.id === editId);
-      } else {
-        appointment = appointments.approves.find(
-          item => item.id === editId);
-      }
-
-      if (appointment) {
-        setPatientId(appointment.patient_id);
-        setDate(moment.utc(appointment.start_date).local());
-        setFrom(moment.utc(appointment.start_date).local());
-        setTo(moment.utc(appointment.end_date).local());
-        setNote(appointment.note);
-      }
+    if (!appointment && selectedDate) {
+      setDate(selectedDate);
     }
-  }, [editId, appointments, selectedPatientId]);
+  }, [selectedDate, appointment]);
+
+  useEffect(() => {
+    if (appointment) {
+      setPatientId(appointment.patient_id);
+      setRecipientType(
+        appointment.patient_id
+          ? APPOINTMENT_RECIPIENT_TYPES.PATIENT
+          : therapistOptions.find(item => item.id === appointment.recipient_id)
+            ? APPOINTMENT_RECIPIENT_TYPES.THERAPIST
+            : APPOINTMENT_RECIPIENT_TYPES.PHC_WORKER
+      );
+      setRecipientId(appointment.recipient_id);
+      setDate(moment.utc(appointment.start_date).local());
+      setFrom(moment.utc(appointment.start_date).local());
+      setTo(moment.utc(appointment.end_date).local());
+      setNote(appointment.note);
+    }
+  }, [appointment, therapistOptions, selectedPatientId]);
 
   useEffect(() => {
     const yesterday = moment().subtract(1, 'day');
@@ -167,16 +196,29 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
   const handleConfirm = () => {
     let canSave = true;
     moment.locale(userLocale);
-
     const now = moment().locale('en').format('YYYY-MM-DD HH:mm:ss');
     const fromTimeThen = moment(moment(date).format(settings.date_format) + ' ' + formattedFrom, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
     const toTimeThen = moment(moment(date).format(settings.date_format) + ' ' + formattedTo, settings.date_format + ' hh:mm A').locale('en').format('YYYY-MM-DD HH:mm:ss');
 
-    if (!patientId) {
+    if (!recipientType) {
+      canSave = false;
+      setErrorRecipientType(true);
+    } else {
+      setErrorRecipientType(false);
+    }
+
+    if (recipientType === APPOINTMENT_RECIPIENT_TYPES.PATIENT && !patientId) {
       canSave = false;
       setErrorPatient(true);
     } else {
       setErrorPatient(false);
+    }
+
+    if ((recipientType === APPOINTMENT_RECIPIENT_TYPES.THERAPIST || recipientType === APPOINTMENT_RECIPIENT_TYPES.PHC_WORKER) && !recipientId) {
+      canSave = false;
+      setErrorRecipient(true);
+    } else {
+      setErrorRecipient(false);
     }
 
     if (formattedDate === '' || !moment(formattedDate, settings.date_format).locale('en').isValid()) {
@@ -201,12 +243,24 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
     }
 
     if (canSave) {
-      const data = {
-        patient_id: patientId,
-        from: moment(moment(date).format(settings.date_format) + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-        to: moment(moment(date).format(settings.date_format) + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-        note
-      };
+      let data = {};
+      const from = moment(moment(date).format(settings.date_format) + ' ' + formattedFrom, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss');
+      const to = moment(moment(date).format(settings.date_format) + ' ' + formattedTo, settings.date_format + ' hh:mm A').utc().locale('en').format('YYYY-MM-DD HH:mm:ss');
+      if (recipientType === APPOINTMENT_RECIPIENT_TYPES.PATIENT) {
+        data = {
+          patient_id: patientId,
+          from,
+          to,
+          note
+        };
+      } else {
+        data = {
+          recipient_id: recipientId,
+          from,
+          to,
+          note
+        };
+      }
 
       const filter = {
         now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
@@ -215,20 +269,66 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
         selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null
       };
 
-      if (editId) {
-        dispatch(updateAppointment(editId, data, filter))
-          .then(result => {
-            if (result) {
-              handleClose();
-            }
-          });
+      if (recipientType === APPOINTMENT_RECIPIENT_TYPES.PATIENT) {
+        if (appointment) {
+          dispatch(updateAppointment(appointment.id, data, filter))
+            .then(result => {
+              if (result) {
+                handleClose();
+              }
+            });
+        } else {
+          dispatch(createAppointment(data, filter))
+            .then(result => {
+              if (result) {
+                handleClose();
+              }
+            });
+        }
       } else {
-        dispatch(createAppointment(data, filter))
-          .then(result => {
-            if (result) {
-              handleClose();
+        if (appointment) {
+          updateAppointmentMutation(
+            { id: appointment.id, payload: { ...data } },
+            {
+              onSuccess: async (res) => {
+                showToast({
+                  title: translate('appointment.edit'),
+                  message: translate(res?.message),
+                  color: 'success'
+                });
+                handleClose();
+              },
+              onError: async (error) => {
+                showToast({
+                  title: translate('toast_title.error_message'),
+                  message: translate(error?.response?.data?.message),
+                  color: 'danger'
+                });
+              }
             }
-          });
+          );
+        } else {
+          createAppointmentMutation(
+            { ...data },
+            {
+              onSuccess: async (res) => {
+                showToast({
+                  title: translate('appointment.new'),
+                  message: translate(res?.message),
+                  color: 'success'
+                });
+                handleClose();
+              },
+              onError: async (error) => {
+                showToast({
+                  title: translate('toast_title.error_message'),
+                  message: translate(error?.response?.data?.message),
+                  color: 'danger'
+                });
+              }
+            },
+          );
+        }
       }
     }
   };
@@ -262,36 +362,111 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, editId, selectedD
     setTimeTo(moment(value.formatted12, 'hh:mm a').locale('en').add(15, 'minutes').format('hh:mm a'));
   };
 
+  const handleRecipientTypeChange = (e) => {
+    setRecipientType(e.value);
+    setRecipientId('');
+    setPatientId('');
+  };
+
   return (
     <Dialog
       show={show}
-      title={translate(editId ? 'appointment.edit' : 'appointment.new')}
+      title={translate(appointment ? 'appointment.edit' : 'appointment.new')}
       onCancel={handleClose}
       onConfirm={handleConfirm}
-      confirmLabel={editId ? translate('common.save') : translate('common.create')}
+      confirmLabel={appointment ? translate('common.save') : translate('common.create')}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
-        <Form.Group controlId="groupTitle">
-          <Form.Label>{translate('appointment.patient')}</Form.Label>
+        <Form.Group controlId="groupRecipientType">
+          <Form.Label>{translate('appointment.appointment_with')}</Form.Label>
           <span className="text-dark ml-1">*</span>
           <Select
-            isDisabled={editId || selectedPatientId}
-            placeholder={translate('placeholder.patient')}
+            isDisabled={appointment}
+            placeholder={translate('appointment.appointment_with.placeholder')}
             classNamePrefix="filter"
-            className={errorPatient ? 'is-invalid' : ''}
-            value={users.filter(option => option.id === patientId)}
-            getOptionLabel={option => `${option.last_name} ${option.first_name}`}
-            options={users}
-            onChange={(e) => setPatientId(e.id)}
+            className={errorRecipientType ? 'is-invalid' : ''}
+            value={APPOINTMENT_OPTIONS.filter(option => option.value === recipientType)}
+            getOptionLabel={option => translate(option.label)}
+            options={APPOINTMENT_OPTIONS}
+            onChange={(e) => handleRecipientTypeChange(e)}
             styles={customSelectStyles}
-            aria-label="Patient"
+            aria-label="Recipient Type"
           />
-          {errorPatient && (
+          {errorRecipientType && (
             <Form.Control.Feedback type="invalid" className="d-block">
-              {translate('error_message.appointment_patient_required')}
+              {translate('error_message.appointment.appointment_with.required')}
             </Form.Control.Feedback>
           )}
         </Form.Group>
+        {recipientType === APPOINTMENT_RECIPIENT_TYPES.PATIENT && (
+          <Form.Group controlId="groupTitle">
+            <Form.Label>{translate('appointment.patient')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Select
+              isDisabled={appointment}
+              placeholder={translate('placeholder.patient')}
+              classNamePrefix="filter"
+              className={errorPatient ? 'is-invalid' : ''}
+              value={users.filter(option => option.id === patientId)}
+              getOptionLabel={option => `${option.last_name} ${option.first_name}`}
+              options={users}
+              onChange={(e) => setPatientId(e.id)}
+              styles={customSelectStyles}
+              aria-label="Patient"
+            />
+            {errorPatient && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {translate('error_message.appointment_patient_required')}
+              </Form.Control.Feedback>
+            )}
+          </Form.Group>
+        )}
+        {recipientType === APPOINTMENT_RECIPIENT_TYPES.PHC_WORKER && (
+          <Form.Group controlId="groupPhcWorker">
+            <Form.Label>{translate('appointment.phc_worker')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Select
+              isDisabled={appointment}
+              placeholder={translate('appointment.phc_worker.placeholder')}
+              classNamePrefix="filter"
+              className={errorRecipient ? 'is-invalid' : ''}
+              value={phcWorkerOptions.filter(option => option.id === recipientId)}
+              getOptionLabel={option => `${option.last_name} ${option.first_name}`}
+              options={phcWorkerOptions.filter(option => option.id !== profile.id)}
+              onChange={(e) => setRecipientId(e.id)}
+              styles={customSelectStyles}
+              aria-label="Phc Worker"
+            />
+            {errorRecipient && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {translate('error_message.appointment.phc_worker.required')}
+              </Form.Control.Feedback>
+            )}
+          </Form.Group>
+        )}
+        {recipientType === APPOINTMENT_RECIPIENT_TYPES.THERAPIST && (
+          <Form.Group controlId="groupTherapist">
+            <Form.Label>{translate('appointment.therapist')}</Form.Label>
+            <span className="text-dark ml-1">*</span>
+            <Select
+              isDisabled={appointment}
+              placeholder={translate('appointment.therapist.placeholder')}
+              classNamePrefix="filter"
+              className={errorRecipient ? 'is-invalid' : ''}
+              value={therapistOptions.filter(option => option.id === recipientId)}
+              getOptionLabel={option => `${option.last_name} ${option.first_name}`}
+              options={therapistOptions.filter(option => option.id !== profile.id)}
+              onChange={(e) => setRecipientId(e.id)}
+              styles={customSelectStyles}
+              aria-label="Therapist"
+            />
+            {errorRecipient && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {translate('error_message.appointment.therapist.required')}
+              </Form.Control.Feedback>
+            )}
+          </Form.Group>
+        )}
         <Form.Group controlId="groupDate">
           <label htmlFor="appointment-date">{translate('appointment.date')}</label>
           <span className="text-dark ml-1">*</span>
@@ -408,7 +583,7 @@ CreatePatient.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
   selectedPatientId: PropTypes.number,
-  editId: PropTypes.number,
+  appointment: PropTypes.object,
   selectedDate: PropTypes.string,
   userLocale: PropTypes.string
 };

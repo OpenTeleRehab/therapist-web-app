@@ -12,4 +12,10 @@ export const END_POINTS = {
   PROVINCE_BY_USER_COUNTRY: 'provinces-by-user-country',
   CLINIC_BY_USER_COUNTRY: 'clinics-by-user-country',
   TRANSFER: 'transfer',
+  APPOINTMENTS: 'appointments',
+  APPOINTMENTS_MARK_AS_READ: 'appointments/bulk/mark-as-read',
+  REFERRAL_THERAPISTS: 'phc-workers/get-referral-therapists',
+  THERAPISTS_BY_CLINIC: 'therapist/list/by-clinic-id',
+  PHC_WORKERS_WITH_ACCEPTED_REFERRALS: 'therapist/phc-workers/with-accepted-referrals',
+
 };

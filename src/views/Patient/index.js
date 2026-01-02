@@ -58,7 +58,7 @@ const Patient = () => {
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
   const { colorScheme } = useSelector(state => state.colorScheme);
-  const { appointments } = useSelector((state) => state.appointment);
+  const { appointmentsWithPatients } = useSelector((state) => state.appointment);
 
   const chatSocket = useContext(RocketchatContext);
   const translate = getTranslate(localize);
@@ -266,7 +266,7 @@ const Patient = () => {
                 const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
                 const unread = room ? room.unread : 0;
                 const userAppointments = user.appointments.filter(appointment => appointment.created_by_therapist === false && appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED && appointment.therapist_status === APPOINTMENT_STATUS.INVITED);
-                const unreadAppointments = _.filter(appointments.unreadAppointments, item => item.patient_id === user.id);
+                const unreadAppointments = _.filter(appointmentsWithPatients.unreadAppointments, item => item.patient_id === user.id);
 
                 const notification = (
                   <div className="notify-lists d-flex align-items-center">
