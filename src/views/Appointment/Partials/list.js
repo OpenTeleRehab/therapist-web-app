@@ -25,23 +25,26 @@ import { getAssistiveTechnologyName } from 'utils/assistiveTechnology';
 import { BiEdit } from 'react-icons/bi';
 import { FaCalendarCheck } from 'react-icons/fa';
 import { RejectAction, TrashAction } from 'components/ActionIcons';
+import { useMutationAction } from 'hooks/useMutationAction';
+import { useDelete } from 'hooks/useDelete';
+import { END_POINTS } from 'variables/endPoint';
+import useToast from 'components/V2/Toast';
 
-const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
+const AppointmentList = ({ handleEdit, appointments, filter }) => {
   const dispatch = useDispatch();
+  const { showToast } = useToast();
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const { colorScheme } = useSelector(state => state.colorScheme);
+  const { profile } = useSelector((state) => state.auth);
   const [approvedAppointments, setApprovedAppointments] = useState([]);
-  const [id, setId] = useState('');
+  const [appointment, setAppointment] = useState(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showAcceptDialog, setShowAcceptDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
-  const filter = {
-    now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
-    date: moment(date).locale('en').format(settings.date_format),
-    selected_from_date: selectedDate ? moment.utc(selectedDate.startOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null,
-    selected_to_date: selectedDate ? moment.utc(selectedDate.endOf('day')).locale('en').format('YYYY-MM-DD HH:mm:ss') : null
-  };
+  const { mutate: acceptAppointmentMutation } = useMutationAction(`${END_POINTS.APPOINTMENTS}/${appointment?.id}/accept`);
+  const { mutate: declineAppointmentMutation } = useMutationAction(`${END_POINTS.APPOINTMENTS}/${appointment?.id}/decline`);
+  const { mutate: deleteAppointmentMutation } = useDelete(END_POINTS.APPOINTMENTS);
 
   useEffect(() => {
     if (appointments) {
@@ -53,56 +56,121 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
     }
   }, [appointments]);
 
-  const handleDelete = (id) => {
-    setId(id);
+  const handleDelete = (appointment) => {
+    setAppointment(appointment);
     setShowDeleteDialog(true);
   };
 
   const handleDialogClose = () => {
-    setId(null);
+    setAppointment(null);
     setShowDeleteDialog(false);
     setShowAcceptDialog(false);
     setShowRejectDialog(false);
   };
 
   const handleDeleteDialogConfirm = () => {
-    dispatch(deleteAppointment(id, filter)).then(result => {
-      if (result) {
-        handleDialogClose();
-      }
-    });
+    if (appointment.patient_id) {
+      dispatch(deleteAppointment(appointment.id, filter)).then(result => {
+        if (result) {
+          handleDialogClose();
+        }
+      });
+    } else {
+      deleteAppointmentMutation(appointment.id, {
+        onSuccess: async (res) => {
+          showToast({
+            title: translate('appointment.cancel.title'),
+            message: translate(res?.message),
+            color: 'success'
+          });
+          handleDialogClose();
+        },
+        onError: async (error) => {
+          showToast({
+            title: translate('toast_title.error_message'),
+            message: translate(error?.message),
+            color: 'danger'
+          });
+        }
+      });
+    }
   };
 
   const handleAcceptDialogConfirm = () => {
-    dispatch(updateAppointmentStatus(id, { therapist_status: APPOINTMENT_STATUS.ACCEPTED }, filter)).then(result => {
-      if (result) {
-        dispatch(showSuccessNotification('toast_title.accept_appointment', 'success_message.appointment_accept'));
-        handleDialogClose();
-      }
-    });
+    if (appointment.patient_id) {
+      dispatch(updateAppointmentStatus(appointment.id, { therapist_status: APPOINTMENT_STATUS.ACCEPTED }, filter)).then(result => {
+        if (result) {
+          dispatch(showSuccessNotification('toast_title.accept_appointment', 'success_message.appointment_accept'));
+          handleDialogClose();
+        }
+      });
+    } else {
+      acceptAppointmentMutation(
+        { invalidateKeys: [END_POINTS.APPOINTMENTS] },
+        {
+          onSuccess: async (res) => {
+            showToast({
+              title: translate('appointment.accept.title'),
+              message: translate(res?.message),
+              color: 'success'
+            });
+            handleDialogClose();
+          },
+          onError: async (error) => {
+            showToast({
+              title: translate('toast_title.error_message'),
+              message: translate(error?.message),
+              color: 'danger'
+            });
+          }
+        }
+      );
+    }
   };
 
   const handleRejectDialogConfirm = () => {
-    dispatch(updateAppointmentStatus(id, { therapist_status: APPOINTMENT_STATUS.REJECTED }, filter)).then(result => {
-      if (result) {
-        dispatch(showSuccessNotification('toast_title.reject_appointment', 'success_message.appointment_reject'));
-        handleDialogClose();
-      }
-    });
+    if (appointment.patient_id) {
+      dispatch(updateAppointmentStatus(appointment.id, { therapist_status: APPOINTMENT_STATUS.REJECTED }, filter)).then(result => {
+        if (result) {
+          dispatch(showSuccessNotification('toast_title.reject_appointment', 'success_message.appointment_reject'));
+          handleDialogClose();
+        }
+      });
+    } else {
+      declineAppointmentMutation({ invalidateKeys: [END_POINTS.APPOINTMENTS] },
+        {
+          onSuccess: async (res) => {
+            showToast({
+              title: translate('appointment.reject.title'),
+              message: translate(res?.message),
+              color: 'success'
+            });
+            handleDialogClose();
+          },
+          onError: async (error) => {
+            showToast({
+              title: translate('toast_title.error_message'),
+              message: translate(error?.message),
+              color: 'danger'
+            });
+          }
+        }
+      );
+    }
   };
 
   const isPast = (datetime) => {
     return datetime.isBefore(moment());
   };
 
-  const handleAccept = (id) => {
-    setId(id);
+  const handleAccept = (appointment) => {
+    setAppointment(appointment);
     setShowAcceptDialog(true);
     dispatch(getAppointments(filter));
   };
 
-  const handleReject = (id) => {
-    setId(id);
+  const handleReject = (appointment) => {
+    setAppointment(appointment);
     setShowRejectDialog(true);
     dispatch(getAppointments(filter));
   };
@@ -131,6 +199,20 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
     }
   };
 
+  const isOwner = (appointment) => {
+    return appointment.created_by_therapist || (appointment.requester_id === profile.id);
+  };
+
+  const getUserStatus = (appointment) => {
+    return appointment.therapist_status ? appointment.therapist_status : isOwner(appointment) ? appointment.requester_status : appointment.recipient_status;
+  };
+
+  const isEditDisabled = (appointment) => {
+    return isPast(moment.utc(appointment.start_date).local()) ||
+      appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED ||
+      appointment.recipient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.recipient_status === APPOINTMENT_STATUS.REJECTED;
+  };
+
   return (
     <>
       {approvedAppointments.length ? (
@@ -140,15 +222,15 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
               <div className="my-3 text-primary font-weight-bold">{group.date}</div>
               {
                 group.approves.map(appointment => {
-                  const { therapist_status: therapistStatus, patient_status: patientStatus } = appointment;
+                  const { therapist_status: therapistStatus, patient_status: patientStatus, requester_status: requesterStatus, recipient_status: recipientStatus } = appointment;
                   let additionTextStyle = {};
                   let statusTextStyle = { color: _.isEmpty(colorScheme) ? scssColors.primary : colorScheme.primary_color };
                   let statusText = 'appointment.status.accept';
-                  if ([therapistStatus, patientStatus].includes(APPOINTMENT_STATUS.INVITED)) {
+                  if ([therapistStatus, patientStatus, requesterStatus, recipientStatus].includes(APPOINTMENT_STATUS.INVITED)) {
                     statusTextStyle = { color: scssColors.dark };
                     statusText = 'appointment.status.pending';
                   } else if (
-                    [therapistStatus, patientStatus].includes(APPOINTMENT_STATUS.REJECTED)
+                    [therapistStatus, patientStatus, requesterStatus, recipientStatus].includes(APPOINTMENT_STATUS.REJECTED)
                   ) {
                     additionTextStyle = { textDecorationLine: 'line-through' };
                     statusTextStyle = { color: scssColors.orange };
@@ -162,7 +244,15 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                         <div>{moment.utc(appointment.end_date).local().format('hh:mm A')}</div>
                       </div>
                       <div className={appointment.assistive_technology || appointment.note ? 'px-3 pt-2 pb-1' : 'p-3'}>
-                        <div style={additionTextStyle}>{translate('appointment.appointment_with_name', { name: (appointment.patient.first_name + ' ' + appointment.patient.last_name) })}</div>
+                        <div style={additionTextStyle}>
+                          {translate('appointment.appointment_with_name', {
+                            name: appointment.patient
+                              ? `${appointment.patient.last_name} ${appointment.patient.first_name}`
+                              : appointment.requester_id === profile.id
+                                ? `${appointment?.recipient.last_name} ${appointment?.recipient.first_name}`
+                                : `${appointment?.requester.last_name} ${appointment?.requester.first_name}`
+                          })}
+                        </div>
                         <div className="mt-2">
                           {renderAppointmentNote(appointment)}
                         </div>
@@ -171,22 +261,22 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
                         </div>
                       </div>
                       <div className="p-3 ml-auto">
-                        {appointment.created_by_therapist && (
+                        {isOwner(appointment) && (
                           <>
-                            <Button aria-label="Edit" className="font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleEdit(appointment.id)} disabled={isPast(moment.utc(appointment.start_date).local()) || appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED || appointment.patient_status === APPOINTMENT_STATUS.REJECTED}>
+                            <Button aria-label="Edit" className="font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleEdit(appointment)} disabled={isEditDisabled(appointment)}>
                               <BiEdit className="mr-1" size={20} /><span>{translate('common.edit')}</span>
                             </Button>
-                            <TrashAction className="mb-1 font-weight-bold" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment.id) } />
+                            <TrashAction className="mb-1 font-weight-bold" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment) } />
                           </>
                         )}
-                        {!appointment.created_by_therapist && !(therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())) && (
+                        {!isOwner(appointment) && !(getUserStatus(appointment) === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())) && (
                           <>
-                            {!(therapistStatus === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())) && (
-                              <Button aria-label="Accept" className="ml-auto font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleAccept(appointment.id)}>
+                            {!(getUserStatus(appointment) === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())) && (
+                              <Button aria-label="Accept" className="ml-auto font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleAccept(appointment)}>
                                 <FaCalendarCheck size={15} /><span>{translate('common.accept')}</span>
                               </Button>
                             )}
-                            <RejectAction className="pr-3 pl-3 mb-1 font-weight-bold" onClick={() => handleReject(appointment.id)} disabled={therapistStatus === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />
+                            <RejectAction className="pr-3 pl-3 mb-1 font-weight-bold" onClick={() => handleReject(appointment)} disabled={getUserStatus(appointment) === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />
                           </>
                         )}
                       </div>
@@ -240,8 +330,7 @@ const AppointmentList = ({ handleEdit, appointments, selectedDate, date }) => {
 AppointmentList.propTypes = {
   handleEdit: PropType.func,
   appointments: PropType.array,
-  selectedDate: PropType.object,
-  date: PropType.object
+  filter: PropType.object
 };
 
 export default AppointmentList;

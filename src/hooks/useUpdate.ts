@@ -12,6 +12,11 @@ export const useUpdate = <T>(resource: string) => {
   return useMutation<any, unknown, UpdateMutateProps<T>>({
     mutationFn: async ({ id, payload }: UpdateMutateProps<T>) => {
       const { data } = await axiosInstance.put<T>(`/${resource}/${id}`, payload);
+      if (data && (data as any).success === false) {
+        const error = new Error((data as any).message);
+        (error as any).response = { data };
+        return Promise.reject(error);
+      }
       return data;
     },
     onSuccess: (_, { id }) => {

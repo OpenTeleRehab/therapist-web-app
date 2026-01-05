@@ -8,14 +8,25 @@ import { useKeycloak } from '@react-keycloak/web';
 import { useSelector } from 'react-redux';
 import { chatLogout, unSubscribeEvent } from 'utils/rocketchat';
 import RocketchatContext from 'context/RocketchatContext';
+import moment from 'moment';
+import settings from 'settings';
+import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
 
 const Navigation = ({ translate }) => {
   const { keycloak } = useKeycloak();
   const chatSocket = useContext(RocketchatContext);
   const { profile } = useSelector((state) => state.auth);
   const { chatRooms, isChatConnected, subscribeIds } = useSelector((state) => state.rocketchat);
-  const { appointments } = useSelector((state) => state.appointment);
+  const { appointmentsWithPatients } = useSelector((state) => state.appointment);
   const [show, setShow] = useState(false);
+  const { data: { data: appointments = {} } = {} } = useList(
+    END_POINTS.APPOINTMENTS,
+    {
+      now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
+      date: moment().locale('en').format(settings.date_format)
+    }
+  );
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -56,8 +67,8 @@ const Navigation = ({ translate }) => {
     badgeClassesUnread = unread.badgeClasses;
   }
 
-  if (appointments.upcomingAppointments > 0) {
-    const upcomings = getBadgeClass(appointments.upcomingAppointments);
+  if (appointmentsWithPatients.upcomingAppointments > 0) {
+    const upcomings = getBadgeClass((appointmentsWithPatients.upcomingAppointments ?? 0) + (appointments.upcomingAppointments ?? 0));
     navClassesAppointments = upcomings.navClasses;
     badgeClassesAppointments = upcomings.badgeClasses;
   }
@@ -108,9 +119,9 @@ const Navigation = ({ translate }) => {
             className={`d-flex align-items-center nav-link${navClassesAppointments}`}
           >
             {translate('appointment')}
-            {appointments.upcomingAppointments > 0 && (
+            {(appointmentsWithPatients.upcomingAppointments > 0 || appointments.upcomingAppointments > 0) && (
               <Badge variant="danger" className={`circle text-light d-md-block${badgeClassesAppointments}`}>
-                {appointments.upcomingAppointments}
+                {(appointmentsWithPatients.upcomingAppointments ?? 0) + (appointments.upcomingAppointments ?? 0)}
               </Badge>
             )}
           </NavLink>

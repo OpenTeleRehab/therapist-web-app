@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
@@ -13,7 +13,6 @@ import enLocale from 'locales/fullcalendar/en';
 import kmLocale from 'locales/fullcalendar/km';
 import settings from 'settings';
 import { getAppointments, updateAppointmentUnread } from 'store/appointment/actions';
-import List from './Partials/list';
 import CreateAppointment from './Partials/create';
 import { getLayoutDirection } from '../../utils/layoutDirection';
 import customColorScheme from '../../utils/customColorScheme';
@@ -23,6 +22,11 @@ import { useHistory, useLocation } from 'react-router-dom';
 import queryString from 'query-string';
 import { getPatient } from '../../store/patient/actions';
 import * as ROUTES from '../../variables/routes';
+import { useList } from 'hooks/useList';
+import { END_POINTS } from 'variables/endPoint';
+import { APPOINTMENT_RECIPIENT_TYPES } from 'variables/appointment';
+import { useMutationAction } from 'hooks/useMutationAction';
+import Section from './Partials/section';
 
 const calendarLocales = [...allLocales, enLocale, kmLocale];
 
@@ -30,7 +34,7 @@ const Appointment = ({ translate }) => {
   const dispatch = useDispatch();
   const history = useHistory();
   const { search } = useLocation();
-  const { appointments } = useSelector((state) => state.appointment);
+  const { appointmentsWithPatients } = useSelector((state) => state.appointment);
   const { languages } = useSelector(state => state.language);
   const { profile } = useSelector((state) => state.auth);
   const { colorScheme } = useSelector(state => state.colorScheme);
@@ -41,12 +45,34 @@ const Appointment = ({ translate }) => {
   const [selectedDate, setSelectedDate] = useState();
   const [locale, setLocale] = useState('en');
   const [show, setShow] = useState(false);
-  const [editId, setEditId] = useState(null);
+  const [appointment, setAppointment] = useState(null);
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [userLocale, setUserLocale] = useState('en-us');
   const [patient, setPatient] = useState(undefined);
+  const [approvedAppointmentsWithPhcWorkers, setApprovedAppointmentsWithPhcWorkers] = useState([]);
+  const [newAppointmentsWithPhcWorkers, setNewAppointmentsWithPhcWorkers] = useState([]);
+  const [approvedAppointmentsWithTherapists, setApprovedAppointmentsWithTherapists] = useState([]);
+  const [newAppointmentsWithTherapists, setNewAppointmentsWithTherapists] = useState([]);
+  const [filter, setFilter] = useState({});
+  const { data: { data: appointments = {} } = {} } = useList(END_POINTS.APPOINTMENTS, { ...filter }, { enabled: !_.isEmpty(filter.date) });
+  const { mutate: updateUnreadMutation } = useMutationAction(END_POINTS.APPOINTMENTS_MARK_AS_READ);
+  const [expandedSections, setExpandedSections] = useState({
+    patient: true,
+    phcWorker: true,
+    therapist: true,
+  });
 
   const patientId = queryString.parse(search).patient_id;
+
+  const calendarData = useMemo(() => {
+    if (_.isEmpty(appointments) || _.isEmpty(appointmentsWithPatients)) {
+      return [];
+    }
+    const calendarDataAppointments = appointments?.calendarData ?? [];
+    const calendarDataAppointmentsWithPatients = appointmentsWithPatients?.calendarData ?? [];
+
+    return [...calendarDataAppointments, ...calendarDataAppointmentsWithPatients];
+  }, [appointments, appointmentsWithPatients]);
 
   useEffect(() => {
     if (patientId) {
@@ -57,6 +83,19 @@ const Appointment = ({ translate }) => {
       setPatient(undefined);
     }
   }, [patientId]);
+
+  useEffect(() => {
+    if (!_.isEmpty(appointments)) {
+      const approvedWithPhcWorkers = appointments.approves?.filter(appointment => appointment.with_user_type === APPOINTMENT_RECIPIENT_TYPES.PHC_WORKER);
+      const newWithPhcWorkers = appointments.newAppointments?.filter(appointment => appointment.with_user_type === APPOINTMENT_RECIPIENT_TYPES.PHC_WORKER);
+      const approvedWithTherapists = appointments.approves?.filter(appointment => appointment.with_user_type === APPOINTMENT_RECIPIENT_TYPES.THERAPIST);
+      const newWithTherapists = appointments.newAppointments?.filter(appointment => appointment.with_user_type === APPOINTMENT_RECIPIENT_TYPES.THERAPIST);
+      setApprovedAppointmentsWithPhcWorkers(approvedWithPhcWorkers);
+      setNewAppointmentsWithPhcWorkers(newWithPhcWorkers);
+      setApprovedAppointmentsWithTherapists(approvedWithTherapists);
+      setNewAppointmentsWithTherapists(newWithTherapists);
+    }
+  }, [appointments, appointmentsWithPatients]);
 
   useEffect(() => {
     if (date && countries.length) {
@@ -70,15 +109,15 @@ const Appointment = ({ translate }) => {
       if (patientId) {
         filter.patient_id = parseInt(patientId);
       }
-
+      setFilter(filter);
       dispatch(getAppointments(filter));
     }
   }, [dispatch, date, selectedDate, patientId, countries]);
 
   useEffect(() => {
     if (date) {
-      if (!Array.isArray(appointments) && appointments && appointments.unreadAppointments.length) {
-        dispatch(updateAppointmentUnread(_.map(appointments.unreadAppointments, 'id'))).then(result => {
+      if (!Array.isArray(appointmentsWithPatients) && appointmentsWithPatients && appointmentsWithPatients.unreadAppointments.length) {
+        dispatch(updateAppointmentUnread(_.map(appointmentsWithPatients.unreadAppointments, 'id'))).then(result => {
           if (result) {
             dispatch(getAppointments({
               now: moment.utc().locale('en').format('YYYY-MM-DD HH:mm:ss'),
@@ -87,8 +126,12 @@ const Appointment = ({ translate }) => {
           }
         });
       }
+
+      if (appointments.unreadAppointments?.length) {
+        updateUnreadMutation({ payload: _.map(appointments.unreadAppointments, 'id'), method: 'put', invalidateKeys: [END_POINTS.APPOINTMENTS] });
+      }
     }
-  }, [dispatch, date, appointments]);
+  }, [dispatch, date, appointmentsWithPatients, appointments]);
 
   useEffect(() => {
     if (languages.length && profile) {
@@ -105,8 +148,8 @@ const Appointment = ({ translate }) => {
   }, [languages, profile]);
 
   useEffect(() => {
-    if (appointments.calendarData) {
-      const groupedCalendarData = _.chain(appointments.calendarData)
+    if (calendarData.length > 0) {
+      const groupedCalendarData = _.chain(calendarData)
         .groupBy((item) =>
           moment.utc(item.start_date).local().locale('en').format('YYYY-MM-DD')
         )
@@ -118,10 +161,9 @@ const Appointment = ({ translate }) => {
           date: appointment.date
         };
       });
-
       setEvents(approvedAppointments);
     }
-  }, [appointments, translate]);
+  }, [calendarData, translate]);
 
   useEffect(() => {
     dispatch(getAssistiveTechnologies({ lang: profile.language_id }));
@@ -158,14 +200,21 @@ const Appointment = ({ translate }) => {
 
   const handleClose = () => {
     moment.locale(userLocale);
-    setEditId('');
+    setAppointment(null);
     setSelectedPatientId('');
     setShow(false);
   };
 
-  const handleEdit = (id) => {
-    setEditId(id);
+  const handleEdit = (appointment) => {
+    setAppointment(appointment);
     setShow(true);
+  };
+
+  const toggleSection = (key) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   return (
@@ -203,7 +252,7 @@ const Appointment = ({ translate }) => {
           show && <CreateAppointment
             handleClose={handleClose}
             show={show}
-            editId={editId}
+            appointment={appointment}
             selectedDate={selectedDate}
             selectedPatientId={selectedPatientId}
             userLocale={userLocale}
@@ -222,7 +271,10 @@ const Appointment = ({ translate }) => {
               <Nav.Link eventKey="new">
                 {translate('appointment.new_requested')}
                 <Badge className="ml-1" variant="danger">
-                  {appointments.newAppointments ? appointments.newAppointments.length : 0}
+                  {
+                    (appointmentsWithPatients.newAppointments?.length ?? 0) +
+                    (appointments.newAppointments?.length ?? 0)
+                  }
                 </Badge>
               </Nav.Link>
             </Nav.Item>
@@ -234,10 +286,81 @@ const Appointment = ({ translate }) => {
 
           <Tab.Content>
             <Tab.Pane eventKey="list">
-              <List handleEdit={handleEdit} appointments={appointments.approves} selectedDate={selectedDate} date={date} />
+              <>
+                {appointmentsWithPatients.approves?.length > 0 && (
+                  <Section
+                    eventKey="patient"
+                    title={translate('appointment.with_patient')}
+                    appointments={appointmentsWithPatients.approves}
+                    handleEdit={handleEdit}
+                    selectedDate={selectedDate}
+                    date={date}
+                    isOpen={expandedSections.patient}
+                    onToggle={toggleSection}
+                  />
+                )}
+                {approvedAppointmentsWithPhcWorkers.length > 0 && (
+                  <Section
+                    eventKey="phcWorker"
+                    title={translate('appointment.with_phc_worker')}
+                    appointments={approvedAppointmentsWithPhcWorkers}
+                    handleEdit={handleEdit}
+                    selectedDate={selectedDate}
+                    date={date}
+                    isOpen={expandedSections.phcWorker}
+                    onToggle={toggleSection}
+                  />
+                )}
+                {approvedAppointmentsWithTherapists.length > 0 && (
+                  <Section
+                    eventKey="therapist"
+                    title={translate('appointment.with_therapist')}
+                    appointments={approvedAppointmentsWithTherapists}
+                    handleEdit={handleEdit}
+                    selectedDate={selectedDate}
+                    date={date}
+                    isOpen={expandedSections.therapist}
+                    onToggle={toggleSection}
+                  />
+                )}
+              </>
             </Tab.Pane>
             <Tab.Pane eventKey="new">
-              <List handleEdit={handleEdit} appointments={appointments.newAppointments} selectedDate={selectedDate} date={date} />
+              <>
+                {appointmentsWithPatients.newAppointments?.length > 0 && (
+                  <Section
+                    eventKey="patient"
+                    title={translate('appointment.with_patient')}
+                    appointments={appointmentsWithPatients.newAppointments}
+                    handleEdit={handleEdit}
+                    filter={filter}
+                    isOpen={expandedSections.patient}
+                    onToggle={toggleSection}
+                  />
+                )}
+                {newAppointmentsWithPhcWorkers.length > 0 && (
+                  <Section
+                    eventKey="phcWorker"
+                    title={translate('appointment.with_phc_worker')}
+                    appointments={newAppointmentsWithPhcWorkers}
+                    handleEdit={handleEdit}
+                    filter={filter}
+                    isOpen={expandedSections.phcWorker}
+                    onToggle={toggleSection}
+                  />
+                )}
+                {newAppointmentsWithTherapists.length > 0 && (
+                  <Section
+                    eventKey="therapist"
+                    title={translate('appointment.with_therapist')}
+                    appointments={newAppointmentsWithTherapists}
+                    handleEdit={handleEdit}
+                    filter={filter}
+                    isOpen={expandedSections.therapist}
+                    onToggle={toggleSection}
+                  />
+                )}
+              </>
             </Tab.Pane>
           </Tab.Content>
         </Tab.Container>
