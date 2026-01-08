@@ -7,7 +7,7 @@ import { useCreate } from 'hooks/useCreate';
 import { useList } from 'hooks/useList';
 import useTranslate from 'hooks/useTranslate';
 import { ITransferRequest } from 'interfaces/ITransfer';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Button, Col, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
@@ -24,7 +24,7 @@ const PhcTransfer = ({ patientId }: PhcTransferProps) => {
   const { showToast } = useToast();
   const { data: phcWorkers } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE);
   const { mutate: createTransfer } = useCreate(END_POINTS.TRANSFER);
-  const { control, handleSubmit } = useForm<ITransferRequest>({
+  const { control, handleSubmit, setValue } = useForm<ITransferRequest>({
     defaultValues: {
       patient_id: patientId,
       phc_service_id: profile.phc_service_id,
@@ -33,6 +33,14 @@ const PhcTransfer = ({ patientId }: PhcTransferProps) => {
       to_therapist_id: 0,
     }
   });
+  const { transfers } = useSelector((state: any) => state.transfer);
+  const transfer = transfers.find((item: any) => item.patient_id === patientId && item.therapist_type === 'lead');
+
+  useEffect(() => {
+    if (transfer && transfer.to_therapist_id) {
+      setValue('to_therapist_id', transfer.to_therapist_id);
+    }
+  }, [transfer]);
 
   const phcWorkerOptions = useMemo(
     () =>
