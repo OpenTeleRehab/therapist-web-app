@@ -33,11 +33,11 @@ import Transfer from './Transfer';
 import PatientReferralList from './PatientReferral';
 import { APPOINTMENT_STATUS } from 'variables/appointment';
 import { USER_GROUPS, USER_ROLES } from 'variables/user';
-import { useList } from 'hooks/useList';
 import { useOne } from 'hooks/useOne';
 import { END_POINTS } from 'variables/endPoint';
-import { getSupplementaryPhcWorker } from 'utils/phcWorker';
+import { renderLeadAndSupplementPhcWorkers } from 'utils/phcWorker';
 import { useKeycloak } from '@react-keycloak/web';
+import { renderLeadAndSupplementTherapists } from 'utils/therapist';
 
 const VIEW_PATIENT = 'patient';
 const VIEW_TRANSFER = 'transfer';
@@ -52,7 +52,6 @@ const Patient = () => {
   const { users, loading } = useSelector(state => state.user);
   const { profile } = useSelector((state) => state.auth);
   const { countries } = useSelector((state) => state.country);
-  const { therapistsByClinic } = useSelector(state => state.therapist);
   const { transfers } = useSelector(state => state.transfer);
   const therapist = useSelector(state => state.auth.profile);
   const localize = useSelector((state) => state.localize);
@@ -64,7 +63,6 @@ const Patient = () => {
   const translate = getTranslate(localize);
   const history = useHistory();
   const pendingTransfers = transfers.filter(item => item.to_therapist_id === profile.id && item.status === 'invited');
-  const { data: phcWorkers } = useList(END_POINTS.PHC_WORKERS_BY_PHC_SERVICE, { phc_service_id: profile?.phc_service_id }, { enabled: profile?.type === USER_GROUPS.PHC_WORKER });
   const { data: referralAssignmentCount } = useOne(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT_COUNT, null, { enabled: profile?.type === USER_GROUPS.THERAPIST });
 
   const columns = [
@@ -77,16 +75,15 @@ const Patient = () => {
     { name: 'treatment_status', title: translate('common.ongoing_treatment_status') },
     { name: 'next_appointment', title: translate('common.next_appointment') },
     { name: 'secondary_therapist', title: translate('common.secondary_primary_therapist') },
-
-    ...(profile.type === USER_GROUPS.PHC_WORKER
-      ? [{ name: 'supplementary_phc_worker', title: translate('common.lead_supplementary_phc_worker') }]
-      : []),
-
+    { name: 'supplementary_phc_worker', title: translate('common.lead_supplementary_phc_worker') },
     { name: 'notification', title: translate('common.notification') },
     { name: 'transfer', title: translate('common.transfer') },
 
     ...(profile.type === USER_GROUPS.PHC_WORKER
       ? [{ name: 'referral_status', title: translate('patient.referral') }]
+      : []),
+    ...(profile.type === USER_GROUPS.THERAPIST
+      ? [{ name: 'referred_by', title: translate('referral.referred_by') }]
       : []),
   ];
 
@@ -94,7 +91,9 @@ const Patient = () => {
     'age',
     'ongoing_treatment_plan',
     'ongoing_treatment_status',
-    'next_appointment'
+    'next_appointment',
+    'supplementary_phc_worker',
+    'referred_by',
   ];
 
   const columnExtensions = [
@@ -150,38 +149,6 @@ const Patient = () => {
       setView(VIEW_PATIENT);
     }
   }, [search]);
-
-  const getSecondaryTherapist = (user) => {
-    let primaryTherapistHTML = '';
-    let secondaryTherapistHTML = '';
-
-    const primaryTherapist = therapistsByClinic.find(item => item.id === user.therapist_id);
-    const secondaryTherapists = _.filter(therapistsByClinic, therapist => _.includes(user.secondary_therapists, therapist.id));
-
-    if (primaryTherapist) {
-      if (primaryTherapist.id === profile.id) {
-        primaryTherapistHTML = `<b>${primaryTherapist.first_name} ${primaryTherapist.last_name}</b>`;
-      } else {
-        primaryTherapistHTML = `${primaryTherapist.first_name} ${primaryTherapist.last_name}`;
-      }
-    }
-
-    if (secondaryTherapists.length) {
-      const therapists = [];
-
-      secondaryTherapists.forEach(therapist => {
-        if (therapist.id === profile.id) {
-          therapists.push(`<b>${therapist.first_name} ${therapist.last_name}</b>`);
-        } else {
-          therapists.push(`${therapist.first_name} ${therapist.last_name}`);
-        }
-      });
-
-      secondaryTherapistHTML = therapists.join(', ');
-    }
-    if (primaryTherapistHTML && secondaryTherapistHTML) return `${primaryTherapistHTML} / ${secondaryTherapistHTML}`;
-    return primaryTherapistHTML || secondaryTherapistHTML || '';
-  };
 
   const handleRowClick = (row) => {
     history.push(ROUTES.VIEW_PATIENT_DETAIL.replace(':patientId', row.id));
@@ -309,10 +276,11 @@ const Patient = () => {
                   ongoing_treatment_plan: user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0].name : user.upcomingTreatmentPlan ? user.upcomingTreatmentPlan.name : '',
                   treatment_status: renderStatusBadge(user.ongoingTreatmentPlan.length ? user.ongoingTreatmentPlan[0] : user.lastTreatmentPlan),
                   next_appointment: getNextAppointment(user.next_appointment),
-                  secondary_therapist: <span dangerouslySetInnerHTML={{ __html: getSecondaryTherapist(user) }}></span>,
-                  supplementary_phc_worker: profile.type === USER_GROUPS.PHC_WORKER && <span dangerouslySetInnerHTML={{ __html: getSupplementaryPhcWorker(profile, user, phcWorkers?.data) }}></span>,
+                  secondary_therapist: <span dangerouslySetInnerHTML={{ __html: renderLeadAndSupplementTherapists(profile.id, user.lead_and_supplementary_therapists ?? []) }}></span>,
+                  supplementary_phc_worker: <span dangerouslySetInnerHTML={{ __html: renderLeadAndSupplementPhcWorkers(profile.id, user.lead_and_supplementary_phc_workers ?? []) }}></span>,
                   notification,
                   transfer: transfer && transfer.from_therapist_id === therapist.id && <Badge pill variant="warning">{translate(`transfer.status.${transfer.status}`)}</Badge>,
+                  referred_by: user.referred_by,
                   referral_status: user.referral_status && <Badge pill variant="warning">{translate(`referral.status.${user.referral_status}`)}</Badge>
                 };
               })}

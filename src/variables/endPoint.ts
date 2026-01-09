@@ -17,5 +17,4 @@ export const END_POINTS = {
   REFERRAL_THERAPISTS: 'phc-workers/get-referral-therapists',
   THERAPISTS_BY_CLINIC: 'therapist/list/by-clinic-id',
   PHC_WORKERS_WITH_ACCEPTED_REFERRALS: 'therapist/phc-workers/with-accepted-referrals',
-
 };
