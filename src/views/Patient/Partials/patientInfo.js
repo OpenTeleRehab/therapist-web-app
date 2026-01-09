@@ -54,6 +54,10 @@ import useDialog from 'components/V2/Dialog';
 import ReferralPatient from './referral';
 import PhcTransfer from './phcTransfer';
 import { useKeycloak } from '@react-keycloak/web';
+import { useUpdate } from 'hooks/useUpdate';
+import useToast from 'components/V2/Toast';
+import { useAlertDialog } from 'components/V2/AlertDialog';
+import { END_POINTS } from 'variables/endPoint';
 
 const PatientInfo = ({ id, translate }) => {
   const dispatch = useDispatch();
@@ -61,6 +65,8 @@ const PatientInfo = ({ id, translate }) => {
   const { keycloak } = useKeycloak();
   const { profile } = useSelector((state) => state.auth);
   const { openDialog } = useDialog();
+  const { showToast } = useToast();
+  const { showAlert } = useAlertDialog();
   const therapist = useSelector(state => state.auth.profile);
   const countries = useSelector(state => state.country.countries);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
@@ -78,6 +84,7 @@ const PatientInfo = ({ id, translate }) => {
   const [phone, setPhone] = useState('');
   const [maxSms, setMaxSms] = useState(2);
   const [reachMaxSms, setReachMaxSms] = useState(false);
+  const { mutate: counterReferral } = useUpdate(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT);
 
   const [formFields, setFormFields] = useState({
     name: '',
@@ -270,6 +277,24 @@ const PatientInfo = ({ id, translate }) => {
     });
   };
 
+  const handleCounterReferral = (patientId) => {
+    showAlert({
+      title: translate('counter_referral.confirmation.title'),
+      message: translate('counter_referral.confirmation.message'),
+      onConfirm: () => {
+        counterReferral({ id: `${patientId}/counter-referral` }, {
+          onSuccess: (res) => {
+            showToast({
+              title: translate('counter_referral.toast.title'),
+              message: translate(res.message),
+            });
+            history.push(ROUTES.PATIENT);
+          }
+        });
+      },
+    });
+  };
+
   return (
     <>
       <div className="btn-toolbar mb-2 mb-md-0 d-flex float-right mt-3">
@@ -303,6 +328,9 @@ const PatientInfo = ({ id, translate }) => {
           <DropdownButton alignRight variant="primary" title={translate('common.action')} className="mr-3">
             <Dropdown.Item onClick={() => handleEdit(formFields.id)}>{translate('common.edit_info')}</Dropdown.Item>
             <Dropdown.Item onClick={() => handleTransfer()}>{translate('common.transfer')}</Dropdown.Item>
+            {(keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL_ASSIGNMENT) && patient?.referral_status) && (
+              <Dropdown.Item onClick={() => handleCounterReferral(id)}>{translate('common.counter_referral')}</Dropdown.Item>
+            )}
             {keycloak.hasRealmRole(USER_ROLES.MANAGE_PATIENT_REFERRAL) && (
               <Dropdown.Item
                 onClick={handleReferral}
