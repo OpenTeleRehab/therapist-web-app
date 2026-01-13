@@ -51,7 +51,7 @@ import {
 import TransferPatient from '../transfer';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
 import useDialog from 'components/V2/Dialog';
-import ReferralPatient from './referral';
+import ReferralPatientForm from '../PatientReferral/Partials/referralForm';
 import PhcTransfer from './phcTransfer';
 import { useKeycloak } from '@react-keycloak/web';
 import { useUpdate } from 'hooks/useUpdate';
@@ -167,7 +167,7 @@ const PatientInfo = ({ id, translate }) => {
   const handleReferral = () => {
     openDialog({
       title: translate('patient.referral.title'),
-      content: <ReferralPatient patientId={parseInt(id)} />
+      content: <ReferralPatientForm patientId={parseInt(id)} />
     });
   };
 

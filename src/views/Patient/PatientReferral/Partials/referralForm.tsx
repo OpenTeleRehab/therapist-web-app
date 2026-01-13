@@ -18,12 +18,13 @@ import { useCreate } from 'hooks/useCreate';
 import useToast from 'components/V2/Toast';
 import { useInvalidate } from 'hooks/useInvalidate';
 import { getPatient } from 'store/patient/actions';
+import Input from 'components/V2/Form/Input';
 
 type ReferralPatientProps = {
   patientId: number;
 }
 
-const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
+const ReferralPatientForm = ({ patientId }: ReferralPatientProps) => {
   const dispatch = useDispatch();
   const t = useTranslate() as any;
   const invalidate = useInvalidate();
@@ -76,6 +77,7 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
     const payload: IReferralRequest = {
       patient_id: data.patient_id,
       to_clinic_id: data.to_clinic_id,
+      request_reason: data.request_reason,
     };
 
     createReferral(payload, {
@@ -152,6 +154,16 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
             }}
           />
         </Form.Group>
+        <Form.Group controlId="reasonField">
+          <Input
+            control={control}
+            controlAs="textarea"
+            name='request_reason'
+            label={t('common.reason')}
+            rules={{ required: t('error.field.required') }}
+            rows={4}
+          />
+        </Form.Group>
       </DialogBody>
       <DialogFooter>
         <Button variant="primary" type='submit'>
@@ -165,4 +177,4 @@ const ReferralPatient = ({ patientId }: ReferralPatientProps) => {
   );
 };
 
-export default ReferralPatient;
+export default ReferralPatientForm;
