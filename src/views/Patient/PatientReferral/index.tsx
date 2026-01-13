@@ -82,9 +82,12 @@ const PatientReferralList = () => {
 
       return {
         identity: ra.patient_identity,
+        last_name: ra.last_name,
+        first_name: ra.first_name,
         date_of_birth: ra.date_of_birth ? moment(ra.date_of_birth).format('DD/MM/YYYY') : '',
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(ra.lead_and_supplementary_phc) }}></span>,
         referred_by: ra.referred_by,
+        request_reason: ra.request_reason,
         action,
       };
     });
@@ -92,11 +95,23 @@ const PatientReferralList = () => {
 
   const columns = useMemo(() => [
     { name: 'identity', title: t('common.id') },
+    { name: 'last_name', title: t('common.last_name'), width: 50 },
+    { name: 'first_name', title: t('common.first_name'), width: 50 },
     { name: 'date_of_birth', title: t('common.date_of_birth') },
     { name: 'phc_workers', title: t('referral.lead.and.supplementary') },
+    { name: 'request_reason', title: t('referral.phc_request_reason') },
     { name: 'referred_by', title: t('referral.referred_by') },
     { name: 'action', title: t('common.action') },
   ], [t]);
+
+  const defaultHiddenColumnNames = [
+    'referred_by',
+  ];
+
+  const columnExtensions = [
+    { columnName: 'request_reason', wordWrapEnabled: true },
+    { columnName: 'action', align: 'right' }
+  ];
 
   return (
     <CustomTable
@@ -104,8 +119,9 @@ const PatientReferralList = () => {
       setPageSize={setPageSize}
       currentPage={currentPage}
       setCurrentPage={setCurrentPage}
-      hideSearchFilter
       columns={columns}
+      columnExtensions={columnExtensions}
+      defaultHiddenColumnNames={defaultHiddenColumnNames}
       rows={rows}
     />
   );
