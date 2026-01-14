@@ -1,6 +1,7 @@
 export interface IReferralRequest {
   patient_id: number;
   to_clinic_id: number;
+  request_reason: string;
 }
 
 export interface IReferralForm {
@@ -9,4 +10,5 @@ export interface IReferralForm {
   region_id: number;
   province_id: number;
   to_clinic_id: number;
+  request_reason: string;
 }
