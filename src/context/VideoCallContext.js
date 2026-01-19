@@ -22,10 +22,11 @@ export const VideoCallContextProvider = ({ children }) => {
   const { profile } = useSelector(state => state.auth);
   const translate = getTranslate(localize);
   const { idleTimer } = useContext(AppContext);
-  const { authUserId, videoCall, chatRooms } = useSelector(state => state.rocketchat);
+  const { authUserId, callAccessToken, chatRooms, videoCall } = useSelector(state => state.rocketchat);
   const [hasParticipantInviting, setHasParticipantInviting] = useState(false);
   const [room, setRoom] = useState(undefined);
   const [participants, setParticipants] = useState([]);
+  const [invitingParticipants, setInvitingParticipants] = useState([]);
 
   useEffect(() => {
     if (room) {
@@ -36,32 +37,57 @@ export const VideoCallContextProvider = ({ children }) => {
   }, [room]);
 
   useEffect(() => {
+    // Call missed listener
+    if (videoCall && [CALL_STATUS.AUDIO_MISSED, CALL_STATUS.VIDEO_MISSED].includes(videoCall.status)) {
+      if (callAccessToken === undefined) {
+        dispatch(mutation.removeVideoCallSuccess());
+      }
+
+      if (callAccessToken && !hasParticipantInviting && participants.length === 0) {
+        dispatch(mutation.getCallAccessTokenSuccess(undefined));
+        dispatch(mutation.removeVideoCallSuccess());
+      }
+    }
+
+    // Call accepted listener
+    if (videoCall && videoCall.status === CALL_STATUS.ACCEPTED && callAccessToken === undefined) {
+      if (videoCall.u._id !== authUserId) {
+        handleUpdateMessage({
+          _id: videoCall.id,
+          rid: videoCall.rid,
+          identity: videoCall.identity,
+          msg: CALL_STATUS.ACCEPTED,
+        });
+      }
+
+      // Get call access token
+      dispatch(getCallAccessToken(videoCall.u._id));
+    }
+
     // Call busy listener
     if (videoCall && videoCall.status === CALL_STATUS.BUSY) {
       setTimeout(() => {
         if (participants.length === 0) {
-          handleDisconnectRoom();
-
-          dispatch(mutation.getCallAccessTokenSuccess(undefined));
-          dispatch(mutation.removeVideoCallSuccess());
+          // Disconnect from room
+          room.disconnect();
         }
         dispatch(showErrorNotification(translate('toast_title.jitsi_call_busy'), translate('error_message.jitsi_call_busy')));
       }, 3000);
     }
 
-    // Missed or ended call listener
-    if (videoCall && [CALL_STATUS.AUDIO_MISSED, CALL_STATUS.VIDEO_MISSED, CALL_STATUS.AUDIO_ENDED, CALL_STATUS.VIDEO_ENDED].includes(videoCall.status)) {
-      if (videoCall.u._id !== authUserId || (videoCall.u._id === authUserId && participants.length === 0 && !hasParticipantInviting)) {
-        handleDisconnectRoom();
-
-        dispatch(mutation.getCallAccessTokenSuccess(undefined));
+    // Call ended listener
+    if (videoCall && [CALL_STATUS.AUDIO_ENDED, CALL_STATUS.VIDEO_ENDED].includes(videoCall.status)) {
+      if (callAccessToken === undefined) {
+        // Remove call access token
         dispatch(mutation.removeVideoCallSuccess());
+      } else {
+        // Disconnect from room
+        room.disconnect();
       }
     }
   }, [room, videoCall, participants, hasParticipantInviting]);
 
-  const handleSendMessage = (rid, identity, msg) => {
-    const _id = generateHash();
+  const handleSendMessage = (_id, rid, identity, msg) => {
     const newMessage = { _id, rid, msg };
 
     sendNewMessage(chatSocket, newMessage, profile.id);
@@ -87,59 +113,62 @@ export const VideoCallContextProvider = ({ children }) => {
   };
 
   const handleAcceptCall = () => {
+    // Send accepted call message
+    handleUpdateMessage(videoCall._id, videoCall.rid, videoCall.identity, CALL_STATUS.ACCEPTED);
+
+    // Get call access token
     dispatch(getCallAccessToken(videoCall.u._id));
   };
 
   const handleDeclineCall = () => {
-    const _id = videoCall._id;
-    const rid = videoCall.rid;
-    const identity = videoCall.identity;
+    if (room?.name === authUserId) {
+      if (participants.length) {
+        participants.map(participant => {
+          const chatRoom = chatRooms.find(item => item.name === getParticipantName(participant.identity));
+          if (chatRoom) {
+            const _id = generateHash();
+            const rid = chatRoom.rid;
+            const identity = chatRoom.name;
+            const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
 
-    if (room) {
-      // TODO: handle missed or end call from host room
-      if (authUserId === videoCall.u._id) {
-        if (participants.length) {
-          participants.map(participant => {
-            const chatRoom = chatRooms.find(item => item.name === getParticipantName(participant.identity));
-
-            if (chatRoom) {
-              handleSendMessage(chatRoom.rid, chatRoom.name, videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED);
-            }
-          });
-        } else {
-          handleUpdateMessage(_id, rid, identity, videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED);
-        }
-      } else {
-        handleUpdateMessage(_id, rid, identity, videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED);
-
-        // Disconnect from twilio video room
-        room.disconnect();
-
-        // Cleanup videoCall and call access token from state
-        dispatch(mutation.removeVideoCallSuccess());
-        dispatch(mutation.getCallAccessTokenSuccess(undefined));
-      }
-    } else {
-      handleUpdateMessage(_id, rid, identity, videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED);
-    }
-  };
-
-  const handleDisconnectRoom = () => {
-    if (room) {
-      // Disconnect from room
-      room.disconnect();
-
-      // Stop local tracks
-      if (room.localParticipant && room.localParticipant.tracks.length) {
-        room.localParticipant.tracks.forEach(function (trackPublication) {
-          trackPublication.track.stop();
+            handleSendMessage(_id, rid, identity, msg);
+          }
         });
       }
+
+      if (invitingParticipants.length) {
+        const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
+
+        invitingParticipants.map(participant => {
+          handleUpdateMessage(participant._id, participant.rid, participant.u.username, msg);
+        });
+      }
+    } else {
+      const _id = videoCall._id;
+      const rid = videoCall.rid;
+      const identity = videoCall.identity;
+
+      if (callAccessToken) {
+        const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
+
+        handleUpdateMessage(_id, rid, identity, msg);
+      } else {
+        const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
+
+        handleUpdateMessage(_id, rid, identity, msg);
+      }
     }
+
+    // Disconnect from room
+    room?.disconnect();
   };
 
   const handleAddParticipants = (items) => {
     setParticipants(items);
+  };
+
+  const handleAddInvitingParticipants = (items) => {
+    setInvitingParticipants(items);
   };
 
   const handleAddRoom = (item) => {
@@ -157,6 +186,7 @@ export const VideoCallContextProvider = ({ children }) => {
       handleAcceptCall,
       handleDeclineCall,
       handleAddParticipants,
+      handleAddInvitingParticipants,
       handleAddRoom,
       toggleInvitation
     }}>

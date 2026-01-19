@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { connect, createLocalVideoTrack, createLocalAudioTrack, LocalDataTrack } from 'twilio-video';
 import { useDispatch, useSelector } from 'react-redux';
 import { useVideoCallContext } from '../../../../../context/VideoCallContext';
+import { mutation } from '../../../../../store/rocketchat/mutations';
 import PropTypes from 'prop-types';
 import Participant from './Participant';
 import CallingScreen from './CallingScreen';
@@ -26,7 +27,7 @@ const Room = ({
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const { profile } = useSelector(state => state.auth);
-  const { videoCall } = useSelector(state => state.rocketchat);
+  const { authUserId, videoCall } = useSelector(state => state.rocketchat);
   const translate = getTranslate(localize);
   const { handleAddParticipants, handleAddRoom } = useVideoCallContext();
   const [room, setRoom] = useState();
@@ -51,6 +52,16 @@ const Room = ({
       setParticipants((prevParticipants) => prevParticipants.filter(item => item.identity !== participant.identity));
     };
 
+    const disconnected = () => {
+      // Stop local tracks
+      room?.localParticipant?.tracks.forEach(function (trackPublication) {
+        trackPublication.track.stop();
+      });
+
+      // Remove call access token
+      dispatch(mutation.getCallAccessTokenSuccess(undefined));
+    };
+
     connect(callAccessToken, {
       name: videoCall.u._id,
       video: videoCall && videoCall.status === CALL_STATUS.VIDEO_STARTED,
@@ -71,6 +82,7 @@ const Room = ({
 
       room.on('participantConnected', participantConnected);
       room.on('participantDisconnected', participantDisconnected);
+      room.on('disconnected', disconnected);
     }).catch(error => {
       if ('code' in error) {
         // Handle connection error here.
@@ -132,67 +144,56 @@ const Room = ({
     setIsAudioOn(toggleAudioOn);
   };
 
-  return (
-    <>
-      <ParticipantInvitation participants={participants} isVideoOn={isVideoOn}/>
-
-      {participants.length === 0 ? (
-        <CallingScreen
+  if (room) {
+    return (
+      <div className="room">
+        <div className="transcript-language">
+          <Select
+            isDisabled={!speechRecognitionAvailable}
+            classNamePrefix="filter"
+            value={languages.filter(option => option.code === selectedTranscriptingLanguage)}
+            getOptionLabel={option => option.name}
+            getOptionValue={option => option.code}
+            options={languages}
+            onChange={(e) => setSelectedTranscriptingLanguage(e.code)}
+            aria-label="Language"
+          />
+          {!speechRecognitionAvailable && (
+            <p className="text-danger">
+              {translate('common.transcript.not.available')}
+            </p>
+          )}
+        </div>
+        <div className="remote">
+          {participants.map(participant => (
+            <Participant key={participant.identity} participant={participant}/>
+          ))}
+        </div>
+        <div className="local">
+          <LocalParticipant
+            isVideoOn={isVideoOn}
+            isAudioOn={isAudioOn}
+            participant={room.localParticipant}
+            selectedTranscriptingLanguage={selectedTranscriptingLanguage}
+            setSpeechRecognitionAvailable={setSpeechRecognitionAvailable}
+          />
+        </div>
+        <ParticipantInvitation
+          isVideoOn={isVideoOn}
+          participants={participants}
+          room={room}
+        />
+        <CallingControls
           isVideoOn={isVideoOn}
           isAudioOn={isAudioOn}
           setIsVideoOn={toggleVideo}
           setIsAudioOn={toggleAudio}
         />
-      ) : (
-        <div className="room">
-          <h6 className="text-white participant-name">
-            {profile.first_name} {profile.last_name}
-          </h6>
-          <div className="transcript-language">
-            <Select
-              isDisabled={!speechRecognitionAvailable}
-              classNamePrefix="filter"
-              value={languages.filter(option => option.code === selectedTranscriptingLanguage)}
-              getOptionLabel={option => option.name}
-              getOptionValue={option => option.code}
-              options={languages}
-              onChange={(e) => setSelectedTranscriptingLanguage(e.code)}
-              aria-label="Language"
-            />
-            {!speechRecognitionAvailable && (
-              <p className="text-danger">
-                {translate('common.transcript.not.available')}
-              </p>
-            )}
-          </div>
-          <div className="remote">
-            {participants.map(participant => (
-              <Participant key={participant.identity} participant={participant}/>
-            ))}
-          </div>
-          <div className="local">
-            {room && (
-              <LocalParticipant
-                participant={room.localParticipant}
-                isVideoOn={isVideoOn}
-                isAudioOn={isAudioOn}
-                selectedTranscriptingLanguage={selectedTranscriptingLanguage}
-                setSpeechRecognitionAvailable={setSpeechRecognitionAvailable}
-              />
-            )}
-          </div>
-          <div className="fixed-bottom">
-            <CallingControls
-              isVideoOn={isVideoOn}
-              isAudioOn={isAudioOn}
-              setIsVideoOn={toggleVideo}
-              setIsAudioOn={toggleAudio}
-            />
-          </div>
-        </div>
-      )}
-    </>
-  );
+      </div>
+    );
+  }
+
+  return null;
 };
 
 Room.propTypes = {

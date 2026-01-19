@@ -6,32 +6,43 @@ import { BiPhoneCall } from 'react-icons/bi';
 import { Button, ListGroup, Tab, Tabs } from 'react-bootstrap';
 import { CALL_STATUS } from '../../../../../variables/rocketchat';
 import { useVideoCallContext } from '../../../../../context/VideoCallContext';
+import { generateHash } from '../../../../../utils/general';
 import Dialog from '../../../../../components/Dialog';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 
-const ParticipantInvitation = ({ participants, isVideoOn }) => {
+const ParticipantInvitation = ({
+  isVideoOn,
+  participants,
+  room,
+}) => {
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
-  const { handleSendMessage, toggleInvitation } = useVideoCallContext();
+  const { handleSendMessage, handleUpdateMessage, handleAddInvitingParticipants } = useVideoCallContext();
   const { profile } = useSelector(state => state.auth);
-  const { authUserId, chatRooms, videoCall } = useSelector(state => state.rocketchat);
+  const { authUserId, chatRooms } = useSelector(state => state.rocketchat);
   const [showInviteDialog, setShowInviteDialog] = useState(false);
-  const [rooms, setRooms] = useState(_.cloneDeep(chatRooms));
+  const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
-    toggleInvitation(rooms.some(item => item.countdown > 0));
+    handleAddInvitingParticipants(rooms.filter((item) => item?.countdown > 0));
   }, [rooms]);
 
   useEffect(() => {
-    const timers = rooms.map((participant) => {
-      if (participant.countdown === 0) {
-        handleSendMessage(participant.rid, participant.name, isVideoOn ? CALL_STATUS.VIDEO_MISSED : CALL_STATUS.AUDIO_MISSED);
-        return null;
-      }
+    if (chatRooms.length) {
+      setRooms(
+        chatRooms.map((chatRoom) => ({
+          rid: chatRoom.rid,
+          u: chatRoom.u,
+          name: chatRoom.name,
+        })),
+      );
+    }
+  }, [chatRooms]);
 
+  useEffect(() => {
+    const timers = rooms.map((participant) => {
       if (participant.countdown > 0) {
-        const timer = setTimeout(() => {
+        return setTimeout(() => {
           setRooms((prev) =>
             prev.map((p) =>
               p.id === participant.id && !participants.some(item => item.identity === (p.u.username + '_' + profile.country_id))
@@ -40,8 +51,17 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
             )
           );
         }, 1000);
+      }
 
-        return timer;
+      if (participant.countdown === 0) {
+        const _id = participant._id;
+        const rid = participant.rid;
+        const identity = participant.identity;
+        const msg = isVideoOn ? CALL_STATUS.VIDEO_MISSED : CALL_STATUS.AUDIO_MISSED;
+
+        handleUpdateMessage(_id, rid, identity, msg);
+
+        return null;
       }
 
       return null;
@@ -51,35 +71,31 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
   }, [rooms, participants]);
 
   const handleInvitation = (room) => {
+    const _id = generateHash();
+    const rid = room.rid;
+    const identity = room.u.username;
+    const msg = isVideoOn ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED;
+
     setRooms((prev) =>
       prev.map((participant) =>
         participant.u._id === room.u._id
-          ? { ...participant, countdown: 60 }
+          ? { ...participant, _id: _id, countdown: 60 }
           : participant
       )
     );
 
-    handleSendMessage(room.rid, room.u.username, isVideoOn ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
+    handleSendMessage(_id, rid, identity, msg);
   };
 
   return (
     <>
-      {videoCall.u._id === authUserId ? (
-        <Button
-          disabled={participants.length === 0}
-          className="btn-add-participant"
-          onClick={() => setShowInviteDialog(true)}
-        >
-          <FaUserPlus size={22} /> {translate('common.add_participants')}
-        </Button>
-      ) : (
-        <Button
-          disabled
-          className="btn-add-participant"
-        >
-          {translate('common.participants')}
-        </Button>
-      )}
+      <Button
+        disabled={room.name !== authUserId}
+        className="btn-add-participant"
+        onClick={() => setShowInviteDialog(true)}
+      >
+        <FaUserPlus size={22} /> {translate('common.add_participants')}
+      </Button>
 
       <Dialog
         show={showInviteDialog}
@@ -166,8 +182,9 @@ const ParticipantInvitation = ({ participants, isVideoOn }) => {
 };
 
 ParticipantInvitation.propTypes = {
+  isVideoOn: PropTypes.bool,
   participants: PropTypes.array,
-  isVideoOn: PropTypes.bool
+  room: PropTypes.object,
 };
 
 export default ParticipantInvitation;

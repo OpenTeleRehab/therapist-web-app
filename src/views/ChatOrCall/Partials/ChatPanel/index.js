@@ -86,11 +86,7 @@ const ChatPanel = ({
   };
 
   const handleCall = (isVideo) => {
-    // Send audio or video call message
     onSendMessage(isVideo ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
-
-    // Get twilio call access token
-    dispatch(getCallAccessToken(therapist.chat_user_id));
   };
 
   const handleSendPodcastNotification = (therapist, selectedRoom, body, translatable) => {

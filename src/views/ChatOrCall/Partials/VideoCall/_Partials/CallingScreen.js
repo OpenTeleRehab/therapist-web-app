@@ -17,7 +17,7 @@ const CallingScreen = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn }) => 
       const _id = videoCall._id;
       const rid = videoCall.rid;
       const identity = videoCall.identity;
-      const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
+      const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
 
       handleUpdateMessage(_id, rid, identity, msg);
     }, 60000);
@@ -32,22 +32,20 @@ const CallingScreen = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn }) => 
       <div className="incoming-participant text-center d-flex justify-content-center align-items-end h-50">
         <div className="incoming-participant-info">
           {videoCall && videoCall.u._id === authUserId ? (
-            <h2>{selectedRoom.name}</h2>
+            <h2>{selectedRoom?.name}</h2>
           ) : (
-            <h2>{videoCall.u.name}</h2>
+            <h2>{videoCall?.u?.name}</h2>
           )}
           <p>{translate('video_call_starting')}</p>
         </div>
       </div>
 
-      <div className="fixed-bottom">
-        <CallingControls
-          isVideoOn={isVideoOn}
-          isAudioOn={isAudioOn}
-          setIsVideoOn={setIsVideoOn}
-          setIsAudioOn={setIsAudioOn}
-        />
-      </div>
+      <CallingControls
+        isVideoOn={isVideoOn}
+        isAudioOn={isAudioOn}
+        setIsVideoOn={setIsVideoOn}
+        setIsAudioOn={setIsAudioOn}
+      />
     </div>
   );
 };
