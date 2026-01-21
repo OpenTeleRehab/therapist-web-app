@@ -171,7 +171,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           clinic_id: profile.clinic_id,
           phc_service_id: profile.phc_service_id,
           clinic_identity: getClinicIdentity(profile.clinic_id, clinics),
-          phc_service_identity: getPhcServiceIdentity(profile.phc_service_id, phcServices?.data),
+          phc_service_identity: getPhcServiceIdentity(profile.phc_service_id, phcServices),
           therapist_identity: profile.type === USER_GROUPS.THERAPIST ? profile.identity : null,
           phc_worker_identity: profile.type === USER_GROUPS.PHC_WORKER ? profile.identity : null,
         });
