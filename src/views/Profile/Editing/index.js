@@ -41,7 +41,9 @@ const Edition = () => {
     first_name: '',
     language_id: '',
     profession_id: '',
-    show_guidance: ''
+    show_guidance: '',
+    notify_email: '',
+    notify_in_app: ''
   });
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorFirstName, setErrorFirstName] = useState(false);
@@ -53,7 +55,9 @@ const Edition = () => {
         first_name: profile.first_name,
         language_id: profile.language_id,
         profession_id: profile.profession_id,
-        show_guidance: profile.show_guidance
+        show_guidance: profile.show_guidance,
+        notify_email: profile.notify_email,
+        notify_in_app: profile.notify_in_app
       });
     }
   }, [profile]);
@@ -285,6 +289,34 @@ const Edition = () => {
             />
           </Form.Group>
         </Form.Row>
+
+        <Form.Row>
+          <Form.Group className="col-sm-4 md-4" controlId="formNotifyEmail">
+            <Form.Check
+              custom
+              checked={formFields.notify_email}
+              name="notify_email"
+              type="checkbox"
+              label={translate('common.notify_email')}
+              onChange={handleCheckBoxChange}
+            />
+          </Form.Group>
+        </Form.Row>
+
+        {profile?.type === USER_GROUPS.PHC_WORKER && (
+          <Form.Row>
+            <Form.Group className="col-sm-4 md-4" controlId="formNotifyInApp">
+              <Form.Check
+                custom
+                checked={formFields.notify_in_app}
+                name="notify_in_app"
+                type="checkbox"
+                label={translate('common.notify_in_app')}
+                onChange={handleCheckBoxChange}
+              />
+            </Form.Group>
+          </Form.Row>
+        )}
 
         <Form.Row>
           <Button onClick={handleSave}>
