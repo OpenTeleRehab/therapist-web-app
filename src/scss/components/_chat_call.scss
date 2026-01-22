@@ -258,7 +258,6 @@
       }
     }
     &-options {
-      margin: 0 0 44px 0;
       ul {
         list-style: none;
         padding: 0;
@@ -283,21 +282,10 @@
   .room {
     height: 100%;
     width: 100%;
-    .participant {
-      &-name {
-        font-size: 18px;
-        font-weight: 600;
-        position: absolute;
-        left: 16px;
-        top: 7px;
-        margin: 0;
-        z-index: 99;
-      }
-    }
     .transcript-language {
       position: absolute;
       left: 16px;
-      top: 38px;
+      top: 15px;
       margin: 0;
       z-index: 99;
       width: 200px;
@@ -316,10 +304,12 @@
       width: 100%;
       .participant {
         &-avatar {
+          color: $white;
           position: absolute;
           left: 50%;
           top: 50%;
           transform: translate(-50%, -50%);
+          text-align: center;
         }
       }
     }

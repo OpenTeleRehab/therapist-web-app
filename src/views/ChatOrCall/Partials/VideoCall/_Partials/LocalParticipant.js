@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import { FaUserCircle } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 
-const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscriptingLanguage, setSpeechRecognitionAvailable }) => {
+const LocalParticipant = ({
+  isVideoOn,
+  isAudioOn,
+  participant,
+  selectedTranscriptingLanguage,
+  setSpeechRecognitionAvailable,
+}) => {
   const videoRef = useRef();
   const audioRef = useRef();
   const recognitionRef = useRef();
@@ -13,6 +19,24 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
     Array.from(trackMap.values())
       .map((publication) => publication.track)
       .filter((track) => track !== null);
+
+  useEffect(() => {
+    if (!recognitionRef.current && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = true; // Keeps listening until stopped
+      recognitionRef.current.interimResults = true; // Shows interim results
+      recognitionRef.current.lang = 'en-US'; // Set language
+      recognitionRef.current.onerror = (event) => {
+        console.error(`Speech recognition error detected: ${event.error}`);
+        restartSpeechRecognition();
+      };
+    }
+    startListening();
+    return () => {
+      stopListening();
+    };
+  }, []);
 
   useEffect(() => {
     const videoTrack = trackpubsToTracks(participant.videoTracks)[0];
@@ -33,26 +57,6 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
       };
     }
   }, [participant, isAudioOn]);
-
-  useEffect(() => {
-    if (!recognitionRef.current && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-      const SpeechRecognition =
-        window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = true; // Keeps listening until stopped
-      recognitionRef.current.interimResults = true; // Shows interim results
-      recognitionRef.current.lang = 'en-US'; // Set language
-      recognitionRef.current.onerror = (event) => {
-        console.error(`Speech recognition error detected: ${event.error}`);
-        restartSpeechRecognition();
-      };
-    }
-
-    startListening();
-    return () => {
-      stopListening();
-    };
-  }, []);
 
   useEffect(() => {
     restartSpeechRecognition();
@@ -133,6 +137,9 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
       {!isVideoOn && (
         <div className="participant-avatar">
           <FaUserCircle size={50} color="white" />
+          <h6 className="mt-2 mb-0">
+            {profile.first_name} {profile.last_name}
+          </h6>
         </div>
       )}
       <video ref={videoRef} autoPlay />
@@ -142,9 +149,9 @@ const LocalParticipant = ({ participant, isVideoOn, isAudioOn, selectedTranscrip
 };
 
 LocalParticipant.propTypes = {
-  participant: PropTypes.object,
   isAudioOn: PropTypes.bool,
   isVideoOn: PropTypes.bool,
+  participant: PropTypes.object,
   selectedTranscriptingLanguage: PropTypes.string,
   setSpeechRecognitionAvailable: PropTypes.func
 };
