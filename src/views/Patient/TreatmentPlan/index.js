@@ -23,7 +23,8 @@ const TreatmentHistory = () => {
     { name: 'name', title: translate('common.treatment_name') },
     { name: 'treatment_status', title: translate('common.status') },
     { name: 'start_date', title: translate('common.start_date') },
-    { name: 'end_date', title: translate('common.end_date') }
+    { name: 'end_date', title: translate('common.end_date') },
+    { name: 'creator_name', title: translate('common.created_by') },
   ];
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
@@ -89,7 +90,8 @@ const TreatmentHistory = () => {
               name: treatmentPlan.name,
               treatment_status: renderStatusBadge(treatmentPlan),
               start_date: treatmentPlan.start_date,
-              end_date: treatmentPlan.end_date
+              end_date: treatmentPlan.end_date,
+              creator_name: treatmentPlan.creator_name,
             };
           })}
         />
