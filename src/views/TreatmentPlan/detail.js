@@ -22,10 +22,9 @@ import EllipsisText from 'react-ellipsis-text';
 import QuestionnaireTab from './TabContents/questionnaireTab';
 import ActivitySection from './_Partials/activitySection';
 import AdherenceTab from './TabContents/adherenceTab';
-import { getDisease, renderStatusBadge } from '../../utils/treatmentPlan';
+import { renderStatusBadge } from '../../utils/treatmentPlan';
 import GoalTrackingTab from './TabContents/goalTrakingTab';
 import Dialog from 'components/Dialog';
-import { getDiseases } from 'store/disease/actions';
 import AssignPatient from '../Library/PresetTreatment/assignPatient';
 
 const ViewTreatmentPlan = () => {
@@ -46,7 +45,6 @@ const ViewTreatmentPlan = () => {
     end_date: '',
     patient_name: '',
     status: '',
-    disease: ''
   });
   const [weeks, setWeeks] = useState(1);
   const [activities, setActivities] = useState([]);
@@ -54,14 +52,7 @@ const ViewTreatmentPlan = () => {
   const [readOnly] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const diseases = useSelector((state) => state.disease.diseases);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
-
-  useEffect(() => {
-    if (profile && profile.language_id) {
-      dispatch(getDiseases({ lang: profile.language_id }));
-    }
-  }, [dispatch, profile]);
 
   useEffect(() => {
     if (id && profile && countries.length) {
@@ -97,13 +88,12 @@ const ViewTreatmentPlan = () => {
         start_date: moment(treatmentPlansDetail.start_date, settings.date_format).locale('en').format(settings.date_format),
         end_date: moment(treatmentPlansDetail.end_date, settings.date_format).locale('en').format(settings.date_format),
         status: treatmentPlansDetail.status,
-        disease: getDisease(treatmentPlansDetail.disease_id, diseases)
       });
       setWeeks(treatmentPlansDetail.total_of_weeks);
       setActivities(treatmentPlansDetail.activities);
       setStartDate(moment(treatmentPlansDetail.start_date, settings.date_format).format(settings.date_format));
     }
-  }, [id, treatmentPlansDetail, diseases]);
+  }, [id, treatmentPlansDetail]);
 
   const handleDelete = () => {
     setShowDeleteDialog(true);
@@ -208,9 +198,6 @@ const ViewTreatmentPlan = () => {
         </div>
         {patientId && (
           <div className="patient-info">
-            <span className="mr-4">
-              <strong>{translate('common.ICD')}:</strong>&nbsp; {formFields.disease}
-            </span>
             <span className="mr-4">
               <strong>{translate('common.description')}:</strong>&nbsp;
               <OverlayTrigger
