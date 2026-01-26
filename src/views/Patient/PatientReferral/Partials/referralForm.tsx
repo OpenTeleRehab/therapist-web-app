@@ -56,7 +56,7 @@ const ReferralPatientForm = ({ patientId }: ReferralPatientProps) => {
   }, [regions]);
 
   const clinicOptions = useMemo(() => {
-    return (clinics?.data ?? []).filter((c: any) => c.province.id === provinceId).map((c: any) => ({ label: c.name, value: c.id }));
+    return (clinics?.data ?? []).filter((c: any) => c.province?.id === provinceId).map((c: any) => ({ label: c.name, value: c.id }));
   }, [clinics, provinceId]);
 
   useEffect(() => {

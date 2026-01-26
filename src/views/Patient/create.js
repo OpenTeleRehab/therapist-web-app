@@ -282,11 +282,20 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       }
     }
 
-    setSelectedTherapists(previousSelects => Array.isArray(e) ? [...previousSelects, ...e.map(x => x.value)] : previousSelects);
-    setPendingTransfers(pendingTransfers => _.chain([...pendingTransfers, ...transformE])
-      .sortBy(t => priority[t.status])
-      .uniqBy('therapist_id')
-      .value()
+    setSelectedTherapists(prev =>
+      Array.isArray(e)
+        ? [...(Array.isArray(prev) ? prev : []), ...e.map(x => x.value)]
+        : prev
+    );
+
+    setPendingTransfers(prev =>
+      _.chain([
+        ...(Array.isArray(prev) ? prev : []),
+        ...(Array.isArray(transformE) ? transformE : [])
+      ])
+        .sortBy(t => priority?.[t?.status] ?? 999)
+        .uniqBy('therapist_id')
+        .value()
     );
   };
 
