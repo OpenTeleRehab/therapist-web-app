@@ -54,7 +54,7 @@ const Message = ({ show, handleClose, patientId, phone, handleCheckMaxSms, reach
 
   const handleSendSms = () => {
     dispatch(sendMessages({ message, phone, patient_id: patientId })).then(result => {
-      if (result.success) {
+      if (result && result.success) {
         handleCheckMaxSms();
         setIsSent(true);
       } else {
