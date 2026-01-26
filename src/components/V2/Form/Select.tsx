@@ -76,7 +76,7 @@ const Select = <
               getOptionLabel={getOptionLabel}
               getOptionValue={getOptionValue}
               value={selectedValue as any}
-              onChange={(val) => {
+              onChange={(val: any) => {
                 if (isMulti) {
                   field.onChange(val ? (val as OptionType<TValue, TExtra>[]).map(v => getOptionValue(v)) : []);
                 } else {
