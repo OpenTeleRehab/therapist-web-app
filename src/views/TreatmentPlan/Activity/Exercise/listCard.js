@@ -93,7 +93,7 @@ const ListExerciseCard = ({ translate, exerciseIds, customExercises, onSelection
                         </Button>
                       ) : (
                         <>
-                          {(!treatmentPlanExercises.includes(exercise.id) || exercise.created_by === therapistId) && !readOnly &&
+                          {(!treatmentPlanExercises.includes(exercise.activity_id || exercise.id) || exercise.created_by === therapistId) && !readOnly &&
                             <Button
                               aria-label="Remove exercise"
                               className="btn-circle-sm"
