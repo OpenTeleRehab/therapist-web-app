@@ -1,4 +1,3 @@
-import adminAxios from 'utils/admin-axios';
 import axios from 'utils/axios';
 
 const submitSurvey = payload => {
@@ -26,7 +25,7 @@ const skipSurvey = payload => {
 };
 
 const getPublishSurvey = (payload) => {
-  return adminAxios.get('/get-publish-survey', { params: payload })
+  return axios.get('survey/list/publish-survey', { params: payload })
     .then(
       res => {
         return res.data;

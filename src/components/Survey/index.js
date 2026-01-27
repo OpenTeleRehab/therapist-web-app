@@ -14,11 +14,6 @@ const Survey = () => {
 
   useEffect(() => {
     dispatch(getPublishSurvey({
-      organization: process.env.REACT_APP_NAME,
-      user_id: profile.id,
-      type: 'therapist',
-      country_id: profile.country_id,
-      clinic_id: profile.clinic_id,
       lang: profile.language_id ? profile.language_id : languages.length ? languages[0].id : ''
     }));
   }, [profile, dispatch]);
