@@ -20,6 +20,7 @@ const ViewPatient = () => {
   const translate = getTranslate(localize);
   const { hash } = useLocation();
   const [view, setView] = useState(undefined);
+  const patient = useSelector(state => state.patient.patient);
 
   useEffect(() => {
     switch (hash) {
@@ -60,15 +61,17 @@ const ViewPatient = () => {
               {translate('common.assistive_technology_history')}
             </Nav.Link>
           </Nav.Item>
-          <Nav.Item>
-            <Nav.Link
-              as={Link}
-              to={'#' + VIEW_INTERVIEW_HISTORY}
-              eventKey={VIEW_INTERVIEW_HISTORY}
-            >
-              {translate('common.interview_history')}
-            </Nav.Link>
-          </Nav.Item>
+          {patient?.phc_worker_id &&
+            <Nav.Item>
+              <Nav.Link
+                as={Link}
+                to={'#' + VIEW_INTERVIEW_HISTORY}
+                eventKey={VIEW_INTERVIEW_HISTORY}
+              >
+                {translate('common.interview_history')}
+              </Nav.Link>
+            </Nav.Item>
+          }
         </Nav>
 
         <Tab.Content>
@@ -78,9 +81,11 @@ const ViewPatient = () => {
           <Tab.Pane eventKey={VIEW_ASSISTIVE_TECHNOLOGY}>
             <AssistiveTechnologyHistory />
           </Tab.Pane>
+          {patient?.phc_worker_id &&
           <Tab.Pane eventKey={VIEW_INTERVIEW_HISTORY}>
             <InterviewHistory />
           </Tab.Pane>
+          }
         </Tab.Content>
       </Tab.Container>
     </>
