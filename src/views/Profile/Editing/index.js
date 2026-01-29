@@ -43,7 +43,6 @@ const Edition = () => {
     profession_id: '',
     show_guidance: '',
     notify_email: '',
-    notify_in_app: ''
   });
   const [errorLastName, setErrorLastName] = useState(false);
   const [errorFirstName, setErrorFirstName] = useState(false);
@@ -57,7 +56,6 @@ const Edition = () => {
         profession_id: profile.profession_id,
         show_guidance: profile.show_guidance,
         notify_email: profile.notify_email,
-        notify_in_app: profile.notify_in_app
       });
     }
   }, [profile]);
@@ -302,21 +300,6 @@ const Edition = () => {
             />
           </Form.Group>
         </Form.Row>
-
-        {profile?.type === USER_GROUPS.PHC_WORKER && (
-          <Form.Row>
-            <Form.Group className="col-sm-4 md-4" controlId="formNotifyInApp">
-              <Form.Check
-                custom
-                checked={formFields.notify_in_app}
-                name="notify_in_app"
-                type="checkbox"
-                label={translate('common.notify_in_app')}
-                onChange={handleCheckBoxChange}
-              />
-            </Form.Group>
-          </Form.Row>
-        )}
 
         <Form.Row>
           <Button onClick={handleSave}>

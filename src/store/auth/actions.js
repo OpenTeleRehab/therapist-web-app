@@ -54,3 +54,17 @@ export const updatePassword = payload => async dispatch => {
     return false;
   }
 };
+
+export const toggleGuidance = (id) => async (dispatch) => {
+  dispatch(mutation.toggleGuidanceRequest());
+  const data = await Auth.toggleGuidance(id);
+  if (data.success) {
+    dispatch(mutation.toggleGuidanceSuccess());
+    dispatch(showSuccessNotification('toast_title.turn_off_guidance', data.message));
+    return true;
+  } else {
+    dispatch(mutation.toggleGuidanceFail());
+    dispatch(showErrorNotification('toast_title.turn_off_guidance', data.message));
+    return false;
+  }
+};

@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { Translate } from 'react-localize-redux';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProfile } from '../../store/auth/actions';
 import { getGuidances } from '../../store/guidance/actions';
+import { toggleGuidance } from '../../store/auth/actions';
 import GoogleTranslationAttribute from '../GoogleTranslationAttribute';
 
 const Guidance = () => {
   const dispatch = useDispatch();
-  const languages = useSelector(state => state.language.languages);
   const { profile } = useSelector((state) => state.auth);
   const { guidances } = useSelector(state => state.guidance);
   const [showGuidance, setShowGuidance] = useState(false);
+  const [checked, setChecked] = useState(false);
   const [currentIndex, SetCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -21,19 +21,8 @@ const Guidance = () => {
     }
   }, [profile, dispatch]);
 
-  const language = languages.find(item => item.id === profile.language_id);
-  const [formFields, setFormFields] = useState({
-    last_name: profile.last_name,
-    first_name: profile.first_name,
-    language_id: profile.language_id,
-    language_code: language ? language.code : null,
-    profession_id: profile.profession_id,
-    show_guidance: profile.show_guidance
-  });
-
   const handleCheckBoxChange = e => {
-    const { name, checked } = e.target;
-    setFormFields({ ...formFields, [name]: checked });
+    setChecked(true);
   };
 
   const handlePrevGuidance = () => {
@@ -45,10 +34,11 @@ const Guidance = () => {
   };
 
   const handleCloseGuidance = () => {
-    setShowGuidance(false);
-    if (profile.show_guidance !== formFields.show_guidance) {
-      dispatch(updateProfile(profile.id, formFields));
+    if (checked) {
+      dispatch(toggleGuidance(profile.id));
     }
+
+    setShowGuidance(false);
   };
 
   return (

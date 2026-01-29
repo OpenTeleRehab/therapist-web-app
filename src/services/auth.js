@@ -36,8 +36,21 @@ const updatePassword = payload => {
     });
 };
 
+const toggleGuidance = (id) => {
+  return axios.post(`user/${id}/turn-off-guidance`)
+    .then(
+      res => {
+        return res.data;
+      }
+    )
+    .catch((e) => {
+      return e.response.data;
+    });
+};
+
 export const Auth = {
   getProfile,
   updateProfile,
-  updatePassword
+  updatePassword,
+  toggleGuidance,
 };

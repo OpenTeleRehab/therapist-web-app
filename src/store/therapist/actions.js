@@ -1,9 +1,7 @@
 import { Therapist } from 'services/therapist';
 import { mutation } from './mutations';
 
-import {
-  showErrorNotification
-} from 'store/notification/actions';
+import { showErrorNotification, showSuccessNotification } from '../notification/actions';
 
 export const getTherapistsByClinic = clinicId => async dispatch => {
   dispatch(mutation.getTherapistsByClinicRequest());
