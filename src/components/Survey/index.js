@@ -19,7 +19,7 @@ const Survey = () => {
   }, [profile, dispatch]);
 
   useEffect(() => {
-    if (publishSurveys.length) {
+    if (publishSurveys?.length) {
       setSurveys(publishSurveys);
     }
   }, [publishSurveys]);

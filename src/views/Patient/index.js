@@ -57,7 +57,6 @@ const Patient = () => {
   const localize = useSelector((state) => state.localize);
   const { authToken, chatRooms } = useSelector(state => state.rocketchat);
   const { colorScheme } = useSelector(state => state.colorScheme);
-  const { appointmentsWithPatients } = useSelector((state) => state.appointment);
 
   const chatSocket = useContext(RocketchatContext);
   const translate = getTranslate(localize);
@@ -105,7 +104,8 @@ const Patient = () => {
     { columnName: 'treatment_status', wordWrapEnabled: true },
     { columnName: 'secondary_therapist', wordWrapEnabled: true },
     { columnName: 'supplementary_phc_worker', wordWrapEnabled: true },
-    { columnName: 'transfer', wordWrapEnabled: true, width: 150 }
+    { columnName: 'transfer', wordWrapEnabled: true, width: 150 },
+    { columnName: 'notification', wordWrapEnabled: true, width: 200 }
   ];
 
   const [pageSize, setPageSize] = useState(60);
@@ -234,13 +234,12 @@ const Patient = () => {
                 const transfer = transfers.find(item => item.patient_id === user.id && item.therapist_type === 'lead');
                 const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
                 const unread = room ? room.unread : 0;
-                const userAppointments = user.appointments.filter(appointment => appointment.created_by_therapist === false && appointment.patient_status === APPOINTMENT_STATUS.ACCEPTED && appointment.therapist_status === APPOINTMENT_STATUS.INVITED);
-                const unreadAppointments = _.filter(appointmentsWithPatients.unreadAppointments, item => item.patient_id === user.id);
+                const appointmentCount = user.patient_appointment_count + user.therapist_unread_appointment_count;
 
                 const notification = (
                   <div className="notify-lists d-flex align-items-center">
                     <div className="notify-list-item mr-2">
-                      <ProgressBar width={75} percent={user.completed_percent || 0}/>
+                      <ProgressBar width={60} percent={user.completed_percent || 0}/>
                     </div>
                     {user.total_pain_threshold > 0 && (
                       <div className="notify-list-item mr-2">
@@ -256,11 +255,11 @@ const Patient = () => {
                         </Button>
                       </div>
                     )}
-                    {(userAppointments.length > 0 || unreadAppointments.length > 0) && (
+                    {appointmentCount > 0 && (
                       <div className="notify-list-item">
                         <Button className="text-decoration-none p-0" onClick={(event) => handleNavigateAppointment(event, user)} variant="link">
                           <RiCalendar2Line className="chat-icon mr-1" size={20} color={scssColors.primary}/>
-                          <sup>{userAppointments.length + unreadAppointments.length > 99 ? '99+' : userAppointments.length + unreadAppointments.length}</sup>
+                          <sup>{appointmentCount > 99 ? '99+' : appointmentCount}</sup>
                         </Button>
                       </div>
                     )}
