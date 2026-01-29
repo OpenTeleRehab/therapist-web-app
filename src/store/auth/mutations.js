@@ -37,6 +37,18 @@ const updatePasswordFail = () => ({
   type: 'UPDATE_PASSWORD_FAIL'
 });
 
+const toggleGuidanceRequest = () => ({
+  type: 'TOGGLE_GUIDANCE_REQUEST'
+});
+
+const toggleGuidanceSuccess = () => ({
+  type: 'TOGGLE_GUIDANCE_SUCCESS'
+});
+
+const toggleGuidanceFail = () => ({
+  type: 'TOGGLE_GUIDANCE_FAIL'
+});
+
 export const mutation = {
   getProfileRequest,
   getProfileSuccess,
@@ -46,5 +58,8 @@ export const mutation = {
   updateProfileFail,
   updatePasswordRequest,
   updatePasswordSuccess,
-  updatePasswordFail
+  updatePasswordFail,
+  toggleGuidanceRequest,
+  toggleGuidanceSuccess,
+  toggleGuidanceFail
 };
