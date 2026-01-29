@@ -324,14 +324,13 @@ const SliderRender = ({ question, disabled, translate }) => {
     fieldState: { error },
   } = useController({
     name: getQuestionName(question.id),
-    defaultValue: question.options[0].min, // Default to min value if null? Logic says null in RN but slider needs value
+    defaultValue: null,
     rules: {
       required: question.mandatory && translate('error.message.required'),
     },
   });
 
-  // Ensure value is numeric for slider
-  const currentValue = field.value !== null && field.value !== undefined ? field.value : question.options[0].min;
+  const currentValue = field.value;
 
   const imageUrl = getFileUrl(question.file);
 
@@ -349,8 +348,7 @@ const SliderRender = ({ question, disabled, translate }) => {
       <div>Value: {currentValue}</div>
       <Form.Control
         type="range"
-        value={currentValue}
-        onChange={(e) => field.onChange(Number(e.target.value))}
+        value={currentValue ?? 0}
         min={question.options[0].min}
         max={question.options[0].max}
         step={1}
