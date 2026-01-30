@@ -77,6 +77,7 @@ const ReferralPatientForm = ({ patientId }: ReferralPatientProps) => {
     const payload: IReferralRequest = {
       patient_id: data.patient_id,
       to_clinic_id: data.to_clinic_id,
+      to_region_id: data.region_id,
       request_reason: data.request_reason,
     };
 
