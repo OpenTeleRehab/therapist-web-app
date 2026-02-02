@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import Dialog from 'components/Dialog';
 import { useDispatch, useSelector } from 'react-redux';
 import { getTranslate } from 'react-localize-redux';
-import { Form, Col } from 'react-bootstrap';
+import { Form, Col, Row } from 'react-bootstrap';
 import { getUsers } from '../../../store/user/actions';
 import Datetime from 'components/DateTime';
 import moment from 'moment';
@@ -20,6 +20,7 @@ import { USER_GROUPS } from 'variables/user';
 import { APPOINTMENT_OPTIONS, APPOINTMENT_RECIPIENT_TYPES } from '../../../variables/appointment';
 import useToast from 'components/V2/Toast';
 import { getCountryIsoCode } from 'utils/country';
+import { APPOINTMENT_TYPE } from 'variables/appointmentType';
 
 const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, selectedDate, userLocale }) => {
   const dispatch = useDispatch();
@@ -44,6 +45,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
   const [phcWorkerOptions, setPhcWorkerOptions] = useState([]);
   const [therapistOptions, setTherapistOptions] = useState([]);
   const [recipientId, setRecipientId] = useState('');
+  const [type, setType] = useState(APPOINTMENT_TYPE.ONLINE);
 
   const validateDate = (current) => {
     const yesterday = moment().subtract(1, 'day');
@@ -101,6 +103,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
       setFrom(moment.utc(appointment.start_date).local());
       setTo(moment.utc(appointment.end_date).local());
       setNote(appointment.note);
+      setType(appointment.type);
     }
   }, [appointment, therapistOptions, selectedPatientId]);
 
@@ -251,14 +254,16 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
           patient_id: patientId,
           from,
           to,
-          note
+          note,
+          type,
         };
       } else {
         data = {
           recipient_id: recipientId,
           from,
           to,
-          note
+          note,
+          type,
         };
       }
 
@@ -377,6 +382,34 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
       confirmLabel={appointment ? translate('common.save') : translate('common.create')}
     >
       <Form onKeyPress={(e) => handleFormSubmit(e)}>
+        <Form.Group controlId="type">
+          <Form.Label>
+            {translate('appointment.type')}
+            <span className="text-dark ml-1">*</span>
+          </Form.Label>
+
+          <div className="d-flex" style={{ gap: 20 }}>
+            <Form.Check
+              name="type"
+              type="radio"
+              value={APPOINTMENT_TYPE.ONLINE}
+              checked={type === APPOINTMENT_TYPE.ONLINE}
+              onChange={() => setType(APPOINTMENT_TYPE.ONLINE)}
+              id="appointmentTypeOnline"
+              label={translate('appointment.type.online')}
+            />
+
+            <Form.Check
+              name="type"
+              type="radio"
+              value={APPOINTMENT_TYPE.IN_PERSON}
+              checked={type === APPOINTMENT_TYPE.IN_PERSON}
+              onChange={() => setType(APPOINTMENT_TYPE.IN_PERSON)}
+              id="appointmentTypeInPerson"
+              label={translate('appointment.type.in_person')}
+            />
+          </div>
+        </Form.Group>
         <Form.Group controlId="groupRecipientType">
           <Form.Label>{translate('appointment.appointment_with')}</Form.Label>
           <span className="text-dark ml-1">*</span>
