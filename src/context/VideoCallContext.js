@@ -77,12 +77,12 @@ export const VideoCallContextProvider = ({ children }) => {
 
     // Call ended listener
     if (videoCall && [CALL_STATUS.AUDIO_ENDED, CALL_STATUS.VIDEO_ENDED].includes(videoCall.status)) {
-      if (callAccessToken === undefined) {
-        // Remove call access token
-        dispatch(mutation.removeVideoCallSuccess());
-      } else {
+      if (callAccessToken) {
         // Disconnect from room
         room.disconnect();
+      } else {
+        // Remove video call
+        dispatch(mutation.removeVideoCallSuccess());
       }
     }
   }, [room, videoCall, participants, hasParticipantInviting]);

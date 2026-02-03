@@ -7,11 +7,7 @@ import { BsChevronLeft } from 'react-icons/bs';
 import { IoCallOutline, IoVideocamOutline } from 'react-icons/io5';
 import { CALL_STATUS, CHAT_TYPES, USER_STATUS } from 'variables/rocketchat';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  getCallAccessToken,
-  postAttachmentMessage,
-  sendPodcastNotification
-} from 'store/rocketchat/actions';
+import { postAttachmentMessage, sendPodcastNotification } from 'store/rocketchat/actions';
 import { generateHash } from 'utils/general';
 import CallingButton from '../../../../components/CallingButton';
 import RocketchatContext from '../../../../context/RocketchatContext';
