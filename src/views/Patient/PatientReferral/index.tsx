@@ -12,6 +12,7 @@ import useDialog from 'components/V2/Dialog';
 import DeclineForm from './Partials/declineForm';
 import { useUpdate } from 'hooks/useUpdate';
 import useToast from 'components/V2/Toast';
+import InterviewHistoryDialog from './Partials/InterviewHistoryDialog';
 
 const CustomTable = Table as any;
 
@@ -21,11 +22,18 @@ const PatientReferralList = () => {
   const { showToast } = useToast();
   const [pageSize, setPageSize] = useState<number>(60);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [showInterviewHistory, setShowInterviewHistory] = useState(false);
+  const [interviewPatientId, setInterviewPatientId] = useState<number | null>(null);
   const { mutate: acceptPatientReferral } = useUpdate(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT);
   const { data: referralAssignments } = useList<IReferralAssignmentResource>(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT, {
     page_size: pageSize,
     page: currentPage,
   });
+
+  const handleViewHistory = (patientId: number) => {
+    setInterviewPatientId(patientId);
+    setShowInterviewHistory(true);
+  };
 
   const formatLeadSupplementaryPhc = (workers: string[] = []) => {
     if (!workers || workers.length === 0) return '';
@@ -88,6 +96,7 @@ const PatientReferralList = () => {
         phc_workers: <span dangerouslySetInnerHTML={{ __html: formatLeadSupplementaryPhc(ra.lead_and_supplementary_phc) }}></span>,
         referred_by: ra.referred_by,
         request_reason: ra.request_reason,
+        interview_history: <p className="text-primary" style={{ cursor: 'pointer' }} onClick={() => handleViewHistory(ra.patient_id)}>{t('common.view_history')}</p>,
         action,
       };
     });
@@ -101,6 +110,7 @@ const PatientReferralList = () => {
     { name: 'phc_workers', title: t('referral.lead.and.supplementary') },
     { name: 'request_reason', title: t('referral.phc_request_reason') },
     { name: 'referred_by', title: t('referral.referred_by') },
+    { name: 'interview_history', title: t('common.interview_history') },
     { name: 'action', title: t('common.action') },
   ], [t]);
 
@@ -114,16 +124,23 @@ const PatientReferralList = () => {
   ];
 
   return (
-    <CustomTable
-      pageSize={pageSize}
-      setPageSize={setPageSize}
-      currentPage={currentPage}
-      setCurrentPage={setCurrentPage}
-      columns={columns}
-      columnExtensions={columnExtensions}
-      defaultHiddenColumnNames={defaultHiddenColumnNames}
-      rows={rows}
-    />
+    <>
+      <CustomTable
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        columns={columns}
+        columnExtensions={columnExtensions}
+        defaultHiddenColumnNames={defaultHiddenColumnNames}
+        rows={rows}
+      />
+      <InterviewHistoryDialog
+        show={showInterviewHistory}
+        onClose={() => setShowInterviewHistory(false)}
+        patientId={interviewPatientId}
+      />
+    </>
   );
 };
 
