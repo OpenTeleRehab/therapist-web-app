@@ -60,6 +60,9 @@ const Room = ({
 
       // Remove call access token
       dispatch(mutation.getCallAccessTokenSuccess(undefined));
+
+      // Remove video call
+      dispatch(mutation.removeVideoCallSuccess());
     };
 
     connect(callAccessToken, {

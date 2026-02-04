@@ -74,16 +74,17 @@ const ChatOrCall = ({ translate }) => {
     const identity = selectedRoom.u.username;
     const title = therapist.first_name + ' ' + therapist.last_name;
 
-    const notification = {
-      _id,
-      rid,
-      identity,
-      title,
-      body: msg,
-      translatable: false
-    };
-
-    dispatch(sendPodcastNotification(notification));
+    if (selectedRoom.u.status === USER_STATUS[0]) {
+      const notification = {
+        _id,
+        rid,
+        identity,
+        title,
+        body: msg,
+        translatable: false
+      };
+      dispatch(sendPodcastNotification(notification));
+    }
   };
 
   const handleUpdateMessage = (_id, msg) => {
