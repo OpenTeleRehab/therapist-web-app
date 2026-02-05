@@ -3,6 +3,7 @@ export interface IReferralAssignmentResource {
   first_name: string;
   last_name: string;
   patient_identity: string;
+  patient_id: number;
   date_of_birth: string;
   lead_and_supplementary_phc: string[];
   request_reason: string | null;

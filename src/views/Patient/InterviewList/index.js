@@ -11,6 +11,8 @@ import moment from 'moment';
 import QuestionRenderer from '../../../components/ScreeningQuestionnaire/QuestionRenderer';
 import { useForm, FormProvider } from 'react-hook-form';
 import { Button } from 'react-bootstrap';
+import useTranslate from 'hooks/useTranslate';
+import PropTypes from 'prop-types';
 
 const calculateScoreBySection = (section, answers) => {
   let totalScore = 0;
@@ -72,13 +74,14 @@ const mapScore = (sectionTotalScore, actions) => {
   return match ? match.action_text : null;
 };
 
-const InterviewHistory = () => {
-  const { patientId } = useParams();
+const InterviewHistory = ({ patientId: propPatientId }) => {
+  const { patientId: paramPatientId } = useParams();
+  const patientId = propPatientId ?? paramPatientId;
   const localize = useSelector((state) => state.localize);
   const translate = getTranslate(localize);
   const [showDetail, setShowDetail] = useState(false);
   const [step, setStep] = useState(0);
-  const { data: interviewHistorys } = useList(END_POINTS.INTERVIEW_HISTORY, { user_id: patientId });
+  const { data: interviewHistories } = useList(END_POINTS.INTERVIEW_HISTORY, { user_id: patientId });
   const [interviewHistoryDetail, setInterviewHistoryDetail] = useState();
   const methods = useForm();
   const { reset } = methods;
@@ -115,15 +118,55 @@ const InterviewHistory = () => {
     }
   };
 
+  const getSectionMaxScores = (section) => {
+    const sectionMax = (section?.questions || [])?.reduce((sum, q) => {
+      const options = q?.options || [];
+
+      const points = options
+        ?.map((o) => Number(o?.option_point ?? 0))
+        ?.filter((n) => !Number.isNaN(n));
+
+      let questionMax = 0;
+
+      switch (q?.question_type) {
+        case 'radio':
+          questionMax = points.length ? Math.max(...points) : 0;
+          break;
+
+        case 'checkbox':
+          questionMax = points.reduce((s, p) => s + (p > 0 ? p : 0), 0);
+          break;
+
+        case 'rating':
+          questionMax = Number(q?.options?.[0]?.max ?? 0) || 0;
+          break;
+
+        case 'open-number':
+          questionMax = Number(q?.options?.[0]?.option_point ?? 0);
+          break;
+
+        default:
+          questionMax = points.length ? Math.max(...points) : 0;
+          break;
+      }
+
+      return sum + questionMax;
+    }, 0);
+
+    return sectionMax;
+  };
+
   return (
     <>
-      <div className='mt-4 d-flex'>
-        <h5>{translate('common.interview_history')}</h5>
-        <BackButton />
-      </div>
-      <div className='mt-4'>
-        {interviewHistorys?.data?.length > 0
-          ? interviewHistorys?.data?.map((interviewHistory) => {
+      {!propPatientId && (
+        <div className='mt-4 d-flex'>
+          <h5>{translate('common.interview_history')}</h5>
+          <BackButton />
+        </div>
+      )}
+      <div className={!propPatientId ? 'mt-4' : ''}>
+        {interviewHistories?.data?.length > 0
+          ? interviewHistories?.data?.map((interviewHistory) => {
             const TotalScoreFirstSection = calculateScoreBySection(interviewHistory.questionnaire.sections[0], JSON.parse(interviewHistory.answers));
             return (
               <div
@@ -183,7 +226,7 @@ const InterviewHistory = () => {
                 <div className="d-flex justify-content-between align-items-center mt-2">
                   <span>{currentSection.title}</span>
                   <span className="font-weight-bold">
-                    {translate('phc.interview_total_score', { total_score: totalScore })}
+                    {translate('common.interview_total_score_of_max_score', { total_score: totalScore, max_score: getSectionMaxScores(currentSection) })}
                   </span>
                 </div>
                 {actionText && (
@@ -220,3 +263,7 @@ const InterviewHistory = () => {
 };
 
 export default InterviewHistory;
+
+InterviewHistory.propTypes = {
+  patientId: PropTypes.number,
+};
