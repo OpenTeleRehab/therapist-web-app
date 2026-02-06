@@ -3,6 +3,26 @@ const setWebsocketConnectionSuccess = (data) => ({
   data
 });
 
+const setHasStartedCallSuccess = (data) => ({
+  type: 'SET_HAS_STARTED_CALL_SUCCESS',
+  data
+});
+
+const setHasAcceptedCallSuccess = (data) => ({
+  type: 'SET_HAS_ACCEPTED_CALL_SUCCESS',
+  data
+});
+
+const showIncomingCallSuccess = (data) => ({
+  type: 'SHOW_INCOMING_CALL_SUCCESS',
+  data
+});
+
+const showAcceptedCallSuccess = (data) => ({
+  type: 'SHOW_ACCEPTED_CALL_SUCCESS',
+  data
+});
+
 const chatUserLoginSuccess = (data) => ({
   type: 'CHAT_USER_LOGIN_SUCCESS',
   data
@@ -103,6 +123,10 @@ const getCallAccessTokenFail = () => ({
 
 export const mutation = {
   setWebsocketConnectionSuccess,
+  setHasStartedCallSuccess,
+  setHasAcceptedCallSuccess,
+  showIncomingCallSuccess,
+  showAcceptedCallSuccess,
   chatUserLoginSuccess,
   setChatSubscribeIdsSuccess,
   getChatRoomsSuccess,

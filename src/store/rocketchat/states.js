@@ -10,5 +10,9 @@ export const initialState = {
   tokenExpiredAt: null,
   selectedRoom: undefined,
   videoCall: undefined,
-  callAccessToken: undefined
+  callAccessToken: undefined,
+  hasStartedCall: false,
+  hasAcceptedCall: false,
+  showIncomingCall: false,
+  showAcceptedCall: false,
 };

@@ -16,7 +16,7 @@ import {
 import CallingButton from '../../../../../components/CallingButton';
 
 const CallingControls = ({ isVideoOn, isAudioOn, setIsVideoOn, setIsAudioOn }) => {
-  const { callAccessToken, videoCall, authUserId } = useSelector(state => state.rocketchat);
+  const { callAccessToken, hasStartedCall } = useSelector(state => state.rocketchat);
   const { handleAcceptCall, handleDeclineCall } = useVideoCallContext();
 
   return (
@@ -33,7 +33,7 @@ const CallingControls = ({ isVideoOn, isAudioOn, setIsVideoOn, setIsAudioOn }) =
               {isAudioOn ? (<IoMicOutline size={20}/>) : (<IoMicOff size={20}/>)}
             </Button>
           </li>
-          {callAccessToken === undefined && videoCall.u._id !== authUserId && (
+          {callAccessToken === undefined && !hasStartedCall && (
             <li>
               <Button variant="success" className="btn-accept-call" onClick={handleAcceptCall}>
                 <MdCall size={20}/>

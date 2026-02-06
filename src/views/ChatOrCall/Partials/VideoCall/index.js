@@ -7,7 +7,12 @@ import Room from './_Partials/Room';
 import CallingScreen from './_Partials/CallingScreen';
 
 const VideoCall = () => {
-  const { callAccessToken, videoCall } = useSelector(state => state.rocketchat);
+  const {
+    callAccessToken,
+    videoCall,
+    showIncomingCall,
+    showAcceptedCall
+  } = useSelector(state => state.rocketchat);
   const [isVideoOn, setIsVideoOn] = useState(undefined);
   const [isAudioOn, setIsAudioOn] = useState(true);
   const [selectedTranscriptingLanguage, setSelectedTranscriptingLanguage] = useState('en-US');
@@ -23,7 +28,18 @@ const VideoCall = () => {
 
   return (
     <VideoCallContextProvider>
-      {callAccessToken && videoCall && (
+      {showIncomingCall && !callAccessToken && (
+        <div className="calling">
+          <CallingScreen
+            isVideoOn={isVideoOn}
+            isAudioOn={isAudioOn}
+            setIsVideoOn={setIsVideoOn}
+            setIsAudioOn={setIsAudioOn}
+          />
+        </div>
+      )}
+
+      {showAcceptedCall && callAccessToken && (
         <div className="calling">
           <Room
             callAccessToken={callAccessToken}
@@ -33,16 +49,6 @@ const VideoCall = () => {
             setIsVideoOn={setIsVideoOn}
             setIsAudioOn={setIsAudioOn}
             setSelectedTranscriptingLanguage={setSelectedTranscriptingLanguage}
-          />
-        </div>
-      )}
-      {!callAccessToken && videoCall && videoCall.status.startsWith('jitsi_call') && (videoCall.status.endsWith('_started')) && (
-        <div className="calling">
-          <CallingScreen
-            isVideoOn={isVideoOn}
-            isAudioOn={isAudioOn}
-            setIsVideoOn={setIsVideoOn}
-            setIsAudioOn={setIsAudioOn}
           />
         </div>
       )}

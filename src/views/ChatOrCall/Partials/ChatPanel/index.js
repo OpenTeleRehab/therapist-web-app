@@ -12,6 +12,7 @@ import { generateHash } from 'utils/general';
 import CallingButton from '../../../../components/CallingButton';
 import RocketchatContext from '../../../../context/RocketchatContext';
 import { markMessagesAsRead } from '../../../../utils/chat';
+import { mutation } from '../../../../store/rocketchat/mutations';
 
 const MIN_MSG_OUTER_HEIGHT = 205;
 
@@ -82,6 +83,11 @@ const ChatPanel = ({
   };
 
   const handleCall = (isVideo) => {
+    // Show incoming call
+    dispatch(mutation.showIncomingCallSuccess(true));
+    dispatch(mutation.setHasStartedCallSuccess(true));
+
+    // Send call message
     onSendMessage(isVideo ? CALL_STATUS.VIDEO_STARTED : CALL_STATUS.AUDIO_STARTED);
   };
 

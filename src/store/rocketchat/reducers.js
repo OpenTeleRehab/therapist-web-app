@@ -7,6 +7,26 @@ export const rocketchat = (state = initialState, action) => {
         isChatConnected: action.data
       });
     }
+    case 'SET_HAS_STARTED_CALL_SUCCESS': {
+      return Object.assign({}, state, {
+        hasStartedCall: action.data
+      });
+    }
+    case 'SET_HAS_ACCEPTED_CALL_SUCCESS': {
+      return Object.assign({}, state, {
+        hasAcceptedCall: action.data
+      });
+    }
+    case 'SHOW_INCOMING_CALL_SUCCESS': {
+      return Object.assign({}, state, {
+        showIncomingCall: action.data
+      });
+    }
+    case 'SHOW_ACCEPTED_CALL_SUCCESS': {
+      return Object.assign({}, state, {
+        showAcceptedCall: action.data
+      });
+    }
     case 'CHAT_USER_LOGIN_SUCCESS': {
       return Object.assign({}, state, {
         authToken: action.data.authToken,
