@@ -5,7 +5,6 @@ import { useVideoCallContext } from '../../../../../context/VideoCallContext';
 import { mutation } from '../../../../../store/rocketchat/mutations';
 import PropTypes from 'prop-types';
 import Participant from './Participant';
-import CallingScreen from './CallingScreen';
 import CallingControls from './CallingControls';
 import LocalParticipant from './LocalParticipant';
 import ParticipantInvitation from './ParticipantInvitation';
@@ -26,8 +25,7 @@ const Room = ({
 }) => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
-  const { profile } = useSelector(state => state.auth);
-  const { authUserId, videoCall } = useSelector(state => state.rocketchat);
+  const { videoCall } = useSelector(state => state.rocketchat);
   const translate = getTranslate(localize);
   const { handleAddParticipants, handleAddRoom } = useVideoCallContext();
   const [room, setRoom] = useState();
@@ -53,11 +51,6 @@ const Room = ({
     };
 
     const disconnected = () => {
-      // Stop local tracks
-      room?.localParticipant?.tracks.forEach(function (trackPublication) {
-        trackPublication.track.stop();
-      });
-
       // Remove call access token
       dispatch(mutation.getCallAccessTokenSuccess(undefined));
 

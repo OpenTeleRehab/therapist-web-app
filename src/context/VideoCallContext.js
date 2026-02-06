@@ -10,6 +10,7 @@ import { mutation } from '../store/rocketchat/mutations';
 import { generateHash, getParticipantName } from '../utils/general';
 import RocketchatContext from './RocketchatContext';
 import AppContext from './AppContext';
+import _ from 'lodash';
 
 const VideoCallContext = createContext(null);
 
@@ -22,7 +23,14 @@ export const VideoCallContextProvider = ({ children }) => {
   const { profile } = useSelector(state => state.auth);
   const translate = getTranslate(localize);
   const { idleTimer } = useContext(AppContext);
-  const { authUserId, callAccessToken, chatRooms, videoCall } = useSelector(state => state.rocketchat);
+  const {
+    authUserId,
+    callAccessToken,
+    chatRooms,
+    videoCall,
+    hasStartedCall,
+    hasAcceptedCall
+  } = useSelector(state => state.rocketchat);
   const [hasParticipantInviting, setHasParticipantInviting] = useState(false);
   const [room, setRoom] = useState(undefined);
   const [participants, setParticipants] = useState([]);
@@ -37,6 +45,23 @@ export const VideoCallContextProvider = ({ children }) => {
   }, [room]);
 
   useEffect(() => {
+    if (_.isEmpty(videoCall)) {
+      dispatch(mutation.showIncomingCallSuccess(false));
+      dispatch(mutation.showAcceptedCallSuccess(false));
+
+      dispatch(mutation.setHasStartedCallSuccess(false));
+      dispatch(mutation.setHasAcceptedCallSuccess(false));
+    }
+  }, [videoCall]);
+
+  useEffect(() => {
+    // Call started listener
+    if (videoCall && [CALL_STATUS.AUDIO_STARTED, CALL_STATUS.VIDEO_STARTED].includes(videoCall.status)) {
+      if (videoCall.u._id !== authUserId && !hasStartedCall && !hasAcceptedCall) {
+        dispatch(mutation.showIncomingCallSuccess(true));
+      }
+    }
+
     // Call missed listener
     if (videoCall && [CALL_STATUS.AUDIO_MISSED, CALL_STATUS.VIDEO_MISSED].includes(videoCall.status)) {
       if (callAccessToken === undefined) {
@@ -51,7 +76,7 @@ export const VideoCallContextProvider = ({ children }) => {
 
     // Call accepted listener
     if (videoCall && videoCall.status === CALL_STATUS.ACCEPTED && callAccessToken === undefined) {
-      if (videoCall.u._id !== authUserId) {
+      if (!hasStartedCall) {
         handleUpdateMessage({
           _id: videoCall.id,
           rid: videoCall.rid,
@@ -60,8 +85,19 @@ export const VideoCallContextProvider = ({ children }) => {
         });
       }
 
-      // Get call access token
-      dispatch(getCallAccessToken(videoCall.u._id));
+      if (hasStartedCall || hasAcceptedCall) {
+        // Get call access token
+        dispatch(getCallAccessToken(videoCall.u._id));
+
+        // Hide incoming call
+        dispatch(mutation.showIncomingCallSuccess(false));
+
+        // Show accepted call
+        dispatch(mutation.showAcceptedCallSuccess(true));
+      } else {
+        // Remove video call
+        dispatch(mutation.removeVideoCallSuccess());
+      }
     }
 
     // Call busy listener
@@ -78,8 +114,17 @@ export const VideoCallContextProvider = ({ children }) => {
     // Call ended listener
     if (videoCall && [CALL_STATUS.AUDIO_ENDED, CALL_STATUS.VIDEO_ENDED].includes(videoCall.status)) {
       if (callAccessToken) {
-        // Disconnect from room
-        room.disconnect();
+        if (hasAcceptedCall || (hasStartedCall && participants.length === 0)) {
+          // Stop and unpublish camera tracking
+          room?.localParticipant?.videoTracks?.forEach(function (publication) {
+            publication.unpublish();
+            publication.track.stop();
+            publication.track.detach();
+          });
+
+          // Disconnect from room
+          room?.disconnect();
+        }
       } else {
         // Remove video call
         dispatch(mutation.removeVideoCallSuccess());
@@ -116,8 +161,14 @@ export const VideoCallContextProvider = ({ children }) => {
     // Send accepted call message
     handleUpdateMessage(videoCall._id, videoCall.rid, videoCall.identity, CALL_STATUS.ACCEPTED);
 
-    // Get call access token
-    dispatch(getCallAccessToken(videoCall.u._id));
+    // Hide incoming call
+    dispatch(mutation.showIncomingCallSuccess(false));
+
+    // Show accepted call
+    dispatch(mutation.showAcceptedCallSuccess(true));
+
+    // Set has accepted call
+    dispatch(mutation.setHasAcceptedCallSuccess(true));
   };
 
   const handleDeclineCall = () => {
@@ -158,6 +209,13 @@ export const VideoCallContextProvider = ({ children }) => {
         handleUpdateMessage(_id, rid, identity, msg);
       }
     }
+
+    // Stop and unpublish camera tracking
+    room?.localParticipant?.videoTracks?.forEach(function (publication) {
+      publication.unpublish();
+      publication.track.stop();
+      publication.track.detach();
+    });
 
     // Disconnect from room
     room?.disconnect();
