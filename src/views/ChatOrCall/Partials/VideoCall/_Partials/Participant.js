@@ -73,7 +73,7 @@ const Participant = ({ participant }) => {
         </div>
       )}
       <p className="participant-identity">
-        {getParticipantName(participant.identity)}
+        {getParticipantName(participant)}
       </p>
       <video ref={videoRef} autoPlay />
       <audio ref={audioRef} autoPlay />

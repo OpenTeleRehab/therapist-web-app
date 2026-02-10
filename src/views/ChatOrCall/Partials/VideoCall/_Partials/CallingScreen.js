@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useVideoCallContext } from '../../../../../context/VideoCallContext';
 import { CALL_STATUS } from '../../../../../variables/rocketchat';
 import PropTypes from 'prop-types';
-import useTranslate from 'hooks/useTranslate';
+import useTranslate from '../../../../../hooks/useTranslate';
 import CallingControls from './CallingControls';
 
 const CallingScreen = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn }) => {
@@ -16,7 +16,7 @@ const CallingScreen = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn }) => 
     callTimeout.current = setTimeout(() => {
       const _id = videoCall._id;
       const rid = videoCall.rid;
-      const identity = videoCall.identity;
+      const identity = videoCall.u.username;
       const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
 
       handleUpdateMessage(_id, rid, identity, msg);

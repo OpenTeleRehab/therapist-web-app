@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
 import settings from 'settings';
-import store from '../store';
 import { CHAT_TYPES } from 'variables/rocketchat';
 
 export const generateHash = (length = 17) => {
@@ -65,13 +64,7 @@ export const isGSM7 = (text) => {
   return regexp.test(text);
 };
 
-export const getParticipantName = (participantIdentity) => {
-  const { chatRooms } = store.getState().rocketchat;
-  const [identity] = participantIdentity.split('_');
-
-  const room = chatRooms.find(room => {
-    return room.u.username === identity;
-  });
-
-  return room ? room.name : '';
+export const getParticipantName = (participant) => {
+  const parts = participant?.identity?.split('###');
+  return parts?.[2] ?? '';
 };
