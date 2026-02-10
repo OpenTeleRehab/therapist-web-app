@@ -90,7 +90,7 @@ const ChatOrCall = ({ translate }) => {
   const handleUpdateMessage = (_id, msg) => {
     const rid = selectedRoom.rid;
     const identity = selectedRoom.u.username;
-    const title = therapist.first_name + ' ' + therapist.last_name;
+    const title = therapist.last_name + ' ' + therapist.first_name;
     const notification = {
       _id,
       rid,

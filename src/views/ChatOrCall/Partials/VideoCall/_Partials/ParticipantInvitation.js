@@ -45,7 +45,7 @@ const ParticipantInvitation = ({
         return setTimeout(() => {
           setRooms((prev) =>
             prev.map((p) =>
-              p.id === participant.id && !participants.some(item => item.identity === (p.u.username + '_' + profile.country_id))
+              p.id === participant.id && !participants.some(item => item.identity.startsWith(p.u.username + '###' + profile.country_id))
                 ? { ...p, countdown: p.countdown - 1 }
                 : { ...p, countdown: undefined }
             )
@@ -56,7 +56,7 @@ const ParticipantInvitation = ({
       if (participant.countdown === 0) {
         const _id = participant._id;
         const rid = participant.rid;
-        const identity = participant.identity;
+        const identity = participant.u.username;
         const msg = isVideoOn ? CALL_STATUS.VIDEO_MISSED : CALL_STATUS.AUDIO_MISSED;
 
         handleUpdateMessage(_id, rid, identity, msg);
@@ -110,7 +110,7 @@ const ParticipantInvitation = ({
                   <p className="mb-0 d-flex align-items-center">
                     {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
                   </p>
-                  {participants.some(item => item.identity === (room.u.username + '_' + profile.country_id)) ? (
+                  {participants.some(item => item.identity.startsWith(room.u.username + '###' + profile.country_id)) ? (
                     <Button className="min-w-92" size="sm" disabled>
                       <BiPhoneCall size={16} /> {translate('common.joined')}
                     </Button>
@@ -134,7 +134,7 @@ const ParticipantInvitation = ({
                   <p className="mb-0 d-flex align-items-center">
                     {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
                   </p>
-                  {participants.some(item => item.identity === (room.u.username + '_' + profile.country_id)) ? (
+                  {participants.some(item => item.identity.startsWith(room.u.username + '###' + profile.country_id)) ? (
                     <Button className="min-w-92" size="sm" disabled>
                       <BiPhoneCall size={16} /> {translate('common.joined')}
                     </Button>
@@ -158,7 +158,7 @@ const ParticipantInvitation = ({
                   <p className="mb-0 d-flex align-items-center">
                     {room.name} <span className={`chat-user-status ${room.u.status}`}></span>
                   </p>
-                  {participants.some(item => item.identity === (room.u.username + '_' + profile.country_id)) ? (
+                  {participants.some(item => item.identity.startsWith(room.u.username + '###' + profile.country_id)) ? (
                     <Button className="min-w-92" size="sm" disabled>
                       <BiPhoneCall size={16} /> {translate('common.joined')}
                     </Button>

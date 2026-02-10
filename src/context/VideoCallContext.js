@@ -80,7 +80,7 @@ export const VideoCallContextProvider = ({ children }) => {
         handleUpdateMessage({
           _id: videoCall.id,
           rid: videoCall.rid,
-          identity: videoCall.identity,
+          identity: videoCall.u.username,
           msg: CALL_STATUS.ACCEPTED,
         });
       }
@@ -105,7 +105,7 @@ export const VideoCallContextProvider = ({ children }) => {
       setTimeout(() => {
         if (participants.length === 0) {
           // Disconnect from room
-          room.disconnect();
+          room?.disconnect();
         }
         dispatch(showErrorNotification(translate('toast_title.jitsi_call_busy'), translate('error_message.jitsi_call_busy')));
       }, 3000);
@@ -159,7 +159,7 @@ export const VideoCallContextProvider = ({ children }) => {
 
   const handleAcceptCall = () => {
     // Send accepted call message
-    handleUpdateMessage(videoCall._id, videoCall.rid, videoCall.identity, CALL_STATUS.ACCEPTED);
+    handleUpdateMessage(videoCall._id, videoCall.rid, videoCall.u.username, CALL_STATUS.ACCEPTED);
 
     // Hide incoming call
     dispatch(mutation.showIncomingCallSuccess(false));
@@ -175,7 +175,7 @@ export const VideoCallContextProvider = ({ children }) => {
     if (room?.name === authUserId) {
       if (participants.length) {
         participants.map(participant => {
-          const chatRoom = chatRooms.find(item => item.name === getParticipantName(participant.identity));
+          const chatRoom = chatRooms.find(item => participant.identity.includes(item.u.username + '###'));
           if (chatRoom) {
             const _id = generateHash();
             const rid = chatRoom.rid;
@@ -197,7 +197,7 @@ export const VideoCallContextProvider = ({ children }) => {
     } else {
       const _id = videoCall._id;
       const rid = videoCall.rid;
-      const identity = videoCall.identity;
+      const identity = videoCall.u.username;
 
       if (callAccessToken) {
         const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
