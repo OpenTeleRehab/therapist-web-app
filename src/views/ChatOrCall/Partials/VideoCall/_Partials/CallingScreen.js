@@ -16,10 +16,9 @@ const CallingScreen = ({ isVideoOn, setIsVideoOn, isAudioOn, setIsAudioOn }) => 
     callTimeout.current = setTimeout(() => {
       const _id = videoCall._id;
       const rid = videoCall.rid;
-      const identity = videoCall.u.username;
       const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
 
-      handleUpdateMessage(_id, rid, identity, msg);
+      handleUpdateMessage(_id, rid, msg);
     }, 60000);
 
     return () => {
