@@ -7,7 +7,7 @@ import { showErrorNotification } from '../store/notification/actions';
 import { getCallAccessToken, sendPodcastNotification } from '../store/rocketchat/actions';
 import { CALL_STATUS } from '../variables/rocketchat';
 import { mutation } from '../store/rocketchat/mutations';
-import { generateHash, getParticipantName } from '../utils/general';
+import { generateHash } from '../utils/general';
 import RocketchatContext from './RocketchatContext';
 import AppContext from './AppContext';
 import _ from 'lodash';
@@ -80,7 +80,6 @@ export const VideoCallContextProvider = ({ children }) => {
         handleUpdateMessage({
           _id: videoCall.id,
           rid: videoCall.rid,
-          identity: videoCall.u.username,
           msg: CALL_STATUS.ACCEPTED,
         });
       }
@@ -101,14 +100,9 @@ export const VideoCallContextProvider = ({ children }) => {
     }
 
     // Call busy listener
-    if (videoCall && videoCall.status === CALL_STATUS.BUSY) {
-      setTimeout(() => {
-        if (participants.length === 0) {
-          // Disconnect from room
-          room?.disconnect();
-        }
-        dispatch(showErrorNotification(translate('toast_title.jitsi_call_busy'), translate('error_message.jitsi_call_busy')));
-      }, 3000);
+    if (videoCall && videoCall.status === CALL_STATUS.BUSY && callAccessToken === undefined) {
+      dispatch(mutation.removeVideoCallSuccess());
+      dispatch(showErrorNotification(translate('toast_title.jitsi_call_busy'), translate('error_message.jitsi_call_busy')));
     }
 
     // Call ended listener
@@ -139,9 +133,8 @@ export const VideoCallContextProvider = ({ children }) => {
     handlePodcastNotification(_id, rid, identity, msg);
   };
 
-  const handleUpdateMessage = (_id, rid, identity, msg) => {
+  const handleUpdateMessage = (_id, rid, msg) => {
     updateMessage(chatSocket, { _id, rid, msg }, profile.id);
-    handlePodcastNotification(_id, rid, identity, msg);
   };
 
   const handlePodcastNotification = (_id, rid, identity, msg) => {
@@ -159,7 +152,7 @@ export const VideoCallContextProvider = ({ children }) => {
 
   const handleAcceptCall = () => {
     // Send accepted call message
-    handleUpdateMessage(videoCall._id, videoCall.rid, videoCall.u.username, CALL_STATUS.ACCEPTED);
+    handleUpdateMessage(videoCall._id, videoCall.rid, CALL_STATUS.ACCEPTED);
 
     // Hide incoming call
     dispatch(mutation.showIncomingCallSuccess(false));
@@ -191,22 +184,26 @@ export const VideoCallContextProvider = ({ children }) => {
         const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
 
         invitingParticipants.map(participant => {
-          handleUpdateMessage(participant._id, participant.rid, participant.u.username, msg);
+          handleUpdateMessage(participant._id, participant.rid, msg);
         });
       }
     } else {
       const _id = videoCall._id;
       const rid = videoCall.rid;
-      const identity = videoCall.u.username;
 
       if (callAccessToken) {
         const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
 
-        handleUpdateMessage(_id, rid, identity, msg);
+        handleUpdateMessage(_id, rid, msg);
       } else {
+        const chatRoom = chatRooms.find(cr => cr.u._id === videoCall.rid.replace(videoCall.u._id, ''));
         const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
 
-        handleUpdateMessage(_id, rid, identity, msg);
+        handleUpdateMessage(_id, rid, msg);
+
+        if (chatRoom?.u?.username) {
+          handlePodcastNotification(_id, rid, chatRoom.u.username, msg);
+        }
       }
     }
 

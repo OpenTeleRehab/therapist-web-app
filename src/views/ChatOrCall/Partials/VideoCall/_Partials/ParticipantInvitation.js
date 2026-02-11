@@ -56,10 +56,9 @@ const ParticipantInvitation = ({
       if (participant.countdown === 0) {
         const _id = participant._id;
         const rid = participant.rid;
-        const identity = participant.u.username;
         const msg = isVideoOn ? CALL_STATUS.VIDEO_MISSED : CALL_STATUS.AUDIO_MISSED;
 
-        handleUpdateMessage(_id, rid, identity, msg);
+        handleUpdateMessage(_id, rid, msg);
 
         return null;
       }
