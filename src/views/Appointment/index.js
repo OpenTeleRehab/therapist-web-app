@@ -297,6 +297,7 @@ const Appointment = ({ translate }) => {
                     date={date}
                     isOpen={expandedSections.patient}
                     onToggle={toggleSection}
+                    filter={filter}
                   />
                 )}
                 {approvedAppointmentsWithPhcWorkers.length > 0 && (
@@ -309,6 +310,7 @@ const Appointment = ({ translate }) => {
                     date={date}
                     isOpen={expandedSections.phcWorker}
                     onToggle={toggleSection}
+                    filter={filter}
                   />
                 )}
                 {approvedAppointmentsWithTherapists.length > 0 && (
@@ -321,6 +323,7 @@ const Appointment = ({ translate }) => {
                     date={date}
                     isOpen={expandedSections.therapist}
                     onToggle={toggleSection}
+                    filter={filter}
                   />
                 )}
               </>
