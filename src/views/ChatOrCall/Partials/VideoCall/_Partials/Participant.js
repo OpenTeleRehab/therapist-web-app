@@ -35,8 +35,26 @@ const Participant = ({ participant }) => {
       }
     };
 
+    const trackEnabled = ({ track }) => {
+      if (track.kind === 'video') {
+        setVideoTracks(() => [track]);
+      } else if (track.kind === 'audio') {
+        setAudioTracks(() => [track]);
+      }
+    };
+
+    const trackDisabled = ({ track }) => {
+      if (track.kind === 'video') {
+        setVideoTracks([]);
+      } else if (track.kind === 'audio') {
+        setAudioTracks([]);
+      }
+    };
+
     participant.on('trackSubscribed', trackSubscribed);
     participant.on('trackUnsubscribed', trackUnsubscribed);
+    participant.on('trackEnabled', trackEnabled);
+    participant.on('trackDisabled', trackDisabled);
 
     return () => {
       setVideoTracks([]);
