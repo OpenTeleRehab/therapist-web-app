@@ -29,19 +29,26 @@ export const getMessage = (message, authUserId = '', authToken = '') => {
     const attachedFile = attachments[0];
     const baseUrl = process.env.REACT_APP_ROCKET_CHAT_BASE_URL;
     const authParams = `?rc_uid=${authUserId}&rc_token=${authToken}`;
+
     attachment = {
       title: file.name,
       type: file.type,
       caption: attachedFile.description || ''
     };
-    if (file.type.includes('video/')) {
-      attachment.url = encodeURI(`${baseUrl}${attachedFile.video_url}${authParams}`);
-      type = CHAT_TYPES.VIDEO;
-    } else {
+
+    if (file.type.startsWith('image/')) {
       attachment.url = encodeURI(`${baseUrl}${attachedFile.image_url}${authParams}`);
       attachment.height = attachedFile.image_dimensions.height;
       attachment.width = attachedFile.image_dimensions.width;
       type = CHAT_TYPES.IMAGE;
+    }
+    if (file.type.startsWith('video/')) {
+      attachment.url = encodeURI(`${baseUrl}${attachedFile.video_url}${authParams}`);
+      type = CHAT_TYPES.VIDEO;
+    }
+    if (file.type === 'application/octet-stream') {
+      attachment.url = encodeURI(`${baseUrl}${attachedFile.title_link}${authParams}`);
+      type = CHAT_TYPES.VIDEO;
     }
   }
 
