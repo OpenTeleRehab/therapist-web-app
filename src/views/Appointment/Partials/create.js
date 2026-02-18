@@ -54,8 +54,8 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
 
   const [errorPatient, setErrorPatient] = useState(false);
   const [errorDate, setErrorDate] = useState(false);
-  const [errorFrom, setErrorFrom] = useState(false);
-  const [errorTo, setErrorTo] = useState(false);
+  const [errorFrom, setErrorFrom] = useState('');
+  const [errorTo, setErrorTo] = useState('');
   const [errorRecipientType, setErrorRecipientType] = useState(false);
   const [errorRecipient, setErrorRecipient] = useState(false);
 
@@ -231,18 +231,27 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
       setErrorDate(false);
     }
 
-    if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').locale('en').isValid() || !moment(now).isBefore(fromTimeThen)) {
+    if (formattedFrom === '' || !moment(formattedFrom, 'hh:mm A').locale('en').isValid()) {
       canSave = false;
-      setErrorFrom(true);
+      setErrorFrom('error_message.appointment_required');
+    } else if (!moment(now).isBefore(fromTimeThen)) {
+      canSave = false;
+      setErrorFrom('error_message.appointment_past_time');
     } else {
-      setErrorFrom(false);
+      setErrorFrom('');
     }
 
-    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').locale('en').isValid() || formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').locale('en').isBefore(moment(formattedFrom, 'hh:mm A').locale('en')) || !moment(now).isBefore(toTimeThen)) {
+    if (formattedTo === '' || !moment(formattedTo, 'hh:mm A').locale('en').isValid()) {
       canSave = false;
-      setErrorTo(true);
+      setErrorTo('error_message.appointment_required');
+    } else if (formattedFrom === formattedTo || moment(formattedTo, 'hh:mm A').locale('en').isBefore(moment(formattedFrom, 'hh:mm A').locale('en'))) {
+      canSave = false;
+      setErrorTo('error_message.appointment_less_than_start_time');
+    } else if (!moment(now).isBefore(toTimeThen)) {
+      canSave = false;
+      setErrorTo('error_message.appointment_past_time');
     } else {
-      setErrorTo(false);
+      setErrorTo('');
     }
 
     if (canSave) {
@@ -538,7 +547,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
               />
               {errorFrom && (
                 <Form.Control.Feedback type="invalid" className="d-block">
-                  {translate('error_message.appointment_from')}
+                  {translate(errorFrom)}
                 </Form.Control.Feedback>
               )}
               {showFromTime &&
@@ -572,7 +581,7 @@ const CreatePatient = ({ show, handleClose, selectedPatientId, appointment, sele
               />
               {errorTo && (
                 <Form.Control.Feedback type="invalid" className="d-block">
-                  {translate('error_message.appointment_to')}
+                  {translate(errorTo)}
                 </Form.Control.Feedback>
               )}
               {showToTime &&
