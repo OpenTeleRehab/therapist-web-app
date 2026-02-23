@@ -76,14 +76,6 @@ export const VideoCallContextProvider = ({ children }) => {
 
     // Call accepted listener
     if (videoCall && videoCall.status === CALL_STATUS.ACCEPTED && callAccessToken === undefined) {
-      if (!hasStartedCall) {
-        handleUpdateMessage({
-          _id: videoCall.id,
-          rid: videoCall.rid,
-          msg: CALL_STATUS.ACCEPTED,
-        });
-      }
-
       if (hasStartedCall || hasAcceptedCall) {
         // Get call access token
         dispatch(getCallAccessToken(videoCall.u._id));
