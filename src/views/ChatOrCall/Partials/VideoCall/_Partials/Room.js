@@ -10,7 +10,6 @@ import LocalParticipant from './LocalParticipant';
 import ParticipantInvitation from './ParticipantInvitation';
 import { showErrorNotification } from '../../../../../store/notification/actions';
 import { languages } from '../../../../../variables/webApiAvailableLanguages';
-import { CALL_STATUS } from '../../../../../variables/rocketchat';
 import Select from 'react-select';
 import { getTranslate } from 'react-localize-redux';
 
@@ -60,7 +59,7 @@ const Room = ({
 
     connect(callAccessToken, {
       name: videoCall.u._id,
-      video: videoCall && videoCall.status === CALL_STATUS.VIDEO_STARTED,
+      video: isVideoOn,
       audio: isAudioOn,
       networkQuality: { local: 3, remote: 3 }
     }).then(async (room) => {
