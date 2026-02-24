@@ -234,7 +234,7 @@ const Patient = () => {
                 const transfer = transfers.find(item => item.patient_id === user.id && item.therapist_type === 'lead');
                 const room = chatRooms.find(r => r.rid.includes(user.chat_user_id));
                 const unread = room ? room.unread : 0;
-                const appointmentCount = user.patient_appointment_count + user.therapist_unread_appointment_count;
+                const appointmentCount = user.invited_appointment_count + user.unread_appointment_count;
 
                 const notification = (
                   <div className="notify-lists d-flex align-items-center">
