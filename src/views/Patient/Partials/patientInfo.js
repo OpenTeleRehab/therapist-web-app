@@ -166,7 +166,7 @@ const PatientInfo = ({ id, translate }) => {
 
   const handleReferral = () => {
     openDialog({
-      title: translate('patient.referral.title'),
+      title: translate('patient.referral'),
       content: <ReferralPatientForm patientId={parseInt(id)} />
     });
   };

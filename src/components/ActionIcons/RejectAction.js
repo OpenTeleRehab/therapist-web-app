@@ -6,7 +6,7 @@ import { FaCalendarTimes } from 'react-icons/fa';
 
 export const RejectAction = ({ className, ...rest }) => (
   <Button aria-label="Reject" variant="danger" className={`${className}`} {...rest}>
-    <FaCalendarTimes size={15} /> <span className="mt-2" ><Translate id="common.decline" /></span>
+    <FaCalendarTimes size={15} className='mb-1' /> <span><Translate id="common.decline" /></span>
   </Button>
 );
 

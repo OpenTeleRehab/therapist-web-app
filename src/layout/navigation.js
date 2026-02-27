@@ -116,14 +116,23 @@ const Navigation = ({ translate }) => {
           <NavLink
             to={ROUTES.APPOINTMENT}
             key='nav-appointment'
-            className={`d-flex align-items-center nav-link${navClassesAppointments}`}
+            className={`d-flex align-items-center pr-5 nav-link${navClassesAppointments}`}
           >
-            {translate('appointment')}
-            {(appointmentsWithPatients.upcomingAppointments > 0 || appointments.upcomingAppointments > 0) && (
-              <Badge variant="danger" className={`circle text-light d-md-block${badgeClassesAppointments}`}>
-                {(appointmentsWithPatients.upcomingAppointments ?? 0) + (appointments.upcomingAppointments ?? 0)}
-              </Badge>
-            )}
+            <span className="d-inline-flex align-items-center">
+              {translate('appointment')}
+              {(appointmentsWithPatients.upcomingAppointments > 0 ||
+                appointments.upcomingAppointments > 0) && (
+                <span className="ml-1 d-inline-flex align-items-center">
+                  <Badge
+                    variant="danger"
+                    className={`circle text-light d-md-block${badgeClassesAppointments}`}
+                  >
+                    {(appointmentsWithPatients.upcomingAppointments ?? 0) +
+                      (appointments.upcomingAppointments ?? 0)}
+                  </Badge>
+                </span>
+              )}
+            </span>
           </NavLink>
           {profile && profile.chat_user_id && (
             <NavLink
