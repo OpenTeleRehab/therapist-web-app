@@ -263,8 +263,8 @@ const AppointmentList = ({ handleEdit, appointments, filter }) => {
                       <div className="p-3 ml-auto">
                         {isOwner(appointment) && (
                           <>
-                            <Button aria-label="Edit" className="font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleEdit(appointment)} disabled={isEditDisabled(appointment)}>
-                              <BiEdit className="mr-1" size={20} /><span>{translate('common.edit')}</span>
+                            <Button aria-label="Edit" className="font-weight-bold pr-3 pl-2 mb-1 mr-1" onClick={() => handleEdit(appointment)} disabled={isEditDisabled(appointment)}>
+                              <BiEdit className="mr-1 mb-1" size={20} /><span className='mt-1'>{translate('common.edit')}</span>
                             </Button>
                             <TrashAction className="mb-1 font-weight-bold" disabled={isPast(moment.utc(appointment.start_date).local())} onClick={ () => handleDelete(appointment) } />
                           </>
@@ -273,7 +273,7 @@ const AppointmentList = ({ handleEdit, appointments, filter }) => {
                           <>
                             {!(getUserStatus(appointment) === APPOINTMENT_STATUS.ACCEPTED || isPast(moment.utc(appointment.start_date).local())) && (
                               <Button aria-label="Accept" className="ml-auto font-weight-bold pr-3 pl-3 mb-1 mr-1" onClick={() => handleAccept(appointment)}>
-                                <FaCalendarCheck size={15} /><span>{translate('common.accept')}</span>
+                                <FaCalendarCheck size={15} className='mb-1' /><span className="ml-1">{translate('common.accept')}</span>
                               </Button>
                             )}
                             <RejectAction className="pr-3 pl-3 mb-1 font-weight-bold" onClick={() => handleReject(appointment)} disabled={getUserStatus(appointment) === APPOINTMENT_STATUS.REJECTED || isPast(moment.utc(appointment.start_date).local())} />

@@ -13,6 +13,7 @@ import NextAppointmentFilterCell from './NextAppointmentFilterCell';
 import ProvisionDateFilterCell from './ProvisionDateFilterCell';
 import FollowUpDateFilterCell from './FollowUpDateFilterCell';
 import AssistiveTechnologyFilterCell from './AssistiveTechnologyFilterCell';
+import ReferralStatusFilterCell from './ReferralStatusFilterCell';
 
 const FilterCell = (props) => {
   const { column } = props;
@@ -40,6 +41,8 @@ const FilterCell = (props) => {
     return <AssistiveTechnologyFilterCell {...props} />;
   } else if (column.name === 'transfer') {
     return <TransferFilterCell {...props} />;
+  } else if (column.name === 'referral_status') {
+    return <ReferralStatusFilterCell {...props} />;
   }
   return <TableFilterRow.Cell {...props} />;
 };

@@ -84,7 +84,7 @@ const ReferralPatientForm = ({ patientId }: ReferralPatientProps) => {
     createReferral(payload, {
       onSuccess: (res) => {
         showToast({
-          title: t('patient.referral.title'),
+          title: t('patient.referral'),
           message: t(res.message || ''),
         });
         dispatch(getPatient(patientId));
