@@ -216,7 +216,7 @@ const Questionnaire = ({ translate, handleSwitchFavorite, therapistId, allowCrea
                   id="questionnaire-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
-                {keycloak.hasRealmRole(USER_ROLES.SETUP_QUESTIONNAIRE) && (
+                {keycloak.hasRealmRole(USER_ROLES.MANAGE_QUESTIONNAIRE) && (
                   <Form.Check
                     custom
                     type="checkbox"

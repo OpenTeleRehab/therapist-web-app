@@ -1,5 +1,5 @@
 import { useList } from 'hooks/useList';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { END_POINTS } from 'variables/endPoint';
 import Table from '../../../components/Table';
 import moment from 'moment';
@@ -22,13 +22,28 @@ const PatientReferralList = () => {
   const { showToast } = useToast();
   const [pageSize, setPageSize] = useState<number>(60);
   const [currentPage, setCurrentPage] = useState<number>(1);
+   const [totalCount, setTotalCount] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
+  const [filters, setFilters] = useState([]);
   const [showInterviewHistory, setShowInterviewHistory] = useState(false);
   const [interviewPatientId, setInterviewPatientId] = useState<number | null>(null);
   const { mutate: acceptPatientReferral } = useUpdate(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT);
   const { data: referralAssignments } = useList<IReferralAssignmentResource>(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT, {
     page_size: pageSize,
-    page: currentPage,
+    page: currentPage + 1,
+    search_value: searchValue,
+    filters,
   });
+
+  useEffect(() => {
+    if (referralAssignments && referralAssignments.info) {
+      setTotalCount(referralAssignments.info.total_count);
+    }
+  }, [referralAssignments]);
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [pageSize, searchValue, filters]);
 
   const handleViewHistory = (patientId: number) => {
     setInterviewPatientId(patientId);
@@ -130,6 +145,10 @@ const PatientReferralList = () => {
         setPageSize={setPageSize}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
+        totalCount={totalCount}
+        setSearchValue={setSearchValue}
+        setFilters={setFilters}
+        filters={filters}
         columns={columns}
         columnExtensions={columnExtensions}
         defaultHiddenColumnNames={defaultHiddenColumnNames}

@@ -219,7 +219,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                   id="material-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
-                {keycloak.hasRealmRole(USER_ROLES.SETUP_EDUCATIONAL_MATERIAL) && (
+                {keycloak.hasRealmRole(USER_ROLES.MANAGE_EDUCATION_MATERIAL) && (
                   <Form.Check
                     custom
                     type="checkbox"

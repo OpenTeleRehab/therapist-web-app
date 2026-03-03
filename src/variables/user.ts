@@ -4,9 +4,9 @@ export const USER_GROUPS = {
 };
 
 export const USER_ROLES = {
-  SETUP_EXERCISE: 'setup_exercise',
-  SETUP_EDUCATIONAL_MATERIAL: 'setup_educational_material',
-  SETUP_QUESTIONNAIRE: 'setup_questionnaire',
+  MANAGE_EXERCISE: 'manage_exercise',
+  MANAGE_EDUCATION_MATERIAL: 'manage_education_material',
+  MANAGE_QUESTIONNAIRE: 'manage_questionnaire',
   MANAGE_PATIENT_REFERRAL: 'manage_patient_referral',
   MANAGE_PATIENT_REFERRAL_ASSIGNMENT: 'manage_patient_referral_assignment',
 };
