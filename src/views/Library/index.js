@@ -89,7 +89,7 @@ const Library = ({ translate }) => {
   }, [profile]);
 
   useEffect(() => {
-    if (therapistId && hasAnyRole([USER_ROLES.SETUP_EXERCISE, USER_ROLES.SETUP_EDUCATIONAL_MATERIAL, USER_ROLES.SETUP_QUESTIONNAIRE])) {
+    if (therapistId && hasAnyRole([USER_ROLES.MANAGE_EXERCISE, USER_ROLES.MANAGE_EDUCATION_MATERIAL, USER_ROLES.MANAGE_QUESTIONNAIRE])) {
       exerciseService.countTherapistLibraries(therapistId).then(res => {
         if (res.success) {
           setAllowCreateContent(res.data < maxLibraries);
@@ -152,9 +152,9 @@ const Library = ({ translate }) => {
 
   const hideCreateBtn = () => {
     const viewRoleMap = {
-      [VIEW_EXERCISE]: USER_ROLES.SETUP_EXERCISE,
-      [VIEW_EDUCATION]: USER_ROLES.SETUP_EDUCATIONAL_MATERIAL,
-      [VIEW_QUESTIONNAIRE]: USER_ROLES.SETUP_QUESTIONNAIRE,
+      [VIEW_EXERCISE]: USER_ROLES.MANAGE_EXERCISE,
+      [VIEW_EDUCATION]: USER_ROLES.MANAGE_EDUCATION_MATERIAL,
+      [VIEW_QUESTIONNAIRE]: USER_ROLES.MANAGE_QUESTIONNAIRE,
     };
 
     const requiredRole = viewRoleMap[view];

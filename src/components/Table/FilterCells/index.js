@@ -23,7 +23,7 @@ const FilterCell = (props) => {
     return <TreatmentStatusFilterCell {...props} />;
   } else if (column.name === 'start_date' || column.name === 'end_date') {
     return <DateRangeFilterCell {...props} />;
-  } else if (column.name === 'action' || column.name === 'notification') {
+  } else if (column.name === 'action' || column.name === 'notification' || column.name === 'phc_workers' || column.name === 'interview_history') {
     return <th className="dx-g-bs4-fixed-cell position-sticky" style={{ right: 0 }} />;
   } else if (column.name === 'date_of_birth') {
     return <DateOfBirthFilterCell {...props} />;

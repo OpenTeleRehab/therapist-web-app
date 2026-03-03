@@ -201,7 +201,7 @@ const Exercise = ({ translate, handleSwitchFavorite, therapistId, allowCreateCon
                   id="exercise-showFavoritesOnly"
                   onChange={handleCheckBoxChange}
                 />
-                {keycloak.hasRealmRole(USER_ROLES.SETUP_EXERCISE) && (
+                {keycloak.hasRealmRole(USER_ROLES.MANAGE_EXERCISE) && (
                   <Form.Check
                     custom
                     type="checkbox"
