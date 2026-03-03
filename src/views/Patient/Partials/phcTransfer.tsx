@@ -10,8 +10,9 @@ import { ITransferRequest } from 'interfaces/ITransfer';
 import { useEffect, useMemo } from 'react';
 import { Button, Col, Form } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { END_POINTS } from 'variables/endPoint';
+import { getTransfers } from 'store/transfer/actions';
 
 type PhcTransferProps = {
   patientId: number;
@@ -19,6 +20,7 @@ type PhcTransferProps = {
 
 const PhcTransfer = ({ patientId }: PhcTransferProps) => {
   const t: any = useTranslate();
+  const dispatch = useDispatch();
   const { profile } = useSelector((state: any) => state.auth);
   const { closeDialog } = useDialog();
   const { showToast } = useToast();
@@ -58,6 +60,7 @@ const PhcTransfer = ({ patientId }: PhcTransferProps) => {
           title: t('common.transfer_patient'),
           message: t(res.message || ''),
         });
+        dispatch(getTransfers());
         closeDialog();
       },
     });
