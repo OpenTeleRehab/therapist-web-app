@@ -116,7 +116,11 @@ const Navigation = ({ translate }) => {
           <NavLink
             to={ROUTES.APPOINTMENT}
             key='nav-appointment'
-            className={`d-flex align-items-center pr-5 nav-link${navClassesAppointments}`}
+            className={
+              `d-flex align-items-center
+              ${appointmentsWithPatients.upcomingAppointments > 0 || appointments.upcomingAppointments > 0 ? 'pr-5' : ''}
+              nav-link${navClassesAppointments}`
+            }
           >
             <span className="d-inline-flex align-items-center">
               {translate('appointment')}
