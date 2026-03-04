@@ -5,7 +5,8 @@ export const superset = (state = initialState, action) => {
     case 'GET_GUEST_TOKEN_SUCCESS': {
       return Object.assign({}, state, {
         guestToken: action.data.guest_token,
-        exp: action.data.expiration_time
+        exp: action.data.expiration_time,
+        dashboardId: action.data.dashboard_id,
       });
     }
     default:

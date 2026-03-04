@@ -2,17 +2,18 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getGuestToken } from '../../store/superset/actions';
 import { embedDashboard } from '@superset-ui/embedded-sdk';
-import PropTypes from 'prop-types';
 
-const Dashboard = ({ dashboardId }) => {
+const Dashboard = () => {
   const dispatch = useDispatch();
-  const { guestToken, exp } = useSelector(state => state.superset);
+  const { guestToken, exp, dashboardId } = useSelector(state => state.superset);
   const { profile } = useSelector((state) => state.auth);
   const { languages } = useSelector(state => state.language);
   const containerRef = useRef(null);
+  const tokenRef = useRef(null);
   const intervalIdRef = useRef(null);
   const [locale, setLocale] = useState('en');
   const [langReady, setLangReady] = useState(false);
+  const dashboardMountedRef = useRef(false);
 
   const refreshToken = () => {
     dispatch(getGuestToken());
@@ -51,6 +52,8 @@ const Dashboard = ({ dashboardId }) => {
       return;
     }
 
+    tokenRef.current = guestToken;
+
     const expirationTime = exp * 1000;
     const currentTime = Date.now();
     const timeRemaining = expirationTime - currentTime - 30000;
@@ -67,12 +70,14 @@ const Dashboard = ({ dashboardId }) => {
   }, [guestToken]);
 
   useEffect(() => {
-    if (containerRef.current && guestToken && langReady) {
+    if (containerRef.current && langReady && !dashboardMountedRef.current) {
+      dashboardMountedRef.current = true;
+
       embedDashboard({
         id: dashboardId,
         supersetDomain: process.env.REACT_APP_SUPERSET_API_BASE_URL,
         mountPoint: containerRef.current,
-        fetchGuestToken: () => guestToken,
+        fetchGuestToken: () => tokenRef.current ?? '',
         dashboardUiConfig: {
           hideTitle: true,
           filters: { expanded: true },
@@ -90,10 +95,6 @@ const Dashboard = ({ dashboardId }) => {
       <div id="superset-container" ref={containerRef}></div>
     </div>
   );
-};
-
-Dashboard.propTypes = {
-  dashboardId: PropTypes.string.isRequired
 };
 
 export default Dashboard;
