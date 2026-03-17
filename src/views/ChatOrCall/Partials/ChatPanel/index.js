@@ -92,16 +92,14 @@ const ChatPanel = ({
   };
 
   const handleSendPodcastNotification = (therapist, selectedRoom, body, translatable) => {
-    if (therapist && selectedRoom.u.status === USER_STATUS.OFFLINE) {
-      const notification = {
-        identity: selectedRoom.u.username,
-        title: therapist.first_name + ' ' + therapist.last_name,
-        body: body,
-        translatable: translatable
-      };
+    const notification = {
+      identity: selectedRoom.u.username,
+      title: therapist.first_name + ' ' + therapist.last_name,
+      body: body,
+      translatable: translatable
+    };
 
-      dispatch(sendPodcastNotification(notification));
-    }
+    dispatch(sendPodcastNotification(notification));
   };
 
   if (selectedRoom) {
