@@ -14,7 +14,7 @@ const InterviewHistoryDialog = ({ show, onClose, patientId }: InterviewHistoryDi
   const translate = getTranslate(localize);
 
   return (
-    <Dialog show={show} onCancel={onClose} title={translate('common.interview_history')}>
+    <Dialog show={show} onCancel={onClose} cancelLabel={translate('common.close')} title={translate('common.interview_history')}>
       <InterviewHistory patientId={patientId} />
     </Dialog>
   );
