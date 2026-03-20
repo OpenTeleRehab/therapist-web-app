@@ -164,47 +164,50 @@ const InterviewHistory = ({ patientId: propPatientId }) => {
           <BackButton />
         </div>
       )}
-      <div className={!propPatientId ? 'mt-4' : ''}>
-        {interviewHistories?.data?.length > 0
-          ? interviewHistories?.data?.map((interviewHistory) => {
-            const TotalScoreFirstSection = calculateScoreBySection(interviewHistory.questionnaire.sections[0], JSON.parse(interviewHistory.answers));
-            return (
-              <div
-                key={interviewHistory.id}
-                onClick={() => {
-                  setInterviewHistoryDetail(interviewHistory);
-                  setShowDetail(true);
-                  setStep(0);
-                }}
-                className="card p-3 mb-2"
-                style={{ cursor: 'pointer' }}
-              >
-                <div className="d-flex justify-content-between">
-                  <p className="m-0">
-                    {interviewHistory.questionnaire.title}
-                  </p>
-                  <p className="m-0">
-                    {mapScore(TotalScoreFirstSection, interviewHistory.questionnaire.sections[0].actions)}
-                  </p>
-                </div>
-                <div className="d-flex">
-                  <p className="m-0">
+      {!showDetail && (
+        <div className={!propPatientId ? 'mt-4' : ''}>
+          {interviewHistories?.data?.length > 0
+            ? interviewHistories?.data?.map((interviewHistory) => {
+              const TotalScoreFirstSection = calculateScoreBySection(interviewHistory.questionnaire.sections[0], JSON.parse(interviewHistory.answers));
+              return (
+                <div
+                  key={interviewHistory.id}
+                  onClick={() => {
+                    setInterviewHistoryDetail(interviewHistory);
+                    setShowDetail(true);
+                    setStep(0);
+                  }}
+                  className="card p-3 mb-2"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="d-flex justify-content-between">
+                    <p className="m-0">
+                      {interviewHistory.questionnaire.title}
+                    </p>
+                    <p className="m-0">
+                      {mapScore(TotalScoreFirstSection, interviewHistory.questionnaire.sections[0].actions)}
+                    </p>
+                  </div>
+                  <div className="d-flex">
+                    <p className="m-0">
                   ( {moment(interviewHistory.created_at).format(settings.date_format)} )
-                  </p>
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })
-          : <div className="d-flex justify-content-center align-items-center">
-            <big className="text-muted">{translate('common.no_data')}</big>
-          </div>
-        }
-      </div>
+              );
+            })
+            : <div className="d-flex justify-content-center align-items-center">
+              <big className="text-muted">{translate('common.no_data')}</big>
+            </div>
+          }
+        </div>
+      )}
 
       <Dialog
         show={showDetail}
         title={currentQuestionnaire?.title}
         onCancel={() => setShowDetail(false)}
+        cancelLabel={translate('common.close')}
       >
         <div style={{ maxHeight: '70vh', overflowY: 'auto', padding: '10px' }}>
           {currentSection && (
