@@ -146,6 +146,9 @@ export const VideoCallContextProvider = ({ children }) => {
     // Send accepted call message
     handleUpdateMessage(videoCall._id, videoCall.rid, CALL_STATUS.ACCEPTED);
 
+    // Send accepted call notification
+    handlePodcastNotification(videoCall._id, videoCall.rid, profile.identity, CALL_STATUS.ACCEPTED);
+
     // Hide incoming call
     dispatch(mutation.showIncomingCallSuccess(false));
 
@@ -176,7 +179,11 @@ export const VideoCallContextProvider = ({ children }) => {
         const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
 
         invitingParticipants.map(participant => {
+          // Send missed call chat message to inviting participant
           handleUpdateMessage(participant._id, participant.rid, msg);
+
+          // Send missed call notification to inviting participant
+          handlePodcastNotification(participant._id, participant.rid, participant.u.username, msg);
         });
       }
     } else {
@@ -186,16 +193,17 @@ export const VideoCallContextProvider = ({ children }) => {
       if (callAccessToken) {
         const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
 
+        // Send ended call chat message
         handleUpdateMessage(_id, rid, msg);
       } else {
         const chatRoom = chatRooms.find(cr => cr.u._id === videoCall.rid.replace(videoCall.u._id, ''));
         const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_MISSED : CALL_STATUS.VIDEO_MISSED;
 
+        // Send missed call chat message
         handleUpdateMessage(_id, rid, msg);
 
-        if (chatRoom?.u?.username) {
-          handlePodcastNotification(_id, rid, chatRoom.u.username, msg);
-        }
+        // Send missed call notification
+        handlePodcastNotification(_id, rid, hasStartedCall ? chatRoom.u.username : profile.identity, msg);
       }
     }
 
