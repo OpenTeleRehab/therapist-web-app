@@ -105,7 +105,7 @@ const Patient = () => {
     { columnName: 'secondary_therapist', wordWrapEnabled: true },
     { columnName: 'supplementary_phc_worker', wordWrapEnabled: true },
     { columnName: 'transfer', wordWrapEnabled: true, width: 150 },
-    { columnName: 'notification', wordWrapEnabled: true, width: 200 }
+    { columnName: 'notification', wordWrapEnabled: true, width: 240 }
   ];
 
   const [pageSize, setPageSize] = useState(60);
