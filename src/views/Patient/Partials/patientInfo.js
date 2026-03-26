@@ -21,9 +21,7 @@ import { getCountryName } from 'utils/country';
 import AgeCalculation from 'utils/age';
 import { activateDeactivateAccount, deleteAccount } from 'store/user/actions';
 import { getPatient } from 'store/patient/actions';
-import {
-  getOrganizationTherapistAndMaxSms
-} from 'store/organization/actions';
+import { getOrganizationTherapistAndMaxSms } from 'store/organization/actions';
 import CreatePatient from 'views/Patient/create';
 import Dialog from 'components/Dialog';
 import {
@@ -35,9 +33,7 @@ import {
 import { loadMessagesInRoom, sendNewMessage } from '../../../utils/rocketchat';
 import { markMessagesAsRead } from '../../../utils/chat';
 import RocketchatContext from '../../../context/RocketchatContext';
-import {
-  showErrorNotification
-} from '../../../store/notification/actions';
+import { showErrorNotification } from '../../../store/notification/actions';
 import { generateHash } from '../../../utils/general';
 import { CALL_STATUS } from '../../../variables/rocketchat';
 import customColorScheme from '../../../utils/customColorScheme';
@@ -45,11 +41,10 @@ import _ from 'lodash';
 import Message from '../message';
 import CallingButton from '../../../components/CallingButton';
 import SmsButton from '../../../components/SmsButton';
-import {
-  getTherapistMessage
-} from '../../../store/message/actions';
+import { getTherapistMessage } from '../../../store/message/actions';
 import TransferPatient from '../transfer';
 import { USER_GROUPS, USER_ROLES } from '../../../variables/user';
+import { mutation } from '../../../store/rocketchat/mutations';
 import useDialog from 'components/V2/Dialog';
 import ReferralPatientForm from '../PatientReferral/Partials/referralForm';
 import PhcTransfer from './phcTransfer';
@@ -254,6 +249,8 @@ const PatientInfo = ({ id, translate }) => {
         sendNewMessage(chatSocket, newMessage, therapist.id);
         dispatch(selectRoom(chatRooms[findIndex]));
         dispatch(sendPodcastNotification(notification));
+        dispatch(mutation.setHasStartedCallSuccess(true));
+        dispatch(mutation.showIncomingCallSuccess(true));
         loadMessagesInRoom(chatSocket, chatRooms[findIndex].rid, therapist.id);
         setTimeout(() => {
           markMessagesAsRead(chatSocket, chatRooms[findIndex].rid, therapist.id);
