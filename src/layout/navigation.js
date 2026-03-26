@@ -67,7 +67,7 @@ const Navigation = ({ translate }) => {
     badgeClassesUnread = unread.badgeClasses;
   }
 
-  if (appointmentsWithPatients.upcomingAppointments > 0) {
+  if (appointmentsWithPatients.upcomingAppointments > 0 || appointments.upcomingAppointments > 0) {
     const upcomings = getBadgeClass((appointmentsWithPatients.upcomingAppointments ?? 0) + (appointments.upcomingAppointments ?? 0));
     navClassesAppointments = upcomings.navClasses;
     badgeClassesAppointments = upcomings.badgeClasses;
