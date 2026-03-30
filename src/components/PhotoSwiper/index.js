@@ -33,7 +33,7 @@ const PhotoSwiper = (props) => {
 
   const downloadImage = () => {
     const currentItem = props.items[activeIndexRef.current];
-    downloadRef.href = `${currentItem.src}?download`;
+    downloadRef.href = `${currentItem.src}&download`;
     downloadRef.download = currentItem.name;
     downloadRef.click();
   };
