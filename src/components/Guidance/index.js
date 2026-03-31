@@ -15,6 +15,7 @@ const Guidance = () => {
   const [currentIndex, SetCurrentIndex] = useState(0);
 
   useEffect(() => {
+    // TODO: Fix show_guidance flag — negative value currently treated as "Not Show".
     if (profile && profile.show_guidance === 0) {
       dispatch(getGuidances());
       setShowGuidance(true);
@@ -41,16 +42,18 @@ const Guidance = () => {
     setShowGuidance(false);
   };
 
+  if (guidances.length === 0) {
+    return null;
+  }
+
   return (
     <Modal show={showGuidance} size="lg" onHide={handleCloseGuidance} scrollable={true}>
       <Modal.Header closeButton>
-        <Modal.Title>{guidances.length > 0 && guidances[currentIndex].title}</Modal.Title>
+        <Modal.Title>{guidances[currentIndex].title}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div dangerouslySetInnerHTML={{ __html: guidances.length > 0 && guidances[currentIndex].content }} />
-        { guidances.length > 0 && guidances[currentIndex].auto_translated === true && (
-          <GoogleTranslationAttribute />
-        )}
+        <div dangerouslySetInnerHTML={{ __html: guidances[currentIndex].content }} />
+        { guidances[currentIndex].auto_translated === true && <GoogleTranslationAttribute /> }
       </Modal.Body>
       <Modal.Footer className="justify-content-between">
         <Form.Check
@@ -73,7 +76,7 @@ const Guidance = () => {
           <Button
             className="ml-1"
             variant="primary"
-            disabled={currentIndex + 1 === (guidances.length > 0 && guidances.length)}
+            disabled={currentIndex + 1 === guidances.length}
             onClick={handleNextGuidance}
           >
             <Translate id="common.guidance.next"/>
