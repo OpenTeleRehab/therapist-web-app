@@ -6,7 +6,8 @@ import { showErrorNotification } from 'store/notification/actions';
 import { getMessage } from 'utils/general';
 import { markMessagesAsRead } from 'utils/chat';
 import { Therapist } from '../../services/therapist';
-import { USER_GROUPS } from 'variables/user';
+import { USER_STATUS } from '../../variables/rocketchat';
+import _ from 'lodash';
 
 export const connectWebsocket = (payload) => (dispatch) => {
   dispatch(mutation.setWebsocketConnectionSuccess(payload));
@@ -45,6 +46,9 @@ export const getChatRooms = () => async (dispatch, getState) => {
         const subscription = subscriptions.find(room => room.rid.includes(user.chat_user_id));
 
         if (subscription) {
+          const status = await Rocketchat.getUserPresence(user.identity, authUserId, authToken);
+          const lastMessage = await Rocketchat.getLastMessage(subscription.rid, authUserId, authToken);
+
           chatRooms.push({
             rid: subscription.rid,
             name: `${user.last_name} ${user.first_name}`,
@@ -52,9 +56,11 @@ export const getChatRooms = () => async (dispatch, getState) => {
             u: {
               _id: user.chat_user_id,
               username: user.identity,
-              status: 'offline'
+              status: status?.presence ?? USER_STATUS[0]
             },
-            lastMessage: {},
+            lastMessage: lastMessage?.success
+              ? lastMessage.messages?.[0] ?? {}
+              : {},
             totalMessages: 0
           });
         }
@@ -66,6 +72,9 @@ export const getChatRooms = () => async (dispatch, getState) => {
       const subscription = subscriptions.find(room => room.rid.includes(therapist.chat_user_id));
 
       if (subscription) {
+        const status = await Rocketchat.getUserPresence(therapist.identity, authUserId, authToken);
+        const lastMessage = await Rocketchat.getLastMessage(subscription.rid, authUserId, authToken);
+
         chatRooms.push({
           rid: subscription.rid,
           name: `${therapist.last_name} ${therapist.first_name}`,
@@ -73,9 +82,11 @@ export const getChatRooms = () => async (dispatch, getState) => {
           u: {
             _id: therapist.chat_user_id,
             username: therapist.identity,
-            status: 'offline'
+            status: status?.presence ?? USER_STATUS[0]
           },
-          lastMessage: {},
+          lastMessage: lastMessage?.success
+            ? lastMessage.messages?.[0] ?? {}
+            : {},
           totalMessages: 0
         });
       }
@@ -86,6 +97,9 @@ export const getChatRooms = () => async (dispatch, getState) => {
       const subscription = subscriptions.find(room => room.rid.includes(therapist.chat_user_id));
 
       if (subscription) {
+        const status = await Rocketchat.getUserPresence(therapist.identity, authUserId, authToken);
+        const lastMessage = await Rocketchat.getLastMessage(subscription.rid, authUserId, authToken);
+
         chatRooms.push({
           rid: subscription.rid,
           name: `${therapist.last_name} ${therapist.first_name}`,
@@ -93,9 +107,11 @@ export const getChatRooms = () => async (dispatch, getState) => {
           u: {
             _id: therapist.chat_user_id,
             username: therapist.identity,
-            status: 'offline'
+            status: status?.presence ?? USER_STATUS[0]
           },
-          lastMessage: {},
+          lastMessage: lastMessage?.success
+            ? lastMessage.messages?.[0] ?? {}
+            : {},
           totalMessages: 0
         });
       }
@@ -105,58 +121,6 @@ export const getChatRooms = () => async (dispatch, getState) => {
     return chatRooms.length > 0;
   } else {
     dispatch(mutation.getChatRoomsFail());
-    dispatch(showErrorNotification('toast_title.error_message', data.message));
-    return false;
-  }
-};
-
-export const getCurrentChatUsersStatus = () => async (dispatch, getState) => {
-  const { authToken, authUserId, chatRooms } = getState().rocketchat;
-  const userNames = [];
-  const mapIndex = [];
-  chatRooms.forEach((room, idx) => {
-    userNames.push(room.u.username);
-    mapIndex[room.u._id] = idx;
-  });
-  if (userNames.length) {
-    const data = await Rocketchat.getUserStatus(userNames, authUserId, authToken);
-    if (data.success) {
-      data.users.forEach(user => {
-        if (chatRooms[mapIndex[user._id]]) {
-          chatRooms[mapIndex[user._id]].u.status = user.status;
-        }
-      });
-      dispatch(mutation.getChatUsersStatusSuccess(chatRooms));
-      return true;
-    } else {
-      dispatch(mutation.getChatUsersStatusFail());
-      console.error('Cannot get chat user status', data.error);
-      return false;
-    }
-  }
-};
-
-export const getLastMessages = () => async (dispatch, getState) => {
-  const { authToken, authUserId, chatRooms } = getState().rocketchat;
-  const roomIds = [];
-  chatRooms.forEach((room) => {
-    roomIds.push(room.rid);
-  });
-  const data = await Rocketchat.getLastMessages(roomIds, authUserId, authToken);
-  if (data.success) {
-    data.ims.forEach((message) => {
-      if (message.lastMessage) {
-        const fIndex = chatRooms.findIndex(cr => cr.rid === message.lastMessage.rid);
-        if (fIndex > -1) {
-          chatRooms[fIndex].lastMessage = getMessage(message.lastMessage, authUserId, authToken);
-          chatRooms[fIndex].totalMessages = message.msgs;
-        }
-      }
-    });
-    dispatch(mutation.getLastMessagesSuccess(chatRooms));
-    return true;
-  } else {
-    dispatch(mutation.getLastMessagesFail());
     dispatch(showErrorNotification('toast_title.error_message', data.message));
     return false;
   }

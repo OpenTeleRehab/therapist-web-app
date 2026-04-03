@@ -22,11 +22,10 @@ const login = (user, password) => {
     });
 };
 
-const getUserStatus = (userNames, authUserId, authToken) => {
+const getUserPresence = async (username, authUserId, authToken) => {
   const instance = createInstance(authUserId, authToken);
-  const fields = JSON.stringify({ status: 1 });
-  const query = JSON.stringify({ username: { $in: userNames } });
-  return instance.get(`/users.list?fields=${fields}&query=${query}&count=999999`)
+
+  return instance.get(`/users.getPresence?username=${username}`)
     .then(
       res => {
         return res.data;
@@ -36,11 +35,10 @@ const getUserStatus = (userNames, authUserId, authToken) => {
     });
 };
 
-const getLastMessages = (chatRooms, authUserId, authToken) => {
+const getLastMessage = async (roomId, authUserId, authToken) => {
   const instance = createInstance(authUserId, authToken);
-  const fields = JSON.stringify({ msgs: 1, lastMessage: 1 });
-  const query = JSON.stringify({ _id: { $in: chatRooms } });
-  return instance.get(`/im.list?fields=${fields}&query=${query}&count=999999`)
+
+  return instance.get(`/im.history?roomId=${roomId}&count=1`)
     .then(
       res => {
         return res.data;
@@ -77,8 +75,8 @@ const sendAttachmentMessage = (roomId, authUserId, authToken, attachment) => {
 
 export const Rocketchat = {
   login,
-  getUserStatus,
-  getLastMessages,
+  getUserPresence,
+  getLastMessage,
   getSubscriptions,
   sendAttachmentMessage
 };
