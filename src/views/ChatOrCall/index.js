@@ -3,13 +3,7 @@ import PropTypes from 'prop-types';
 import { Row, Col, Form, Badge, Button, Alert, Tabs, Tab } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { BsSearch, BsXCircle } from 'react-icons/bs';
-import {
-  setIsOnChatPage,
-  getChatRooms,
-  getCurrentChatUsersStatus,
-  getLastMessages,
-  sendPodcastNotification
-} from 'store/rocketchat/actions';
+import { setIsOnChatPage, getChatRooms, sendPodcastNotification } from '../../store/rocketchat/actions';
 import ChatRoomList from './Partials/ChatRoomList';
 import ChatPanel from './Partials/ChatPanel';
 import RocketchatContext from 'context/RocketchatContext';
@@ -37,14 +31,7 @@ const ChatOrCall = ({ translate }) => {
 
   useEffect(() => {
     if (therapist && therapist.chat_user_id && authToken && countries.length) {
-      dispatch(getChatRooms()).then(success => {
-        if (success) {
-          dispatch(getLastMessages());
-          setTimeout(() => {
-            dispatch(getCurrentChatUsersStatus());
-          }, 1000);
-        }
-      });
+      dispatch(getChatRooms());
     }
     dispatch(setIsOnChatPage(true));
     return () => {
