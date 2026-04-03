@@ -13,6 +13,7 @@ import DeclineForm from './Partials/declineForm';
 import { useUpdate } from 'hooks/useUpdate';
 import useToast from 'components/V2/Toast';
 import InterviewHistoryDialog from './Partials/InterviewHistoryDialog';
+import { useInvalidate } from 'hooks/useInvalidate';
 
 const CustomTable = Table as any;
 
@@ -20,6 +21,7 @@ const PatientReferralList = () => {
   const t: any = useTranslate();
   const { openDialog } = useDialog();
   const { showToast } = useToast();
+  const invalidate = useInvalidate();
   const [pageSize, setPageSize] = useState<number>(60);
   const [currentPage, setCurrentPage] = useState<number>(1);
    const [totalCount, setTotalCount] = useState(0);
@@ -66,6 +68,7 @@ const PatientReferralList = () => {
   const handleAccept = (referralAssignmentId: number) => {
     acceptPatientReferral({ id: `${referralAssignmentId}/accept`, payload: { status: 'accepted' } }, {
       onSuccess: (res) => {
+        invalidate(END_POINTS.PATIENT_REFERRAL_ASSIGNMENT_COUNT);
         showToast({
           title: t('patient.referral_assignment.accept.title'),
           message: t(res.message ?? '')
@@ -135,7 +138,8 @@ const PatientReferralList = () => {
 
   const columnExtensions = [
     { columnName: 'request_reason', wordWrapEnabled: true },
-    { columnName: 'action', align: 'right' }
+    { columnName: 'action', align: 'right' },
+    { columnName: 'phc_workers', wordWrapEnabled: true },
   ];
 
   return (
