@@ -6,11 +6,11 @@ export const getChatRooms = (id, therapists) => {
   return therapist ? therapist.chat_rooms : '';
 };
 
-export const renderLeadAndSupplementTherapists = (profileId, therapists = []) =>
+export const renderLeadAndSupplementTherapists = (profileId, therapists = [], translate) =>
   therapists
     .map((therapist) =>
       therapist.id === profileId
-        ? `<b>${therapist.first_name} ${therapist.last_name}</b>`
-        : `${therapist.first_name} ${therapist.last_name}`
+        ? `<b>${translate('common.user.full_name', { lastName: therapist.last_name, firstName: therapist.first_name })}</b>`
+        : `${translate('common.user.full_name', { lastName: therapist.last_name, firstName: therapist.first_name })}`
     )
     .join(', ');
