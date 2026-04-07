@@ -135,7 +135,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   if (profile && userOptions?.data?.length) {
     (userOptions?.data || []).forEach(function (user) {
       if (!_.some(pendingTransfers, pendingTransfer => pendingTransfer.therapist_id === user.id && pendingTransfer.status === 'invited') && Number(user.id) !== Number(profile.id)) {
-        options.push({ value: user.id, label: user.first_name + ' ' + user.last_name });
+        options.push({ value: user.id, label: translate('common.user.full_name', { lastName: user.last_name, firstName: user.first_name }) });
       }
     });
   }
@@ -609,7 +609,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
                     <Chip
                       key={item.therapist_id}
                       variant={item.status === 'invited' ? 'primary' : 'danger'}
-                      label={`${item.first_name} ${item.last_name}`}
+                      label={translate('common.user.full_name', { lastName: item.last_name, firstName: item.first_name })}
                       onDelete={() => handleRemovePendingSecondaryTherapist(item.id, item.therapist_id)}
                     />
                   );
@@ -642,7 +642,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
                     <Chip
                       key={item.therapist_id}
                       variant={item.status === 'invited' ? 'primary' : 'danger'}
-                      label={`${item.first_name} ${item.last_name}`}
+                      label={translate('common.user.full_name', { lastName: item.last_name, firstName: item.first_name })}
                       onDelete={() => handleRemovePendingSecondaryTherapist(item.id, item.therapist_id)}
                     />
                   );
