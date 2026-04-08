@@ -1,4 +1,5 @@
 # Overview
+<!-- We need to expand the overview to something specific like: Web Aplication for Therapists who wants to use and implement this software in your own work. Maybe we need to write more about what's the app do and how it works. For me, wasn't possible to understand what the app does, so if we can explain how it works, that helps new contributors. -->
 
 This web client app project was bootstrapped with [React Js](https://reactjs.org/docs/getting-started.html).
 
