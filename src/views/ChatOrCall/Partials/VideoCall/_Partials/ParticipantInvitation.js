@@ -89,7 +89,7 @@ const ParticipantInvitation = ({
   return (
     <>
       <Button
-        disabled={room.name !== authUserId}
+        disabled={room.name !== authUserId || participants.length === 0}
         className="btn-add-participant"
         onClick={() => setShowInviteDialog(true)}
       >

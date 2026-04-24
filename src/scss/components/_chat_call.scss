@@ -290,6 +290,11 @@
       z-index: 99;
       width: 200px;
     }
+    .end-call-hint {
+      position: fixed;
+      bottom: 78px;
+      width: 100%;
+    }
     .local,
     .remote {
       .participant,

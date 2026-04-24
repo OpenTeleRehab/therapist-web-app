@@ -23,6 +23,10 @@ const Room = ({
   setSelectedTranscriptingLanguage
 }) => {
   const dispatch = useDispatch();
+  const isActive = useRef(true);
+  const timerRef = useRef(null);
+  const callStartRef = useRef(null);
+  const { handleDeclineCall } = useVideoCallContext();
   const localize = useSelector((state) => state.localize);
   const { videoCall } = useSelector(state => state.rocketchat);
   const translate = getTranslate(localize);
@@ -30,7 +34,8 @@ const Room = ({
   const [room, setRoom] = useState();
   const [participants, setParticipants] = useState([]);
   const [speechRecognitionAvailable, setSpeechRecognitionAvailable] = useState(true);
-  const isActive = useRef(true);
+  const [callDuration, setCallDuration] = useState(0);
+  const [showAutoEndCallHint, setShowAutoEndCallHint] = useState(false);
 
   useEffect(() => {
     handleAddParticipants(participants);
@@ -64,9 +69,12 @@ const Room = ({
       networkQuality: { local: 3, remote: 3 }
     }).then(async (room) => {
       if (!isActive.current) {
+        stopCallTimer();
         room.disconnect();
         return;
       }
+
+      startCallTimer();
 
       setRoom(room);
 
@@ -87,6 +95,7 @@ const Room = ({
 
     return () => {
       isActive.current = false;
+      stopCallTimer();
       setRoom(currentRoom => {
         if (currentRoom && currentRoom.localParticipant.state === 'connected') {
           currentRoom.localParticipant.tracks.forEach(function (trackPublication) {
@@ -100,6 +109,37 @@ const Room = ({
       });
     };
   }, []);
+
+  useEffect(() => {
+    if (participants.length) {
+      setShowAutoEndCallHint(false);
+    } else {
+      if (callDuration >= 30) {
+        setShowAutoEndCallHint(true);
+      }
+      if (callDuration >= 40) {
+        stopCallTimer();
+
+        handleDeclineCall();
+      }
+    }
+  }, [callDuration, participants, room]);
+
+  const startCallTimer = () => {
+    callStartRef.current = Date.now();
+
+    timerRef.current = setInterval(() => {
+      const diff = Math.floor((Date.now() - callStartRef.current) / 1000);
+      setCallDuration(diff);
+    }, 1000);
+  };
+
+  const stopCallTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
 
   const toggleVideo = async () => {
     if (room === undefined) {
@@ -159,6 +199,13 @@ const Room = ({
             </p>
           )}
         </div>
+        {showAutoEndCallHint && (
+          <div className="end-call-hint">
+            <p className="text-danger text-center">
+              {translate('chat_message.no_participants_auto_end_call')}
+            </p>
+          </div>
+        )}
         <div className="remote">
           {participants.map(participant => (
             <Participant key={participant.identity} participant={participant}/>
