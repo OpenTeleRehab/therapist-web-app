@@ -161,6 +161,8 @@ export const VideoCallContextProvider = ({ children }) => {
 
   const handleDeclineCall = () => {
     if (room?.name === authUserId) {
+      const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
+
       if (participants.length) {
         participants.map(participant => {
           const chatRoom = chatRooms.find(item => participant.identity.includes(item.u.username + '###'));
@@ -168,11 +170,16 @@ export const VideoCallContextProvider = ({ children }) => {
             const _id = generateHash();
             const rid = chatRoom.rid;
             const identity = chatRoom.name;
-            const msg = videoCall.status === CALL_STATUS.AUDIO_STARTED ? CALL_STATUS.AUDIO_ENDED : CALL_STATUS.VIDEO_ENDED;
 
             handleSendMessage(_id, rid, identity, msg);
           }
         });
+      } else {
+        const _id = videoCall._id;
+        const rid = videoCall.rid;
+        const identity = videoCall.u.username;
+
+        handleUpdateMessage(_id, rid, msg);
       }
 
       if (invitingParticipants.length) {
@@ -186,6 +193,9 @@ export const VideoCallContextProvider = ({ children }) => {
           handlePodcastNotification(participant._id, participant.rid, participant.u.username, msg);
         });
       }
+
+      // Reset room
+      setRoom(undefined);
     } else {
       const _id = videoCall._id;
       const rid = videoCall.rid;
