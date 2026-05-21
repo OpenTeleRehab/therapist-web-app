@@ -34,6 +34,7 @@ const Transfer = () => {
   ];
 
   const columnExtensions = [
+    { columnName: 'transfer_from', wordWrapEnabled: true },
     { columnName: 'action', width: 220 }
   ];
 
@@ -102,13 +103,19 @@ const Transfer = () => {
           </>
         );
 
+        const transferFrom = transfer && transfer.from_therapist ? translate('common.user.full_name', { lastName: transfer.from_therapist.last_name, firstName: transfer.from_therapist.first_name }) : '';
+
         return {
           identity: patient && patient.identity,
           last_name: patient && patient.last_name,
           first_name: patient && patient.first_name,
           date_of_birth: patient && patient.date_of_birth ? moment(patient.date_of_birth, 'YYYY-MM-DD').locale('en').format(settings.date_format) : '',
           secondary_therapist: transfer && transfer.therapist_type === 'lead' ? translate('common.primary_therapist.label') : translate('common.secondary_therapist.label'),
-          transfer_from: transfer && transfer.from_therapist && `${transfer.from_therapist.first_name} ${transfer.from_therapist.last_name}`,
+          transfer_from: (
+            <span style={{ whiteSpace: 'normal', overflowWrap: 'anywhere', wordBreak: 'break-word' }}>
+              {transferFrom}
+            </span>
+          ),
           action: renderTransfer
         };
       })}
