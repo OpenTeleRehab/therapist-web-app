@@ -38,8 +38,8 @@ export const getMessage = (message, authUserId = '', authToken = '') => {
 
     if (file.type.startsWith('image/')) {
       attachment.url = encodeURI(`${baseUrl}${attachedFile.image_url}${authParams}`);
-      attachment.height = attachedFile.image_dimensions.height;
-      attachment.width = attachedFile.image_dimensions.width;
+      attachment.height = attachedFile?.image_dimensions?.height ?? 360;
+      attachment.width = attachedFile?.image_dimensions?.width ?? 480;
       type = CHAT_TYPES.IMAGE;
     }
     if (file.type.startsWith('video/')) {
