@@ -177,6 +177,9 @@ const SurveyModal = ({ publishSurvey, handleSurveyClose }) => {
       <Modal.Body>
         {currentQuestion && (
           <>
+            { currentQuestion.file &&
+              <img src={`${process.env.REACT_APP_ADMIN_API_BASE_URL}/file/${currentQuestion.file.id}`} alt="..." className="img-thumbnail mb-3" width={200} height={200}/>
+            }
             <h5>{currentQuestion.title} {!!currentQuestion.mandatory && <span>*</span>}</h5>
             {currentQuestion.type === 'checkbox' && currentQuestion.answers.map((answer, index) => (
               <div key={index}>
