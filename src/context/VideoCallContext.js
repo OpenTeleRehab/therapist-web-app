@@ -101,15 +101,25 @@ export const VideoCallContextProvider = ({ children }) => {
     if (videoCall && [CALL_STATUS.AUDIO_ENDED, CALL_STATUS.VIDEO_ENDED].includes(videoCall.status)) {
       if (callAccessToken) {
         if (hasAcceptedCall || (hasStartedCall && participants.length === 0)) {
-          // Stop and unpublish camera tracking
-          room?.localParticipant?.videoTracks?.forEach(function (publication) {
-            publication.unpublish();
-            publication.track.stop();
-            publication.track.detach();
-          });
+          if (room) {
+            // Stop and unpublish camera tracking
+            room.localParticipant?.videoTracks?.forEach(function (publication) {
+              publication.unpublish();
+              publication.track.stop();
+              publication.track.detach();
+            });
 
-          // Disconnect from room
-          room?.disconnect();
+            // Disconnect from room
+            room.disconnect();
+          } else {
+            setTimeout(() => {
+              // Remove call access token
+              dispatch(mutation.getCallAccessTokenSuccess(undefined));
+
+              // Remove video call
+              dispatch(mutation.removeVideoCallSuccess());
+            }, 3000);
+          }
         }
       } else {
         // Remove video call
@@ -177,7 +187,6 @@ export const VideoCallContextProvider = ({ children }) => {
       } else {
         const _id = videoCall._id;
         const rid = videoCall.rid;
-        const identity = videoCall.u.username;
 
         handleUpdateMessage(_id, rid, msg);
       }
