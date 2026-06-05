@@ -114,10 +114,10 @@ const Room = ({
     if (participants.length) {
       setShowAutoEndCallHint(false);
     } else {
-      if (callDuration >= 30) {
+      if (callDuration >= 15) {
         setShowAutoEndCallHint(true);
       }
-      if (callDuration >= 40) {
+      if (callDuration >= 20) {
         stopCallTimer();
 
         handleDeclineCall();
