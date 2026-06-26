@@ -66,6 +66,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
   const [errorGender, setErrorGender] = useState(false);
   const [errorInvalidDob, setErrorInvalidDob] = useState(false);
   const [errorLocation, setErrorLocation] = useState(false);
+  const [errorDateOfBirth, setErrorDateOfBirth] = useState(false);
   const [selectedTherapists, setSelectedTherapists] = useState([]);
   const [originalSecondaryTherapists, setOriginalSecondaryTherapists] = useState([]);
   const [patientChatUserId, setPatientChatUserId] = useState('');
@@ -192,6 +193,7 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           setErrorInvalidDob(true);
           setFormFields({ ...formFields, date_of_birth: '', age: '' });
         }
+        setErrorDateOfBirth(false);
       } else {
         setErrorInvalidDob(false);
         setFormFields({ ...formFields, date_of_birth: '', age: '' });
@@ -336,6 +338,13 @@ const CreatePatient = ({ show, handleClose, editId }) => {
       setErrorGender(true);
     } else {
       setErrorGender(false);
+    }
+
+    if (formFields.date_of_birth === '') {
+      canSave = false;
+      setErrorDateOfBirth(true);
+    } else {
+      setErrorDateOfBirth(false);
     }
 
     if (formFields.last_name === '') {
@@ -513,12 +522,13 @@ const CreatePatient = ({ show, handleClose, editId }) => {
           </Form.Group>
           <Form.Group as={Col} controlId="formDateOfBirth">
             <label htmlFor="date-of-birth">{translate('common.dateOfBirth')}</label>
+            <span className="text-dark ml-1">*</span>
             <Datetime
               inputProps={{
                 id: 'date-of-birth',
                 name: 'date_of_birth',
                 autoComplete: 'off',
-                className: errorInvalidDob ? 'form-control is-invalid' : 'form-control',
+                className: errorInvalidDob || errorDateOfBirth ? 'form-control is-invalid' : 'form-control',
                 placeholder: translate('placeholder.date_of_birth')
               }}
               dateFormat={settings.date_format}
@@ -532,6 +542,11 @@ const CreatePatient = ({ show, handleClose, editId }) => {
             {errorInvalidDob && (
               <Form.Control.Feedback type="invalid" className="d-block">
                 {translate('error.invalid_date')}
+              </Form.Control.Feedback>
+            )}
+            {errorDateOfBirth && !errorInvalidDob && (
+              <Form.Control.Feedback type="invalid" className="d-block">
+                {translate('error.date_of_birth')}
               </Form.Control.Feedback>
             )}
             <p className="mt-1">{translate('common.age')} {formFields.age}</p>
