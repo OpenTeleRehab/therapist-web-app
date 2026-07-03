@@ -252,6 +252,7 @@ const AppointmentList = ({ handleEdit, appointments, filter }) => {
                                 ? `${appointment?.recipient.last_name} ${appointment?.recipient.first_name}`
                                 : `${appointment?.requester.last_name} ${appointment?.requester.first_name}`
                           })}
+                          <span className="font-weight-bold ml-1">{`(${translate(`appointment.type.${appointment.type}`)})`}</span>
                         </div>
                         <div className="mt-2">
                           {renderAppointmentNote(appointment)}
