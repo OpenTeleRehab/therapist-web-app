@@ -18,7 +18,7 @@ import {
   BsSquare,
   BsPersonFill
 } from 'react-icons/bs';
-import { USER_ROLES } from 'variables/user';
+import { USER_ROLES, USER_GROUPS } from 'variables/user';
 import { useKeycloak } from '@react-keycloak/web';
 
 import Pagination from 'components/Pagination';
@@ -302,7 +302,7 @@ const EducationMaterial = ({ translate, handleSwitchFavorite, therapistId, allow
                           }
                         </div>
                         <div className="ml-2">
-                          {material.auto_translated && therapistId !== material.therapist_id && (
+                          {profile.type === USER_GROUPS.THERAPIST && material.auto_translated && therapistId !== material.therapist_id && (
                             <TranslateAction onClick={() => handleTranslate(material.id)} />
                           )}
                         </div>
