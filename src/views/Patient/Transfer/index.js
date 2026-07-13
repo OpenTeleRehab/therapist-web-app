@@ -10,12 +10,14 @@ import settings from '../../../settings';
 import { Button } from 'react-bootstrap';
 import { BsCheck, BsX } from 'react-icons/bs';
 import { acceptTransfer, declineTransfer, getTransfers } from '../../../store/transfer/actions';
+import { useAlertDialog } from 'components/V2/AlertDialog';
 
 const Transfer = () => {
   const dispatch = useDispatch();
   const localize = useSelector((state) => state.localize);
   const { profile } = useSelector(state => state.auth);
   const { transfers } = useSelector(state => state.transfer);
+  const { showAlert } = useAlertDialog();
 
   const [pageSize, setPageSize] = useState(60);
   const [currentPage, setCurrentPage] = useState(0);
@@ -55,7 +57,7 @@ const Transfer = () => {
     }
   }, [dispatch, transfers]);
 
-  const handleAcceptTransfer = (transferId, patient) => {
+  const handleAcceptTransferConfirm = (transferId, patient) => {
     dispatch(acceptTransfer({
       transfer_id: transferId,
       patient_id: patient.id
@@ -63,9 +65,25 @@ const Transfer = () => {
     dispatch(getTransfers());
   };
 
-  const handleDeclineTransfer = (transferId) => {
+  const handleDeclineTransferConfirm = (transferId) => {
     dispatch(declineTransfer(transferId));
     dispatch(getTransfers());
+  };
+
+  const handleAcceptTransfer = (transferId, patient) => {
+    showAlert({
+      title: translate('transfer.accept.confirmation.title'),
+      message: translate('transfer.accept.confirmation.message'),
+      onConfirm: () => handleAcceptTransferConfirm(transferId, patient),
+    });
+  };
+
+  const handleDeclineTransfer = (transferId) => {
+    showAlert({
+      title: translate('transfer.decline.confirmation.title'),
+      message: translate('transfer.decline.confirmation.message'),
+      onConfirm: () => handleDeclineTransferConfirm(transferId),
+    });
   };
 
   return (
